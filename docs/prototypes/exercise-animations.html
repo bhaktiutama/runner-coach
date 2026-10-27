@@ -84,7 +84,7 @@ p.lead { margin: 0 0 20px; color: var(--muted); line-height: 1.5; max-width: 680
 
 <script>
 // Panjang segmen tubuh (unit SVG)
-const L = { thigh: 46, shin: 44, foot: 16, torso: 58, neck: 8, head: 11, ua: 30, fa: 28 };
+const L = { thigh: 46, shin: 44, foot: 16, torso: 58, neck: 5, head: 12.5, ua: 30, fa: 28 };
 const GROUND = 178;
 const rad = d => d * Math.PI / 180;
 
@@ -181,11 +181,11 @@ const EXERCISES = [
     [P({ t: 84, h: 5, nt: -81, ns: -82, nf: 30, ft: -80, fs: -81, ff: 30, nu: 0, nl: 90, fu: 2, fl: 92 }), 1.4]] },
   { id: 'deadbug', muscles: ['core'], name: 'Dead bug', cat: 'core', dose: '3 x 8 per sisi', cues: ['Punggung bawah tetap menempel lantai', 'Luruskan lengan dan kaki yang berlawanan secara pelan'], k: [
     [P({ t: -90, nu: 180, nl: 180, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 177, fs: 92, ff: 180 }), 1.0],
-    [P({ t: -90, nu: -100, nl: -100, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 100, fs: 100, ff: 180 }), 0.6],
-    [P({ t: -90, nu: -100, nl: -100, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 100, fs: 100, ff: 180 }), 1.0],
+    [P({ t: -90, nu: 260, nl: 260, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 100, fs: 100, ff: 180 }), 0.6],
+    [P({ t: -90, nu: 260, nl: 260, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 100, fs: 100, ff: 180 }), 1.0],
     [P({ t: -90, nu: 180, nl: 180, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 177, fs: 92, ff: 180 }), 0.6],
-    [P({ t: -90, nu: 180, nl: 180, fu: -100, fl: -100, nt: 100, ns: 100, nf: 180, ft: 177, fs: 92, ff: 180 }), 1.0],
-    [P({ t: -90, nu: 180, nl: 180, fu: -100, fl: -100, nt: 100, ns: 100, nf: 180, ft: 177, fs: 92, ff: 180 }), 0.6]] }
+    [P({ t: -90, nu: 180, nl: 180, fu: 260, fl: 260, nt: 100, ns: 100, nf: 180, ft: 177, fs: 92, ff: 180 }), 1.0],
+    [P({ t: -90, nu: 180, nl: 180, fu: 260, fl: 260, nt: 100, ns: 100, nf: 180, ft: 177, fs: 92, ff: 180 }), 0.6]] }
 ];
 
 const CAT = { drill: ['DRILL', 'var(--drill)'], strength: ['KEKUATAN', 'var(--strength)'], core: ['CORE', 'var(--core)'] };
@@ -195,8 +195,8 @@ const rootStyle = document.documentElement.style;
 // Pilihan tampilan: jenis kelamin, warna kulit, highlight otot
 const TONES = [['Terang', '#EBC4A0', '#C99E78'], ['Sawo matang', '#C68E64', '#A06D47'], ['Cokelat', '#9C6440', '#7A4A2D'], ['Gelap', '#6A432E', '#4E2F20']];
 const OUTFIT = {
-  male: { top: '#1E3A8A', bottom: '#1F2937', hair: '#1C1410' },
-  female: { top: '#0F766E', bottom: '#27272A', hair: '#2A1A12' }
+  male: { top: '#1E3A8A', bottom: '#1F2937', hair: '#3A2618' },
+  female: { top: '#0F766E', bottom: '#27272A', hair: '#4A2E1C' }
 };
 const VIEW = { gender: 'male', tone: 1, muscles: false };
 
@@ -333,7 +333,7 @@ const rigs = EXERCISES.map(ex => {
   add(gMid, 'neck', 'var(--skin)'); add(gMid, 'neckS', 'var(--shade)');
   add(gMid, 'torso', 'var(--skin)'); add(gMid, 'torsoC1', 'var(--top)'); add(gMid, 'torsoC2', 'var(--bottom)');
   add(gMid, 'torsoS', 'var(--shade)'); add(gMid, 'torsoM', 'var(--muscle)');
-  add(gMid, 'hair', 'var(--hair)'); add(gMid, 'face', 'var(--skin)'); add(gMid, 'ear', 'var(--skin-shade)');
+  add(gMid, 'face', 'var(--skin)'); add(gMid, 'ear', 'var(--skin-shade)'); add(gMid, 'hair', 'var(--hair)');
   LEG_FIRST.forEach(k => add(gNear, 'n' + k, fills[k]));
   ARM_FIRST.forEach(k => add(gNear, 'n' + k, fills[k]));
   P.shadow = shadow;
@@ -400,7 +400,7 @@ function draw(r, time, dt) {
   });
 
   const up = [Math.sin(rad(b.ha)), -Math.cos(rad(b.ha))], fw = [Math.cos(rad(b.ha)), Math.sin(rad(b.ha))];
-  const neckTop = [b.sh[0] + up[0] * (L.neck + 4), b.sh[1] + up[1] * (L.neck + 4)];
+  const neckTop = [b.sh[0] + up[0] * (L.neck + 6), b.sh[1] + up[1] * (L.neck + 6)];
   set('neck', seg(b.sh, neckTop, BP.neck, T));
   set('neckS', seg(b.sh, neckTop, BP.neck, T, { shade: 'b' }));
   const tp = BP.torso.map(([f, a, c]) => f > 0.55 && f < 0.95 ? [f, a * breath, c] : [f, a, c]);
@@ -411,17 +411,25 @@ function draw(r, time, dt) {
   set('torsoS', seg(b.hip, b.sh, tp, T, { extra: 1.2, shade: 'b' }));
   set('torsoM', mus.includes('core') ? seg(b.hip, b.sh, tp, T, { from: 0.15, to: 0.7, extra: 1.6 }) : '');
 
-  // Kepala: rambut di belakang/atas, wajah sedikit ke depan bawah, telinga
-  const hairC = [b.hd[0] + up[0] * 1.3 - fw[0] * 1.4, b.hd[1] + up[1] * 1.3 - fw[1] * 1.4];
-  set('hair', poly(ellipse(hairC, G === 'male' ? 9.6 : 10, G === 'male' ? 10.4 : 11, b.ha, T)));
-  const faceC = [b.hd[0] + fw[0] * 1.3 - up[0] * 1.4, b.hd[1] + fw[1] * 1.3 - up[1] * 1.4];
-  const jawC = [b.hd[0] + fw[0] * 3 - up[0] * 6, b.hd[1] + fw[1] * 3 - up[1] * 6];
-  set('face', poly(ellipse(faceC, 8.6, 9.8, b.ha, T)) + ' ' + poly(ellipse(jawC, G === 'male' ? 6.8 : 6, G === 'male' ? 5.6 : 5, b.ha, T, 20)));
-  set('ear', poly(ellipse([b.hd[0] - fw[0] * 1.2, b.hd[1] - fw[1] * 1.2], 2.2, 3.2, b.ha, T, 12)));
+  // Kepala: wajah + rahang, telinga, lalu rambut menutup bagian atas dan belakang kepala
+  const at = (c, x, y) => [c[0] + fw[0] * x + up[0] * y, c[1] + fw[1] * x + up[1] * y];
+  const faceC = at(b.hd, 0.6, -0.6), jawC = at(b.hd, 3.4, -6.4);
+  set('face', poly(ellipse(faceC, 10, 11.4, b.ha, T)) + ' ' + poly(ellipse(jawC, G === 'male' ? 7.6 : 6.8, G === 'male' ? 6.4 : 5.8, b.ha, T, 20)));
+  set('ear', poly(ellipse(at(b.hd, -1.6, -1), 2.4, 3.4, b.ha, T, 12)));
+  // Rambut: busur luar mengikuti tengkorak dari dahi -> ubun-ubun -> belakang, busur dalam = garis rambut
+  const hc = at(b.hd, 0.2, 0.4), cap = [];
+  const a0 = G === 'male' ? 62 : 52, a1 = G === 'male' ? 222 : 238;
+  for (let d = a0; d <= a1; d += 8) cap.push(at(hc, Math.cos(rad(d)) * 11, Math.sin(rad(d)) * 12.4));
+  const thick = G === 'male' ? 3.2 : 3.6;
+  for (let d = a1; d >= a0; d -= 8) {
+    const tk = d < 100 ? thick * 0.8 : d > 190 ? thick * 1.6 : thick;
+    cap.push(at(hc, Math.cos(rad(d)) * (11 - tk), Math.sin(rad(d)) * (12.4 - tk) - (d > 150 ? 1.5 : 0)));
+  }
+  set('hair', poly(cap.map(T)));
 
   // Kuncir rambut dengan pegas sederhana: tertinggal saat kepala bergerak, lalu kembali menggantung
   if (G === 'female') {
-    const anchor = T([b.hd[0] - fw[0] * 8.5 + up[0] * 4, b.hd[1] - fw[1] * 8.5 + up[1] * 4]);
+    const anchor = T([b.hd[0] - fw[0] * 10 + up[0] * 3, b.hd[1] - fw[1] * 10 + up[1] * 3]);
     if (!r.pony) r.pony = { a: -20, v: 0, prev: anchor };
     const st = r.pony;
     if (dt > 0) {
@@ -433,7 +441,8 @@ function draw(r, time, dt) {
       st.prev = anchor;
     }
     const tipA = rad(st.a);
-    const tip = [anchor[0] + Math.sin(tipA) * 24, anchor[1] + Math.cos(tipA) * 24];
+    // Kuncir tidak boleh menembus lantai saat berbaring
+    const tip = [anchor[0] + Math.sin(tipA) * 24, Math.min(GROUND - 1.5, anchor[1] + Math.cos(tipA) * 24)];
     const id = p => p;
     set('pony', seg(anchor, tip, [[0, 3.6, 3.6], [0.45, 4.6, 4.6], [1, 1.2, 1.2]], id));
   } else {
