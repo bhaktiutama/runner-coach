@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animasi Gerakan</title>
+<style>
+:root {
+  --bg: #FAFAFA; --card: #FFFFFF; --ink: #18181B; --muted: #52525B; --line: #E4E4E7;
+  --near: #18181B; --far: #A1A1AA; --ground: #D4D4D8;
+  --drill: #2563EB; --strength: #7C3AED; --core: #B45309;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A0A0A; --card: #18181B; --ink: #FAFAFA; --muted: #A1A1AA; --line: #27272A;
+    --near: #FAFAFA; --far: #71717A; --ground: #3F3F46;
+    --drill: #60A5FA; --strength: #A78BFA; --core: #FBBF24;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A0A0A; --card: #18181B; --ink: #FAFAFA; --muted: #A1A1AA; --line: #27272A;
+  --near: #FAFAFA; --far: #71717A; --ground: #3F3F46;
+  --drill: #60A5FA; --strength: #A78BFA; --core: #FBBF24;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, -apple-system, sans-serif; }
+main { max-width: 1120px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { margin: 0 0 6px; font-size: 28px; letter-spacing: -0.02em; }
+p.lead { margin: 0 0 20px; color: var(--muted); line-height: 1.5; max-width: 680px; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 20px; }
+.bar button { height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.bar button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.bar .sep { flex: 1; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.card svg { width: 100%; height: auto; display: block; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.name { font-size: 17px; font-weight: 800; }
+.chip { font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 4px 8px; border-radius: 6px; color: var(--card); }
+.dose { font-size: 13px; font-weight: 700; color: var(--muted); }
+.cues { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.note { margin-top: 28px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Animasi gerakan</h1>
+  <p class="lead">Figur sederhana dari SVG yang digerakkan oleh data sudut sendi (pose keyframe). Satu format data dipakai untuk semua gerakan, sehingga bisa dirender ulang di app (react-native-svg) tanpa file video.</p>
+
+  <div class="bar" role="toolbar" aria-label="Kontrol">
+    <button type="button" data-filter="all" aria-pressed="true">Semua</button>
+    <button type="button" data-filter="drill" aria-pressed="false">Drill</button>
+    <button type="button" data-filter="strength" aria-pressed="false">Kekuatan kaki</button>
+    <button type="button" data-filter="core" aria-pressed="false">Core</button>
+    <span class="sep"></span>
+    <button type="button" id="speed" aria-pressed="false">Lambat 0.5x</button>
+    <button type="button" id="play" aria-pressed="false">Jeda</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="note">Prototipe. Dosis (set x repetisi) dan cue teknik adalah contoh dan perlu di-review pelatih atau fisioterapis sebelum dipakai di app. Kaki/lengan gelap = sisi dekat kamera, abu-abu = sisi jauh.</p>
+</main>
+
+<script>
+// Panjang segmen tubuh (unit SVG)
+const L = { thigh: 46, shin: 44, foot: 16, torso: 58, neck: 8, head: 11, ua: 30, fa: 28 };
+const GROUND = 178;
+const rad = d => d * Math.PI / 180;
+
+// Sudut absolut: 0 = lurus ke bawah, 90 = ke depan (kanan), 180 = ke atas, -90 = ke belakang.
+// Torso (t): 0 = tegak, positif = condong ke depan. h = tekukan kepala relatif torso.
+// n* = sisi dekat, f* = sisi jauh. t/s/f = paha/betis/telapak, u/l = lengan atas/bawah.
+const BASE = { t: 0, h: 0, nt: 0, ns: 0, nf: 90, ft: 0, fs: 0, ff: 90, nu: 6, nl: 6, fu: -6, fl: -6, lift: 0 };
+const P = o => Object.assign({}, BASE, o);
+
+function limb(p, a, len) { return [p[0] + len * Math.sin(rad(a)), p[1] + len * Math.cos(rad(a))]; }
+
+function fk(q) {
+  const hip = [0, 0];
+  const sh = [Math.sin(rad(q.t)) * L.torso, -Math.cos(rad(q.t)) * L.torso];
+  const ha = q.t + q.h;
+  const hd = [sh[0] + Math.sin(rad(ha)) * (L.neck + L.head), sh[1] - Math.cos(rad(ha)) * (L.neck + L.head)];
+  const leg = s => { const k = limb(hip, q[s + 't'], L.thigh); const a = limb(k, q[s + 's'], L.shin); return [hip, k, a, limb(a, q[s + 'f'], L.foot)]; };
+  const arm = s => { const e = limb(sh, q[s + 'u'], L.ua); return [sh, e, limb(e, q[s + 'l'], L.fa)]; };
+  return { hip, sh, hd, nLeg: leg('n'), fLeg: leg('f'), nArm: arm('n'), fArm: arm('f') };
+}
+
+// Titik kontak untuk menapakkan figur ke lantai (badan diberi ketebalan 6)
+function lowest(b) {
+  const ys = [b.nLeg[1][1], b.nLeg[2][1], b.nLeg[3][1], b.fLeg[1][1], b.fLeg[2][1], b.fLeg[3][1],
+    b.nArm[1][1], b.nArm[2][1], b.fArm[1][1], b.fArm[2][1], b.hip[1] + 6, b.sh[1] + 6, b.hd[1] + 4];
+  return Math.max.apply(null, ys);
+}
+function bboxCenterX(b) {
+  const xs = [b.hd[0], b.sh[0], b.hip[0]].concat(
+    [b.nLeg, b.fLeg, b.nArm, b.fArm].flatMap(c => c.map(p => p[0])));
+  return (Math.min.apply(null, xs) + Math.max.apply(null, xs)) / 2;
+}
+
+const swingA = { nu: -45, nl: 45, fu: 45, fl: 135 };
+const swingB = { nu: 45, nl: 135, fu: -45, fl: 45 };
+const neutralArms = { nu: 0, nl: 70, fu: 0, fl: 70 };
+
+// k: [pose, detik menuju keyframe berikutnya]
+const EXERCISES = [
+  { id: 'askip', name: 'A-skip', cat: 'drill', dose: '2 x 20 m', cues: ['Lutut naik sampai setinggi pinggul', 'Mendarat di bola kaki, ayunan lengan berlawanan'], k: [
+    [P(Object.assign({ t: 6, nt: 90, ns: 0, nf: 90, ft: 0, fs: 0, ff: 60, lift: 6 }, swingA)), 0.22],
+    [P(Object.assign({ t: 6, nt: 15, ns: -10, ft: -8, fs: -15 }, neutralArms)), 0.22],
+    [P(Object.assign({ t: 6, ft: 90, fs: 0, ff: 90, nt: 0, ns: 0, nf: 60, lift: 6 }, swingB)), 0.22],
+    [P(Object.assign({ t: 6, nt: -8, ns: -15, ft: 15, fs: -10 }, neutralArms)), 0.22]] },
+  { id: 'bskip', name: 'B-skip', cat: 'drill', dose: '2 x 20 m', cues: ['Angkat lutut, lalu luruskan kaki ke depan', 'Tarik kaki ke bawah dan ke belakang seperti menyapu'], k: [
+    [P(Object.assign({ t: 6, nt: 90, ns: 0, ft: 0, fs: 0, ff: 60, lift: 4 }, swingA)), 0.2],
+    [P(Object.assign({ t: 6, nt: 75, ns: 70, nf: 100, ft: 0, fs: 0, ff: 60, lift: 6 }, swingA)), 0.22],
+    [P(Object.assign({ t: 6, nt: 8, ns: -4, ft: -6, fs: -12 }, neutralArms)), 0.22],
+    [P(Object.assign({ t: 6, ft: 90, fs: 0, nt: 0, ns: 0, nf: 60, lift: 4 }, swingB)), 0.2],
+    [P(Object.assign({ t: 6, ft: 75, fs: 70, ff: 100, nt: 0, ns: 0, nf: 60, lift: 6 }, swingB)), 0.22],
+    [P(Object.assign({ t: 6, ft: 8, fs: -4, nt: -6, ns: -12 }, neutralArms)), 0.22]] },
+  { id: 'cskip', name: 'C-skip (butt kick)', cat: 'drill', dose: '2 x 20 m', cues: ['Tumit ditarik ke arah bokong', 'Paha tetap mengarah ke bawah, langkah cepat dan pendek'], k: [
+    [P(Object.assign({ t: 6, nt: 15, ns: -160, nf: -100, ft: 0, fs: 0, ff: 60, lift: 5 }, swingB)), 0.2],
+    [P(Object.assign({ t: 6, nt: 5, ns: -10, ft: -5, fs: -10 }, neutralArms)), 0.18],
+    [P(Object.assign({ t: 6, ft: 15, fs: -160, ff: -100, nt: 0, ns: 0, nf: 60, lift: 5 }, swingA)), 0.2],
+    [P(Object.assign({ t: 6, nt: -5, ns: -10, ft: 5, fs: -10 }, neutralArms)), 0.18]] },
+  { id: 'pogo', name: 'Pogo jump', cat: 'drill', dose: '2 x 20 lompatan', cues: ['Lompatan kecil dari pergelangan kaki', 'Kontak tanah sesingkat mungkin, lutut hampir lurus'], k: [
+    [P({ nt: 6, ns: -6, ft: 4, fs: -8, nu: 10, nl: 80, fu: 6, fl: 76 }), 0.16],
+    [P({ nf: 45, ff: 45, lift: 14, nu: 10, nl: 80, fu: 6, fl: 76 }), 0.16]] },
+  { id: 'squat', name: 'Squat', cat: 'strength', dose: '3 x 12', cues: ['Pinggul turun ke belakang seperti duduk', 'Lutut searah jari kaki, punggung netral'], k: [
+    [P({}), 0.5],
+    [P({}), 1.1],
+    [P({ t: 35, nt: 80, ns: -25, ft: 76, fs: -22, nu: 80, nl: 82, fu: 78, fl: 80 }), 0.4],
+    [P({ t: 35, nt: 80, ns: -25, ft: 76, fs: -22, nu: 80, nl: 82, fu: 78, fl: 80 }), 0.9]] },
+  { id: 'lunge', name: 'Lunge', cat: 'strength', dose: '3 x 10 per kaki', cues: ['Turun lurus ke bawah, lutut belakang hampir menyentuh lantai', 'Lutut depan di atas pergelangan kaki'], k: [
+    [P({ nt: 20, ns: -8, ft: -25, fs: -45, ff: 40 }), 0.4],
+    [P({ nt: 20, ns: -8, ft: -25, fs: -45, ff: 40 }), 1.0],
+    [P({ nt: 85, ns: 0, ft: -5, fs: -100, ff: 60 }), 0.4],
+    [P({ nt: 85, ns: 0, ft: -5, fs: -100, ff: 60 }), 0.9]] },
+  { id: 'sldl', name: 'Single-leg deadlift', cat: 'strength', dose: '3 x 8 per kaki', cues: ['Engsel di pinggul, badan dan kaki belakang satu garis', 'Lutut kaki tumpu sedikit ditekuk'], k: [
+    [P({ ft: 3, fs: -3, nt: -6, ns: -6, nu: 0, nl: 0, fu: 0, fl: 0 }), 0.4],
+    [P({ ft: 3, fs: -3, nt: -6, ns: -6, nu: 0, nl: 0, fu: 0, fl: 0 }), 1.4],
+    [P({ t: 85, h: -5, ft: 10, fs: -10, nt: -85, ns: -85, nf: 0, nu: 0, nl: 0, fu: 2, fl: 2 }), 0.6],
+    [P({ t: 85, h: -5, ft: 10, fs: -10, nt: -85, ns: -85, nf: 0, nu: 0, nl: 0, fu: 2, fl: 2 }), 1.2]] },
+  { id: 'calf', name: 'Calf raise', cat: 'strength', dose: '3 x 15', cues: ['Naik setinggi mungkin di bola kaki', 'Turun pelan, 2-3 detik'], k: [
+    [P({}), 0.3], [P({}), 0.7], [P({ nf: 40, ff: 40 }), 0.5], [P({ nf: 40, ff: 40 }), 1.2]] },
+  { id: 'bridge', name: 'Glute bridge', cat: 'core', dose: '3 x 12', cues: ['Dorong pinggul ke atas lewat tumit', 'Tahan 2 detik di atas, jangan melengkungkan punggung bawah'], k: [
+    [P({ t: -90, nt: 150, ns: 5, ft: 146, fs: 3, nu: 90, nl: 90, fu: 92, fl: 92 }), 0.5],
+    [P({ t: -90, nt: 150, ns: 5, ft: 146, fs: 3, nu: 90, nl: 90, fu: 92, fl: 92 }), 0.9],
+    [P({ t: -115, h: 25, nt: 120, ns: 0, ft: 117, fs: 0, nu: 90, nl: 90, fu: 92, fl: 92 }), 0.9],
+    [P({ t: -115, h: 25, nt: 120, ns: 0, ft: 117, fs: 0, nu: 90, nl: 90, fu: 92, fl: 92 }), 0.9]] },
+  { id: 'plank', name: 'Plank', cat: 'core', dose: '3 x 30 detik', cues: ['Badan lurus dari kepala ke tumit', 'Kencangkan perut, napas tetap teratur'], k: [
+    [P({ t: 85, h: 5, nt: -82, ns: -82, nf: 30, ft: -81, fs: -81, ff: 30, nu: 0, nl: 90, fu: 2, fl: 92 }), 1.4],
+    [P({ t: 84, h: 5, nt: -81, ns: -82, nf: 30, ft: -80, fs: -81, ff: 30, nu: 0, nl: 90, fu: 2, fl: 92 }), 1.4]] },
+  { id: 'deadbug', name: 'Dead bug', cat: 'core', dose: '3 x 8 per sisi', cues: ['Punggung bawah tetap menempel lantai', 'Luruskan lengan dan kaki yang berlawanan secara pelan'], k: [
+    [P({ t: -90, nu: 180, nl: 180, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 177, fs: 92, ff: 180 }), 1.0],
+    [P({ t: -90, nu: -100, nl: -100, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 100, fs: 100, ff: 180 }), 0.6],
+    [P({ t: -90, nu: -100, nl: -100, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 100, fs: 100, ff: 180 }), 1.0],
+    [P({ t: -90, nu: 180, nl: 180, fu: 178, fl: 178, nt: 180, ns: 90, nf: 180, ft: 177, fs: 92, ff: 180 }), 0.6],
+    [P({ t: -90, nu: 180, nl: 180, fu: -100, fl: -100, nt: 100, ns: 100, nf: 180, ft: 177, fs: 92, ff: 180 }), 1.0],
+    [P({ t: -90, nu: 180, nl: 180, fu: -100, fl: -100, nt: 100, ns: 100, nf: 180, ft: 177, fs: 92, ff: 180 }), 0.6]] }
+];
+
+const CAT = { drill: ['DRILL', 'var(--drill)'], strength: ['KEKUATAN', 'var(--strength)'], core: ['CORE', 'var(--core)'] };
+const NS = 'http://www.w3.org/2000/svg';
+const ease = x => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+const grid = document.getElementById('grid');
+const rigs = EXERCISES.map(ex => {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.dataset.cat = ex.cat;
+  card.innerHTML = '<div class="head"><span class="name"></span><span class="chip"></span></div><div class="dose"></div><ul class="cues"></ul>';
+  card.querySelector('.name').textContent = ex.name;
+  const chip = card.querySelector('.chip');
+  chip.textContent = CAT[ex.cat][0];
+  chip.style.background = CAT[ex.cat][1];
+  card.querySelector('.dose').textContent = ex.dose;
+  ex.cues.forEach(c => { const li = document.createElement('li'); li.textContent = c; card.querySelector('.cues').appendChild(li); });
+
+  const svg = el('svg', { viewBox: '-20 -26 240 216', role: 'img', 'aria-label': 'Animasi ' + ex.name });
+  el('line', { x1: -12, y1: GROUND + 1, x2: 212, y2: GROUND + 1, stroke: 'var(--ground)', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
+  const g = el('g', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', fill: 'none' }, svg);
+  const mk = (color, w) => el('polyline', { stroke: color, 'stroke-width': w }, g);
+  const parts = {
+    fArm: mk('var(--far)', 8), fLeg: mk('var(--far)', 10),
+    torso: mk('var(--near)', 13),
+    nLeg: mk('var(--near)', 10), nArm: mk('var(--near)', 8),
+    head: el('circle', { r: L.head, fill: 'var(--near)' }, g)
+  };
+  card.insertBefore(svg, card.firstChild);
+  grid.appendChild(card);
+
+  // Offset horizontal tetap per gerakan supaya figur tidak bergeser saat berganti pose
+  const centers = ex.k.map(f => bboxCenterX(fk(f[0])));
+  const offX = 100 - centers.reduce((a, b) => a + b, 0) / centers.length;
+  const total = ex.k.reduce((a, f) => a + f[1], 0);
+  return { ex, card, parts, offX, total };
+});
+
+function poseAt(ex, time) {
+  let t = time % ex.k.reduce((a, f) => a + f[1], 0);
+  for (let i = 0; i < ex.k.length; i++) {
+    const [a, d] = ex.k[i];
+    if (t <= d) {
+      const b = ex.k[(i + 1) % ex.k.length][0];
+      const u = ease(d ? t / d : 1);
+      const q = {};
+      for (const key in a) q[key] = a[key] + (b[key] - a[key]) * u;
+      return q;
+    }
+    t -= d;
+  }
+  return ex.k[0][0];
+}
+
+function draw(r, time) {
+  const q = poseAt(r.ex, time);
+  const b = fk(q);
+  const dy = GROUND - q.lift - lowest(b);
+  const tr = p => (p[0] + r.offX).toFixed(1) + ',' + (p[1] + dy).toFixed(1);
+  const line = pts => pts.map(tr).join(' ');
+  r.parts.torso.setAttribute('points', line([b.hip, b.sh]));
+  r.parts.nLeg.setAttribute('points', line(b.nLeg));
+  r.parts.fLeg.setAttribute('points', line(b.fLeg));
+  r.parts.nArm.setAttribute('points', line(b.nArm));
+  r.parts.fArm.setAttribute('points', line(b.fArm));
+  r.parts.head.setAttribute('cx', (b.hd[0] + r.offX).toFixed(1));
+  r.parts.head.setAttribute('cy', (b.hd[1] + dy).toFixed(1));
+}
+
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let playing = !reduceMotion, speed = 1, clock = 0, last = null;
+const playBtn = document.getElementById('play');
+const speedBtn = document.getElementById('speed');
+function syncPlay() { playBtn.textContent = playing ? 'Jeda' : 'Putar'; }
+syncPlay();
+
+function frame(ts) {
+  if (last !== null && playing) clock += (ts - last) / 1000 * speed;
+  last = ts;
+  rigs.forEach(r => { if (!r.card.hidden) draw(r, clock); });
+  requestAnimationFrame(frame);
+}
+rigs.forEach(r => draw(r, 0));
+requestAnimationFrame(frame);
+
+playBtn.addEventListener('click', () => { playing = !playing; syncPlay(); });
+speedBtn.addEventListener('click', () => {
+  speed = speed === 1 ? 0.5 : 1;
+  speedBtn.setAttribute('aria-pressed', String(speed !== 1));
+});
+document.querySelectorAll('[data-filter]').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+  const f = btn.dataset.filter;
+  rigs.forEach(r => { r.card.hidden = f !== 'all' && r.ex.cat !== f; });
+}));
+</script>
+</body>
+</html>
