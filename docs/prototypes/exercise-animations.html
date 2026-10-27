@@ -8,21 +8,21 @@
 :root {
   --bg: #FAFAFA; --card: #FFFFFF; --ink: #18181B; --muted: #52525B; --line: #E4E4E7;
   --ground: #D4D4D8; --body: #E4E4E7; --body-far: #C4C4CC; --outline: #52525B;
-  --muscle: #F97316; --muscle-far: #FDBA74; --shoe: #27272A; --shadow: rgba(0,0,0,0.13);
+  --muscle: rgba(249,115,22,0.62); --muscle-far: #FDBA74; --shoe: #27272A; --shadow: rgba(0,0,0,0.13);
   --drill: #2563EB; --strength: #7C3AED; --core: #B45309;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0A0A0A; --card: #18181B; --ink: #FAFAFA; --muted: #A1A1AA; --line: #27272A;
     --ground: #3F3F46; --body: #D4D4D8; --body-far: #8E8E96; --outline: #0A0A0A;
-    --muscle: #FB923C; --muscle-far: #C2410C; --shoe: #52525B; --shadow: rgba(0,0,0,0.5);
+    --muscle: rgba(251,146,60,0.62); --muscle-far: #C2410C; --shoe: #52525B; --shadow: rgba(0,0,0,0.5);
     --drill: #60A5FA; --strength: #A78BFA; --core: #FBBF24;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0A0A0A; --card: #18181B; --ink: #FAFAFA; --muted: #A1A1AA; --line: #27272A;
   --ground: #3F3F46; --body: #D4D4D8; --body-far: #8E8E96; --outline: #0A0A0A;
-  --muscle: #FB923C; --muscle-far: #C2410C; --shoe: #52525B; --shadow: rgba(0,0,0,0.5);
+  --muscle: rgba(251,146,60,0.62); --muscle-far: #C2410C; --shoe: #52525B; --shadow: rgba(0,0,0,0.5);
   --drill: #60A5FA; --strength: #A78BFA; --core: #FBBF24;
 }
 * { box-sizing: border-box; }
@@ -42,13 +42,20 @@ p.lead { margin: 0 0 20px; color: var(--muted); line-height: 1.5; max-width: 680
 .chip { font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 4px 8px; border-radius: 6px; color: var(--card); }
 .dose { font-size: 13px; font-weight: 700; color: var(--muted); }
 .cues { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.far { filter: brightness(0.8); }
+.bar.view { margin-top: -8px; }
+.label { font-size: 13px; font-weight: 700; color: var(--muted); margin-right: 2px; }
+.swatches { display: flex; gap: 6px; }
+.swatch { width: 32px; height: 32px; padding: 0; border-radius: 16px; border: 2px solid var(--card); outline: 1.5px solid var(--line); cursor: pointer; }
+.swatch[aria-pressed="true"] { outline: 2.5px solid var(--ink); }
+:root { --shade: rgba(0,0,0,0.17); --shoe: #3F3F46; --sole: #F4F4F5; }
 .note { margin-top: 28px; font-size: 13px; color: var(--muted); line-height: 1.5; }
 </style>
 </head>
 <body>
 <main>
   <h1>Animasi gerakan</h1>
-  <p class="lead">Figur manekin dari SVG yang digerakkan oleh data sudut sendi (pose keyframe). Satu format data dipakai untuk semua gerakan, sehingga bisa dirender ulang di app (react-native-svg) tanpa file video.</p>
+  <p class="lead">Figur atletis dari SVG yang digerakkan oleh data sudut sendi (pose keyframe) dengan interpolasi kurva halus. Satu format data dipakai untuk semua gerakan, sehingga bisa dirender ulang di app (react-native-svg) tanpa file video.</p>
 
   <div class="bar" role="toolbar" aria-label="Kontrol">
     <button type="button" data-filter="all" aria-pressed="true">Semua</button>
@@ -60,9 +67,19 @@ p.lead { margin: 0 0 20px; color: var(--muted); line-height: 1.5; max-width: 680
     <button type="button" id="play" aria-pressed="false">Jeda</button>
   </div>
 
+  <div class="bar view" role="toolbar" aria-label="Tampilan figur">
+    <span class="label">Figur</span>
+    <button type="button" data-gender="male" aria-pressed="true">Pria</button>
+    <button type="button" data-gender="female" aria-pressed="false">Wanita</button>
+    <span class="label" style="margin-left: 8px">Kulit</span>
+    <div class="swatches" id="tones"></div>
+    <span class="sep"></span>
+    <button type="button" id="muscles" aria-pressed="false">Tampilkan otot</button>
+  </div>
+
   <div class="grid" id="grid"></div>
 
-  <p class="note">Prototipe. Dosis (set x repetisi) dan cue teknik adalah contoh dan perlu di-review pelatih atau fisioterapis sebelum dipakai di app. Oranye = otot utama yang dilatih. Anggota tubuh yang lebih gelap = sisi jauh dari kamera.</p>
+  <p class="note">Prototipe. Dosis (set x repetisi) dan cue teknik adalah contoh dan perlu di-review pelatih atau fisioterapis sebelum dipakai di app. Aktifkan "Tampilkan otot" untuk melihat otot utama yang dilatih (oranye). Anggota tubuh yang lebih gelap = sisi jauh dari kamera.</p>
 </main>
 
 <script>
@@ -85,7 +102,8 @@ function limb(p, a, len) { return [p[0] + len * Math.sin(rad(a)), p[1] + len * M
 function fk(q) {
   const hip = [0, 0];
   const sh = [Math.sin(rad(q.t)) * L.torso, -Math.cos(rad(q.t)) * L.torso];
-  const ha = q.t + q.h;
+  // Kepala menjaga pandangan tetap ke depan saat badan condong (kecuali berbaring/engsel penuh)
+  const ha = q.t + q.h + (Math.abs(q.t) < 50 ? -q.t * 0.6 : 0);
   const hd = [sh[0] + Math.sin(rad(ha)) * (L.neck + L.head), sh[1] - Math.cos(rad(ha)) * (L.neck + L.head)];
   const leg = s => { const k = limb(hip, q[s + 't'], L.thigh); const a = limb(k, q[s + 's'], L.shin); return [hip, k, a, limb(a, q[s + 'f'], L.foot)]; };
   const shoe = s => {
@@ -172,7 +190,52 @@ const EXERCISES = [
 
 const CAT = { drill: ['DRILL', 'var(--drill)'], strength: ['KEKUATAN', 'var(--strength)'], core: ['CORE', 'var(--core)'] };
 const NS = 'http://www.w3.org/2000/svg';
-const ease = x => x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+const rootStyle = document.documentElement.style;
+
+// Pilihan tampilan: jenis kelamin, warna kulit, highlight otot
+const TONES = [['Terang', '#EBC4A0', '#C99E78'], ['Sawo matang', '#C68E64', '#A06D47'], ['Cokelat', '#9C6440', '#7A4A2D'], ['Gelap', '#6A432E', '#4E2F20']];
+const OUTFIT = {
+  male: { top: '#1E3A8A', bottom: '#1F2937', hair: '#1C1410' },
+  female: { top: '#0F766E', bottom: '#27272A', hair: '#2A1A12' }
+};
+const VIEW = { gender: 'male', tone: 1, muscles: false };
+
+// Profil lebar segmen: [posisi 0..1 sepanjang tulang, lebar sisi +n, lebar sisi -n].
+// Tungkai menggantung: +n = belakang. Torso: +n = depan.
+const BODY = {
+  male: {
+    torso: [[0, 10, 11.5], [0.2, 9.2, 11], [0.45, 9, 9.6], [0.7, 13.5, 11.2], [0.88, 12.5, 11.8], [1, 9, 9]],
+    thigh: [[0, 12.2, 10.5], [0.3, 11.2, 10.8], [0.72, 8.2, 8.4], [1, 6.6, 6.6]],
+    shin: [[0, 6.4, 6.2], [0.26, 8.6, 5.8], [0.62, 5.6, 4.6], [1, 3.8, 3.6]],
+    ua: [[0, 7.2, 7], [0.3, 6.4, 6.2], [0.7, 5.2, 5.4], [1, 4.2, 4.2]],
+    fa: [[0, 4.4, 4.4], [0.25, 5.2, 4.8], [1, 3, 3]],
+    neck: [[0, 5, 5], [1, 4.3, 4.3]]
+  },
+  female: {
+    torso: [[0, 10.5, 13.6], [0.2, 9.4, 12.6], [0.47, 8, 8.4], [0.68, 12.2, 9], [0.84, 10.2, 9.4], [1, 7.8, 7.8]],
+    thigh: [[0, 13.2, 11], [0.3, 11.4, 10.4], [0.72, 8, 7.8], [1, 6.2, 6.2]],
+    shin: [[0, 6, 5.8], [0.26, 7.8, 5.4], [0.62, 5.2, 4.3], [1, 3.6, 3.4]],
+    ua: [[0, 6, 5.8], [0.3, 5.4, 5.2], [1, 3.8, 3.8]],
+    fa: [[0, 4, 4], [0.25, 4.4, 4.2], [1, 2.8, 2.8]],
+    neck: [[0, 4.4, 4.4], [1, 3.8, 3.8]]
+  }
+};
+// Pakaian: [segmen, dari, sampai, tambahan lebar, ujung awal datar, ujung akhir datar, warna]
+const CLOTHES = {
+  male: [['torso', 0.17, 1, 1.4, true, false, 'top'], ['ua', 0, 0.45, 1.6, false, true, 'top'],
+         ['torso', 0, 0.26, 1.4, false, true, 'bottom'], ['thigh', 0, 0.52, 2.2, false, true, 'bottom']],
+  female: [['torso', 0.24, 0.97, 0.8, true, false, 'top'],
+           ['torso', 0, 0.28, 0.7, false, true, 'bottom'], ['thigh', 0, 1, 0.7, false, false, 'bottom'], ['shin', 0, 0.72, 0.6, true, true, 'bottom']]
+};
+
+function applyView() {
+  const t = TONES[VIEW.tone], o = OUTFIT[VIEW.gender];
+  rootStyle.setProperty('--skin', t[1]);
+  rootStyle.setProperty('--skin-shade', t[2]);
+  rootStyle.setProperty('--top', o.top);
+  rootStyle.setProperty('--bottom', o.bottom);
+  rootStyle.setProperty('--hair', o.hair);
+}
 
 function el(tag, attrs, parent) {
   const e = document.createElementNS(NS, tag);
@@ -180,6 +243,62 @@ function el(tag, attrs, parent) {
   if (parent) parent.appendChild(e);
   return e;
 }
+
+const f1 = n => n.toFixed(1);
+const lerp = (a, b, u) => a + (b - a) * u;
+function profAt(prof, f) {
+  for (let i = 1; i < prof.length; i++) {
+    if (f <= prof[i][0]) {
+      const a = prof[i - 1], b = prof[i], u = (f - a[0]) / ((b[0] - a[0]) || 1);
+      return [f, lerp(a[1], b[1], u), lerp(a[2], b[2], u)];
+    }
+  }
+  return prof[prof.length - 1].slice();
+}
+
+// Bentuk segmen tubuh (atau potongan kain / bayangan) sepanjang tulang p1 -> p2
+function seg(p1, p2, prof, T, o) {
+  o = o || {};
+  const from = o.from || 0, to = o.to === undefined ? 1 : o.to, ex = o.extra || 0, sc = o.scale || 1;
+  let pts = [profAt(prof, from)].concat(prof.filter(p => p[0] > from && p[0] < to)).concat([profAt(prof, to)]);
+  pts = pts.map(([f, a, b]) => {
+    a = (a + ex) * sc; b = (b + ex) * sc;
+    if (o.shade === 'a') b = -a * 0.25;
+    if (o.shade === 'b') a = -b * 0.25;
+    return [f, a, b];
+  });
+  const dx = p2[0] - p1[0], dy = p2[1] - p1[1], len = Math.hypot(dx, dy) || 1;
+  const n = [-dy / len, dx / len];
+  const A = [], B = [];
+  pts.forEach(([f, wa, wb]) => {
+    const c = [p1[0] + dx * f, p1[1] + dy * f];
+    A.push(T([c[0] + n[0] * wa, c[1] + n[1] * wa]));
+    B.push(T([c[0] - n[0] * wb, c[1] - n[1] * wb]));
+  });
+  const pt = p => f1(p[0]) + ' ' + f1(p[1]);
+  const last = pts[pts.length - 1], first = pts[0];
+  const r2 = Math.max(0.5, (last[1] + last[2]) / 2), r1 = Math.max(0.5, (first[1] + first[2]) / 2);
+  const flatEnd = o.flatEnd || o.shade, flatStart = o.flatStart || o.shade;
+  return 'M' + A.map(pt).join(' L') +
+    (flatEnd ? ' L' : ' A' + f1(r2) + ' ' + f1(r2) + ' 0 0 0 ') + pt(B[B.length - 1]) +
+    ' L' + B.slice().reverse().map(pt).join(' L') +
+    (flatStart ? ' L' : ' A' + f1(r1) + ' ' + f1(r1) + ' 0 0 0 ') + pt(A[0]) + 'Z';
+}
+function ellipse(c, rx, ry, ang, T, steps) {
+  steps = steps || 28;
+  const a = rad(ang), u = [Math.sin(a), -Math.cos(a)], f = [Math.cos(a), Math.sin(a)], out = [];
+  for (let i = 0; i < steps; i++) {
+    const th = i / steps * Math.PI * 2;
+    out.push(T([c[0] + f[0] * Math.cos(th) * rx + u[0] * Math.sin(th) * ry, c[1] + f[1] * Math.cos(th) * rx + u[1] * Math.sin(th) * ry]));
+  }
+  return out;
+}
+const poly = pts => 'M' + pts.map(p => f1(p[0]) + ' ' + f1(p[1])).join(' L') + 'Z';
+
+// Urutan gambar dari belakang ke depan. Sisi jauh digelapkan lewat grup.
+const LIMB_PARTS = ['ua', 'uaC', 'uaS', 'uaM', 'fa', 'faS', 'hand', 'thigh', 'thighC', 'thighS', 'thighM', 'shin', 'shinC', 'shinS', 'shinM', 'shoe', 'sole'];
+const ARM_FIRST = ['ua', 'fa', 'uaC', 'uaS', 'faS', 'uaM', 'hand'];
+const LEG_FIRST = ['thigh', 'shin', 'thighC', 'shinC', 'thighS', 'shinS', 'thighM', 'shinM', 'shoe', 'sole'];
 
 const grid = document.getElementById('grid');
 const rigs = EXERCISES.map(ex => {
@@ -195,114 +314,137 @@ const rigs = EXERCISES.map(ex => {
   ex.cues.forEach(c => { const li = document.createElement('li'); li.textContent = c; card.querySelector('.cues').appendChild(li); });
 
   const svg = el('svg', { viewBox: '-8 -22 216 206', role: 'img', 'aria-label': 'Animasi ' + ex.name });
-  el('line', { x1: -12, y1: GROUND + 1, x2: 212, y2: GROUND + 1, stroke: 'var(--ground)', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
-  const shadow = el('ellipse', { fill: 'var(--shadow)', ry: 3.5 }, svg);
-  const g = el('g', { 'stroke-linejoin': 'round' }, svg);
-  const part = fill => el('path', { fill: fill, stroke: fill === 'var(--shoe)' ? 'none' : 'var(--outline)', 'stroke-width': 1.3 }, g);
-  const hl = (seg, far) => (ex.muscles || []).includes(seg) ? (far ? 'var(--muscle-far)' : 'var(--muscle)') : (far ? 'var(--body-far)' : 'var(--body)');
-  const parts = {
-    fUa: part(hl('arm', 1)), fFa: part(hl('arm', 1)), fHand: part('var(--body-far)'),
-    fThigh: part(hl('thigh', 1)), fShin: part(hl('calf', 1)), fShoe: part('var(--shoe)'),
-    neck: part('var(--body)'), torso: part(hl('core', 0)), head: part('var(--body)'),
-    nThigh: part(hl('thigh', 0)), nShin: part(hl('calf', 0)), nShoe: part('var(--shoe)'),
-    nUa: part(hl('arm', 0)), nFa: part(hl('arm', 0)), nHand: part('var(--body)')
+  el('line', { x1: -4, y1: GROUND + 1, x2: 204, y2: GROUND + 1, stroke: 'var(--ground)', 'stroke-width': 2, 'stroke-linecap': 'round' }, svg);
+  const shadow = el('ellipse', { fill: 'var(--shadow)', ry: 3.2 }, svg);
+  const gFar = el('g', { class: 'far' }, svg);
+  const gMid = el('g', {}, svg);
+  const gNear = el('g', {}, svg);
+  const fills = {
+    ua: 'var(--skin)', uaC: 'var(--top)', uaS: 'var(--shade)', uaM: 'var(--muscle)', fa: 'var(--skin)', faS: 'var(--shade)', hand: 'var(--skin)',
+    thigh: 'var(--skin)', thighC: 'var(--bottom)', thighS: 'var(--shade)', thighM: 'var(--muscle)',
+    shin: 'var(--skin)', shinC: 'var(--bottom)', shinS: 'var(--shade)', shinM: 'var(--muscle)',
+    shoe: 'var(--shoe)', sole: 'var(--sole)'
   };
-  parts.shadow = shadow;
+  const P = {};
+  const add = (g, key, fill) => { P[key] = el('path', { fill: fill }, g); };
+  ARM_FIRST.forEach(k => add(gFar, 'f' + k, fills[k]));
+  LEG_FIRST.forEach(k => add(gFar, 'f' + k, fills[k]));
+  add(gMid, 'pony', 'var(--hair)');
+  add(gMid, 'neck', 'var(--skin)'); add(gMid, 'neckS', 'var(--shade)');
+  add(gMid, 'torso', 'var(--skin)'); add(gMid, 'torsoC1', 'var(--top)'); add(gMid, 'torsoC2', 'var(--bottom)');
+  add(gMid, 'torsoS', 'var(--shade)'); add(gMid, 'torsoM', 'var(--muscle)');
+  add(gMid, 'hair', 'var(--hair)'); add(gMid, 'face', 'var(--skin)'); add(gMid, 'ear', 'var(--skin-shade)');
+  LEG_FIRST.forEach(k => add(gNear, 'n' + k, fills[k]));
+  ARM_FIRST.forEach(k => add(gNear, 'n' + k, fills[k]));
+  P.shadow = shadow;
   card.insertBefore(svg, card.firstChild);
   grid.appendChild(card);
 
-  // Offset horizontal tetap per gerakan supaya figur tidak bergeser saat berganti pose
   const centers = ex.k.map(f => bboxCenterX(fk(f[0])));
   const offX = 100 - centers.reduce((a, b) => a + b, 0) / centers.length;
-  const total = ex.k.reduce((a, f) => a + f[1], 0);
-  return { ex, card, parts, offX, total };
+  return { ex, card, parts: P, offX, pony: null };
 });
 
+// Interpolasi kubik monoton antar keyframe: kecepatan berubah halus tanpa berhenti mendadak
+// di tengah gerakan, dan tidak melewati batas pose (tidak ada overshoot saat jeda/tahan).
+function slope(d1, d2) { return d1 * d2 <= 0 ? 0 : 2 / (1 / d1 + 1 / d2); }
 function poseAt(ex, time) {
-  let t = time % ex.k.reduce((a, f) => a + f[1], 0);
-  for (let i = 0; i < ex.k.length; i++) {
-    const [a, d] = ex.k[i];
-    if (t <= d) {
-      const b = ex.k[(i + 1) % ex.k.length][0];
-      const u = ease(d ? t / d : 1);
+  const k = ex.k, n = k.length, total = k.reduce((a, f) => a + f[1], 0);
+  let t = time % total;
+  for (let i = 0; i < n; i++) {
+    const h = k[i][1];
+    if (t <= h || i === n - 1) {
+      const a = k[i][0], b = k[(i + 1) % n][0], pa = k[(i - 1 + n) % n][0], nb = k[(i + 2) % n][0];
+      const hp = k[(i - 1 + n) % n][1] || 1e-3, hn = k[(i + 1) % n][1] || 1e-3, hh = h || 1e-3;
+      const s = Math.min(1, t / hh), s2 = s * s, s3 = s2 * s;
+      const h00 = 2 * s3 - 3 * s2 + 1, h10 = s3 - 2 * s2 + s, h01 = -2 * s3 + 3 * s2, h11 = s3 - s2;
       const q = {};
-      for (const key in a) q[key] = a[key] + (b[key] - a[key]) * u;
+      for (const key in a) {
+        const d0 = (a[key] - pa[key]) / hp, d1 = (b[key] - a[key]) / hh, d2 = (nb[key] - b[key]) / hn;
+        q[key] = h00 * a[key] + h10 * hh * slope(d0, d1) + h01 * b[key] + h11 * hh * slope(d1, d2);
+      }
       return q;
     }
-    t -= d;
+    t -= h;
   }
-  return ex.k[0][0];
+  return k[0][0];
 }
 
-// Profil lebar segmen: [posisi 0..1 sepanjang tulang, lebar sisi +n, lebar sisi -n].
-// Untuk tungkai yang menggantung, +n = belakang; untuk torso, +n = depan.
-const PROF = {
-  thigh: [[0, 12, 10], [0.3, 10.5, 9.5], [0.7, 8, 8], [1, 6.5, 6.5]],
-  shin: [[0, 6.2, 6.2], [0.28, 8.2, 5.6], [0.6, 5.8, 4.6], [1, 3.8, 3.6]],
-  torso: [[0, 10, 12], [0.2, 9, 11.5], [0.45, 8.5, 9], [0.74, 12, 10], [0.9, 11, 10], [1, 8, 8]],
-  neck: [[0, 4.2, 4.2], [1, 4, 4]],
-  ua: [[0, 6.2, 6], [0.35, 5.8, 5.6], [1, 4.2, 4]],
-  fa: [[0, 4.2, 4.2], [0.3, 4.8, 4.6], [1, 3, 3]]
-};
-const f1 = n => n.toFixed(1);
-
-function seg(p1, p2, prof, T) {
-  const dx = p2[0] - p1[0], dy = p2[1] - p1[1], len = Math.hypot(dx, dy) || 1;
-  const d = [dx / len, dy / len], n = [-d[1], d[0]];
-  const A = [], B = [];
-  prof.forEach(([f, wa, wb]) => {
-    const c = [p1[0] + dx * f, p1[1] + dy * f];
-    A.push(T([c[0] + n[0] * wa, c[1] + n[1] * wa]));
-    B.push(T([c[0] - n[0] * wb, c[1] - n[1] * wb]));
-  });
-  const r1 = (prof[0][1] + prof[0][2]) / 2, r2 = (prof[prof.length - 1][1] + prof[prof.length - 1][2]) / 2;
-  const pt = p => f1(p[0]) + ' ' + f1(p[1]);
-  return 'M' + A.map(pt).join(' L') + ' A' + f1(r2) + ' ' + f1(r2) + ' 0 0 0 ' + pt(B[B.length - 1]) +
-    ' L' + B.slice().reverse().map(pt).join(' L') + ' A' + f1(r1) + ' ' + f1(r1) + ' 0 0 0 ' + pt(A[0]) + 'Z';
-}
-function ellipse(c, rx, ry, ang, T, steps) {
-  const a = rad(ang), u = [Math.sin(a), -Math.cos(a)], f = [Math.cos(a), Math.sin(a)], out = [];
-  for (let i = 0; i < (steps || 28); i++) {
-    const th = i / (steps || 28) * Math.PI * 2;
-    out.push(T([c[0] + f[0] * Math.cos(th) * rx + u[0] * Math.sin(th) * ry, c[1] + f[1] * Math.cos(th) * rx + u[1] * Math.sin(th) * ry]));
-  }
-  return out;
-}
-const poly = pts => 'M' + pts.map(p => f1(p[0]) + ' ' + f1(p[1])).join(' L') + 'Z';
-
-function draw(r, time) {
+function draw(r, time, dt) {
   const q = poseAt(r.ex, time);
   const b = fk(q);
   const dy = GROUND - q.lift - lowest(b);
   const T = p => [p[0] + r.offX, p[1] + dy];
-  const P = r.parts;
+  const P = r.parts, G = VIEW.gender, BP = BODY[G], mus = VIEW.muscles ? (r.ex.muscles || []) : [];
+  const breath = 1 + 0.018 * Math.sin(time * Math.PI * 2 / 3.6);
+  const set = (key, d) => P[key].setAttribute('d', d || '');
+
   ['n', 'f'].forEach(s => {
     const leg = b[s + 'Leg'], arm = b[s + 'Arm'];
-    P[s + 'Thigh'].setAttribute('d', seg(leg[0], leg[1], PROF.thigh, T));
-    P[s + 'Shin'].setAttribute('d', seg(leg[1], leg[2], PROF.shin, T));
-    P[s + 'Shoe'].setAttribute('d', poly(b[s + 'Shoe'].map(T)));
-    P[s + 'Ua'].setAttribute('d', seg(arm[0], arm[1], PROF.ua, T));
-    P[s + 'Fa'].setAttribute('d', seg(arm[1], arm[2], PROF.fa, T));
+    const bones = { thigh: [leg[0], leg[1]], shin: [leg[1], leg[2]], ua: [arm[0], arm[1]], fa: [arm[1], arm[2]] };
+    ['thigh', 'shin', 'ua', 'fa'].forEach(name => {
+      const [p1, p2] = bones[name], prof = BP[name];
+      set(s + name, seg(p1, p2, prof, T));
+      // Sisi belakang tungkai lebih gelap (cahaya dari depan atas) memberi kesan volume
+      set(s + name + 'S', seg(p1, p2, prof, T, { shade: 'a' }));
+      const cloth = CLOTHES[G].find(c => c[0] === name);
+      if (P[s + name + 'C']) set(s + name + 'C', cloth ? seg(p1, p2, prof, T, { from: cloth[1], to: cloth[2], extra: cloth[3], flatStart: cloth[4], flatEnd: cloth[5] }) : '');
+      if (P[s + name + 'M']) set(s + name + 'M', mus.includes(name === 'shin' ? 'calf' : name === 'ua' ? 'arm' : name) ? seg(p1, p2, prof, T, { extra: 0.4 }) : '');
+    });
     const fa = [arm[2][0] - arm[1][0], arm[2][1] - arm[1][1]], fl = Math.hypot(fa[0], fa[1]) || 1;
-    const hc = [arm[2][0] + fa[0] / fl * 3.5, arm[2][1] + fa[1] / fl * 3.5];
-    P[s + 'Hand'].setAttribute('d', poly(ellipse(hc, 3.6, 4.6, Math.atan2(fa[0], -fa[1]) * 180 / Math.PI, T, 16)));
+    const hc = [arm[2][0] + fa[0] / fl * 3.8, arm[2][1] + fa[1] / fl * 3.8];
+    set(s + 'hand', poly(ellipse(hc, G === 'male' ? 3.6 : 3.2, G === 'male' ? 5 : 4.6, Math.atan2(fa[0], -fa[1]) * 180 / Math.PI, T, 16)));
+    set(s + 'shoe', poly(b[s + 'Shoe'].map(T)));
+    const sh = b[s + 'Shoe'];
+    set(s + 'sole', poly([sh[1], sh[2], sh[3], [lerp(sh[3][0], sh[2][0], 0.4) , lerp(sh[3][1], sh[2][1], 0.4)], [lerp(sh[0][0], sh[1][0], 0.6), lerp(sh[0][1], sh[1][1], 0.6)]].map(T)));
   });
-  const up = [Math.sin(rad(b.ha)), -Math.cos(rad(b.ha))];
+
+  const up = [Math.sin(rad(b.ha)), -Math.cos(rad(b.ha))], fw = [Math.cos(rad(b.ha)), Math.sin(rad(b.ha))];
   const neckTop = [b.sh[0] + up[0] * (L.neck + 4), b.sh[1] + up[1] * (L.neck + 4)];
-  P.neck.setAttribute('d', seg(b.sh, neckTop, PROF.neck, T));
-  P.torso.setAttribute('d', seg(b.hip, b.sh, PROF.torso, T));
-  // Kepala: tengkorak + rahang (rahang sedikit ke depan bawah menunjukkan arah wajah)
-  const fw = [Math.cos(rad(b.ha)), Math.sin(rad(b.ha))];
-  const skull = ellipse(b.hd, 9.2, 10.6, b.ha, T);
-  const jaw = ellipse([b.hd[0] + fw[0] * 3 - up[0] * 5.5, b.hd[1] + fw[1] * 3 - up[1] * 5.5], 6.8, 5.6, b.ha, T, 20);
-  P.head.setAttribute('d', poly(skull) + ' ' + poly(jaw));
-  P.head.setAttribute('fill-rule', 'nonzero');
-  // Bayangan di bawah titik yang menyentuh lantai
+  set('neck', seg(b.sh, neckTop, BP.neck, T));
+  set('neckS', seg(b.sh, neckTop, BP.neck, T, { shade: 'b' }));
+  const tp = BP.torso.map(([f, a, c]) => f > 0.55 && f < 0.95 ? [f, a * breath, c] : [f, a, c]);
+  set('torso', seg(b.hip, b.sh, tp, T));
+  const cl = CLOTHES[G].filter(c => c[0] === 'torso');
+  set('torsoC1', seg(b.hip, b.sh, tp, T, { from: cl[0][1], to: cl[0][2], extra: cl[0][3], flatStart: cl[0][4], flatEnd: cl[0][5] }));
+  set('torsoC2', seg(b.hip, b.sh, tp, T, { from: cl[1][1], to: cl[1][2], extra: cl[1][3], flatStart: cl[1][4], flatEnd: cl[1][5] }));
+  set('torsoS', seg(b.hip, b.sh, tp, T, { extra: 1.2, shade: 'b' }));
+  set('torsoM', mus.includes('core') ? seg(b.hip, b.sh, tp, T, { from: 0.15, to: 0.7, extra: 1.6 }) : '');
+
+  // Kepala: rambut di belakang/atas, wajah sedikit ke depan bawah, telinga
+  const hairC = [b.hd[0] + up[0] * 1.3 - fw[0] * 1.4, b.hd[1] + up[1] * 1.3 - fw[1] * 1.4];
+  set('hair', poly(ellipse(hairC, G === 'male' ? 9.6 : 10, G === 'male' ? 10.4 : 11, b.ha, T)));
+  const faceC = [b.hd[0] + fw[0] * 1.3 - up[0] * 1.4, b.hd[1] + fw[1] * 1.3 - up[1] * 1.4];
+  const jawC = [b.hd[0] + fw[0] * 3 - up[0] * 6, b.hd[1] + fw[1] * 3 - up[1] * 6];
+  set('face', poly(ellipse(faceC, 8.6, 9.8, b.ha, T)) + ' ' + poly(ellipse(jawC, G === 'male' ? 6.8 : 6, G === 'male' ? 5.6 : 5, b.ha, T, 20)));
+  set('ear', poly(ellipse([b.hd[0] - fw[0] * 1.2, b.hd[1] - fw[1] * 1.2], 2.2, 3.2, b.ha, T, 12)));
+
+  // Kuncir rambut dengan pegas sederhana: tertinggal saat kepala bergerak, lalu kembali menggantung
+  if (G === 'female') {
+    const anchor = T([b.hd[0] - fw[0] * 8.5 + up[0] * 4, b.hd[1] - fw[1] * 8.5 + up[1] * 4]);
+    if (!r.pony) r.pony = { a: -20, v: 0, prev: anchor };
+    const st = r.pony;
+    if (dt > 0) {
+      const h = Math.min(dt, 0.05);
+      const vx = (anchor[0] - st.prev[0]) / h, vy = (anchor[1] - st.prev[1]) / h;
+      const target = Math.max(-120, Math.min(60, -vx * 0.35 - 12 + vy * 0.1));
+      st.v += (55 * (target - st.a) - 7 * st.v) * h;
+      st.a += st.v * h;
+      st.prev = anchor;
+    }
+    const tipA = rad(st.a);
+    const tip = [anchor[0] + Math.sin(tipA) * 24, anchor[1] + Math.cos(tipA) * 24];
+    const id = p => p;
+    set('pony', seg(anchor, tip, [[0, 3.6, 3.6], [0.45, 4.6, 4.6], [1, 1.2, 1.2]], id));
+  } else {
+    set('pony', '');
+  }
+
   const touching = contacts(b).filter(p => p[1] > lowest(b) - 4).map(p => p[0] + r.offX);
   const minX = Math.min.apply(null, touching), maxX = Math.max.apply(null, touching);
   P.shadow.setAttribute('cx', f1((minX + maxX) / 2));
   P.shadow.setAttribute('cy', f1(GROUND + 1));
-  P.shadow.setAttribute('rx', f1((maxX - minX) / 2 + 12));
+  P.shadow.setAttribute('rx', f1((maxX - minX) / 2 + 14));
 }
 
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -311,14 +453,16 @@ const playBtn = document.getElementById('play');
 const speedBtn = document.getElementById('speed');
 function syncPlay() { playBtn.textContent = playing ? 'Jeda' : 'Putar'; }
 syncPlay();
+applyView();
 
 function frame(ts) {
-  if (last !== null && playing) clock += (ts - last) / 1000 * speed;
+  let dt = 0;
+  if (last !== null && playing) { dt = (ts - last) / 1000 * speed; clock += dt; }
   last = ts;
-  rigs.forEach(r => { if (!r.card.hidden) draw(r, clock); });
+  rigs.forEach(r => { if (!r.card.hidden) draw(r, clock, dt); });
   requestAnimationFrame(frame);
 }
-rigs.forEach(r => draw(r, 0));
+rigs.forEach(r => draw(r, 0, 0));
 requestAnimationFrame(frame);
 
 playBtn.addEventListener('click', () => { playing = !playing; syncPlay(); });
@@ -331,6 +475,32 @@ document.querySelectorAll('[data-filter]').forEach(btn => btn.addEventListener('
   const f = btn.dataset.filter;
   rigs.forEach(r => { r.card.hidden = f !== 'all' && r.ex.cat !== f; });
 }));
+document.querySelectorAll('[data-gender]').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('[data-gender]').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+  VIEW.gender = btn.dataset.gender;
+  rigs.forEach(r => { r.pony = null; draw(r, clock, 0); });
+  applyView();
+}));
+const tones = document.getElementById('tones');
+TONES.forEach((t, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'swatch';
+  btn.style.background = t[1];
+  btn.setAttribute('aria-label', 'Warna kulit ' + t[0]);
+  btn.setAttribute('aria-pressed', String(i === VIEW.tone));
+  btn.addEventListener('click', () => {
+    VIEW.tone = i;
+    tones.querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-pressed', String(j === i)));
+    applyView();
+  });
+  tones.appendChild(btn);
+});
+document.getElementById('muscles').addEventListener('click', e => {
+  VIEW.muscles = !VIEW.muscles;
+  e.currentTarget.setAttribute('aria-pressed', String(VIEW.muscles));
+  rigs.forEach(r => draw(r, clock, 0));
+});
 </script>
 </body>
 </html>
