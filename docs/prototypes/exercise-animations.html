@@ -48,7 +48,7 @@ p.lead { margin: 0 0 20px; color: var(--muted); line-height: 1.5; max-width: 680
 .swatches { display: flex; gap: 6px; }
 .swatch { width: 32px; height: 32px; padding: 0; border-radius: 16px; border: 2px solid var(--card); outline: 1.5px solid var(--line); cursor: pointer; }
 .swatch[aria-pressed="true"] { outline: 2.5px solid var(--ink); }
-:root { --shade: rgba(0,0,0,0.17); --shoe: #3F3F46; --sole: #F4F4F5; }
+:root { --hair-hi: rgba(255,255,255,0.14); --tie: #0F766E; --shade: rgba(0,0,0,0.17); --shoe: #3F3F46; --sole: #F4F4F5; }
 .note { margin-top: 28px; font-size: 13px; color: var(--muted); line-height: 1.5; }
 </style>
 </head>
@@ -204,16 +204,16 @@ const VIEW = { gender: 'male', tone: 1, muscles: false };
 // Tungkai menggantung: +n = belakang. Torso: +n = depan.
 const BODY = {
   male: {
-    torso: [[0, 10, 11.5], [0.2, 9.2, 11], [0.45, 9, 9.6], [0.7, 13.5, 11.2], [0.88, 12.5, 11.8], [1, 9, 9]],
-    thigh: [[0, 12.2, 10.5], [0.3, 11.2, 10.8], [0.72, 8.2, 8.4], [1, 6.6, 6.6]],
+    torso: [[0, 10, 11.8], [0.15, 9.4, 11.6], [0.4, 9.2, 9.6], [0.62, 11.6, 10.6], [0.76, 14, 12.2], [0.9, 12.6, 11.8], [1, 9, 9]],
+    thigh: [[0, 12.4, 10.8], [0.25, 11.4, 11.2], [0.65, 9, 9.2], [0.88, 7.2, 7.2], [1, 6.6, 6.6]],
     shin: [[0, 6.4, 6.2], [0.26, 8.6, 5.8], [0.62, 5.6, 4.6], [1, 3.8, 3.6]],
     ua: [[0, 7.2, 7], [0.3, 6.4, 6.2], [0.7, 5.2, 5.4], [1, 4.2, 4.2]],
     fa: [[0, 4.4, 4.4], [0.25, 5.2, 4.8], [1, 3, 3]],
     neck: [[0, 5, 5], [1, 4.3, 4.3]]
   },
   female: {
-    torso: [[0, 10.5, 13.6], [0.2, 9.4, 12.6], [0.47, 8, 8.4], [0.68, 12.2, 9], [0.84, 10.2, 9.4], [1, 7.8, 7.8]],
-    thigh: [[0, 13.2, 11], [0.3, 11.4, 10.4], [0.72, 8, 7.8], [1, 6.2, 6.2]],
+    torso: [[0, 10, 14.4], [0.12, 9.8, 13.8], [0.3, 9, 10.4], [0.47, 7.6, 7.8], [0.58, 8.6, 8.4], [0.68, 12.4, 9], [0.78, 12.2, 9.6], [0.88, 9.8, 9.4], [1, 7.6, 7.6]],
+    thigh: [[0, 14, 11.6], [0.22, 12.2, 10.8], [0.6, 9.4, 8.6], [0.85, 7.2, 7], [1, 6.2, 6.2]],
     shin: [[0, 6, 5.8], [0.26, 7.8, 5.4], [0.62, 5.2, 4.3], [1, 3.6, 3.4]],
     ua: [[0, 6, 5.8], [0.3, 5.4, 5.2], [1, 3.8, 3.8]],
     fa: [[0, 4, 4], [0.25, 4.4, 4.2], [1, 2.8, 2.8]],
@@ -224,8 +224,8 @@ const BODY = {
 const CLOTHES = {
   male: [['torso', 0.17, 1, 1.4, true, false, 'top'], ['ua', 0, 0.45, 1.6, false, true, 'top'],
          ['torso', 0, 0.26, 1.4, false, true, 'bottom'], ['thigh', 0, 0.52, 2.2, false, true, 'bottom']],
-  female: [['torso', 0.24, 0.97, 0.8, true, false, 'top'],
-           ['torso', 0, 0.28, 0.7, false, true, 'bottom'], ['thigh', 0, 1, 0.7, false, false, 'bottom'], ['shin', 0, 0.72, 0.6, true, true, 'bottom']]
+  female: [['torso', 0.6, 0.95, 0.7, true, true, 'top'],
+           ['torso', 0, 0.4, 0.7, false, true, 'bottom'], ['thigh', 0, 1, 0.7, false, false, 'bottom'], ['shin', 0, 0.72, 0.6, true, true, 'bottom']]
 };
 
 function applyView() {
@@ -249,8 +249,8 @@ const lerp = (a, b, u) => a + (b - a) * u;
 function profAt(prof, f) {
   for (let i = 1; i < prof.length; i++) {
     if (f <= prof[i][0]) {
-      const a = prof[i - 1], b = prof[i], u = (f - a[0]) / ((b[0] - a[0]) || 1);
-      return [f, lerp(a[1], b[1], u), lerp(a[2], b[2], u)];
+      const a = prof[i - 1], b = prof[i], u = (f - a[0]) / ((b[0] - a[0]) || 1), e = (1 - Math.cos(Math.PI * u)) / 2;
+      return [f, lerp(a[1], b[1], e), lerp(a[2], b[2], e)];
     }
   }
   return prof[prof.length - 1].slice();
@@ -260,7 +260,9 @@ function profAt(prof, f) {
 function seg(p1, p2, prof, T, o) {
   o = o || {};
   const from = o.from || 0, to = o.to === undefined ? 1 : o.to, ex = o.extra || 0, sc = o.scale || 1;
-  let pts = [profAt(prof, from)].concat(prof.filter(p => p[0] > from && p[0] < to)).concat([profAt(prof, to)]);
+  let pts = [];
+  const steps = Math.max(2, Math.ceil((to - from) / 0.05));
+  for (let i = 0; i <= steps; i++) pts.push(profAt(prof, from + (to - from) * i / steps));
   pts = pts.map(([f, a, b]) => {
     a = (a + ex) * sc; b = (b + ex) * sc;
     if (o.shade === 'a') b = -a * 0.25;
@@ -329,11 +331,12 @@ const rigs = EXERCISES.map(ex => {
   const add = (g, key, fill) => { P[key] = el('path', { fill: fill }, g); };
   ARM_FIRST.forEach(k => add(gFar, 'f' + k, fills[k]));
   LEG_FIRST.forEach(k => add(gFar, 'f' + k, fills[k]));
-  add(gMid, 'pony', 'var(--hair)');
+  add(gMid, 'pony', 'var(--hair)'); add(gMid, 'pony2', 'var(--hair)'); add(gMid, 'ponyS', 'var(--shade)');
   add(gMid, 'neck', 'var(--skin)'); add(gMid, 'neckS', 'var(--shade)');
   add(gMid, 'torso', 'var(--skin)'); add(gMid, 'torsoC1', 'var(--top)'); add(gMid, 'torsoC2', 'var(--bottom)');
   add(gMid, 'torsoS', 'var(--shade)'); add(gMid, 'torsoM', 'var(--muscle)');
   add(gMid, 'face', 'var(--skin)'); add(gMid, 'ear', 'var(--skin-shade)'); add(gMid, 'hair', 'var(--hair)');
+  add(gMid, 'hairHi', 'var(--hair-hi)'); add(gMid, 'lock', 'var(--hair)'); add(gMid, 'tie', 'var(--tie)');
   LEG_FIRST.forEach(k => add(gNear, 'n' + k, fills[k]));
   ARM_FIRST.forEach(k => add(gNear, 'n' + k, fills[k]));
   P.shadow = shadow;
@@ -411,42 +414,47 @@ function draw(r, time, dt) {
   set('torsoS', seg(b.hip, b.sh, tp, T, { extra: 1.2, shade: 'b' }));
   set('torsoM', mus.includes('core') ? seg(b.hip, b.sh, tp, T, { from: 0.15, to: 0.7, extra: 1.6 }) : '');
 
-  // Kepala: wajah + rahang, telinga, lalu rambut menutup bagian atas dan belakang kepala
+  // Kepala (koordinat lokal: x = ke depan/wajah, y = ke atas, titik 0,0 = pusat tengkorak)
   const at = (c, x, y) => [c[0] + fw[0] * x + up[0] * y, c[1] + fw[1] * x + up[1] * y];
-  const faceC = at(b.hd, 0.6, -0.6), jawC = at(b.hd, 3.4, -6.4);
-  set('face', poly(ellipse(faceC, 10, 11.4, b.ha, T)) + ' ' + poly(ellipse(jawC, G === 'male' ? 7.6 : 6.8, G === 'male' ? 6.4 : 5.8, b.ha, T, 20)));
-  set('ear', poly(ellipse(at(b.hd, -1.6, -1), 2.4, 3.4, b.ha, T, 12)));
-  // Rambut: busur luar mengikuti tengkorak dari dahi -> ubun-ubun -> belakang, busur dalam = garis rambut
-  const hc = at(b.hd, 0.2, 0.4), cap = [];
-  const a0 = G === 'male' ? 62 : 52, a1 = G === 'male' ? 222 : 238;
-  for (let d = a0; d <= a1; d += 8) cap.push(at(hc, Math.cos(rad(d)) * 11, Math.sin(rad(d)) * 12.4));
-  const thick = G === 'male' ? 3.2 : 3.6;
-  for (let d = a1; d >= a0; d -= 8) {
-    const tk = d < 100 ? thick * 0.8 : d > 190 ? thick * 1.6 : thick;
-    cap.push(at(hc, Math.cos(rad(d)) * (11 - tk), Math.sin(rad(d)) * (12.4 - tk) - (d > 150 ? 1.5 : 0)));
-  }
-  set('hair', poly(cap.map(T)));
-
-  // Kuncir rambut dengan pegas sederhana: tertinggal saat kepala bergerak, lalu kembali menggantung
-  if (G === 'female') {
-    const anchor = T([b.hd[0] - fw[0] * 10 + up[0] * 3, b.hd[1] - fw[1] * 10 + up[1] * 3]);
-    if (!r.pony) r.pony = { a: -20, v: 0, prev: anchor };
+  const H = (pts) => poly(pts.map(([x, y]) => T(at(b.hd, x, y))));
+  set('face', poly(ellipse(at(b.hd, 0.6, -0.6), 10, 11.4, b.ha, T)) + ' ' +
+    poly(ellipse(at(b.hd, 3.6, -6.6), G === 'male' ? 7.8 : 6.8, G === 'male' ? 6.4 : 5.6, b.ha, T, 20)) + ' ' +
+    poly(ellipse(at(b.hd, 10.2, -1.4), 1.6, 2.6, b.ha, T, 12)));
+  set('ear', poly(ellipse(at(b.hd, -1.8, -1.2), 2.4, 3.5, b.ha, T, 12)));
+  if (G === 'male') {
+    // Pendek bertekstur: atas bervolume, poni menyapu ke dahi, samping & tengkuk tipis
+    set('hair', H([[7.6, 3.4], [10.6, 5.6], [11.4, 8.2], [9.4, 12.4], [4.6, 15.4], [-1.5, 15.8], [-7.2, 13.6], [-10.8, 9.6],
+      [-12, 4], [-11.6, -2.4], [-10.2, -7.4], [-8.4, -9.2], [-7.6, -6], [-7.4, -1.8], [-5.4, 2.6], [-1.6, 3.6], [1.2, 6.2], [4.6, 5.4]]));
+    set('hairHi', H([[2, 13.6], [-3.5, 13.9], [-8, 11.2], [-7.2, 10.6], [-3.4, 12.6], [1.6, 12.6]]));
+    set('lock', ''); set('tie', ''); set('pony', ''); set('pony2', ''); set('ponyS', '');
+  } else {
+    // Rambut ditarik ke belakang, poni samping ke arah alis, anak rambut di depan telinga
+    set('hair', H([[8.2, 4.6], [10.6, 1.8], [11.6, 5.6], [9.8, 10.6], [4.8, 14.4], [-1.6, 15], [-7.4, 13.2], [-11, 9.4],
+      [-12, 3.6], [-11.2, -1.8], [-9, -4.4], [-7.6, -2.6], [-5.2, 1.6], [-1.8, 3.8], [1.8, 6.4], [5.4, 7]]));
+    set('hairHi', H([[3, 13.4], [-3, 13.9], [-8.4, 10.6], [-7.6, 10], [-3, 12.6], [2.6, 12.4]]));
+    set('lock', '');
+    // Kuncir tinggi: 2 ruas dengan pegas, ruas kedua tertinggal dari ruas pertama sehingga melengkung natural
+    const anchor = T(at(b.hd, -9.4, 9.6));
+    set('tie', poly(ellipse(at(b.hd, -9.4, 9.6), 2.2, 3, b.ha - 40, T, 12)));
+    if (!r.pony) r.pony = { a: -20, v: 0, a2: -10, v2: 0, prev: anchor };
     const st = r.pony;
     if (dt > 0) {
       const h = Math.min(dt, 0.05);
       const vx = (anchor[0] - st.prev[0]) / h, vy = (anchor[1] - st.prev[1]) / h;
-      const target = Math.max(-120, Math.min(60, -vx * 0.35 - 12 + vy * 0.1));
-      st.v += (55 * (target - st.a) - 7 * st.v) * h;
+      const target = Math.max(-120, Math.min(70, -vx * 0.35 - 22 + vy * 0.1));
+      st.v += (40 * (target - st.a) - 6 * st.v) * h;
       st.a += st.v * h;
+      st.v2 += (30 * (st.a + 12 - st.a2) - 5 * st.v2) * h;
+      st.a2 += st.v2 * h;
       st.prev = anchor;
     }
-    const tipA = rad(st.a);
-    // Kuncir tidak boleh menembus lantai saat berbaring
-    const tip = [anchor[0] + Math.sin(tipA) * 24, Math.min(GROUND - 1.5, anchor[1] + Math.cos(tipA) * 24)];
+    const mid = [anchor[0] + Math.sin(rad(st.a)) * 17, Math.min(GROUND - 3, anchor[1] + Math.cos(rad(st.a)) * 17)];
+    const tip = [mid[0] + Math.sin(rad(st.a2)) * 20, Math.min(GROUND - 1.5, mid[1] + Math.cos(rad(st.a2)) * 20)];
     const id = p => p;
-    set('pony', seg(anchor, tip, [[0, 3.6, 3.6], [0.45, 4.6, 4.6], [1, 1.2, 1.2]], id));
-  } else {
-    set('pony', '');
+    const P1 = [[0, 3.4, 3.4], [0.35, 6, 5.8], [1, 6.4, 6]], P2 = [[0, 6.4, 6], [0.4, 6.8, 5.6], [0.8, 4, 3.4], [1, 1, 1]];
+    set('pony', seg(anchor, mid, P1, id));
+    set('pony2', seg(mid, tip, P2, id));
+    set('ponyS', seg(mid, tip, P2, id, { shade: 'a' }));
   }
 
   const touching = contacts(b).filter(p => p[1] > lowest(b) - 4).map(p => p[0] + r.offX);
