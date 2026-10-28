@@ -24,11 +24,11 @@ Status: Draft v0.2 (2026-10-28) | Nomor layar = wireframe "Runner Coach Wirefram
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
 | 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
-| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3 |
+| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3; Privasi & export data; Hapus akun |
 | 4.2 | Integrasi | Fase 2 |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
 | 4.4 | Premium | Fase 3 |
-| - | Log manual, Hapus akun, Login email | Belum ada di wireframe (O1) |
+| - | Log manual, konfirmasi Hapus akun, Login email | Belum ada di wireframe (O1) |
 
 ## 2. Flow
 

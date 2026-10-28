@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Detail aktivitas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0}
+a{color:#1D4ED8}a:hover{color:#1E3A8A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 52px 20px 32px; gap: 18px; overflow: hidden">
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <a href="Progress.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <span style="padding: 4px 10px; border-radius: 8px; background: #FFEDD5; color: #9A3412; font-size: 12px; font-weight: 700">Disinkron dari Strava</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 4px">
+    <span style="font-size: 13px; font-weight: 600; color: #52525B">Selasa, 20 Okt  ·  05:42</span>
+    <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Tempo Run</h1>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Jarak</span><span style="font-size: 22px; font-weight: 800">5,2 km</span></div>
+    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Durasi</span><span style="font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums">38:45</span></div>
+    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Pace rata-rata</span><span style="font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums">7:27 /km</span></div>
+    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Detak rata-rata</span><span style="font-size: 22px; font-weight: 800">158 bpm</span></div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 14px; font-weight: 700">Segmen vs target</span>
+    <div style="display: flex; flex-direction: column; border-radius: 14px; border: 1.5px solid #E4E4E7">
+      <sc-for list="{{segs}}" as="s" hint-placeholder-count="3">
+        <div style="display: grid; grid-template-columns: 8px 1fr auto auto; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #F4F4F5; font-size: 14px">
+          <span style="width: 8px; height: 8px; border-radius: 4px; background: {{s.color}}"></span>
+          <span>{{s.name}}</span>
+          <span style="color: #52525B; font-size: 13px">{{s.target}}</span>
+          <b style="font-variant-numeric: tabular-nums; color: {{s.okColor}}">{{s.actual}}</b>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 14px; font-weight: 700">Split per km</span>
+    <sc-for list="{{splits}}" as="k" hint-placeholder-count="5">
+      <div style="display: grid; grid-template-columns: 28px 1fr 44px; align-items: center; gap: 10px; font-size: 13px">
+        <span style="color: #52525B; font-weight: 600">{{k.n}}</span>
+        <div style="height: 14px; border-radius: 4px; width: {{k.w}}; background: {{k.color}}"></div>
+        <b style="text-align: right; font-variant-numeric: tabular-nums">{{k.pace}}</b>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-radius: 14px; background: #F4F4F5; font-size: 14px">
+    <span>Rasa (RPE)</span>
+    <b>6 / 10: sesuai target</b>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var splits = [['1', 475, '7:55', '#2563EB'], ['2', 470, '7:50', '#2563EB'], ['3', 408, '6:48', '#F59E0B'], ['4', 402, '6:42', '#F59E0B'], ['5', 472, '7:52', '#2563EB']];
+    return {
+      segs: [
+        { name: 'Pemanasan', target: 'easy', actual: '7:54', color: '#2563EB', okColor: '#15803D' },
+        { name: 'Tempo', target: '6:45', actual: '6:45', color: '#F59E0B', okColor: '#15803D' },
+        { name: 'Pendinginan', target: 'easy', actual: '7:50', color: '#2563EB', okColor: '#15803D' }
+      ],
+      splits: splits.map(function (s) {
+        return { n: 'km ' + s[0], w: Math.round((520 - s[1]) / 120 * 100) + '%', pace: s[2], color: s[3] };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

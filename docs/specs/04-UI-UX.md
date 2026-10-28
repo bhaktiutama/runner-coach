@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.2 (2026-10-28) | Acuan visual: wireframe "Runner Coach Wireframes" (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka)
+Status: Draft v0.2 (2026-10-28) | Acuan visual: [`docs/wireframes/`](../wireframes/README.md) (sumber: artifact "Runner Coach Wireframes")
 
 ## Ringkasan
 

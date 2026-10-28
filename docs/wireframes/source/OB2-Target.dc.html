@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Onboarding: target</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0}
+a{color:#1D4ED8}a:hover{color:#1E3A8A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 56px 24px 40px; gap: 28px; overflow: hidden">
+  <div style="display: flex; align-items: center; gap: 12px">
+    <a href="Main.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <div style="flex: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px" aria-hidden="true">
+      <div style="height: 6px; border-radius: 3px; background: #18181B"></div>
+      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
+      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
+      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
+      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
+      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
+    </div>
+    <span style="font-size: 13px; font-weight: 600; color: #52525B">1/6</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Apa target larimu?</h1>
+    <p style="margin: 0; font-size: 15px; color: #52525B">Bisa diganti kapan saja.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+    <button type="button" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 1.5px solid #E4E4E7; cursor: pointer">
+      <span style="font-size: 28px; font-weight: 800">5K</span>
+      <span style="font-size: 13px; color: #52525B">Cocok untuk mulai lari</span>
+    </button>
+    <button type="button" aria-pressed="true" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 2.5px solid #18181B; background: #F4F4F5; cursor: pointer">
+      <span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 28px; font-weight: 800">10K</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span>
+      <span style="font-size: 13px; color: #52525B">Langkah berikutnya setelah 5K</span>
+    </button>
+    <button type="button" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 1.5px solid #E4E4E7; cursor: pointer">
+      <span style="font-size: 28px; font-weight: 800">HM</span>
+      <span style="font-size: 13px; color: #52525B">Half Marathon, 21,1 km</span>
+    </button>
+    <button type="button" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 1.5px solid #E4E4E7; cursor: pointer">
+      <span style="font-size: 28px; font-weight: 800">FM</span>
+      <span style="font-size: 13px; color: #52525B">Full Marathon, 42,2 km</span>
+    </button>
+  </div>
+
+  <button type="button" style="all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; height: 60px; border-radius: 18px; border: 1.5px solid #E4E4E7; font-size: 15px; font-weight: 600; cursor: pointer">
+    Tidak ada target jarak, ingin lebih bugar
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+
+  <div style="flex: 1"></div>
+  <a href="OB3-Tanggal.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #18181B; color: #FFFFFF; font-size: 17px; font-weight: 700; text-decoration: none">Lanjut</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

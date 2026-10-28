@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Premium</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+body{margin:0}
+a{color:#1D4ED8}a:hover{color:#1E3A8A}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 52px 20px 28px; gap: 18px; overflow: hidden">
+  <div style="display: flex; justify-content: flex-end">
+    <a href="Profile.dc.html" aria-label="Tutup" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 22px; background: #F4F4F5; color: #18181B">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </a>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="align-self: flex-start; padding: 5px 10px; border-radius: 8px; background: #18181B; color: #FFFFFF; font-size: 12px; font-weight: 800; letter-spacing: 0.08em">PREMIUM</span>
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Latihan yang benar-benar menyesuaikan dirimu</h1>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <sc-for list="{{perks}}" as="p" hint-placeholder-count="6">
+      <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 15px; line-height: 1.35">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>{{p.text}}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="flex: 1"></div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <sc-for list="{{plans}}" as="o" hint-placeholder-count="2">
+      <button type="button" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-radius: 16px; cursor: pointer; border: {{o.border}}; background: {{o.bg}}">
+        <span style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 16px; font-weight: 800">{{o.name}}</span>
+          <span style="font-size: 12px; color: #52525B">{{o.note}}</span>
+        </span>
+        <span style="font-size: 16px; font-weight: 800">{{o.price}}</span>
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <a href="Today.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #18181B; color: #FFFFFF; font-size: 17px; font-weight: 800; text-decoration: none">Coba gratis [X] hari</a>
+    <span style="text-align: center; font-size: 12px; color: #52525B">Batalkan kapan saja. Fitur gratis tetap bisa dipakai selamanya.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { plan: 'year' };
+  }
+  renderVals() {
+    var self = this;
+    var opts = [
+      { id: 'year', name: 'Tahunan', note: 'Hemat dibanding bulanan', price: '[HARGA] /tahun' },
+      { id: 'month', name: 'Bulanan', note: 'Fleksibel', price: '[HARGA] /bulan' }
+    ];
+    return {
+      perks: [
+        { text: 'Plan adaptif penuh dari RPE, detak jantung dan latihan terlewat' },
+        { text: 'Prediksi waktu race + zona pace dan detak jantung detail' },
+        { text: 'Riwayat grafik lengkap, bukan hanya 8 minggu' },
+        { text: 'Beberapa target sekaligus dan plan custom' },
+        { text: 'Plan kekuatan dan mobility untuk pelari' },
+        { text: 'Kirim workout ke jam (Garmin, Apple Watch)' }
+      ],
+      plans: opts.map(function (o) {
+        var on = o.id === self.state.plan;
+        return {
+          name: o.name, note: o.note, price: o.price, pressed: on ? 'true' : 'false',
+          border: on ? '2.5px solid #18181B' : '1.5px solid #E4E4E7', bg: on ? '#F4F4F5' : '#FFFFFF',
+          pick: function () { self.setState({ plan: o.id }); }
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -42,7 +42,7 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | F-07 | Progres | 3.3 | Must | Rentang 8 mgg / Plan / Semua; volume mingguan, tren pace easy run, kepatuhan, prediksi race (rentang), aktivitas terakhir |
 | F-08 | Kalender + pindah latihan | 3.1, 3.2 | Must | Bar fase Base/Build/Peak/Taper, daftar minggu. Pindah ke hari lain dengan pesan cek aturan; bisa gabung 2 latihan; Lewati |
 | F-09 | Jeda plan | 4.3 | Must | Alasan (Cedera/Sakit/Sibuk-libur), perkiraan durasi, bagian nyeri (opsional). Saat lanjut: 1 minggu "Return to run" |
-| F-10 | Hapus akun | Belum ada (O1) | Must | Hapus akun + semua data dari dalam app |
+| F-10 | Hapus akun | 4.1 (menu); konfirmasi belum ada (O1) | Must | Hapus akun + semua data dari dalam app |
 | F-11 | Ringkasan minggu + adaptasi | 2.5 | Should | Muncul setelah latihan terakhir minggu itu. Usulan perubahan plan dengan alasan; "Oke, terapkan" / "Tetap plan awal" |
 | F-12 | Pengingat | 1.6, 4.1 | Should | Jam pengingat dipilih di onboarding, bisa diubah/dimatikan di Profil |
 | F-13 | Export data | 4.1 | Should | "Privasi & export data": unduh semua data dalam JSON |
