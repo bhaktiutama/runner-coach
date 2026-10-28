@@ -1,6 +1,6 @@
 # 02. Technical Requirements Document (TRD)
 
-Status: Draft v0.1 (2026-10-27) | Detail latar belakang: `docs/PLANNING.md` bagian 4, 5, 6
+Status: Draft v0.2 (2026-10-28) | Detail latar belakang: `docs/PLANNING.md` bagian 4, 5, 6
 
 ## Ringkasan
 
@@ -58,6 +58,7 @@ Aturan:
 | Konflik | Last-write-wins berdasarkan `updated_at` |
 | Hapus | Soft delete (`deleted_at`) agar ikut tersinkron |
 | Antrian | Perubahan lokal diantrikan, dikirim saat online, retry dengan backoff |
+| Sebelum login | Onboarding dan plan dibuat lokal tanpa `user_id` (login baru diminta di layar 1.8). Setelah login, semua baris lokal diberi `user_id` lalu disinkron. Login ke akun yang sudah punya plan: tanya pakai plan lama atau plan baru |
 
 ## 4. Training engine
 
@@ -74,14 +75,31 @@ Angka adalah heuristik umum coaching (PLANNING 4.3), bukan hasil riset; wajib di
 
 | Aturan | Nilai default |
 |--------|---------------|
-| Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg |
+| Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
+| Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
 | Kenaikan volume mingguan | Maks 10% |
 | Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
-| Long run | Maks 30% volume mingguan |
+| Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna |
 | Intensitas | ~80% easy |
-| Sesi berat | Maks 2 per minggu, pemula 0-1 |
+| Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg |
-| Adaptasi (F-11) | Tabel PLANNING 4.5 |
+| Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
+| Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
+
+### 4.3 Adaptasi (F-11, layar 2.5)
+
+Dihitung engine di akhir minggu, ditampilkan sebagai **usulan**; plan baru berubah setelah pengguna menekan "Oke, terapkan".
+
+| Kondisi | Usulan |
+|---------|--------|
+| RPE >= 8 pada easy run 2x berturut-turut | Volume minggu depan turun ~10%, 1 sesi berat diganti easy |
+| RPE <= 4 pada sesi kualitas 3x berturut-turut | Target pace sesi kualitas naik 1 tingkat |
+| 1 latihan terlewat | Tidak diganti; lanjut plan |
+| >= 2 latihan terlewat dalam seminggu | Ulangi minggu tersebut (volume tidak dinaikkan) |
+| Tidak lari >= 10 hari | Tawarkan 1 minggu Return to run |
+| Waktu race / time trial baru | Hitung ulang zona pace dan prediksi |
+
+Sumber: PLANNING 4.5.
 
 ## 5. Batasan platform
 
@@ -108,5 +126,5 @@ Angka adalah heuristik umum coaching (PLANNING 4.3), bukan hasil riset; wajib di
 |------|--------|
 | Cue timer | Telat maks 1 detik dari jadwal saat app aktif |
 | Offline | Onboarding selesai = plan tersimpan lokal; timer + log bisa tanpa internet |
-| Aksesibilitas | Kontras teks min 4.5:1, target sentuh min 48 x 48 dp |
+| Aksesibilitas | Kontras teks min 4.5:1, area sentuh min 44 x 44 (sesuai wireframe) |
 | Biaya infra beta | Tier gratis Supabase / PostHog / Sentry |
