@@ -296,14 +296,19 @@ export function InfoBox({
 }
 
 /** Input teks 52 px, radius 10, garis 1.5 line-strong. */
-export function TextField(props: TextInputProps & { label?: string }) {
-  const { label, style, ...rest } = props;
+export function TextField(props: TextInputProps & { label?: string; numeric?: boolean }) {
+  const { label, style, numeric, ...rest } = props;
   const input = (
     <TextInput
       placeholderTextColor={color.textMuted}
       accessibilityLabel={label}
       {...rest}
-      style={[styles.field, typography.body, styles.fieldText, style]}
+      style={[
+        styles.field,
+        numeric ? typography.numberInput : typography.body,
+        numeric ? styles.numberText : styles.fieldText,
+        style,
+      ]}
     />
   );
   return label ? <Field label={label}>{input}</Field> : input;

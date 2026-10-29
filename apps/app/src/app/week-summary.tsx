@@ -1,19 +1,19 @@
 import { addDays, diffDays, mondayOf, type Change, type EngineMessageKey } from '@run-coach/training-engine';
 import {
   color,
+  Icon,
   IconButton,
   InfoBox,
-  PrimaryButton,
   radius,
-  SecondaryButton,
+  shadow,
+  size,
   space,
   Text,
   TrackRing,
 } from '@run-coach/ui';
 import { formatDistance, formatTotalDuration } from '@run-coach/ui/format';
-import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
 import {
   useActivePlan,
@@ -81,20 +81,23 @@ export default function WeekSummary() {
       <IconButton icon="close" label={t('week.close')} onPress={() => goHome()} />
       <View style={styles.center}>
         <TrackRing
-          width={space[10] * 6}
-          height={space[10] * 3 + space[8]}
+          width={space[10] * 5 + space[5]}
+          height={space[10] * 3 + space[2]}
+          stroke={space[3] + space[1] / 2}
           progress={ws.length ? done / ws.length : 0}
           color={color.success}
           trackColor={color.surfaceSunken}
         >
-          <Text variant="numberXl">{t('week.done', { done, total: ws.length })}</Text>
-          <Text color="textMuted">{t('week.doneLabel')}</Text>
+          <Text variant="display">{t('week.done', { done, total: ws.length })}</Text>
+          <Text variant="controlSm" color="textMuted">
+            {t('week.doneLabel')}
+          </Text>
         </TrackRing>
         <Text variant="title" align="center">
           {done === ws.length ? t('week.title', { n: idx }) : t('week.titlePartial', { n: idx })}
         </Text>
         {g.race_date ? (
-          <Text color="textMuted" align="center">
+          <Text variant="control" color="textMuted" align="center">
             {t('week.toRace', {
               weeks: Math.max(0, Math.ceil(diffDays(today, g.race_date) / 7)),
               distance: et(`distance.${g.distance}` as EngineMessageKey),
@@ -104,20 +107,20 @@ export default function WeekSummary() {
       </View>
       <View style={styles.pair}>
         <View style={styles.stat}>
-          <Text variant="label" color="textMuted">
+          <Text variant="captionStrong" color="textMuted">
             {t('week.distance')}
           </Text>
-          <Text variant="numberMd">{formatDistance(stats.dist)}</Text>
-          <Text variant="label" color={delta >= 0 ? 'success' : 'textMuted'}>
+          <Text variant="statLg">{formatDistance(stats.dist)}</Text>
+          <Text variant="captionStrong" color={delta >= 0 ? 'success' : 'textMuted'}>
             {t('week.vsLast', { delta: `${delta >= 0 ? '+' : '-'}${formatDistance(Math.abs(delta))}` })}
           </Text>
         </View>
         <View style={styles.stat}>
-          <Text variant="label" color="textMuted">
+          <Text variant="captionStrong" color="textMuted">
             {t('week.time')}
           </Text>
-          <Text variant="numberMd">{formatTotalDuration(stats.time)}</Text>
-          <Text variant="label" color="textMuted">
+          <Text variant="statLg">{formatTotalDuration(stats.time)}</Text>
+          <Text variant="caption" color="textMuted">
             {t('week.target', { time: formatTotalDuration(target) })}
           </Text>
         </View>
@@ -125,74 +128,88 @@ export default function WeekSummary() {
       {(proposals.data ?? []).map((p) =>
         p.rule in decided ? (
           <InfoBox key={p.rule} tone="ok">
-            <Text>{decided[p.rule] ? t('week.applied') : t('week.kept')}</Text>
+            {decided[p.rule] ? t('week.applied') : t('week.kept')}
           </InfoBox>
         ) : (
           <View key={p.rule} style={styles.adjust} testID={`proposal-${p.rule}`}>
-            <Text variant="heading">{t('week.adjustTitle')}</Text>
-            <Text>{rationaleText(p.rationale)}</Text>
+            <View style={styles.adjustHead}>
+              <Icon name="sync" size={space[5]} color={color.status.onStatus} />
+              <Text variant="cardTitle">{t('week.adjustTitle')}</Text>
+            </View>
+            <Text variant="bodySm">{rationaleText(p.rationale)}</Text>
             <View style={styles.changes}>
               {p.changes.map((c, i) => {
                 const r = changeRow(c);
                 return r ? (
                   <View key={i} style={styles.changeRow}>
-                    <Text>{t(r[0])}</Text>
-                    <Text variant="heading">{r[1]}</Text>
+                    <Text variant="bodySm">{t(r[0])}</Text>
+                    <Text variant="controlStrong">{r[1]}</Text>
                   </View>
                 ) : null;
               })}
             </View>
             <View style={styles.pair}>
-              <View style={styles.flex}>
-                <PrimaryButton
-                  variant="dark"
-                  label={t('week.apply')}
-                  testID="apply"
-                  onPress={async () => {
-                    await ops.decide.mutateAsync({ weekStart, proposal: p, accept: true, today });
-                    track('adjustment_decided', { rule: p.rule, accepted: true });
-                    setDecided((d) => ({ ...d, [p.rule]: true }));
-                  }}
-                />
-              </View>
-              <View style={styles.flex}>
-                <SecondaryButton
-                  label={t('week.keep')}
-                  testID="keep"
-                  onPress={async () => {
-                    await ops.decide.mutateAsync({ weekStart, proposal: p, accept: false, today });
-                    track('adjustment_decided', { rule: p.rule, accepted: false });
-                    setDecided((d) => ({ ...d, [p.rule]: false }));
-                  }}
-                />
-              </View>
+              <Pressable
+                accessibilityRole="button"
+                testID="apply"
+                style={[styles.btn, styles.btnDark]}
+                onPress={async () => {
+                  await ops.decide.mutateAsync({ weekStart, proposal: p, accept: true, today });
+                  track('adjustment_decided', { rule: p.rule, accepted: true });
+                  setDecided((d) => ({ ...d, [p.rule]: true }));
+                }}
+              >
+                <Text variant="row" style={{ color: color.bg }}>
+                  {t('week.apply')}
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                testID="keep"
+                style={[styles.btn, styles.btnLight]}
+                onPress={async () => {
+                  await ops.decide.mutateAsync({ weekStart, proposal: p, accept: false, today });
+                  track('adjustment_decided', { rule: p.rule, accepted: false });
+                  setDecided((d) => ({ ...d, [p.rule]: false }));
+                }}
+              >
+                <Text variant="row">{t('week.keep')}</Text>
+              </Pressable>
             </View>
           </View>
         ),
       )}
-      <PrimaryButton label={t('week.toToday')} onPress={() => goHome()} />
-      <SecondaryButton label={t('week.toPlan')} onPress={() => (goHome(), router.navigate('/plan'))} />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
   center: { alignItems: 'center', gap: space[3] },
-  pair: { flexDirection: 'row', gap: space[3] },
+  pair: { flexDirection: 'row', gap: space[2] },
   stat: {
     flex: 1,
     backgroundColor: color.surface,
     borderRadius: radius.lg,
-    padding: space[4],
+    padding: space[3] + space[1] / 2,
     gap: space[1],
+    ...shadow.card,
   },
   adjust: {
     backgroundColor: color.status.recovery,
     borderRadius: radius.lg,
-    padding: space[5],
+    padding: space[4] + space[1] / 2,
     gap: space[3],
   },
-  changes: { backgroundColor: color.surface, borderRadius: radius.md, padding: space[4], gap: space[2] },
+  adjustHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+  changes: { backgroundColor: color.surface, borderRadius: radius.md, padding: space[3], gap: space[2] },
   changeRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  btn: {
+    flex: 1,
+    height: size.buttonSecondary,
+    borderRadius: radius.stadium,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnDark: { backgroundColor: color.text },
+  btnLight: { backgroundColor: color.surface },
 });

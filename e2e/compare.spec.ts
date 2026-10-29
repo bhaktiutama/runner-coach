@@ -73,3 +73,49 @@ test('onboarding', async ({ page }) => {
     .click()
     .catch(() => undefined);
 });
+
+test('latihan', async ({ page }) => {
+  test.setTimeout(180_000);
+  const { onboard } = await import('./helpers');
+  await onboard(page);
+  await page.getByTestId('manual-log').click();
+  await page.getByTestId('screen-log').waitFor();
+  await page.getByTestId('log-km').fill('5,0');
+  await page.getByTestId('log-duration').fill('40:00');
+  await page.getByTestId('screen-log').getByTestId('rpe-6').click();
+  await shot(page, '2-6-catat-lari');
+  await page.goto('/plan');
+  await page.getByTestId('screen-plan').waitFor();
+  const q = page
+    .getByTestId('screen-plan')
+    .locator('[data-testid^="plan-day-"]')
+    .filter({ hasText: /Tempo|Interval/ });
+  for (let i = 0; i < 8 && (await q.count()) === 0; i++) {
+    if (await page.getByTestId('next-week').isDisabled()) break;
+    await page.getByTestId('next-week').click();
+  }
+  if ((await q.count()) > 0) await q.first().click();
+  else
+    await page
+      .getByTestId('screen-plan')
+      .locator('[data-testid^="plan-day-"]')
+      .filter({ hasText: 'mnt' })
+      .first()
+      .click();
+  await page.getByTestId('screen-detail').getByTestId('start').click();
+  await page.getByTestId('screen-timer').waitFor();
+  await page.waitForTimeout(4500);
+  await shot(page, '2-3-timer');
+  if (
+    await page
+      .getByTestId('drill-next')
+      .isVisible()
+      .catch(() => false)
+  )
+    await shot(page, '2-3b-timer-drill');
+  await page.getByTestId('timer-end').click();
+  await page.getByTestId('timer-confirm-yes').click();
+  await page.getByTestId('screen-finish').waitFor();
+  await page.getByTestId('rpe-6').click();
+  await shot(page, '2-4-selesai-rpe');
+});

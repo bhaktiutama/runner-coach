@@ -3,17 +3,17 @@ import {
   BibTag,
   border,
   color,
+  fontFiles,
   Icon,
   type IconName,
   PrimaryButton,
   radius,
-  SegmentBar,
   size,
   space,
   Text,
   TrackRing,
 } from '@run-coach/ui';
-import { formatDuration, formatPaceValue } from '@run-coach/ui/format';
+import { formatClock, formatDuration, formatPaceValue } from '@run-coach/ui/format';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -97,8 +97,8 @@ export default function TimerScreen() {
 
   const bg = {
     backgroundColor: dark.bg,
-    paddingTop: insets.top + space[4],
-    paddingBottom: insets.bottom + space[4],
+    paddingTop: Math.max(space.screenTop, insets.top + space[2]),
+    paddingBottom: Math.max(space.screenBottom, insets.bottom + space[2]),
   };
 
   if (w.isPending || (!st && !tm.restored)) return <View style={[styles.root, bg]} />;
@@ -159,24 +159,26 @@ export default function TimerScreen() {
   const zone = seg && seg.kind !== 'drill' ? seg.zone : 'easy';
   const ringColor = zone === 'interval' ? dark.zoneInterval : color.zone[zone];
   const ringW = Math.min(width - space.screenX * 2, size.contentMax / 1.6);
+  const segs = intensitySegments(w.data.steps);
 
   const top = (
     <View style={styles.top}>
       <Pressable
         onPress={() => setConfirm(true)}
-        style={styles.pill}
+        style={styles.endPill}
         accessibilityRole="button"
         testID="timer-end"
         disabled={locked}
       >
-        <Text variant="heading" color="darkText">
+        <Text variant="controlStrong" color="darkText">
           {t('timer.end')}
         </Text>
       </Pressable>
-      <Text variant="heading" color="darkTextMuted" testID="timer-segment">
+      <Text variant="controlStrong" color="darkTextMuted" testID="timer-segment">
         {t('timer.segment', { n: pos.group, total: pos.groups })}
       </Text>
       <RoundButton
+        small
         icon={st!.muted ? 'sound-off' : 'sound-on'}
         label={st!.muted ? t('timer.unmute') : t('timer.mute')}
         onPress={tm.toggleMute}
@@ -185,147 +187,225 @@ export default function TimerScreen() {
     </View>
   );
 
+  if (isDrill && seg?.kind === 'drill' && !(countdown !== null && countdown > 0)) {
+    return (
+      <View style={[styles.root, bg]} testID="screen-timer">
+        <View style={styles.inner}>
+          {top}
+          <DrillView tm={tm} />
+        </View>
+        <View style={styles.drillFooter}>
+          <PrimaryButton
+            label={t('timer.next.cta')}
+            icon="chevron-right"
+            onPress={tm.next}
+            disabled={locked}
+            testID="drill-next"
+          />
+          <Pressable
+            onPress={tm.skipGroup}
+            disabled={locked}
+            accessibilityRole="button"
+            style={styles.textBtn}
+            testID="drill-skip"
+          >
+            <Text variant="controlStrong" color="darkTextMuted" align="center">
+              {t('timer.skipDrill')}
+            </Text>
+          </Pressable>
+        </View>
+        {confirm ? (
+          <Confirm onYes={() => (setConfirm(false), tm.end())} onNo={() => setConfirm(false)} />
+        ) : null}
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.root, bg]} testID="screen-timer">
       <View style={styles.inner}>
         {top}
         {countdown !== null && countdown > 0 ? (
           <View style={styles.centerCol} testID="timer-countdown">
-            <Text variant="label" color="darkTextMuted">
+            <Text variant="statusCaps" color="darkTextMuted">
               {t('timer.countdown')}
             </Text>
             <Text variant="timer" color="darkText">
               {String(countdown)}
             </Text>
           </View>
-        ) : isDrill && seg?.kind === 'drill' ? (
-          <DrillView tm={tm} locked={locked} />
         ) : (
           <>
             <View style={styles.ringWrap}>
               <TrackRing
                 width={ringW}
-                height={ringW * 0.86}
+                height={ringW * (300 / 350)}
+                stroke={space[3] + border.selected - border.hairline / 2}
                 progress={seg?.timedS ? pos.elapsedInSegS / seg.timedS : 0}
                 color={ringColor}
                 trackColor={dark.surfaceSunken}
               >
-                {seg ? <BibTag label={segmentName(seg, w.data.type)} zone={zone} /> : null}
-                <Text
-                  variant="timer"
-                  color="darkText"
-                  style={paused && styles.blink}
-                  testID="timer-remaining"
-                >
-                  {formatDuration(pos.remainingS ?? 0)}
-                </Text>
-                <Text color="darkTextMuted">
-                  {paused
-                    ? t('timer.paused')
-                    : t('timer.remainingOf', { total: formatDuration(seg?.timedS ?? 0) })}
-                </Text>
+                <View style={styles.ringCol}>
+                  {seg ? <BibTag label={segmentName(seg, w.data.type)} zone={zone} /> : null}
+                  {paused ? (
+                    <Text variant="statusCaps" style={{ color: color.status.attention }}>
+                      {t('timer.paused')}
+                    </Text>
+                  ) : null}
+                  <Text
+                    variant="timer"
+                    color="darkText"
+                    style={paused && styles.blink}
+                    testID="timer-remaining"
+                  >
+                    {formatClock(pos.remainingS ?? 0)}
+                  </Text>
+                  <Text variant="control" color="darkTextMuted">
+                    {t('timer.remainingOf', { total: formatDuration(seg?.timedS ?? 0) })}
+                  </Text>
+                </View>
               </TrackRing>
             </View>
             <View style={styles.cards}>
-              {profile.data?.intensity_guide !== 'rpe' && seg?.pace_s_per_km && !seg.walk ? (
+              {profile.data?.intensity_guide !== 'rpe' &&
+              seg &&
+              seg.kind !== 'drill' &&
+              seg.pace_s_per_km &&
+              !seg.walk ? (
                 <View style={styles.card}>
-                  <Text variant="label" color="darkTextMuted">
+                  <Text variant="captionStrong" color="darkTextMuted">
                     {t('timer.targetPace')}
                   </Text>
-                  <Text variant="numberMd" color="darkText">
+                  <Text
+                    variant={zone === 'easy' || zone === 'long' || zone === 'recovery' ? 'stat' : 'title'}
+                    color="darkText"
+                    numberOfLines={1}
+                  >
                     {zone === 'easy' || zone === 'long' || zone === 'recovery'
-                      ? `${formatPaceValue(seg.pace_s_per_km.min)}-${formatPaceValue(seg.pace_s_per_km.max)} /km`
-                      : `${formatPaceValue(seg.pace_s_per_km.min)} /km`}
+                      ? `${formatPaceValue(seg.pace_s_per_km.min)}-${formatPaceValue(seg.pace_s_per_km.max)}`
+                      : formatPaceValue(seg.pace_s_per_km.min)}
+                    <Text variant="numberRowStrong" color="darkTextMuted">
+                      {t('timer.perKm')}
+                    </Text>
                   </Text>
                 </View>
               ) : null}
               <View style={styles.card}>
-                <Text variant="label" color="darkTextMuted">
+                <Text variant="captionStrong" color="darkTextMuted">
                   {t('timer.feel')}
                 </Text>
-                <Text variant="heading" color="darkText">
+                <Text variant="row" color="darkText">
                   {t(FEEL_KEY[zone])}
                 </Text>
               </View>
             </View>
-            <SegmentBar segments={intensitySegments(w.data.steps)} />
-            <View style={styles.row}>
-              <Text variant="label" color="darkTextMuted">
-                {t('timer.total', {
-                  elapsed: formatDuration(pos.totalElapsedS),
-                  planned: formatDuration(pos.totalPlannedS),
+            <View style={styles.progress}>
+              <View style={styles.segRow}>
+                {segs.map((s2, i) => {
+                  const done = i < segIndexOf(segs, pos.totalElapsedS);
+                  const cur = i === segIndexOf(segs, pos.totalElapsedS);
+                  return (
+                    <View
+                      key={i}
+                      style={[
+                        styles.segPart,
+                        { flex: Math.max(0.05, s2.weight) },
+                        cur || done
+                          ? { backgroundColor: color.zone[s2.zone], opacity: done ? 0.45 : 1 }
+                          : styles.segFuture,
+                      ]}
+                    />
+                  );
                 })}
-              </Text>
-              <Text variant="label" color="darkTextMuted">
-                {pos.next
-                  ? t('timer.next', {
-                      name: segmentName(pos.next, w.data.type),
-                      duration: formatDuration(plannedS(pos.next)),
-                    })
-                  : t('timer.nextDone')}
-              </Text>
+              </View>
+              <View style={styles.row}>
+                <Text variant="controlSm" color="darkTextMuted" style={styles.display}>
+                  {t('timer.total', {
+                    elapsed: formatDuration(pos.totalElapsedS),
+                    planned: formatDuration(pos.totalPlannedS),
+                  })}
+                </Text>
+                <Text variant="controlSm" color="darkTextMuted">
+                  {pos.next
+                    ? t('timer.next', {
+                        name: segmentName(pos.next, w.data.type),
+                        duration: formatDuration(plannedS(pos.next)),
+                      })
+                    : t('timer.nextDone')}
+                </Text>
+              </View>
             </View>
-            <View style={styles.controls}>
-              <RoundButton
-                icon="lock"
-                label={locked ? t('timer.unlock') : t('timer.lock')}
-                onPress={() => setLocked(!locked)}
-                active={locked}
-              />
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={paused ? t('timer.resume') : t('timer.pause')}
-                testID="timer-toggle"
-                disabled={locked || (!running && !paused)}
-                onPress={paused ? tm.resume : tm.pause}
-                style={[styles.big, { opacity: locked ? 0.4 : 1 }]}
-              >
-                <Icon name={paused ? 'play' : 'pause'} color={color.onPrimary} size={size.touchMin} />
-              </Pressable>
-              <RoundButton
-                icon="skip"
-                label={t('timer.skip')}
-                onPress={tm.skip}
-                disabled={locked}
-                testID="timer-skip"
-              />
-            </View>
-            {locked ? (
-              <Text variant="label" color="darkTextMuted" align="center">
-                {t('timer.locked')}
-              </Text>
-            ) : (
-              <Text variant="label" color="darkTextMuted" align="center">
-                {process.env.EXPO_OS === 'web' ? t('timer.footerWeb') : t('timer.footer')}
-              </Text>
-            )}
           </>
         )}
       </View>
+      <View style={styles.controls}>
+        <RoundButton
+          icon="lock"
+          label={locked ? t('timer.unlock') : t('timer.lock')}
+          onPress={() => setLocked(!locked)}
+          active={locked}
+        />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={paused ? t('timer.resume') : t('timer.pause')}
+          testID="timer-toggle"
+          disabled={locked || (!running && !paused)}
+          onPress={paused ? tm.resume : tm.pause}
+          style={[styles.big, { opacity: locked ? 0.4 : 1 }]}
+        >
+          <Icon name={paused ? 'play' : 'pause'} color={color.onPrimary} size={space[8]} />
+        </Pressable>
+        <RoundButton
+          icon="skip"
+          label={t('timer.skip')}
+          onPress={tm.skip}
+          disabled={locked}
+          testID="timer-skip"
+        />
+      </View>
+      <Text variant="caption" color="darkTextMuted" align="center" style={styles.footnote}>
+        {locked
+          ? t('timer.locked')
+          : process.env.EXPO_OS === 'web'
+            ? t('timer.footerWeb')
+            : t('timer.footer')}
+      </Text>
       {confirm ? (
-        <View style={styles.overlay} testID="timer-confirm">
-          <View style={styles.dialog}>
-            <Text variant="title" color="darkText">
-              {t('timer.confirmTitle')}
-            </Text>
-            <Text color="darkTextMuted">{t('timer.confirmBody')}</Text>
-            <PrimaryButton
-              label={t('timer.confirmYes')}
-              testID="timer-confirm-yes"
-              onPress={() => {
-                setConfirm(false);
-                tm.end();
-              }}
-            />
-            <DarkButton label={t('common.cancel')} onPress={() => setConfirm(false)} />
-          </View>
-        </View>
+        <Confirm onYes={() => (setConfirm(false), tm.end())} onNo={() => setConfirm(false)} />
       ) : null}
     </View>
   );
 }
 
-function DrillView({ tm, locked }: { tm: ReturnType<typeof useTimer>; locked: boolean }) {
+/** Indeks bagian grafik tempat waktu berjalan berada. */
+function segIndexOf(segs: { weight: number }[], elapsedS: number): number {
+  let acc = 0;
+  for (let i = 0; i < segs.length; i++) {
+    acc += segs[i]!.weight;
+    if (elapsedS < acc) return i;
+  }
+  return segs.length - 1;
+}
+
+function Confirm({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
+  return (
+    <View style={styles.overlay} testID="timer-confirm">
+      <View style={styles.dialog}>
+        <Text variant="title" color="darkText">
+          {t('timer.confirmTitle')}
+        </Text>
+        <Text variant="bodySm" color="darkTextMuted">
+          {t('timer.confirmBody')}
+        </Text>
+        <PrimaryButton label={t('timer.confirmYes')} testID="timer-confirm-yes" onPress={onYes} />
+        <DarkButton label={t('common.cancel')} onPress={onNo} />
+      </View>
+    </View>
+  );
+}
+
+/** 2.3b segmen drill (wireframe TimerDrill). */
+function DrillView({ tm }: { tm: ReturnType<typeof useTimer> }) {
   const pos = tm.position!;
   const seg = pos.segment;
   if (!seg || seg.kind !== 'drill') return null;
@@ -355,58 +435,39 @@ function DrillView({ tm, locked }: { tm: ReturnType<typeof useTimer>; locked: bo
     .filter(Boolean);
   return (
     <View style={styles.drill} testID="timer-drill">
-      <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
-      <Text variant="display" color="darkText">
-        {et(`drill.${seg.exercise_id}.name` as EngineMessageKey)}
-      </Text>
-      <View style={styles.row}>
-        <Text variant="heading" color="darkText">
+      <View style={styles.drillHead}>
+        <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+        <Text variant="drillName" color="darkText">
+          {et(`drill.${seg.exercise_id}.name` as EngineMessageKey)}
+        </Text>
+        <Text variant="set" color="darkText">
           {t('timer.drillSet', { n: seg.set, total: seg.sets })}
+          <Text variant="set" color="darkTextMuted">
+            {t('timer.drillDoseSpaced', { dose })}
+          </Text>
         </Text>
-        <Text variant="heading" color="darkTextMuted">
-          {t('timer.drillDose', { dose })}
-        </Text>
+        <View style={styles.lanes}>
+          {Array.from({ length: seg.sets }, (_, i) => (
+            <View
+              key={i}
+              style={[styles.lane, { backgroundColor: i < seg.set ? color.primary : dark.surfaceSunken }]}
+            />
+          ))}
+        </View>
       </View>
-      <View style={styles.lanes}>
-        {Array.from({ length: seg.sets }, (_, i) => (
-          <View
-            key={i}
-            style={[styles.lane, { backgroundColor: i < seg.set ? color.primary : dark.surfaceSunken }]}
-          />
-        ))}
-      </View>
-      <View style={styles.cueBox}>
+      <View style={styles.cues}>
         {cues.map((c) => (
           <View key={c} style={styles.cueRow}>
             <Icon name="check" color={dark.successInk} size={space[5]} />
-            <Text color="darkText" style={styles.flex}>
+            <Text variant="subtitle" color="darkText" style={styles.flex}>
               {c}
             </Text>
           </View>
         ))}
       </View>
-      <Text variant="label" color="darkTextMuted">
+      <Text variant="controlSm" color="darkTextMuted">
         {t('timer.drillHintNext', { hint: t('timer.drillHint'), next: nextLabel })}
       </Text>
-      <View style={styles.flex} />
-      <PrimaryButton
-        label={t('timer.next.cta')}
-        icon="chevron-right"
-        onPress={tm.next}
-        disabled={locked}
-        testID="drill-next"
-      />
-      <Pressable
-        onPress={tm.skipGroup}
-        disabled={locked}
-        accessibilityRole="button"
-        style={styles.textBtn}
-        testID="drill-skip"
-      >
-        <Text variant="heading" color="darkTextMuted" align="center">
-          {t('timer.skipDrill')}
-        </Text>
-      </Pressable>
     </View>
   );
 }
@@ -418,6 +479,7 @@ function RoundButton(p: {
   disabled?: boolean;
   active?: boolean;
   testID?: string;
+  small?: boolean;
 }) {
   return (
     <Pressable
@@ -427,19 +489,19 @@ function RoundButton(p: {
       disabled={p.disabled}
       testID={p.testID}
       style={[
-        styles.round,
+        p.small ? styles.roundSm : styles.round,
         { opacity: p.disabled ? 0.4 : 1, backgroundColor: p.active ? dark.text : dark.surface },
       ]}
     >
-      <Icon name={p.icon} color={p.active ? dark.bg : dark.text} />
+      <Icon name={p.icon} size={size.iconSm} color={p.active ? dark.bg : dark.text} />
     </Pressable>
   );
 }
 
 function DarkButton({ label, onPress }: { label: string; onPress: () => void }) {
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.pill, styles.darkBtn]}>
-      <Text variant="button" color="darkText" align="center">
+    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.endPill, styles.darkBtn]}>
+      <Text variant="row" color="darkText" align="center">
         {label}
       </Text>
     </Pressable>
@@ -447,30 +509,65 @@ function DarkButton({ label, onPress }: { label: string; onPress: () => void }) 
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, paddingHorizontal: space.screenX },
-  inner: { flex: 1, width: '100%', maxWidth: size.contentMax, alignSelf: 'center', gap: space[4] },
-  centerCol: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[4] },
+  root: { flex: 1 },
+  inner: {
+    flex: 1,
+    width: '100%',
+    maxWidth: size.contentMax,
+    alignSelf: 'center',
+    gap: space[5],
+    paddingHorizontal: space.screenX,
+  },
+  centerCol: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: space[4],
+    paddingHorizontal: space.screenX,
+  },
   flex: { flex: 1 },
   top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  pill: {
+  endPill: {
     backgroundColor: dark.surface,
     borderRadius: radius.stadium,
     minHeight: size.touchMin,
-    paddingHorizontal: space[5],
+    paddingHorizontal: space[4],
     justifyContent: 'center',
   },
   darkBtn: { alignSelf: 'stretch', minHeight: size.buttonSecondary },
   round: {
-    width: size.touchMin + space[4],
-    height: size.touchMin + space[4],
+    width: space[10] + space[4],
+    height: space[10] + space[4],
     borderRadius: radius.stadium,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ringWrap: { alignItems: 'center', marginVertical: space[2] },
+  roundSm: {
+    width: size.touchMin,
+    height: size.touchMin,
+    borderRadius: radius.stadium,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ringWrap: { alignItems: 'center' },
+  ringCol: { alignItems: 'center', gap: space[1] + space[1] / 2 },
   blink: { opacity: 0.6 },
-  cards: { flexDirection: 'row', gap: space[3] },
-  card: { flex: 1, backgroundColor: dark.surface, borderRadius: radius.md, padding: space[4], gap: space[1] },
+  cards: { flexDirection: 'row', gap: space[2] },
+  card: {
+    flex: 1,
+    backgroundColor: dark.surface,
+    borderRadius: radius.md,
+    paddingVertical: space[3],
+    paddingHorizontal: space[4],
+    gap: space[1],
+  },
+  progress: { gap: space[2] },
+  segRow: { flexDirection: 'row', gap: space[1] },
+  segPart: { height: space[2], borderRadius: radius.stadium },
+  segFuture: {
+    backgroundColor: dark.surface,
+    boxShadow: `inset 0px 0px 0px ${border.hairline}px ${dark.line}`,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -478,21 +575,25 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: space[2],
   },
+  display: { fontFamily: fontFiles.display700 },
   controls: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: space[8],
-    marginTop: space[4],
+    gap: space[6] + space[1],
+    paddingTop: space[2],
+    paddingBottom: space[3],
+    paddingHorizontal: space.screenX,
   },
   big: {
-    width: size.buttonPrimary * 1.5,
-    height: size.buttonPrimary * 1.5,
+    width: size.touchMin * 2,
+    height: size.touchMin * 2,
     borderRadius: radius.stadium,
     backgroundColor: color.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  footnote: { paddingHorizontal: space[8] },
   overlay: {
     ...StyleSheet.absoluteFill,
     backgroundColor: color.overlay,
@@ -508,17 +609,19 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
-  drill: { flex: 1, gap: space[3] },
-  lanes: { flexDirection: 'row', gap: space[2] },
-  lane: { width: space[10] * 2, height: space[2], borderRadius: radius.stadium },
-  cueBox: {
-    backgroundColor: dark.surface,
-    borderRadius: radius.lg,
-    borderWidth: border.hairline,
-    borderColor: dark.line,
-    padding: space[5],
-    gap: space[3],
+  drill: { flex: 1, gap: space[5] },
+  drillHead: { gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
+  lanes: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
+  lane: { width: space[10], height: space[2], borderRadius: radius.stadium },
+  cues: { gap: space[2] + space[1] / 2 },
+  cueRow: { flexDirection: 'row', gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
+  drillFooter: {
+    gap: space[2],
+    paddingTop: space[2],
+    paddingHorizontal: space.screenX,
+    width: '100%',
+    maxWidth: size.contentMax + space.screenX * 2,
+    alignSelf: 'center',
   },
-  cueRow: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
   textBtn: { minHeight: size.touchMin, justifyContent: 'center' },
 });

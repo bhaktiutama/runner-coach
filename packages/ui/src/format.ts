@@ -191,3 +191,13 @@ export function nextTimeDigits(prev: string, text: string): string {
   else d = raw;
   return d.replace(/^0+/, '').slice(0, 5);
 }
+
+/** Jam timer mm:ss (2 digit menit), di atas 1 jam j:mm:ss: 522 -> "08:42". */
+export function formatClock(seconds: number): string {
+  const s = Math.max(0, Math.round(seconds));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+}

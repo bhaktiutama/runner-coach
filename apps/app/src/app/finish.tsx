@@ -82,13 +82,10 @@ export default function Finish() {
   return (
     <Screen
       testID="screen-finish"
+      gap="finish"
       footer={
         <>
-          {error ? (
-            <InfoBox tone="danger">
-              <Text>{error}</Text>
-            </InfoBox>
-          ) : null}
+          {error ? <InfoBox tone="danger">{error}</InfoBox> : null}
           <PrimaryButton
             label={t('common.save')}
             testID="finish-save"
@@ -98,16 +95,19 @@ export default function Finish() {
         </>
       }
     >
-      <View style={styles.check}>
-        <Icon name="check" color={color.onSuccess} size={size.touchMin} strokeWidth={3} />
+      <View style={styles.head}>
+        <View style={styles.check}>
+          <Icon name="check" color={color.onSuccess} size={size.iconSm + space[1]} strokeWidth={3} />
+        </View>
+        <Text variant="title">{t('finish.title', { type: typeName(w.data.type) })}</Text>
+        <Text variant="control" color="success" testID="finish-segments">
+          {t('finish.segments', { done: sum.segmentsDone, total: sum.segmentsTotal })}
+        </Text>
       </View>
-      <Text variant="title">{t('finish.title', { type: typeName(w.data.type) })}</Text>
-      <Text color="success" testID="finish-segments">
-        {t('finish.segments', { done: sum.segmentsDone, total: sum.segmentsTotal })}
-      </Text>
       <View style={styles.row}>
         <View style={styles.flex}>
           <TextField
+            numeric
             label={t('finish.duration')}
             value={dur}
             onChangeText={setDur}
@@ -117,6 +117,7 @@ export default function Finish() {
         </View>
         <View style={styles.flex}>
           <TextField
+            numeric
             label={t('finish.distance')}
             value={km}
             onChangeText={setKm}
@@ -124,23 +125,25 @@ export default function Finish() {
             keyboardType="decimal-pad"
           />
         </View>
-        <View style={styles.flex}>
+        <View style={[styles.flex, styles.avgCol]}>
           <Text variant="label" color="textMuted">
             {t('finish.avg')}
           </Text>
-          <Text variant="numberMd" style={styles.avg}>
-            {pace ? formatPaceValue(pace) : t('finish.noPace')}
-          </Text>
+          <View style={styles.avgBox}>
+            <Text variant="stat">{pace ? formatPaceValue(pace) : t('finish.noPace')}</Text>
+          </View>
         </View>
       </View>
       <Text variant="caption" color="textMuted">
         {t('finish.estimate')}
       </Text>
       <FeedbackFields rpe={rpe} setRpe={setRpe} tags={tags} setTags={setTags} type={w.data.type} />
-      <Text variant="label" color="textMuted">
+      <Text variant="caption" color="textMuted">
         {t('finish.watch')}
       </Text>
       <LinkButton
+        size="sm"
+        tone="text"
         label={t('finish.discard')}
         onPress={async () => {
           await discard.mutateAsync();
@@ -153,14 +156,16 @@ export default function Finish() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  row: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
+  head: { gap: space[2], alignItems: 'flex-start' },
+  row: { flexDirection: 'row', gap: space[2], alignItems: 'flex-end' },
+  avgCol: { gap: space[2] },
+  avgBox: { height: size.input, justifyContent: 'center' },
   check: {
-    width: size.buttonPrimary + space[10],
-    height: size.buttonPrimary + space[10],
+    width: size.input,
+    height: size.input,
     borderRadius: radius.stadium,
     backgroundColor: color.success,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avg: { marginTop: space[3] },
 });

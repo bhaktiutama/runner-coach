@@ -538,6 +538,61 @@ export const tokens = {
       "fontWeight": 600,
       "lineHeight": 1.2,
       "letterSpacing": "0"
+    },
+    "statusCaps": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 13,
+      "fontWeight": 800,
+      "lineHeight": 1.2,
+      "letterSpacing": "0.12em"
+    },
+    "rpe": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 16,
+      "fontWeight": 800,
+      "lineHeight": 1,
+      "letterSpacing": "0"
+    },
+    "drillName": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 44,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
+      "letterSpacing": "-0.02em"
+    },
+    "set": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 20,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "statLg": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 26,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
+      "letterSpacing": "0"
     }
   },
   "space": {

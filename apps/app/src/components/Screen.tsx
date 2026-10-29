@@ -10,23 +10,22 @@ type Props = {
   dark?: boolean;
   testID?: string;
   /** Jarak antarblok: 20 (default) atau 24 (wireframe 1.2, 1.5). */
-  gap?: 'normal' | 'loose' | 'today';
+  gap?: 'normal' | 'loose' | 'today' | 'finish';
 };
 
 /** Kerangka layar: padding 20, konten maks 640 di tengah (UI/UX 5), footer tombol di bawah. */
+/** Jarak antarblok per layar wireframe: 20 umum, 24 (1.2, 1.5), 18 (2.1), 22 (2.4). */
+const GAP = {
+  normal: space[5],
+  loose: space[6],
+  today: space[4] + space[1] / 2,
+  finish: space[5] + space[1] / 2,
+} as const;
+
 export function Screen({ children, footer, scroll = true, dark = false, testID, gap = 'normal' }: Props) {
   const insets = useSafeAreaInsets();
   const bg = dark ? color.dark.bg : color.bg;
-  const body = (
-    <View
-      style={[
-        styles.inner,
-        { gap: gap === 'loose' ? space[6] : gap === 'today' ? space[4] + space[1] / 2 : space[5] },
-      ]}
-    >
-      {children}
-    </View>
-  );
+  const body = <View style={[styles.inner, { gap: GAP[gap] }]}>{children}</View>;
   return (
     <View
       testID={testID}

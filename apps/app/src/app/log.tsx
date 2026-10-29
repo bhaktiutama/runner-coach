@@ -1,19 +1,26 @@
 import { addDays } from '@run-coach/training-engine';
 import {
   BibTag,
+  border,
   Chip,
-  ChoiceCard,
+  color,
+  fontFiles,
+  Icon,
   IconButton,
   InfoBox,
   PrimaryButton,
+  radius,
+  ring,
+  ScreenTitle,
+  size,
   space,
   Text,
   TextField,
 } from '@run-coach/ui';
-import { formatDate, formatPace } from '@run-coach/ui/format';
+import { formatDayMonth, formatPace } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Calendar } from '@/components/Calendar';
 import { FeedbackFields } from '@/components/FeedbackFields';
 import { Screen } from '@/components/Screen';
@@ -25,7 +32,7 @@ import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { isoAtLocal } from '@/lib/today';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 
-/** 2.6 Catat lari manual (F-15, FL-3). */
+/** 2.6 Catat lari manual (F-15, FL-3). Tata letak = wireframe LogManual. */
 export default function LogRun() {
   const today = useToday();
   const tz = useProfile().data?.timezone ?? 'Asia/Jakarta';
@@ -67,11 +74,7 @@ export default function LogRun() {
       testID="screen-log"
       footer={
         <>
-          {error ? (
-            <InfoBox tone="danger">
-              <Text>{error}</Text>
-            </InfoBox>
-          ) : null}
+          {error ? <InfoBox tone="danger">{error}</InfoBox> : null}
           <PrimaryButton
             label={t('common.save')}
             testID="log-save"
@@ -83,71 +86,86 @@ export default function LogRun() {
     >
       <View style={styles.top}>
         <IconButton icon="close" label={t('common.close')} onPress={close} />
-        <Text color="textMuted" align="center" style={styles.flex}>
+        <Text variant="controlStrong" color="textMuted" align="center" style={styles.flex}>
           {t('log.header')}
         </Text>
         <View style={styles.spacer} />
       </View>
-      <Text variant="title">{t('log.title')}</Text>
-      <Text color="textMuted">{t('log.subtitle')}</Text>
-      <Text variant="label" color="textMuted">
-        {t('log.date')}
-      </Text>
-      <View style={styles.row}>
-        <Chip
-          label={t('log.today')}
-          selected={date === today && !picking}
-          onPress={() => (setDate(today), setPicking(false))}
-        />
-        <Chip
-          label={t('log.yesterday')}
-          selected={date === addDays(today, -1) && !picking}
-          onPress={() => (setDate(addDays(today, -1)), setPicking(false))}
-        />
-        <Chip
-          label={picking ? formatDate(date) : t('log.pick')}
-          selected={picking}
-          onPress={() => setPicking(true)}
-        />
+      <ScreenTitle title={t('log.title')} subtitle={t('log.subtitle')} />
+      <View style={styles.block}>
+        <Text variant="label" color="textMuted">
+          {t('log.date')}
+        </Text>
+        <View style={styles.row}>
+          <Chip
+            fill
+            label={t('log.today')}
+            selected={date === today && !picking}
+            onPress={() => (setDate(today), setPicking(false))}
+          />
+          <Chip
+            fill
+            label={t('log.yesterday')}
+            selected={date === addDays(today, -1) && !picking}
+            onPress={() => (setDate(addDays(today, -1)), setPicking(false))}
+          />
+          <Chip
+            fill
+            label={picking ? formatDayMonth(date) : t('log.pick')}
+            selected={picking}
+            onPress={() => setPicking(true)}
+          />
+        </View>
+        {picking ? (
+          <Calendar
+            year={ym.y}
+            month0={ym.m}
+            selected={date}
+            minDate={addDays(today, -365)}
+            onSelect={(d) => d <= today && setDate(d)}
+            onMonth={(y, m) => setYm({ y, m })}
+          />
+        ) : null}
       </View>
-      {picking ? (
-        <Calendar
-          year={ym.y}
-          month0={ym.m}
-          selected={date}
-          minDate={addDays(today, -365)}
-          onSelect={(d) => d <= today && setDate(d)}
-          onMonth={(y, m) => setYm({ y, m })}
-        />
-      ) : null}
-      <Text variant="label" color="textMuted">
-        {t('log.for')}
-      </Text>
-      {match.data ? (
-        <ChoiceCard
-          wide
-          testID="log-for-plan"
-          title={t('log.scheduledToday', {
-            type: typeName(match.data.type),
-            when: date === today ? t('log.when.today') : formatDate(date),
-          })}
-          selected={forPlan}
-          onPress={() => setForPlan(true)}
-        />
-      ) : null}
-      {match.data && forPlan ? (
-        <BibTag label={typeName(match.data.type)} zone={TYPE_ZONE[match.data.type]} />
-      ) : null}
-      <ChoiceCard
-        wide
-        testID="log-extra"
-        title={t('log.extra')}
-        selected={!linked}
-        onPress={() => setForPlan(false)}
-      />
+      <View style={styles.block}>
+        <Text variant="label" color="textMuted">
+          {t('log.for')}
+        </Text>
+        {match.data ? (
+          <Pressable
+            testID="log-for-plan"
+            accessibilityRole="radio"
+            accessibilityState={{ selected: forPlan }}
+            onPress={() => setForPlan(true)}
+            style={[styles.option, styles.optionTall, forPlan ? styles.optionOn : styles.optionOff]}
+          >
+            <BibTag label={typeName(match.data.type)} zone={TYPE_ZONE[match.data.type]} />
+            <Text variant="controlStrong" style={styles.flex}>
+              {t('log.scheduledToday', {
+                type: typeName(match.data.type),
+                when: date === today ? t('log.when.today') : formatDayMonth(date),
+              })}
+            </Text>
+            {forPlan ? <Icon name="check" size={space[5]} /> : null}
+          </Pressable>
+        ) : null}
+        <Pressable
+          testID="log-extra"
+          accessibilityRole="radio"
+          accessibilityState={{ selected: !linked }}
+          onPress={() => setForPlan(false)}
+          style={[styles.option, !linked ? styles.optionOn : styles.optionOff]}
+        >
+          <Text variant={!linked ? 'controlStrong' : 'control'} style={styles.flex}>
+            {t('log.extra')}
+          </Text>
+          {!linked ? <Icon name="check" size={space[5]} /> : null}
+        </Pressable>
+      </View>
       <View style={styles.row}>
         <View style={styles.flex}>
           <TextField
+            numeric
             label={t('log.distance')}
             value={km}
             onChangeText={setKm}
@@ -158,6 +176,7 @@ export default function LogRun() {
         </View>
         <View style={styles.flex}>
           <TextField
+            numeric
             label={t('log.duration')}
             value={dur}
             onChangeText={setDur}
@@ -167,7 +186,14 @@ export default function LogRun() {
           />
         </View>
       </View>
-      {pace ? <Text color="textMuted">{t('log.pace', { pace: formatPace(pace) })}</Text> : null}
+      {pace ? (
+        <Text variant="control" color="textMuted">
+          {t('log.paceLabel')}
+          <Text variant="control" style={styles.paceValue}>
+            {formatPace(pace)}
+          </Text>
+        </Text>
+      ) : null}
       <FeedbackFields rpe={rpe} setRpe={setRpe} tags={tags} setTags={setTags} type={linked?.type ?? null} />
     </Screen>
   );
@@ -175,7 +201,21 @@ export default function LogRun() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  row: { flexDirection: 'row', gap: space[3], flexWrap: 'wrap' },
-  top: { flexDirection: 'row', alignItems: 'center' },
-  spacer: { width: space[10] + space[2] },
+  top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  spacer: { width: size.touchMin },
+  block: { gap: space[2] + space[1] / 2 },
+  row: { flexDirection: 'row', gap: space[2] },
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space[3],
+    minHeight: size.input,
+    paddingHorizontal: space[4],
+    borderRadius: radius.lg,
+    backgroundColor: color.surface,
+  },
+  optionTall: { minHeight: size.buttonPrimary },
+  optionOn: ring(border.selected, color.text),
+  optionOff: ring(border.control, color.line),
+  paceValue: { fontFamily: fontFiles.display700, color: color.text },
 });

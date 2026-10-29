@@ -60,3 +60,11 @@ describe('ketik di input waktu', () => {
     expect(nextTimeDigits('12345', '1 : 23 : 456')).toBe('12345');
   });
 });
+
+import { formatClock } from '../src/format';
+describe('jam timer', () => {
+  it('menit 2 digit', () => {
+    expect(formatClock(522)).toBe('08:42');
+    expect(formatClock(3725)).toBe('1:02:05');
+  });
+});

@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import { border, color, radius, size, space } from '../theme';
+import { border, color, radius, ring, size, space } from '../theme';
 import { Chip } from './Controls';
 import { Text } from './Text';
 
@@ -30,9 +30,15 @@ export function RpePicker({
               accessibilityState={{ selected: on }}
               accessibilityLabel={String(n)}
               onPress={() => onChange(n)}
-              style={[styles.btn, on && { backgroundColor: rpeColor(n), borderColor: color.text }]}
+              style={[
+                styles.btn,
+                on && {
+                  backgroundColor: rpeColor(n),
+                  ...ring(border.selected - border.hairline / 2, color.text),
+                },
+              ]}
             >
-              <Text variant="numberMd" style={on && n >= 9 ? { color: color.zone.onInterval } : null}>
+              <Text variant="rpe" style={on && n >= 9 ? { color: color.zone.onInterval } : null}>
                 {String(n)}
               </Text>
             </Pressable>
@@ -41,7 +47,7 @@ export function RpePicker({
       </View>
       <View style={styles.scale}>
         {labels.map((l) => (
-          <Text key={l} variant="label" color="textMuted">
+          <Text key={l} variant="caption" color="textMuted">
             {l}
           </Text>
         ))}
@@ -75,15 +81,13 @@ export function TagChips<T extends string>({
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: space[2] },
+  wrap: { gap: space[2] + space[1] / 2 },
   row: { flexDirection: 'row', gap: space[1] },
   btn: {
     flex: 1,
-    minHeight: size.touchMin + space[1],
-    borderRadius: radius.stadium,
+    height: size.touchMin + space[1],
+    borderRadius: radius.md,
     backgroundColor: color.surfaceSunken,
-    borderWidth: border.selected,
-    borderColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
   },
