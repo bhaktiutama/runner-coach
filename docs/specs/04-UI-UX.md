@@ -26,7 +26,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 
 | Grup | Isi |
 |------|-----|
-| Warna dasar | bg krem #FFF9F2, surface putih, text charcoal #242C32, primary oranye #F26B38 (teks di atasnya charcoal), accent peach #E9B79D, success hijau #477B63 |
+| Warna dasar | bg abu-abu hangat #F5F4F2, surface putih, text charcoal #242C32, primary oranye #F26B38 (teks di atasnya charcoal), accent peach #E9B79D, success hijau #467861 |
 | Status plan | On track #70D6B3, Perhatian #F2C66D, Tertinggal #FF806E, Recovery #A6B8FF; masing-masing punya varian `-ink` untuk teks |
 | Zona (skala panas) | recovery lavender, easy peach, long #D9946F, tempo oranye, interval #B4361A, strength charcoal |
 | Fase | base peach, build peach tua, peak oranye, taper lavender |
@@ -70,7 +70,7 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 | Aset | Pakai |
 |------|-------|
 | Logo mark + wordmark "run coach" | 1.1, header web |
-| `icon.png`, `adaptive-icon.png` (+ monochrome), `splash-icon.png`, `favicon.png` | `app.json`: icon, adaptiveIcon (latar #F26B38), splash (latar #FFF9F2), web.favicon |
+| `icon.png`, `adaptive-icon.png` (+ monochrome), `splash-icon.png`, `favicon.png` | `app.json`: icon, adaptiveIcon (latar #F26B38), splash (latar #F5F4F2), web.favicon |
 | 40 ikon garis 24 px | Komponen Icon; tab bar: today, plan, progress, profile |
 | Karakter animasi gerakan | Belum ada (D8). MVP pakai teks + SVG prototipe |
 

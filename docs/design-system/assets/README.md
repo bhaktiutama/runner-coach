@@ -12,7 +12,7 @@ Logo, ikon app dan set ikon untuk Run Coach. Semua warna dari `../tokens.json`.
 | `app-icon/` | `icon.png` 1024x1024, RGB tanpa alpha | `expo.icon` (iOS + store) |
 | `app-icon/` | `adaptive-icon.png` (foreground transparan, mark di zona aman 66%) | `android.adaptiveIcon.foregroundImage`, `backgroundColor: "#F26B38"` |
 | `app-icon/` | `adaptive-monochrome.png` | `android.adaptiveIcon.monochromeImage` (ikon bertema Android 13+) |
-| `app-icon/` | `splash-icon.png` (transparan, mark oranye) | `expo-splash-screen`, `backgroundColor: "#FFF9F2"` |
+| `app-icon/` | `splash-icon.png` (transparan, mark oranye) | `expo-splash-screen`, `backgroundColor: "#F5F4F2"` |
 | `app-icon/` | `favicon.png` 48 px, `favicon.svg` | `web.favicon` |
 | `icons/` | 40 ikon garis 24 px + `icons.json` | Semua UI; lihat daftar di bawah |
 | `_build/` | `build.py`, `icons.py`, `render.js` | Membuat ulang semua file di atas |
