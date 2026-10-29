@@ -10,7 +10,7 @@ Terakhir diperbarui: 2026-10-29
 |---|---|---|
 | M0 Spike | Selesai (perlu device) | `docs/specs/spikes.md`: SQLite web OK, grafik pakai react-native-svg. Timer background + backup OS perlu HP |
 | M1 Fondasi | Berjalan | Monorepo, 4 tab, token, format, migrasi SQLite, CI selesai. Layar login dibuat bersama 1.8/1.9 di M3 |
-| M2 Engine | Belum mulai | |
+| M2 Engine | Selesai | 2.294 test (5 target x 4 profil x 3-6 hari x mode ringan), coverage baris 99,6%. Keputusan angka: 07 bagian 7 |
 | M3 Onboarding, Hari ini, Plan | Belum mulai | |
 | M4 Timer | Belum mulai | Uji layar terkunci butuh HP fisik |
 | M5 Feedback, Progres | Belum mulai | |

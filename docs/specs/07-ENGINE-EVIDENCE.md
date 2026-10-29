@@ -193,3 +193,26 @@ Semua dicek 2026-10-29 dari abstrak atau metadata. "PMID" = PubMed ID.
 - Sebagian besar bukti dari pelari terlatih atau populasi Eropa/AS. Konteks lokal (panas, lembab; PLANNING 1.4) belum ada buktinya di dokumen ini.
 - R7 observasional: menunjukkan hubungan, bukan sebab-akibat.
 - Menambah aturan baru ke engine wajib menambah entri registri (bagian 2) di PR yang sama; tanpa entri, test 3.5 gagal.
+
+## 7. Keputusan implementasi M2 (2026-10-29)
+
+Angka di bawah adalah pilihan implementasi (tingkat D, konservatif) untuk hal yang belum diatur TRD 4.2. Semua ikut review pelatih (D6). Kode: `packages/training-engine/src/generator.ts`.
+
+| Topik | Keputusan |
+|-------|-----------|
+| VDOT tanpa waktu acuan ("Saya tidak tahu") | Pemula VDOT 26 (5K ~35 mnt), rekreasional VDOT 33 (5K ~28 mnt). Prediksi dari VDOT ini selalu diberi label "perkiraan kasar". Diganti saat ada time trial (E-20) |
+| Level jika pengguna memberi waktu acuan | Volume < 10 km/minggu = pemula, selain itu rekreasional (PRD 2) |
+| Zona (E-02) | %VO2max: easy 59-74%, threshold 86-88%, interval 97,5-100%, repetisi 105-110%; marathon = pace prediksi maraton VDOT +-5 dtk. VDOT 50 menghasilkan T 4:15 /km dan I 3:55 /km (dicek terhadap tabel Daniels yang beredar; E-O4 tetap terbuka) |
+| Volume awal | Minggu 1 = max(volume sekarang, lari terjauh, 4 km). Volume puncak target per level/jarak (pemula 5K 20 km ... rekreasional FM 60 km), dicapai hanya lewat E-05 |
+| E-05 | Dihitung terhadap volume aktual minggu non-cutback terakhir, dibulatkan ke bawah per 1 km (per 0,5 km di bawah 10 km) |
+| E-07 | Cutback tiap minggu ke-4 (bukan di taper), target 80% lalu dibulatkan, dijaga di rentang 20-30% |
+| E-06 | Berlaku untuk **jarak lari** sesi (segmen jalan run-walk dan drill tidak dihitung). Lari terjauh awal (`longest_run_m`) dianggap berlaku 30 hari pertama |
+| E-08 | Long run = min(30% volume, batas E-06), dicek ulang terhadap volume aktual setelah pembulatan |
+| E-10 | Base: 0 sesi berat; Build: 1; Peak/Taper: 2 jika rekreasional dan >= 4 hari lari, selain itu 1; cutback maks 1. Sesi berat tidak bersebelahan dengan sesi berat lain maupun long run |
+| E-11 | Fraksi volume puncak per minggu taper: 1 mgg [50%], 2 mgg [70%, 50%], 3 mgg [80%, 65%, 50%]. HM taper 2 mgg jika plan >= 12 mgg; FM 3 mgg jika >= 18 mgg |
+| Minggu race | Tidak ada latihan pada/sesudah hari race; sesi berat paling lambat 3 hari sebelum race |
+| Jumlah sesi | Maks hari tersedia, tetapi tidak lebih dari volume/2,5 km; easy run min 2 km. Hari tersedia = boleh dipakai, bukan wajib |
+| E-14 run-walk | Mulai 1 mnt lari / 2 mnt jalan; grid 15 detik; menit lari aktual per sesi naik maks 10%/minggu; sesi easy 30 mnt, long 40 mnt (termasuk 5+5 mnt jalan). Minggu run-walk tanpa cutback (kenaikan sudah kecil); taper memotong ulangan 50% |
+| E-15 | 5 gerakan x 2 set x 20 m (A-skip, B-skip, C-skip, high knees, carioca), estimasi 1 mnt per set = 10 mnt |
+| E-13 | Minggu Return to run: easy saja, tiap sesi 50% lari terjauh 30 hari (min 2 km), maks 4 sesi; sisa plan digeser per minggu penuh |
+| Pindah (3.2) | Sesi berat tidak boleh ke sebelah sesi berat lain; sehari setelah sesi berat/long = "bisa, pelan"; gabung = sesi berat dipertahankan + tambahan easy dibatasi E-06 |
