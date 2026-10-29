@@ -1,0 +1,104 @@
+/* Lintas components. Every value comes from tokens.css custom properties. */
+.ln { font-family: var(--font-ui); color: var(--text); font-feature-settings: "tnum" 1; }
+.ln-stage { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); padding: var(--space-5); background: var(--bg); font-family: var(--font-ui); color: var(--text); }
+.ln-stage-col { flex-direction: column; align-items: stretch; }
+.ln-num { font-family: var(--font-display); font-feature-settings: "tnum" 1; }
+.ln-muted { color: var(--text-muted); }
+
+/* Buttons: stadium shape */
+.ln-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--size-button-primary); padding: 0 var(--space-8); border: 0; border-radius: var(--radius-stadium); background: var(--primary); color: var(--on-primary); font: 700 17px/1 var(--font-ui); cursor: pointer; box-shadow: var(--shadow-raised); transition: transform 120ms cubic-bezier(.2,0,0,1), box-shadow 120ms; }
+.ln-btn:active, .ln-btn.is-pressed { transform: translateY(2px); box-shadow: none; }
+.ln-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.ln-btn[disabled] { opacity: .4; cursor: not-allowed; box-shadow: none; }
+.ln-btn--dark { background: var(--text); color: var(--bg); }
+.ln-btn--secondary { min-height: var(--size-button-secondary); padding: 0 var(--space-6); background: transparent; color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line-strong); }
+.ln-btn--block { width: 100%; }
+.ln-dots { display: inline-flex; gap: 4px; }
+.ln-dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* Bib tag: race number with four safety-pin holes */
+.ln-bib { position: relative; display: inline-flex; align-items: center; min-height: 28px; padding: 0 var(--space-3); border-radius: var(--radius-bib); font: 800 13px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; }
+.ln-bib::before, .ln-bib::after { content: ""; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; pointer-events: none;
+  background: radial-gradient(circle, currentColor 1.5px, transparent 1.6px) 0 0 / 6px 6px no-repeat, radial-gradient(circle, currentColor 1.5px, transparent 1.6px) 100% 0 / 6px 6px no-repeat; opacity: .55; }
+.ln-bib::after { background-position: 0 100%, 100% 100%; }
+.ln-bib--recovery { background: var(--zone-recovery); color: var(--on-zone-recovery); }
+.ln-bib--easy { background: var(--zone-easy); color: var(--on-zone-easy); }
+.ln-bib--long { background: var(--zone-long); color: var(--on-zone-long); }
+.ln-bib--tempo { background: var(--zone-tempo); color: var(--on-zone-tempo); }
+.ln-bib--interval { background: var(--zone-interval); color: var(--on-zone-interval); }
+.ln-bib--strength { background: var(--zone-strength); color: var(--on-zone-strength); }
+.ln-bib-inner { padding: 0 6px; }
+
+/* Status chip */
+.ln-chip { display: inline-flex; align-items: center; gap: var(--space-1); min-height: 28px; padding: 0 var(--space-3); border-radius: var(--radius-stadium); color: var(--on-status); font: 700 13px/1 var(--font-ui); }
+.ln-chip svg { width: 14px; height: 14px; }
+.ln-chip--on-track { background: var(--status-on-track); }
+.ln-chip--attention { background: var(--status-attention); }
+.ln-chip--behind { background: var(--status-behind); }
+.ln-chip--recovery { background: var(--status-recovery); }
+
+/* Card */
+.ln-card { display: flex; flex-direction: column; gap: var(--space-5); padding: var(--space-6); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card); max-width: 360px; }
+.ln-card-top { display: flex; justify-content: space-between; align-items: center; }
+.ln-big { display: flex; align-items: baseline; gap: var(--space-2); }
+.ln-big b { font: 800 56px/1 var(--font-display); letter-spacing: -.03em; font-feature-settings: "tnum" 1; }
+.ln-segs { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ln-segs li { display: grid; grid-template-columns: 6px 1fr auto; gap: var(--space-3); align-items: center; min-height: 32px; font-size: 14px; }
+.ln-segs li > i { align-self: stretch; border-radius: var(--radius-stadium); }
+.ln-segs li > span:last-child { color: var(--text-muted); font-feature-settings: "tnum" 1; }
+
+/* Lane week */
+.ln-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-2); width: 100%; max-width: 360px; }
+.ln-lane { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.ln-lane i { width: 100%; height: 44px; border-radius: var(--radius-stadium); box-sizing: border-box; }
+.ln-lane .done { background: var(--fill); }
+.ln-lane .plan { box-shadow: inset 0 0 0 2px var(--fill); }
+.ln-lane .rest { background: var(--surface-sunken); }
+.ln-lane .missed { box-shadow: inset 0 0 0 2px var(--status-behind-ink); background: repeating-linear-gradient(135deg, transparent 0 5px, var(--status-behind) 5px 7px); }
+.ln-lane.today { color: var(--text); }
+.ln-lane.today i { outline: 2px solid var(--text); outline-offset: 2px; }
+
+/* Segmented control */
+.ln-seg { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 4px; border-radius: var(--radius-stadium); background: var(--surface-sunken); }
+.ln-seg button { min-height: 40px; padding: 0 var(--space-4); border: 0; border-radius: var(--radius-stadium); background: transparent; color: var(--text-muted); font: 600 14px/1 var(--font-ui); cursor: pointer; }
+.ln-seg button[aria-pressed="true"] { background: var(--surface); color: var(--text); font-weight: 700; box-shadow: var(--shadow-card); }
+
+/* RPE */
+.ln-rpe { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; max-width: 420px; }
+.ln-rpe button { min-height: 48px; border: 0; border-radius: var(--radius-md); background: var(--surface-sunken); color: var(--text); font: 800 16px/1 var(--font-display); font-feature-settings: "tnum" 1; cursor: pointer; }
+.ln-rpe button[aria-pressed="true"].r1 { background: var(--rpe-1-3); color: var(--on-zone-easy); }
+.ln-rpe button[aria-pressed="true"].r4 { background: var(--rpe-4-6); color: var(--on-zone-long); }
+.ln-rpe button[aria-pressed="true"].r7 { background: var(--rpe-7-8); color: var(--on-zone-tempo); }
+.ln-rpe button[aria-pressed="true"].r9 { background: var(--rpe-9-10); color: var(--on-zone-interval); }
+.ln-rpe-legend { display: flex; justify-content: space-between; max-width: 420px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+
+/* Stepper */
+.ln-stepper { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); max-width: 340px; }
+.ln-round { width: 60px; height: 60px; border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer; background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--text); }
+.ln-round--primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow-raised); }
+.ln-stepper-val { text-align: center; }
+.ln-stepper-val b { display: block; font: 800 64px/1 var(--font-display); letter-spacing: -.03em; font-feature-settings: "tnum" 1; }
+
+/* Track ring (oval running track) */
+.ln-ring { display: inline-grid; place-items: center; position: relative; }
+.ln-ring svg { display: block; }
+.ln-ring .track { fill: none; stroke: var(--surface-sunken); }
+.ln-ring .lane { fill: none; stroke-linecap: round; }
+.ln-ring-label { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+
+/* Timer (always dark) */
+.ln-timer { display: flex; flex-direction: column; align-items: center; gap: var(--space-5); padding: var(--space-6) var(--space-5); border-radius: var(--radius-lg); background: var(--bg); color: var(--text); max-width: 360px; font-family: var(--font-ui); }
+.ln-timer .t { font: 800 88px/1 var(--font-display); letter-spacing: -.03em; font-feature-settings: "tnum" 1; }
+.ln-timer-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); width: 100%; }
+.ln-timer-stats div { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface); }
+.ln-timer-stats span { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.ln-timer-stats b { font: 700 24px/1.1 var(--font-display); font-feature-settings: "tnum" 1; }
+
+/* Info box */
+.ln-info { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-4); border-radius: var(--radius-md); font-size: 14px; line-height: 1.45; color: var(--on-status); max-width: 360px; }
+.ln-info svg { flex: none; width: 20px; height: 20px; }
+.ln-info--ok { background: var(--status-on-track); }
+.ln-info--warn { background: var(--status-attention); }
+.ln-info--info { background: var(--status-recovery); }
+
+@media (prefers-reduced-motion: reduce) { .ln-btn, .ln-ring .lane { transition: none !important; } }

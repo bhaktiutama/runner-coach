@@ -4,7 +4,7 @@ Status: Draft v0.3 (2026-10-29), model privasi "data di HP"
 
 Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang (riset, alasan, monetisasi). Jika ada konflik, dokumen di folder ini yang dipakai.
 
-**Acuan visual:** [`docs/wireframes/`](../wireframes/README.md), 21 layar HP dalam 4 journey, diekspor dari artifact "Runner Coach Wireframes" (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka). Nomor layar (1.1 sampai 4.4) dipakai di semua spec.
+**Acuan visual:** [`docs/wireframes/`](../wireframes/README.md), 26 layar HP dalam 4 journey, sudah memakai design system Lintas, diekspor dari artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka). Nomor layar (1.1 sampai 4.6) dipakai di semua spec.
 
 ## Urutan baca (total ~20 menit)
 
@@ -80,8 +80,8 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 
 | # | Pertanyaan | Default sementara |
 |---|-----------|-------------------|
-| O1 | Layar Log manual, konfirmasi Hapus akun, dan form Login email belum ada di wireframe (menu Hapus akun dan Privasi & export data sudah ada di 4.1) | Dibangun dengan pola komponen yang sama; wireframe menyusul |
+| O1 | ~~Layar Log manual, konfirmasi Hapus akun, Login email belum ada~~ Selesai di wireframe v0.3: 2.6, 4.6, 1.9 | |
 | O2 | Isi plan "Bugar" (W2) | Blok 8 minggu easy + 1 sesi kualitas, tanpa taper, bisa diulang. Perlu review pelatih |
 | O3 | Screening "Ya" = "plan lebih ringan" (layar 1.7) | Tanpa sesi berat sampai pengguna mengubahnya. Perlu review pelatih |
-| O4 | Segmen drill (F-17) belum ada di wireframe 2.2 dan 2.3 | Segmen pemanasan biasa + nama gerakan, dosis, cue teknik; animasi SVG dari prototipe jika siap, jika belum cukup teks |
+| O4 | ~~Segmen drill belum ada di wireframe~~ Selesai: 2.2 (baris drill) dan 2.3b (timer drill). Animasi SVG dari prototipe jika siap, jika belum cukup teks cue | |
 | D7, D8 | Strength jadi pembeda utama atau Premium; format animasi gerakan | Lihat PLANNING 11. Tidak memengaruhi MVP |

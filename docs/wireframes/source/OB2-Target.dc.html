@@ -4,64 +4,33 @@
 <meta charset="utf-8">
 <title>Onboarding: target</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 body{margin:0}
-a{color:#1D4ED8}a:hover{color:#1E3A8A}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 56px 24px 40px; gap: 28px; overflow: hidden">
-  <div style="display: flex; align-items: center; gap: 12px">
-    <a href="Main.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </a>
-    <div style="flex: 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px" aria-hidden="true">
-      <div style="height: 6px; border-radius: 3px; background: #18181B"></div>
-      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
-      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
-      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
-      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
-      <div style="height: 6px; border-radius: 3px; background: #E4E4E7"></div>
-    </div>
-    <span style="font-size: 13px; font-weight: 600; color: #52525B">1/6</span>
-  </div>
-
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 24px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; gap: 12px"><a href="Main.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line); text-decoration: none; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><div aria-hidden="true" style="flex: 1; display: flex; gap: 4px"><div style="flex: 1; height: 8px; border-radius: var(--radius-stadium); background: var(--primary)"></div><div style="flex: 1; height: 8px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"></div><div style="flex: 1; height: 8px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"></div><div style="flex: 1; height: 8px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"></div><div style="flex: 1; height: 8px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"></div><div style="flex: 1; height: 8px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"></div></div><span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--text-muted)">1/6</span></div>
   <div style="display: flex; flex-direction: column; gap: 8px">
-    <h1 style="margin: 0; font-size: 28px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Apa target larimu?</h1>
-    <p style="margin: 0; font-size: 15px; color: #52525B">Bisa diganti kapan saja.</p>
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Apa target larimu?</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--text-muted)">Bisa diganti kapan saja.</p>
   </div>
-
   <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
-    <button type="button" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 1.5px solid #E4E4E7; cursor: pointer">
-      <span style="font-size: 28px; font-weight: 800">5K</span>
-      <span style="font-size: 13px; color: #52525B">Cocok untuk mulai lari</span>
-    </button>
-    <button type="button" aria-pressed="true" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 2.5px solid #18181B; background: #F4F4F5; cursor: pointer">
-      <span style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 28px; font-weight: 800">10K</span>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18181B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span>
-      <span style="font-size: 13px; color: #52525B">Langkah berikutnya setelah 5K</span>
-    </button>
-    <button type="button" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 1.5px solid #E4E4E7; cursor: pointer">
-      <span style="font-size: 28px; font-weight: 800">HM</span>
-      <span style="font-size: 13px; color: #52525B">Half Marathon, 21,1 km</span>
-    </button>
-    <button type="button" style="all: unset; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; padding: 18px; min-height: 120px; border-radius: 18px; border: 1.5px solid #E4E4E7; cursor: pointer">
-      <span style="font-size: 28px; font-weight: 800">FM</span>
-      <span style="font-size: 13px; color: #52525B">Full Marathon, 42,2 km</span>
-    </button>
+    <button type="button" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 104px; padding: 16px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); text-align: left; box-shadow: inset 0 0 0 1.5px var(--line)"><span style="display: flex; justify-content: space-between; align-self: stretch; align-items: center"><span style="font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em">5K</span></span><span style="font-size: 13px; line-height: 1.35; font-weight: 600; color: var(--text-muted)">Cocok untuk mulai lari</span></button><button type="button" aria-pressed="true" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 104px; padding: 16px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); text-align: left; box-shadow: inset 0 0 0 2.5px var(--text)"><span style="display: flex; justify-content: space-between; align-self: stretch; align-items: center"><span style="font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em">10K</span><span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--text); color: var(--bg)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></span><span style="font-size: 13px; line-height: 1.35; font-weight: 600; color: var(--text-muted)">Langkah berikutnya setelah 5K</span></button><button type="button" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 104px; padding: 16px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); text-align: left; box-shadow: inset 0 0 0 1.5px var(--line)"><span style="display: flex; justify-content: space-between; align-self: stretch; align-items: center"><span style="font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em">HM</span></span><span style="font-size: 13px; line-height: 1.35; font-weight: 600; color: var(--text-muted)">Half Marathon, 21,1 km</span></button><button type="button" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 104px; padding: 16px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); text-align: left; box-shadow: inset 0 0 0 1.5px var(--line)"><span style="display: flex; justify-content: space-between; align-self: stretch; align-items: center"><span style="font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.02em">FM</span></span><span style="font-size: 13px; line-height: 1.35; font-weight: 600; color: var(--text-muted)">Full Marathon, 42,2 km</span></button>
   </div>
-
-  <button type="button" style="all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; height: 60px; border-radius: 18px; border: 1.5px solid #E4E4E7; font-size: 15px; font-weight: 600; cursor: pointer">
-    Tidak ada target jarak, ingin lebih bugar
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+  <button type="button" style="display: flex; align-items: center; justify-content: space-between; min-height: 60px; padding: 0 20px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); font-size: 15px; font-weight: 700; box-shadow: inset 0 0 0 1.5px var(--line)">
+    Tidak ada target jarak, ingin lebih bugar<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
   </button>
-
-  <div style="flex: 1"></div>
-  <a href="OB3-Tanggal.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #18181B; color: #FFFFFF; font-size: 17px; font-weight: 700; text-decoration: none">Lanjut</a>
+</div><div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 32px"><a href="OB3-Tanggal.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 60px; background: var(--primary); color: var(--on-primary); font-size: 17px; box-shadow: var(--shadow-raised)">Lanjut</a></div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>

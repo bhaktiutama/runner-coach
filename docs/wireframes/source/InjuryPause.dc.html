@@ -4,67 +4,50 @@
 <meta charset="utf-8">
 <title>Jeda plan</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 body{margin:0}
-a{color:#1D4ED8}a:hover{color:#1E3A8A}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 52px 20px 32px; gap: 20px; overflow: hidden">
-  <div style="display: flex; align-items: center; gap: 8px">
-    <a href="Profile.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </a>
-    <h1 style="margin: 0; font-size: 22px; font-weight: 800">Jeda plan</h1>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; gap: 12px"><a href="Profile.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line); text-decoration: none; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span style="flex: 1"></span><span style="width: 44px"></span></div>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Jeda plan</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--text-muted)">Istirahat dulu. Plan menunggu dan menyesuaikan saat kamu kembali.</p>
   </div>
-
   <div style="display: flex; flex-direction: column; gap: 10px">
-    <span style="font-size: 16px; font-weight: 800">Apa yang terjadi?</span>
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Apa yang terjadi?</span>
     <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
       <sc-for list="{{reasons}}" as="r" hint-placeholder-count="3">
-        <button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="all: unset; box-sizing: border-box; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; background: {{r.bg}}; color: {{r.fg}}; border: {{r.border}}">{{r.label}}</button>
+        <button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="min-height: 48px; border: 0; border-radius: var(--radius-stadium); font-size: 14px; font-weight: 700; cursor: pointer; background: {{r.bg}}; color: {{r.fg}}; box-shadow: {{r.ring}}">{{r.label}}</button>
       </sc-for>
     </div>
   </div>
-
   <div style="display: flex; flex-direction: column; gap: 10px">
-    <span style="font-size: 16px; font-weight: 800">Kira-kira berapa lama?</span>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px">
-      <button type="button" style="all: unset; height: 40px; padding: 0 14px; display: flex; align-items: center; border-radius: 20px; border: 1.5px solid #E4E4E7; font-size: 14px; font-weight: 600; cursor: pointer">3 hari</button>
-      <button type="button" aria-pressed="true" style="all: unset; height: 40px; padding: 0 14px; display: flex; align-items: center; border-radius: 20px; background: #18181B; color: #FFFFFF; font-size: 14px; font-weight: 700; cursor: pointer">1 minggu</button>
-      <button type="button" style="all: unset; height: 40px; padding: 0 14px; display: flex; align-items: center; border-radius: 20px; border: 1.5px solid #E4E4E7; font-size: 14px; font-weight: 600; cursor: pointer">2 minggu</button>
-      <button type="button" style="all: unset; height: 40px; padding: 0 14px; display: flex; align-items: center; border-radius: 20px; border: 1.5px solid #E4E4E7; font-size: 14px; font-weight: 600; cursor: pointer">Belum tahu</button>
-    </div>
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Kira-kira berapa lama?</span>
+    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"><button type="button" style="min-height: 44px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; white-space: nowrap">3 hari</button><button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: var(--shadow-card)">1 minggu</button><button type="button" style="min-height: 44px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; white-space: nowrap">2 minggu</button><button type="button" style="min-height: 44px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; white-space: nowrap">Belum tahu</button></div>
   </div>
-
   <sc-if value="{{isInjury}}" hint-placeholder-val="{{true}}">
     <div style="display: flex; flex-direction: column; gap: 10px">
-      <span style="font-size: 16px; font-weight: 800">Bagian yang nyeri <span style="font-weight: 500; color: #52525B">(opsional)</span></span>
-      <div style="display: flex; flex-wrap: wrap; gap: 8px">
-        <button type="button" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 18px; border: 1.5px solid #E4E4E7; font-size: 13px; font-weight: 600; cursor: pointer">Lutut</button>
-        <button type="button" aria-pressed="true" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 18px; background: #18181B; color: #FFFFFF; font-size: 13px; font-weight: 700; cursor: pointer">Betis / tulang kering</button>
-        <button type="button" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 18px; border: 1.5px solid #E4E4E7; font-size: 13px; font-weight: 600; cursor: pointer">Telapak kaki</button>
-        <button type="button" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 18px; border: 1.5px solid #E4E4E7; font-size: 13px; font-weight: 600; cursor: pointer">Pinggul</button>
-        <button type="button" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 18px; border: 1.5px solid #E4E4E7; font-size: 13px; font-weight: 600; cursor: pointer">Lainnya</button>
-      </div>
-    </div>
-    <div style="display: flex; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #FEF2F2; color: #7F1D1D; font-size: 13px; line-height: 1.45">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0zM12 9v4M12 17h.01"/></svg>
-      <span>Nyeri tajam, bengkak, atau tidak bisa menumpu berat badan: periksakan ke dokter atau fisioterapis.</span>
+      <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Bagian yang nyeri <span style="font-weight: 500">(opsional, hanya untuk saran, tidak disimpan)</span></span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px"><button type="button" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--line)">Lutut</button><button type="button" aria-pressed="true" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--text); color: var(--bg); font-size: 14px; font-weight: 700">Betis / tulang kering</button><button type="button" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--line)">Telapak kaki</button><button type="button" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--line)">Pinggul</button><button type="button" style="min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--line)">Lainnya</button></div>
+      <div style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--radius-md); background: var(--status-behind); color: var(--on-status); font-size: 14px; line-height: 1.45"><span style="flex-shrink: 0; display: flex; padding-top: 1px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg></span><span>Nyeri tajam, bengkak, atau tidak bisa menumpu berat badan: periksakan ke dokter atau fisioterapis.</span></div>
     </div>
   </sc-if>
-
-  <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: #F4F4F5">
-    <span style="font-size: 14px; font-weight: 800">Saat kamu kembali</span>
-    <span style="font-size: 14px; line-height: 1.5; color: #3F3F46">Plan dimulai dengan 1 minggu "Return to run" (volume rendah, tanpa sesi berat). Target waktu race akan dicek ulang dan kamu bisa memilih target baru jika perlu.</span>
+  <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: var(--radius-lg); background: var(--status-recovery); color: var(--on-status)">
+    <span style="font-family: var(--font-display); font-size: 16px; font-weight: 800">Saat kamu kembali</span>
+    <span style="font-size: 14px; line-height: 1.45">Plan dimulai dengan 1 minggu "Return to run" (volume rendah, tanpa sesi berat). Target waktu race akan dicek ulang dan kamu bisa memilih target baru jika perlu.</span>
   </div>
-
-  <div style="flex: 1"></div>
-  <a href="Today.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #18181B; color: #FFFFFF; font-size: 17px; font-weight: 800; text-decoration: none">Jeda plan 1 minggu</a>
+</div><div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 32px"><a href="Today.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 60px; background: var(--primary); color: var(--on-primary); font-size: 17px; box-shadow: var(--shadow-raised)">Jeda plan 1 minggu</a></div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
@@ -82,8 +65,8 @@ class Component extends DCLogic {
         var on = l === cur;
         return {
           label: l, pressed: on ? 'true' : 'false',
-          bg: on ? '#18181B' : '#FFFFFF', fg: on ? '#FFFFFF' : '#18181B',
-          border: on ? '1.5px solid #18181B' : '1.5px solid #E4E4E7',
+          bg: on ? 'var(--text)' : 'var(--surface)', fg: on ? 'var(--bg)' : 'var(--text)',
+          ring: on ? 'none' : 'inset 0 0 0 1.5px var(--line)',
           pick: function () { self.setState({ reason: l }); }
         };
       })

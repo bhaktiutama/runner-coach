@@ -4,78 +4,44 @@
 <meta charset="utf-8">
 <title>Integrasi data</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 body{margin:0}
-a{color:#1D4ED8}a:hover{color:#1E3A8A}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FAFAFA; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 52px 20px 32px; gap: 16px; overflow: hidden">
-  <div style="display: flex; align-items: center; gap: 8px">
-    <a href="Profile.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </a>
-    <h1 style="margin: 0; font-size: 22px; font-weight: 800">Integrasi data</h1>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; gap: 12px"><a href="Profile.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line); text-decoration: none; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span style="flex: 1"></span><span style="width: 44px"></span></div>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Integrasi data</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--text-muted)">Hubungkan jam atau aplikasi supaya latihan tercatat otomatis dan plan menyesuaikan dari data nyata.</p>
   </div>
-  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #52525B">Hubungkan jam atau aplikasi supaya latihan tercatat otomatis dan plan menyesuaikan dari data nyata.</p>
-
-  <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E4E4E7">
-    <div style="display: flex; align-items: center; gap: 12px">
-      <div style="width: 44px; height: 44px; border-radius: 12px; background: #FFEDD5; color: #9A3412; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">STR</div>
-      <div style="flex: 1; display: flex; flex-direction: column">
-        <span style="font-size: 16px; font-weight: 700">Strava</span>
-        <span style="font-size: 12px; color: #15803D; font-weight: 600">Terhubung  ·  sinkron 2 jam lalu</span>
-      </div>
-      <button type="button" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 10px; border: 1.5px solid #E4E4E7; font-size: 13px; font-weight: 700; cursor: pointer">Putuskan</button>
-    </div>
-    <span style="font-size: 12px; color: #52525B">Web, iOS, Android  ·  Aktivitas lari, pace, split, detak jantung</span>
-  </div>
-
-  <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E4E4E7">
-    <div style="display: flex; align-items: center; gap: 12px">
-      <div style="width: 44px; height: 44px; border-radius: 12px; background: #FEE2E2; color: #B91C1C; display: flex; align-items: center; justify-content: center">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8.1 3.3 4.5 6.9 4.5c2 0 3.5 1.1 5.1 3 1.6-1.9 3.1-3 5.1-3 3.6 0 5.9 3.6 4.4 7.2C19.5 16.4 12 21 12 21z"/></svg>
-      </div>
-      <div style="flex: 1; display: flex; flex-direction: column">
-        <span style="font-size: 16px; font-weight: 700">Apple Health</span>
-        <span style="font-size: 12px; color: #52525B">Apple Watch  ·  hanya di app iOS</span>
-      </div>
-      <button type="button" style="all: unset; height: 36px; padding: 0 12px; display: flex; align-items: center; border-radius: 10px; background: #18181B; color: #FFFFFF; font-size: 13px; font-weight: 700; cursor: pointer">Hubungkan</button>
-    </div>
-    <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px solid #F4F4F5">
-      <span style="font-size: 12px; font-weight: 700; color: #52525B; padding-top: 8px">Data yang dibaca (bisa diatur)</span>
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card)"><div style="display: flex; align-items: center; gap: 12px"><div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--primary); color: var(--on-primary); font-size: 12px; font-weight: 800">STR</div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 800">Strava</span><span style="font-size: 13px; font-weight: 600; color: var(--success-ink)">Terhubung  ·  diambil 2 jam lalu</span></div>
+      <a href="Integrations.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 40px; padding: 0 20px; background: var(--surface); color: var(--text); font-size: 15px; box-shadow: inset 0 0 0 1.5px var(--line-strong)">Putuskan</a></div>
+    <span style="font-size: 12px; color: var(--text-muted)">Web, iOS, Android  ·  Aktivitas lari, pace, split, detak jantung</span></div>
+  <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card)"><div style="display: flex; align-items: center; gap: 12px"><div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--status-behind); color: var(--on-primary); font-size: 12px; font-weight: 800"></div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 800">Apple Health</span><span style="font-size: 13px; color: var(--text-muted)">Apple Watch  ·  hanya di app iOS</span></div>
+      <a href="Integrations.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 40px; padding: 0 16px; background: var(--text); color: var(--bg); font-size: 14px">Hubungkan</a></div>
+    <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: var(--radius-md); background: var(--surface-sunken)">
+      <span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Data yang dibaca (bisa diatur)</span>
       <sc-for list="{{perms}}" as="p" hint-placeholder-count="4">
-        <label style="display: flex; align-items: center; justify-content: space-between; min-height: 32px; font-size: 14px; cursor: pointer">{{p.label}}
-          <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: #18181B">
-        </label>
+        <label style="display: flex; align-items: center; justify-content: space-between; min-height: 36px; font-size: 14px; font-weight: 600">{{p.label}}<input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--text)"></label>
       </sc-for>
-    </div>
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; background: #FFFFFF; border: 1px solid #E4E4E7">
-    <div style="width: 44px; height: 44px; border-radius: 12px; background: #DBEAFE; color: #1E40AF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800">HC</div>
-    <div style="flex: 1; display: flex; flex-direction: column">
-      <span style="font-size: 16px; font-weight: 700">Health Connect</span>
-      <span style="font-size: 12px; color: #52525B">Wear OS, Samsung, dll  ·  hanya di app Android</span>
-    </div>
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 18px; border: 1.5px dashed #D4D4D8">
-    <div style="flex: 1; display: flex; flex-direction: column">
-      <span style="font-size: 15px; font-weight: 700; color: #52525B">Garmin, Coros</span>
-      <span style="font-size: 12px; color: #52525B">Segera hadir (fase lanjut)</span>
-    </div>
-  </div>
-
-  <div style="flex: 1"></div>
-  <div style="display: flex; gap: 10px; font-size: 12px; line-height: 1.45; color: #52525B">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    <span>Data kesehatan hanya dipakai untuk plan latihanmu. Tidak dijual, tidak untuk iklan. Bisa dihapus kapan saja.</span>
-  </div>
+    </div></div>
+  <div style="display: flex; flex-direction: column; gap: 16px; padding: 16px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line)"><div style="display: flex; align-items: center; gap: 12px"><div style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--success); color: var(--on-primary); font-size: 12px; font-weight: 800">HC</div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 800">Health Connect</span><span style="font-size: 13px; color: var(--text-muted)">Wear OS, Samsung, dll  ·  hanya di app Android</span></div></div></div>
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 4px; font-size: 14px"><span style="font-weight: 700">Garmin, Coros</span><span style="color: var(--text-muted)">Segera hadir (fase lanjut)</span></div>
+  <div style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: var(--radius-md); background: var(--status-recovery); color: var(--on-status); font-size: 14px; line-height: 1.45"><span style="flex-shrink: 0; display: flex; padding-top: 1px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><span>Data dari integrasi disimpan di HP ini, bukan di server kami. Akses ke Strava disimpan aman di perangkat dan bisa diputus kapan saja.</span></div>
+</div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>

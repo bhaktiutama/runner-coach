@@ -12,7 +12,7 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 | Fitur `F-xx`, scope | `docs/specs/01-PRD.md` |
 | Stack, aturan engine, sinkron | `docs/specs/02-TRD.md` |
 | Langkah per layar, state machine | `docs/specs/03-APP-FLOW.md` |
-| Tata letak layar | `docs/wireframes/png/` (nomor layar 1.1 sampai 4.4) |
+| Tata letak layar | `docs/wireframes/png/` (26 layar, nomor 1.1 sampai 4.6, sudah memakai Lintas) |
 | Warna, tipe, bentuk, komponen | `docs/design-system/tokens.json` + `README.md`; ringkasan di `docs/specs/04-UI-UX.md` |
 | Logo, ikon app, ikon UI | `docs/design-system/assets/` |
 | Tabel lokal (SQLite), file backup, Auth, Edge Functions | `docs/specs/05-BACKEND-SCHEMA.md` |

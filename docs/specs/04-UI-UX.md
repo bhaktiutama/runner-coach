@@ -4,7 +4,7 @@ Status: Draft v0.4 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes
 
 ## Ringkasan
 
-- **Tata letak** mengikuti wireframe per nomor layar. **Warna, tipe, bentuk** mengikuti design system "Lintas" (`docs/design-system/tokens.json`). Wireframe yang masih biru/abu-abu bukan acuan warna.
+- **Tata letak** mengikuti wireframe per nomor layar; wireframe v0.3 sudah memakai Lintas, jadi warnanya juga bisa dijadikan acuan. Nilai pasti tetap dari `docs/design-system/tokens.json`.
 - Ciri khas: intensitas = skala panas, bentuk lintasan (stadium/oval), label bib, latar kertas hangat + tombol oranye bertulisan gelap.
 - Mobile-first (390 x 844). Semua pasangan warna teks lolos WCAG, dicek otomatis.
 
@@ -44,6 +44,7 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | Komponen | Layar |
 |----------|-------|
 | OnboardingHeader (progress 6 lajur) | 1.2-1.7 |
+| AuthButtons (Apple, Google, Email) + PrivacyNote | 1.1, 1.8, 1.9, 4.5 |
 | ChoiceCard | 1.2 |
 | Stepper | 1.5 |
 | DayPicker | 1.6, 3.2 |
@@ -51,7 +52,9 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | BibTag + WorkoutCard | 2.1, 2.2, 3.1 |
 | SegmentBar | 2.2 |
 | TimerDisplay + TrackRing | 2.3 |
-| RpePicker, TagChips | 2.4, 4.3 |
+| DrillStep (nama gerakan, set, cue, tombol Lanjut) | 2.3b |
+| RpePicker, TagChips | 2.4, 2.6, 4.3 |
+| SettingsRow, Switch, DangerButton | 4.1, 4.5, 4.6 |
 | LaneWeek | 2.1, 3.1 |
 | StatusChip | 2.1, 2.5, 3.1 |
 | PhaseBar | 1.8, 3.1 |

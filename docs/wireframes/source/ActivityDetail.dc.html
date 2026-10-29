@@ -4,79 +4,69 @@
 <meta charset="utf-8">
 <title>Detail aktivitas</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 body{margin:0}
-a{color:#1D4ED8}a:hover{color:#1E3A8A}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 52px 20px 32px; gap: 18px; overflow: hidden">
-  <div style="display: flex; align-items: center; justify-content: space-between">
-    <a href="Progress.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </a>
-    <span style="padding: 4px 10px; border-radius: 8px; background: #FFEDD5; color: #9A3412; font-size: 12px; font-weight: 700">Disinkron dari Strava</span>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; gap: 12px"><a href="Progress.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line); text-decoration: none; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span style="flex: 1"></span><span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.5 4.5L20 16M20 20v-4h-4"/></svg>Dari Strava</span></div>
+  <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start">
+    <span style="font-size: 13px; font-weight: 600; color: var(--text-muted)">Selasa, 20 Okt  ·  05:42</span>
+    <div style="display: flex; align-items: center; gap: 10px"><span class="ln-bib ln-bib--tempo"><span class="ln-bib-inner">TEMPO</span></span><h1 style="margin: 0; font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Tempo Run</h1></div>
   </div>
-
-  <div style="display: flex; flex-direction: column; gap: 4px">
-    <span style="font-size: 13px; font-weight: 600; color: #52525B">Selasa, 20 Okt  ·  05:42</span>
-    <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Tempo Run</h1>
-  </div>
-
-  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
-    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Jarak</span><span style="font-size: 22px; font-weight: 800">5,2 km</span></div>
-    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Durasi</span><span style="font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums">38:45</span></div>
-    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Pace rata-rata</span><span style="font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums">7:27 /km</span></div>
-    <div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 14px; background: #F4F4F5"><span style="font-size: 12px; font-weight: 600; color: #52525B">Detak rata-rata</span><span style="font-size: 22px; font-weight: 800">158 bpm</span></div>
-  </div>
-
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Jarak</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800">5,2 km</span></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Durasi</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800">38:45</span></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Pace rata-rata</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800">7:27 /km</span></div><div style="display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Detak rata-rata</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800">158 bpm</span></div></div>
   <div style="display: flex; flex-direction: column; gap: 8px">
-    <span style="font-size: 14px; font-weight: 700">Segmen vs target</span>
-    <div style="display: flex; flex-direction: column; border-radius: 14px; border: 1.5px solid #E4E4E7">
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Segmen vs target</span>
+    <div style="display: flex; flex-direction: column; border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-card)">
       <sc-for list="{{segs}}" as="s" hint-placeholder-count="3">
-        <div style="display: grid; grid-template-columns: 8px 1fr auto auto; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #F4F4F5; font-size: 14px">
-          <span style="width: 8px; height: 8px; border-radius: 4px; background: {{s.color}}"></span>
-          <span>{{s.name}}</span>
-          <span style="color: #52525B; font-size: 13px">{{s.target}}</span>
-          <b style="font-variant-numeric: tabular-nums; color: {{s.okColor}}">{{s.actual}}</b>
+        <div style="display: grid; grid-template-columns: 6px 1fr auto auto; gap: 12px; align-items: center; min-height: 48px; padding: 0 14px; box-shadow: inset 0 -1px 0 var(--line)">
+          <span style="height: 24px; border-radius: var(--radius-stadium); background: {{s.color}}"></span>
+          <span style="font-size: 14px; font-weight: 700">{{s.name}}</span>
+          <span style="font-size: 13px; color: var(--text-muted)">{{s.target}}</span>
+          <b style="display: flex; align-items: center; gap: 4px; font-family: var(--font-display); font-size: 15px; color: var(--success-ink)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>{{s.actual}}</b>
         </div>
       </sc-for>
     </div>
   </div>
-
   <div style="display: flex; flex-direction: column; gap: 8px">
-    <span style="font-size: 14px; font-weight: 700">Split per km</span>
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Split per km</span>
     <sc-for list="{{splits}}" as="k" hint-placeholder-count="5">
-      <div style="display: grid; grid-template-columns: 28px 1fr 44px; align-items: center; gap: 10px; font-size: 13px">
-        <span style="color: #52525B; font-weight: 600">{{k.n}}</span>
-        <div style="height: 14px; border-radius: 4px; width: {{k.w}}; background: {{k.color}}"></div>
-        <b style="text-align: right; font-variant-numeric: tabular-nums">{{k.pace}}</b>
+      <div style="display: grid; grid-template-columns: 44px 1fr 48px; gap: 10px; align-items: center; font-size: 13px">
+        <span style="font-weight: 700; color: var(--text-muted)">{{k.n}}</span>
+        <div style="height: 14px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"><div style="height: 100%; border-radius: var(--radius-stadium); width: {{k.w}}; background: {{k.color}}"></div></div>
+        <b style="font-family: var(--font-display); text-align: right">{{k.pace}}</b>
       </div>
     </sc-for>
   </div>
-
-  <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-radius: 14px; background: #F4F4F5; font-size: 14px">
-    <span>Rasa (RPE)</span>
-    <b>6 / 10: sesuai target</b>
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-radius: var(--radius-md); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line)">
+    <span style="font-size: 14px; font-weight: 700; color: var(--text-muted)">Rasa (RPE)</span>
+    <b style="font-size: 15px">6 / 10: sesuai target</b>
   </div>
+</div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   renderVals() {
-    var splits = [['1', 475, '7:55', '#2563EB'], ['2', 470, '7:50', '#2563EB'], ['3', 408, '6:48', '#F59E0B'], ['4', 402, '6:42', '#F59E0B'], ['5', 472, '7:52', '#2563EB']];
+    var splits = [['1', 475, '7:55', 'easy'], ['2', 470, '7:50', 'easy'], ['3', 408, '6:48', 'tempo'], ['4', 402, '6:42', 'tempo'], ['5', 472, '7:52', 'easy']];
     return {
       segs: [
-        { name: 'Pemanasan', target: 'easy', actual: '7:54', color: '#2563EB', okColor: '#15803D' },
-        { name: 'Tempo', target: '6:45', actual: '6:45', color: '#F59E0B', okColor: '#15803D' },
-        { name: 'Pendinginan', target: 'easy', actual: '7:50', color: '#2563EB', okColor: '#15803D' }
+        { name: 'Pemanasan', target: 'easy', actual: '7:54', color: 'var(--zone-easy)' },
+        { name: 'Tempo', target: '6:45', actual: '6:45', color: 'var(--zone-tempo)' },
+        { name: 'Pendinginan', target: 'easy', actual: '7:50', color: 'var(--zone-easy)' }
       ],
       splits: splits.map(function (s) {
-        return { n: 'km ' + s[0], w: Math.round((520 - s[1]) / 120 * 100) + '%', pace: s[2], color: s[3] };
+        return { n: 'km ' + s[0], w: Math.round((520 - s[1]) / 120 * 100) + '%', pace: s[2], color: 'var(--zone-' + s[3] + ')' };
       })
     };
   }

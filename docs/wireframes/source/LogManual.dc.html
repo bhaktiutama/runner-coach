@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Catat lari</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+<style>
+body{margin:0}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; gap: 12px"><a href="Today.dc.html" aria-label="Tutup" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line); text-decoration: none; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a><span style="flex: 1; text-align: center; font-size: 14px; font-weight: 700; color: var(--text-muted)">Catat lari</span><span style="width: 44px"></span></div>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Lari tanpa timer?</h1>
+    <p style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--text-muted)">Catat di sini supaya plan dan progresmu tetap akurat.</p>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Tanggal</span>
+    <div style="display: flex; gap: 8px"><button type="button" aria-pressed="true" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--text); color: var(--bg); font-size: 14px; font-weight: 700; flex: 1">Hari ini</button><button type="button" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--line); flex: 1">Kemarin</button><button type="button" style="min-height: 44px; padding: 0 16px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--line); flex: 1">Pilih...</button></div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Untuk latihan</span>
+    <button type="button" aria-pressed="true" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 0 16px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); text-align: left; box-shadow: inset 0 0 0 2.5px var(--text)"><span class="ln-bib ln-bib--tempo"><span class="ln-bib-inner">TEMPO</span></span><span style="flex: 1; font-size: 14px; font-weight: 700">Tempo Run, jadwal hari ini</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+    <button type="button" style="display: flex; align-items: center; min-height: 52px; padding: 0 16px; border: 0; border-radius: var(--radius-lg); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; text-align: left; box-shadow: inset 0 0 0 1.5px var(--line)">Lari tambahan (tidak mengubah plan)</button>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-muted)">Jarak (km)<input type="text" value="5,0" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 0; border-radius: var(--radius-sm); background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line-strong); font-family: var(--font-display); font-size: 22px; font-weight: 700"></label><label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-muted)">Durasi<input type="text" value="40:00" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 0; border-radius: var(--radius-sm); background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line-strong); font-family: var(--font-display); font-size: 22px; font-weight: 700"></label></div>
+  <span style="font-size: 14px; font-weight: 600; color: var(--text-muted)">Pace rata-rata: <b style="font-family: var(--font-display); color: var(--text)">8:00 /km</b></span>
+  <div style="display: flex; flex-direction: column; gap: 10px">
+    <span style="font-family: var(--font-display); font-size: 18px; font-weight: 800">Seberapa berat rasanya?</span>
+    <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px">
+      <sc-for list="{{scale}}" as="s" hint-placeholder-count="10">
+        <button type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="height: 48px; border: 0; border-radius: var(--radius-md); font-family: var(--font-display); font-size: 16px; font-weight: 800; cursor: pointer; background: {{s.bg}}; color: {{s.fg}}; box-shadow: {{s.ring}}">{{s.n}}</button>
+      </sc-for>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-muted)"><span>Sangat mudah</span><span>Sedang</span><span>Maksimal</span></div>
+    <span style="font-size: 15px; font-weight: 700">{{rpeText}}</span>
+  </div>
+</div><div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 32px"><a href="Today.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 60px; background: var(--primary); color: var(--on-primary); font-size: 17px; box-shadow: var(--shadow-raised)">Simpan</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { rpe: 6 };
+  }
+  renderVals() {
+    var self = this;
+    var r = this.state.rpe;
+    var text = { 1: 'Seperti jalan santai', 2: 'Sangat ringan', 3: 'Ringan, bisa ngobrol lancar', 4: 'Agak ringan', 5: 'Sedang', 6: 'Sesuai target tempo', 7: 'Berat tapi terkontrol', 8: 'Berat, sulit bicara', 9: 'Sangat berat', 10: 'Maksimal' };
+    var scale = [];
+    for (var i = 1; i <= 10; i++) {
+      (function (n) {
+        var on = n === r;
+        var z = n <= 3 ? 'easy' : n <= 6 ? 'long' : n <= 8 ? 'tempo' : 'interval';
+        scale.push({ n: n, pressed: on ? 'true' : 'false', bg: on ? 'var(--zone-' + z + ')' : 'var(--surface-sunken)', fg: on ? 'var(--on-zone-' + z + ')' : 'var(--text)', ring: on ? 'inset 0 0 0 2px var(--text)' : 'none', pick: function () { self.setState({ rpe: n }); } });
+      })(i);
+    }
+    return { scale: scale, rpeText: r + ' / 10: ' + text[r] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,50 +1,347 @@
 {
-  "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-10-26T09:00:00Z"},
-  "title": "Run Coach Wireframes",
-  "launch": {"view": "canvas"},
-  "pages": [],
-  "boards": {
-    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "1.1 Selamat datang", "is_interactive": true, "radius": 40},
-    "OB2-Target.dc.html": {"x": 470, "y": 0, "w": 390, "h": 844, "title": "1.2 Pilih target", "is_interactive": true, "radius": 40},
-    "OB3-Tanggal.dc.html": {"x": 940, "y": 0, "w": 390, "h": 844, "title": "1.3 Tanggal race", "is_interactive": true, "radius": 40},
-    "OB4-Kemampuan.dc.html": {"x": 1410, "y": 0, "w": 390, "h": 844, "title": "1.4 Kemampuan saat ini", "is_interactive": true, "radius": 40},
-    "OB5-Volume.dc.html": {"x": 1880, "y": 0, "w": 390, "h": 844, "title": "1.5 Volume mingguan", "is_interactive": true, "radius": 40},
-    "OB6-Hari.dc.html": {"x": 2350, "y": 0, "w": 390, "h": 844, "title": "1.6 Hari latihan", "is_interactive": true, "radius": 40},
-    "OB7-Kesehatan.dc.html": {"x": 2820, "y": 0, "w": 390, "h": 844, "title": "1.7 Screening kesehatan", "is_interactive": true, "radius": 40},
-    "OB8-Preview.dc.html": {"x": 3290, "y": 0, "w": 390, "h": 844, "title": "1.8 Preview plan + simpan akun", "is_interactive": true, "radius": 40},
-
-    "Today.dc.html": {"x": 0, "y": 1264, "w": 390, "h": 844, "title": "2.1 Hari ini", "is_interactive": true, "radius": 40},
-    "WorkoutDetail.dc.html": {"x": 470, "y": 1264, "w": 390, "h": 844, "title": "2.2 Detail latihan", "is_interactive": true, "radius": 40},
-    "Timer.dc.html": {"x": 940, "y": 1264, "w": 390, "h": 844, "title": "2.3 Timer berjalan", "is_interactive": true, "radius": 40},
-    "Finish.dc.html": {"x": 1410, "y": 1264, "w": 390, "h": 844, "title": "2.4 Selesai + RPE", "is_interactive": true, "radius": 40},
-    "WeekDone.dc.html": {"x": 1880, "y": 1264, "w": 390, "h": 844, "title": "2.5 Ringkasan minggu + adaptasi", "is_interactive": true, "radius": 40},
-
-    "Plan.dc.html": {"x": 0, "y": 2528, "w": 390, "h": 844, "title": "3.1 Kalender plan", "is_interactive": true, "radius": 40},
-    "MoveWorkout.dc.html": {"x": 470, "y": 2528, "w": 390, "h": 844, "title": "3.2 Pindahkan latihan", "is_interactive": true, "radius": 40},
-    "Progress.dc.html": {"x": 940, "y": 2528, "w": 390, "h": 844, "title": "3.3 Progres", "is_interactive": true, "radius": 40},
-    "ActivityDetail.dc.html": {"x": 1410, "y": 2528, "w": 390, "h": 844, "title": "3.4 Detail aktivitas", "is_interactive": true, "radius": 40},
-
-    "Profile.dc.html": {"x": 0, "y": 3792, "w": 390, "h": 844, "title": "4.1 Profil", "is_interactive": true, "radius": 40},
-    "Integrations.dc.html": {"x": 470, "y": 3792, "w": 390, "h": 844, "title": "4.2 Integrasi data", "is_interactive": true, "radius": 40},
-    "InjuryPause.dc.html": {"x": 940, "y": 3792, "w": 390, "h": 844, "title": "4.3 Jeda plan (cedera/sakit)", "is_interactive": true, "radius": 40},
-    "Paywall.dc.html": {"x": 1410, "y": 3792, "w": 390, "h": 844, "title": "4.4 Premium (fase 3)", "is_interactive": true, "radius": 40}
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-10-26T09:00:00Z"
+ },
+ "title": "Run Coach Wireframes",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.1 Selamat datang",
+   "is_interactive": true,
+   "radius": 40
   },
-  "order": [
-    "Main.dc.html", "OB2-Target.dc.html", "OB3-Tanggal.dc.html", "OB4-Kemampuan.dc.html", "OB5-Volume.dc.html", "OB6-Hari.dc.html", "OB7-Kesehatan.dc.html", "OB8-Preview.dc.html",
-    "Today.dc.html", "WorkoutDetail.dc.html", "Timer.dc.html", "Finish.dc.html", "WeekDone.dc.html",
-    "Plan.dc.html", "MoveWorkout.dc.html", "Progress.dc.html", "ActivityDetail.dc.html",
-    "Profile.dc.html", "Integrations.dc.html", "InjuryPause.dc.html", "Paywall.dc.html"
-  ],
-  "notes": {
-    "t1": {"x": 0, "y": -300, "text": "1. Onboarding: dari buka app sampai plan jadi", "kind": "title1", "maxW": 3680},
-    "s1": {"x": -560, "y": 0, "w": 460, "fill": "teal", "size": "m", "text": "Journey 1: Onboarding\n\nTujuan: plan personal jadi dalam < 2 menit, tanpa wajib login di awal.\n\nSelamat datang -> 6 pertanyaan (target, tanggal race, kemampuan, volume, hari, kesehatan) -> preview plan -> simpan dengan akun Apple/Google/Email -> Hari ini.\n\nAkun diminta di akhir, setelah pengguna melihat nilai plan-nya."},
-    "t2": {"x": 0, "y": 964, "text": "2. Latihan harian: buka app, lari, catat", "kind": "title1", "maxW": 2270},
-    "s2": {"x": -560, "y": 1264, "w": 460, "fill": "orange", "size": "m", "text": "Journey 2: Latihan harian (loop utama)\n\nHari ini -> (opsional) detail -> Mulai -> timer dengan audio cue per segmen -> selesai -> RPE 1 tap -> simpan.\n\nSetelah latihan terakhir di minggu itu: ringkasan minggu + penyesuaian plan otomatis.\n\nTarget: dari buka app sampai timer jalan = 1 tap."},
-    "t3": {"x": 0, "y": 2228, "text": "3. Plan & progres", "kind": "title1", "maxW": 1800},
-    "s3": {"x": -560, "y": 2528, "w": 460, "fill": "blue", "size": "m", "text": "Journey 3: Atur jadwal & lihat kemajuan\n\nPlan: kalender minggu, fase Base/Build/Peak/Taper, geser latihan dengan cek aturan (tidak ada 2 sesi berat berturut-turut).\n\nProgres: 3 grafik inti (volume, tren pace easy run, kepatuhan plan) + rekor & prediksi race. Tap aktivitas -> detail split vs target."},
-    "t4": {"x": 0, "y": 3492, "text": "4. Profil, integrasi, jeda & Premium", "kind": "title1", "maxW": 1800},
-    "s4": {"x": -560, "y": 3792, "w": 460, "fill": "purple", "size": "m", "text": "Journey 4: Pengaturan & kasus khusus\n\nIntegrasi: Strava (semua platform), Apple Health (iOS), Health Connect (Android).\n\nJeda plan saat cedera/sakit -> kembali via minggu 'Return to run'.\n\nPaywall Premium baru muncul di fase 3. Harga = placeholder sampai hasil survey Van Westendorp."}
+  "OB2-Target.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.2 Pilih target",
+   "is_interactive": true,
+   "radius": 40
   },
-  "designSystems": []
+  "OB3-Tanggal.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.3 Tanggal race",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "OB4-Kemampuan.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.4 Kemampuan saat ini",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "OB5-Volume.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.5 Volume mingguan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "OB6-Hari.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.6 Hari latihan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "OB7-Kesehatan.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.7 Screening kesehatan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "OB8-Preview.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.8 Preview plan + buat akun",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "OB9-Masuk.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1.9 Masuk (akun lama / HP baru)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Today.dc.html": {
+   "x": 0,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.1 Hari ini",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "WorkoutDetail.dc.html": {
+   "x": 470,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.2 Detail latihan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Timer.dc.html": {
+   "x": 940,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.3 Timer berjalan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "TimerDrill.dc.html": {
+   "x": 1410,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.3b Timer: segmen drill",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Finish.dc.html": {
+   "x": 1880,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.4 Selesai + RPE",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "WeekDone.dc.html": {
+   "x": 2350,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.5 Ringkasan minggu + adaptasi",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "LogManual.dc.html": {
+   "x": 2820,
+   "y": 1264,
+   "w": 390,
+   "h": 844,
+   "title": "2.6 Catat lari manual",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Plan.dc.html": {
+   "x": 0,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "3.1 Kalender plan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "MoveWorkout.dc.html": {
+   "x": 470,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "3.2 Pindahkan latihan",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Progress.dc.html": {
+   "x": 940,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "3.3 Progres",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "ActivityDetail.dc.html": {
+   "x": 1410,
+   "y": 2528,
+   "w": 390,
+   "h": 844,
+   "title": "3.4 Detail aktivitas",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Profile.dc.html": {
+   "x": 0,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "4.1 Profil",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Integrations.dc.html": {
+   "x": 470,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "4.2 Integrasi data (fase 2)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "InjuryPause.dc.html": {
+   "x": 940,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "4.3 Jeda plan (cedera/sakit)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "Paywall.dc.html": {
+   "x": 1410,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "4.4 Premium (fase 3)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "DataPrivacy.dc.html": {
+   "x": 1880,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "4.5 Data & privasi",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "DeleteAccount.dc.html": {
+   "x": 2350,
+   "y": 3792,
+   "w": 390,
+   "h": 844,
+   "title": "4.6 Hapus akun",
+   "is_interactive": true,
+   "radius": 40
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "OB2-Target.dc.html",
+  "OB3-Tanggal.dc.html",
+  "OB4-Kemampuan.dc.html",
+  "OB5-Volume.dc.html",
+  "OB6-Hari.dc.html",
+  "OB7-Kesehatan.dc.html",
+  "OB8-Preview.dc.html",
+  "OB9-Masuk.dc.html",
+  "Today.dc.html",
+  "WorkoutDetail.dc.html",
+  "Timer.dc.html",
+  "TimerDrill.dc.html",
+  "Finish.dc.html",
+  "WeekDone.dc.html",
+  "LogManual.dc.html",
+  "Plan.dc.html",
+  "MoveWorkout.dc.html",
+  "Progress.dc.html",
+  "ActivityDetail.dc.html",
+  "Profile.dc.html",
+  "Integrations.dc.html",
+  "InjuryPause.dc.html",
+  "Paywall.dc.html",
+  "DataPrivacy.dc.html",
+  "DeleteAccount.dc.html"
+ ],
+ "notes": {
+  "t1": {
+   "x": 0,
+   "y": -300,
+   "text": "1. Onboarding: dari buka app sampai plan jadi",
+   "kind": "title1",
+   "maxW": 4150
+  },
+  "s1": {
+   "x": -560,
+   "y": 0,
+   "w": 460,
+   "fill": "teal",
+   "size": "m",
+   "text": "Journey 1: Onboarding\n\nTujuan: plan personal jadi dalam < 2 menit, tanpa wajib login di awal.\n\nSelamat datang -> 6 pertanyaan (target, tanggal race, kemampuan, volume, hari, kesehatan) -> preview plan -> buat akun Apple/Google/Email -> Hari ini.\n\nPrivasi: semua jawaban dan plan tersimpan di HP. Akun hanya untuk masuk. HP baru: 1.9 lalu pulihkan dari file backup."
+  },
+  "t2": {
+   "x": 0,
+   "y": 964,
+   "text": "2. Latihan harian: buka app, lari, catat",
+   "kind": "title1",
+   "maxW": 3210
+  },
+  "s2": {
+   "x": -560,
+   "y": 1264,
+   "w": 460,
+   "fill": "orange",
+   "size": "m",
+   "text": "Journey 2: Latihan harian (loop utama)\n\nHari ini -> (opsional) detail -> Mulai -> timer dengan audio cue per segmen (drill ABC: tombol Lanjut per set) -> selesai -> RPE 1 tap -> simpan.\n\nLari tanpa timer: Catat lari manual (2.6).\n\nSetelah latihan terakhir di minggu itu: ringkasan minggu + usulan penyesuaian plan.\n\nTarget: dari buka app sampai timer jalan = 1 tap."
+  },
+  "t3": {
+   "x": 0,
+   "y": 2228,
+   "text": "3. Plan & progres",
+   "kind": "title1",
+   "maxW": 1800
+  },
+  "s3": {
+   "x": -560,
+   "y": 2528,
+   "w": 460,
+   "fill": "blue",
+   "size": "m",
+   "text": "Journey 3: Atur jadwal & lihat kemajuan\n\nPlan: kalender minggu, fase Base/Build/Peak/Taper, geser latihan dengan cek aturan (tidak ada 2 sesi berat berturut-turut).\n\nProgres: 3 grafik inti (volume, tren pace easy run, kepatuhan plan) + prediksi race. Tap aktivitas -> detail split vs target."
+  },
+  "t4": {
+   "x": 0,
+   "y": 3492,
+   "text": "4. Profil, privasi, integrasi, jeda & Premium",
+   "kind": "title1",
+   "maxW": 2740
+  },
+  "s4": {
+   "x": -560,
+   "y": 3792,
+   "w": 460,
+   "fill": "purple",
+   "size": "m",
+   "text": "Journey 4: Pengaturan & kasus khusus\n\nData & privasi (4.5): data ada di HP ini, backup ke file, pulihkan, data anonim, keluar, hapus akun (4.6).\n\nIntegrasi (fase 2): Strava, Apple Health, Health Connect; hasilnya tetap di HP.\n\nJeda plan saat cedera/sakit -> kembali via minggu 'Return to run'.\n\nPaywall Premium baru muncul di fase 3. Harga = placeholder."
+  }
+ },
+ "designSystems": [
+  {
+   "title": "Lintas",
+   "namespace": "lintas",
+   "artifact": "https://claude.ai/artifact/3W87Kuo9E1X7eZFNDjc5j2",
+   "version": "1793255571-ddfc",
+   "copiedAt": "2026-10-29T09:00:00Z"
+  }
+ ]
 }

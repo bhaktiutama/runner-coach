@@ -1,5 +1,6 @@
 // Render Design-canvas .dc.html artboards to PNG with a minimal stand-in for the
-// canvas runtime: supports {{path}} holes, <sc-for>, <sc-if>, initial state.
+// canvas runtime: supports {{path}} holes, <sc-for>, <sc-if>, initial state, and
+// stylesheets under ds/ (inlined from disk; fonts must be installed locally).
 // Usage: node docs/wireframes/render.js <sourceDir> <outDir> <name.dc.html=out.png> ...
 const fs = require('fs');
 const path = require('path');
@@ -61,6 +62,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const [name, png] = pair.split('=');
     let html = fs.readFileSync(path.join(projectDir, name), 'utf8');
     html = html.replace('<script src="./support.js"></script>', SHIM);
+    // Inline the design-system stylesheets copied into the canvas (ds/<folder>/...).
+    html = html.replace(/<link rel="stylesheet" href="(ds\/[^"]+)">/g, (_, href) => `<style>${fs.readFileSync(path.join(projectDir, href), 'utf8')}</style>`);
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('body[data-rendered="1"]', { state: 'attached', timeout: 5000 });
     await page.evaluate(() => document.fonts.ready);

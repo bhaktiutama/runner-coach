@@ -4,68 +4,49 @@
 <meta charset="utf-8">
 <title>Detail latihan</title>
 <script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
 </head>
 <body>
 <x-dc>
 <helmet>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
 <style>
 body{margin:0}
-a{color:#1D4ED8}a:hover{color:#1E3A8A}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
 </style>
 </helmet>
-<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #FFFFFF; color: #18181B; font-family: Inter, system-ui, sans-serif; padding: 52px 20px 32px; gap: 20px; overflow: hidden">
-  <div style="display: flex; align-items: center; justify-content: space-between">
-    <a href="Today.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #18181B; margin-left: -10px">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </a>
-    <span style="font-size: 14px; font-weight: 600; color: #52525B">Selasa, 27 Okt</span>
-    <span style="width: 44px"></span>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; gap: 12px"><a href="Today.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; flex-shrink: 0; border: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface); color: var(--text); box-shadow: inset 0 0 0 1.5px var(--line); text-decoration: none; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a><span style="flex: 1; text-align: center; font-size: 14px; font-weight: 700; color: var(--text-muted)">Selasa, 27 Okt</span><span style="width: 44px"></span></div>
+  <div style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start">
+    <span class="ln-bib ln-bib--tempo"><span class="ln-bib-inner">TEMPO</span></span>
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Tempo Run 42 menit</h1>
   </div>
-
   <div style="display: flex; flex-direction: column; gap: 8px">
-    <span style="align-self: flex-start; padding: 5px 10px; border-radius: 8px; background: #FEF3C7; color: #92400E; font-size: 12px; font-weight: 800; letter-spacing: 0.06em">TEMPO</span>
-    <h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em">Tempo Run 38 menit</h1>
-  </div>
-
-  <div style="display: flex; flex-direction: column; gap: 8px">
-    <span style="font-size: 13px; font-weight: 700; color: #52525B">Intensitas sepanjang latihan</span>
-    <div style="display: flex; align-items: flex-end; gap: 3px; height: 72px" role="img" aria-label="Intensitas: 12 menit rendah, 14 menit tinggi, 12 menit rendah">
-      <div style="flex: 12; height: 35%; border-radius: 8px 8px 4px 4px; background: #2563EB"></div>
-      <div style="flex: 14; height: 100%; border-radius: 8px 8px 4px 4px; background: #F59E0B"></div>
-      <div style="flex: 12; height: 35%; border-radius: 8px 8px 4px 4px; background: #2563EB"></div>
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Intensitas sepanjang latihan</span>
+    <div role="img" aria-label="Intensitas: 10 menit rendah, 8 menit drill, 14 menit tinggi, 10 menit rendah" style="display: flex; gap: 3px; align-items: flex-end; height: 64px">
+      <div style="flex: 10; height: 30%; border-radius: 8px 8px 4px 4px; background: var(--zone-easy)"></div>
+      <div style="flex: 8; height: 45%; border-radius: 8px 8px 4px 4px; background: repeating-linear-gradient(135deg, var(--zone-easy) 0 5px, var(--surface) 5px 8px)"></div>
+      <div style="flex: 14; height: 100%; border-radius: 8px 8px 4px 4px; background: var(--zone-tempo)"></div>
+      <div style="flex: 10; height: 30%; border-radius: 8px 8px 4px 4px; background: var(--zone-easy)"></div>
     </div>
-    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #71717A; font-weight: 600"><span>0</span><span>12</span><span>26</span><span>38 mnt</span></div>
+    <div style="display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 12px; color: var(--text-muted)"><span>0</span><span>10</span><span>18</span><span>32</span><span>42 mnt</span></div>
   </div>
-
-  <div style="display: flex; flex-direction: column; border-radius: 16px; border: 1.5px solid #E4E4E7">
-    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #E4E4E7; font-size: 14px"><span>1. Pemanasan</span><span style="color: #52525B">12:00</span><b style="width: 92px; text-align: right">Easy</b></div>
-    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 14px 16px; border-bottom: 1px solid #E4E4E7; font-size: 14px; background: #FFFBEB"><span style="font-weight: 700">2. Tempo</span><span style="color: #52525B">14:00</span><b style="width: 92px; text-align: right">6:45 /km</b></div>
-    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 14px 16px; font-size: 14px"><span>3. Pendinginan</span><span style="color: #52525B">12:00</span><b style="width: 92px; text-align: right">Easy</b></div>
+  <div style="display: flex; flex-direction: column">
+    <div style="display: grid; grid-template-columns: 6px 1fr auto auto; gap: 12px; align-items: center; min-height: 48px; padding: 6px 0; box-shadow: inset 0 -1px 0 var(--line)"><span style="align-self: stretch; border-radius: var(--radius-stadium); background: var(--zone-easy)"></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">1. Pemanasan</span></span><span style="font-family: var(--font-display); font-size: 15px; color: var(--text-muted)">10:00</span><b style="font-family: var(--font-display); font-size: 15px; min-width: 72px; text-align: right">Easy</b></div>
+    <div style="display: grid; grid-template-columns: 6px 1fr auto auto; gap: 12px; align-items: center; min-height: 48px; padding: 6px 0; box-shadow: inset 0 -1px 0 var(--line)"><span style="align-self: stretch; border-radius: var(--radius-stadium); background: repeating-linear-gradient(135deg, var(--zone-easy) 0 5px, var(--surface) 5px 8px)"></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">2. Drill ABC</span><span style="font-size: 12px; font-weight: 600; color: var(--text-muted)">A-skip, B-skip, C-skip</span></span><span style="font-family: var(--font-display); font-size: 15px; color: var(--text-muted)">8 mnt</span><b style="font-family: var(--font-display); font-size: 15px; min-width: 72px; text-align: right">2 x 20 m</b></div>
+    <div style="display: grid; grid-template-columns: 6px 1fr auto auto; gap: 12px; align-items: center; min-height: 48px; padding: 6px 0; box-shadow: inset 0 -1px 0 var(--line)"><span style="align-self: stretch; border-radius: var(--radius-stadium); background: var(--zone-tempo)"></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">3. Tempo</span></span><span style="font-family: var(--font-display); font-size: 15px; color: var(--text-muted)">14:00</span><b style="font-family: var(--font-display); font-size: 15px; min-width: 72px; text-align: right">6:45 /km</b></div>
+    <div style="display: grid; grid-template-columns: 6px 1fr auto auto; gap: 12px; align-items: center; min-height: 48px; padding: 6px 0; box-shadow: inset 0 -1px 0 var(--line)"><span style="align-self: stretch; border-radius: var(--radius-stadium); background: var(--zone-easy)"></span><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">4. Pendinginan</span></span><span style="font-family: var(--font-display); font-size: 15px; color: var(--text-muted)">10:00</span><b style="font-family: var(--font-display); font-size: 15px; min-width: 72px; text-align: right">Easy</b></div>
   </div>
-
-  <div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 16px; background: #F4F4F5">
-    <span style="font-size: 14px; font-weight: 700">Kenapa latihan ini?</span>
-    <span style="font-size: 14px; line-height: 1.5; color: #3F3F46">Melatih tubuh bertahan di pace "nyaman tapi berat". Kamu masih bisa bicara 2-3 kata, tidak bisa ngobrol panjang. Rasa: 6-7 dari 10.</span>
-  </div>
-
-  <div style="display: flex; flex-direction: column; gap: 8px">
-    <span style="font-size: 13px; font-weight: 700; color: #52525B">Panduan intensitas di timer</span>
-    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #F4F4F5">
-      <button type="button" aria-pressed="true" style="all: unset; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #FFFFFF; font-size: 13px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.12); cursor: pointer">Pace</button>
-      <button type="button" style="all: unset; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #52525B; cursor: pointer">Detak jantung</button>
-      <button type="button" style="all: unset; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #52525B; cursor: pointer">Rasa (RPE)</button>
-    </div>
-  </div>
-
-  <div style="flex: 1"></div>
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line)"><span style="font-family: var(--font-display); font-size: 17px; font-weight: 800">Kenapa latihan ini?</span>
+    <span style="font-size: 14px; line-height: 1.5; color: var(--text-muted)">Melatih tubuh bertahan di pace "nyaman tapi berat". Kamu masih bisa bicara 2-3 kata, tidak bisa ngobrol panjang. Rasa: 6-7 dari 10. Drill ABC sebelumnya membangunkan otot dan merapikan langkah.</span></div>
   <div style="display: flex; flex-direction: column; gap: 10px">
-    <a href="Timer.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 16px; background: #18181B; color: #FFFFFF; font-size: 17px; font-weight: 800; text-decoration: none">Mulai latihan</a>
-    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
-      <a href="MoveWorkout.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 14px; border: 1.5px solid #D4D4D8; color: #18181B; font-size: 14px; font-weight: 700; text-decoration: none">Pindah hari</a>
-      <a href="Today.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; border-radius: 14px; border: 1.5px solid #D4D4D8; color: #18181B; font-size: 14px; font-weight: 700; text-decoration: none">Ganti jadi easy</a>
-    </div>
+    <span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Panduan intensitas di timer</span>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"><button type="button" aria-pressed="true" style="min-height: 40px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: var(--shadow-card)">Pace</button><button type="button" style="min-height: 40px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; white-space: nowrap">Detak jantung</button><button type="button" style="min-height: 40px; padding: 0 6px; border: 0; border-radius: var(--radius-stadium); background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 600; white-space: nowrap">Rasa (RPE)</button></div>
   </div>
+</div><div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 32px"><a href="Timer.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 60px; background: var(--primary); color: var(--on-primary); font-size: 17px; box-shadow: var(--shadow-raised)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.7l-12-7.5A1 1 0 0 0 7 4.5z" fill="currentColor"/></svg>Mulai latihan</a><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><a href="MoveWorkout.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 48px; padding: 0 20px; background: var(--surface); color: var(--text); font-size: 15px; box-shadow: inset 0 0 0 1.5px var(--line-strong)">Pindah hari</a><a href="Today.dc.html" style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-family: var(--font-ui); font-weight: 700; box-sizing: border-box; height: 48px; padding: 0 20px; background: var(--surface); color: var(--text); font-size: 15px; box-shadow: inset 0 0 0 1.5px var(--line-strong)">Ganti jadi easy</a></div></div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
