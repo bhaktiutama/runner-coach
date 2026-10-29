@@ -71,3 +71,7 @@ Wireframe di `docs/wireframes/` dibuat sebelum design system ini (masih biru/abu
 ## 6. Font di app
 
 Expo: paket `@expo-google-fonts/bricolage-grotesque` dan `@expo-google-fonts/plus-jakarta-sans` (dimuat saat start, tanpa koneksi setelah build). Lisensi keduanya SIL Open Font License (cek ulang saat setup).
+
+## 7. Aset (logo, ikon app, ikon)
+
+Ada di [`assets/`](assets/README.md): logo mark lintasan + wordmark, ikon app iOS/Android/web, splash, dan 40 ikon garis 24 px. Karakter animasi latihan belum ada (lihat bagian "Belum ada" di sana).
