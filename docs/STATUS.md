@@ -12,8 +12,8 @@ Terakhir diperbarui: 2026-10-29
 | M1 Fondasi | Selesai (sebagian menunggu B2/B5) | Login Apple/Google/Email ada di kode; Google/Apple butuh B2, kode email butuh B5. Belum dicek di HP |
 | M2 Engine | Selesai | 2.294 test (5 target x 4 profil x 3-6 hari x mode ringan), coverage baris 99,6%. Keputusan angka: 07 bagian 7 |
 | M3 Onboarding, Hari ini, Plan | Selesai (web) | 1.1-1.9, 2.1, 2.2, 3.1, 3.2 sesuai wireframe (dicek screenshot). E2E: onboarding -> Hari ini, reload, pindah hari; 0 request ke luar localhost. Pulihkan dari file (1.9) menunggu M6 |
-| M4 Timer | Belum mulai | Uji layar terkunci butuh HP fisik |
-| M5 Feedback, Progres | Belum mulai | |
+| M4 Timer | Selesai (perlu device) | 2.3 + 2.3b, state machine dari timestamp (8 test), suara + getar, notifikasi lokal terjadwal per segmen, izin saat Mulai pertama, lanjut setelah app ditutup. Uji layar terkunci iOS/Android = B3 |
+| M5 Feedback, Progres | Selesai (web) | 2.4, 2.6, 3.3, 3.4. E2E 2.1 -> 2.3 -> 2.4 -> 3.3 -> 3.4 lulus. Split per km dan detak jantung hanya tampil jika ada data (fase 2), tidak dikarang |
 | M6 Privasi, Akun | Belum mulai | |
 | M7 Rilis beta | Di luar jangkauan agent | Butuh akun Apple/Google + keputusan pemilik |
 
@@ -33,6 +33,8 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 |---|---|---|---|
 | 2026-10-29 | M1 | Monorepo pnpm, Expo SDK 58 + Router, 4 tab, tokens.ts dari tokens.json, format.ts id-ID, migrasi SQLite v1-v4, klien Supabase (Auth saja), ESLint larangan teks literal JSX, CI GitHub Actions | lint OK, typecheck OK, unit 11/11, E2E smoke 1/1, privacy (schema public kosong) 1/1 |
 | 2026-10-29 | M3 | Onboarding 1.1-1.7 (draft lokal bisa dilanjutkan), 1.8 preview + Kenapa plan ini, 1.9 masuk, 2.1 Hari ini, 2.2 detail + ganti jadi easy, 3.1 kalender, 3.2 pindah/gabung/lewati. Fix engine: race Senin/Selasa | unit 2.323/2.323, E2E 4/4, lint + typecheck OK |
+| 2026-10-29 | M4 | Timer 2.3/2.3b: hitung mundur, jeda/lanjut, lewati, kunci layar, drill per set, cue suara+getar, notifikasi terjadwal, keep-awake/Wake Lock, lanjut setelah app ditutup. Bug ditemukan E2E: hitung mundur tertahan (diperbaiki) | timer 8/8 |
+| 2026-10-29 | M5 | 2.4 Selesai+RPE+tag, 2.6 log manual (dicocokkan ke latihan hari itu), 3.3 Progres (volume, tren pace easy, kepatuhan, prediksi), 3.4 detail. Tanggal lokal per zona waktu profil | unit 2.340/2.340, E2E 6/6 |
 
 ## Blocker dan butuh dari pemilik
 

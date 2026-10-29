@@ -44,6 +44,9 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | owner_id | uuid null | `auth.uid()` setelah login (TRD 3.4); null sebelum login |
 | last_backup_at | timestamptz null | Untuk pengingat backup |
 | analytics_opt_in | boolean default true | Sakelar di 4.5 |
+| backup_reminder_dismissed | boolean default false | Pengingat backup 30 hari dimatikan (4.5) |
+| onboarding_draft | json null | Jawaban onboarding 1.2-1.6 yang belum selesai (FL-1: lanjut dari langkah terakhir). Tanpa jawaban screening. Null setelah login di 1.8 |
+| active_timer | json null | State timer yang sedang berjalan/selesai belum disimpan (2.3 -> 2.4), untuk melanjutkan setelah app ditutup sistem (FL-2). Null setelah Simpan/batal. Tidak ikut file backup |
 
 ### profile (1 baris)
 

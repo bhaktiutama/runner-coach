@@ -6,6 +6,7 @@ import { Screen } from '@/components/Screen';
 import { useActivePlan, useCompleteSignIn, useMeta, useSaveDraft } from '@/data/hooks';
 import { emptyDraft } from '@/data/onboarding';
 import { t } from '@/i18n/t';
+import { startFresh } from '@/lib/nav';
 
 /** 1.9 Masuk (akun lama / HP baru), FL-9 + TRD 3.4. */
 export default function SignIn() {
@@ -23,7 +24,7 @@ export default function SignIn() {
       return setState('empty');
     }
     await complete.mutateAsync(uid);
-    router.replace('/');
+    startFresh();
   };
 
   return (

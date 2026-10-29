@@ -12,8 +12,9 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as auth from '@/auth/service';
 import { getDb } from '@/db/client';
-import { localDate } from '@/lib/today';
+import { localDate, localDateOf } from '@/lib/today';
 import { draftToPlanInput, parseDraft, type Draft } from './onboarding';
+import * as acts from './activities';
 import * as repo from './repo';
 
 // Hook data untuk komponen (TRD 2 aturan 2): komponen tidak memanggil SQLite/Supabase langsung.
@@ -147,10 +148,20 @@ export function useSession() {
 
 export { auth };
 
+/** Jarak aktivitas (meter) di rentang tanggal lokal [from, to]. */
 export function useActivityDistance(from: string, to: string) {
+  const tz = useProfile().data?.timezone ?? 'Asia/Jakarta';
   return useQuery({
-    queryKey: ['activityDistance', from, to],
-    queryFn: async () => repo.activityDistance(await getDb(), from, to),
+    queryKey: ['activityDistance', from, to, tz],
+    queryFn: async () => {
+      const list = await acts.listActivities(await getDb(), { from: addDays(from, -1) });
+      return list
+        .filter((a) => {
+          const d = localDateOf(a.started_at, tz);
+          return d >= from && d <= to;
+        })
+        .reduce((s, a) => s + (a.distance_m ?? 0), 0);
+    },
   });
 }
 
@@ -218,5 +229,80 @@ export function useLongest30(date: string, fallbackM: number) {
   return useQuery({
     queryKey: ['longest30', date, fallbackM],
     queryFn: async () => repo.longestRun30(await getDb(), date, fallbackM),
+  });
+}
+
+// ---- Aktivitas (M5) ----
+
+/** Aktivitas + tanggal lokal (profile.timezone). */
+export function useActivities(from?: string) {
+  const tz = useProfile().data?.timezone ?? 'Asia/Jakarta';
+  return useQuery({
+    queryKey: ['activities', from, tz],
+    queryFn: async () =>
+      (await acts.listActivities(await getDb(), { from: from ? addDays(from, -1) : undefined }))
+        .map((a) => ({ ...a, date: localDateOf(a.started_at, tz) }))
+        .filter((a) => !from || a.date >= from),
+  });
+}
+
+export function useActivity(id: string | undefined) {
+  return useQuery({
+    queryKey: ['activity', id],
+    enabled: !!id,
+    queryFn: async () => acts.getActivity(await getDb(), id!),
+  });
+}
+
+export function useMatchWorkout(date: string) {
+  return useQuery({ queryKey: ['match', date], queryFn: async () => acts.matchWorkout(await getDb(), date) });
+}
+
+export function useWorkoutStatuses(planId: string | undefined) {
+  return useQuery({
+    queryKey: ['statuses', planId],
+    enabled: !!planId,
+    queryFn: async () => acts.workoutStatuses(await getDb(), planId!),
+  });
+}
+
+export function useActiveTimer() {
+  return useQuery({ queryKey: ['activeTimer'], queryFn: async () => repo.getActiveTimer(await getDb()) });
+}
+
+/** Simpan aktivitas (2.4 / 2.6). Mengembalikan apakah minggu itu kini selesai (-> 2.5). */
+export function useSaveActivity() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (a: acts.NewActivity & { clearTimer?: boolean }) => {
+      const db = await getDb();
+      const id = await acts.saveActivity(db, a);
+      if (a.clearTimer) await repo.setActiveTimer(db, null);
+      let weekDone = false;
+      if (a.plannedWorkoutId) {
+        const w = await repo.getWorkout(db, a.plannedWorkoutId);
+        if (w) {
+          const m = mondayOf(w.date);
+          weekDone = await acts.weekFinished(db, w.plan_id, m, addDays(m, 6));
+        }
+      }
+      return { id, weekDone };
+    },
+    onSuccess: async () => {
+      await invalidatePlanData(qc);
+      await Promise.all(
+        ['activities', 'activity', 'match', 'statuses', 'activityDistance', 'activeTimer', 'longest30'].map(
+          (k) => qc.invalidateQueries({ queryKey: [k] }),
+        ),
+      );
+    },
+  });
+}
+
+export function useDiscardTimer() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => repo.setActiveTimer(await getDb(), null),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['activeTimer'] }),
   });
 }

@@ -8,3 +8,6 @@ export * from './components/Card';
 export * from './components/BibTag';
 export * from './components/Controls';
 export * from './components/Plan';
+export * from './components/TrackRing';
+export * from './components/Feedback';
+export * from './components/LineTrend';

@@ -9,6 +9,7 @@ export type MetaRow = {
   analytics_opt_in: number;
   backup_reminder_dismissed: number;
   onboarding_draft: string | null;
+  active_timer: string | null;
 };
 
 export type ProfileRow = {

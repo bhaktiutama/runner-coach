@@ -7,7 +7,6 @@ import {
   formatPaceRange,
   formatRaceTime,
 } from '@run-coach/ui/format';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import { AuthPanel } from '@/components/AuthPanel';
@@ -16,6 +15,7 @@ import { Screen } from '@/components/Screen';
 import { useActivePlan, useCompleteSignIn } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t } from '@/i18n/t';
+import { startFresh } from '@/lib/nav';
 import { et } from '@/lib/rationale';
 
 /** 1.8 Preview plan + buat akun. Login tidak mengirim data plan (data tetap lokal). */
@@ -122,7 +122,7 @@ export default function Preview() {
           variant="create"
           onSignedIn={async (uid) => {
             await complete.mutateAsync(uid);
-            router.replace('/');
+            startFresh();
           }}
         />
       </View>

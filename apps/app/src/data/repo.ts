@@ -238,11 +238,16 @@ export async function longestRun30(db: Db, date: string, fallbackM: number): Pro
   return Math.max(a?.m ?? 0, w?.m ?? 0, fallbackM);
 }
 
-/** Jarak aktivitas (meter) di rentang tanggal lokal [from, to]. */
-export async function activityDistance(db: Db, from: string, to: string): Promise<number> {
-  const r = await db.getFirstAsync<{ m: number | null }>(
-    'SELECT sum(distance_m) m FROM activities WHERE substr(started_at, 1, 10) >= ? AND substr(started_at, 1, 10) <= ?',
-    [from, to],
+export async function getActiveTimer(db: Db): Promise<string | null> {
+  return (
+    (
+      await db.getFirstAsync<{ active_timer: string | null }>(
+        'SELECT active_timer FROM app_meta WHERE id = 1',
+      )
+    )?.active_timer ?? null
   );
-  return r?.m ?? 0;
+}
+
+export async function setActiveTimer(db: Db, json: string | null): Promise<void> {
+  await db.runAsync('UPDATE app_meta SET active_timer = ? WHERE id = 1', [json]);
 }
