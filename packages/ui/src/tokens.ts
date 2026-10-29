@@ -472,6 +472,72 @@ export const tokens = {
       "fontWeight": 800,
       "lineHeight": 1.2,
       "letterSpacing": "0"
+    },
+    "numberLg": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 56,
+      "fontWeight": 800,
+      "lineHeight": 1,
+      "letterSpacing": "-0.03em"
+    },
+    "badge": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 13,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "numberRow": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 15,
+      "fontWeight": 500,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "numberRowStrong": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 15,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "axis": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 12,
+      "fontWeight": 500,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "tab": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 12,
+      "fontWeight": 600,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
     }
   },
   "space": {

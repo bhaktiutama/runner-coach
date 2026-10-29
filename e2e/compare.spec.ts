@@ -10,6 +10,7 @@ const shot = (page: Page, name: string) => page.screenshot({ path: `${dir}/${nam
 const next = (page: Page, step: string) => page.getByTestId(`screen-${step}`).getByTestId('next').click();
 
 test('onboarding', async ({ page }) => {
+  test.setTimeout(180_000);
   await page.goto('/');
   await page.getByTestId('screen-welcome').waitFor();
   await page.waitForTimeout(300);
@@ -42,4 +43,33 @@ test('onboarding', async ({ page }) => {
   await next(page, 'health');
   await page.getByTestId('screen-preview').waitFor();
   await shot(page, '1-8-preview-plan');
+  await page.getByTestId('auth-skip').click();
+  await page.getByTestId('screen-today').waitFor();
+  await page.waitForTimeout(300);
+  await shot(page, '2-1-hari-ini');
+  // Detail: latihan kualitas pertama di plan (minggu berikut) supaya mirip wireframe 2.2.
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  const quality = page
+    .getByTestId('screen-plan')
+    .locator('[data-testid^="plan-day-"]')
+    .filter({ hasText: /Tempo|Interval/ });
+  for (let i = 0; i < 8 && (await quality.count()) === 0; i++) {
+    if (await page.getByTestId('next-week').isDisabled()) break;
+    await page.getByTestId('next-week').click();
+  }
+  if ((await quality.count()) > 0) await quality.first().click();
+  else
+    await page
+      .getByTestId('screen-plan')
+      .locator('[data-testid^="plan-day-"]')
+      .filter({ hasText: 'mnt' })
+      .first()
+      .click();
+  await page.getByTestId('screen-detail').waitFor();
+  await page.waitForTimeout(300);
+  await shot(page, '2-2-detail-latihan');
+  await page
+    .getByRole('tab', { name: 'Plan' })
+    .click()
+    .catch(() => undefined);
 });

@@ -19,6 +19,7 @@ export const fontFiles = {
   ui500: 'PlusJakartaSans_500Medium',
   ui600: 'PlusJakartaSans_600SemiBold',
   ui700: 'PlusJakartaSans_700Bold',
+  ui800: 'PlusJakartaSans_800ExtraBold',
 } as const;
 
 type TypoKey = keyof typeof tokens.typography;
@@ -27,6 +28,7 @@ function fontFor(family: readonly string[], weight: number): string {
   const display = family[0] === tokens.font.family.display[0];
   if (display)
     return weight >= 800 ? fontFiles.display800 : weight >= 700 ? fontFiles.display700 : fontFiles.display500;
+  if (weight >= 800) return fontFiles.ui800;
   if (weight >= 700) return fontFiles.ui700;
   if (weight >= 600) return fontFiles.ui600;
   return fontFiles.ui500;

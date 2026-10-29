@@ -191,6 +191,7 @@ export const id = {
   'today.details': 'Lihat detail & alasan latihan',
   'today.thisWeek': 'Minggu ini',
   'today.weekKm': '{done} / {target} km',
+  'today.weekKmRest': ' / {target} km',
   'today.manualLog': 'Catat lari manual',
   'today.restTitle': 'Istirahat',
   'today.restBody': 'Hari ini istirahat. Jalan santai atau stretching boleh.',

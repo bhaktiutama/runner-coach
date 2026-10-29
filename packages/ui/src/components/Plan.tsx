@@ -1,89 +1,95 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import Svg, { Defs, Line, Pattern, Rect } from 'react-native-svg';
-import { border, color, radius, size, space } from '../theme';
+import Svg, { Defs, Pattern, Rect } from 'react-native-svg';
+import { border, color, fontFiles, radius, ring, size, space } from '../theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
 
 export type LaneZone = 'recovery' | 'easy' | 'long' | 'tempo' | 'interval';
 
-/** Isi lajur: warna zona; drill = arsir peach (wireframe 2.1/2.2). */
-function LaneFill({ zone, drill, w, h }: { zone: LaneZone; drill?: boolean; w: number | string; h: number }) {
-  if (!drill) return <View style={{ width: w as number, height: h, backgroundColor: color.zone[zone] }} />;
+/** Arsir drill: garis peach 5 px, celah putih 3 px, miring 135 derajat (wireframe 2.1/2.2). */
+const HATCH = space[2];
+const HATCH_LINE = space[1] + border.hairline;
+let hatchSeq = 0;
+
+/** Isi lajur: warna zona atau arsir drill. Sudut dibulatkan oleh pembungkus. */
+function LaneFill({ zone, drill }: { zone: LaneZone; drill?: boolean }) {
+  if (!drill) return <View style={[StyleSheet.absoluteFill, { backgroundColor: color.zone[zone] }]} />;
+  const id = `hatch${hatchSeq++}`;
   return (
-    <Svg width={w as number} height={h}>
+    <Svg style={StyleSheet.absoluteFill} width="100%" height="100%">
       <Defs>
         <Pattern
-          id="hatch"
-          width={space[2]}
-          height={space[2]}
+          id={id}
+          width={HATCH}
+          height={HATCH}
           patternUnits="userSpaceOnUse"
           patternTransform="rotate(45)"
         >
-          <Rect width={space[2]} height={space[2]} fill={color.surface} />
-          <Line x1={0} y1={0} x2={0} y2={space[2]} stroke={color.zone.easy} strokeWidth={space[1]} />
+          <Rect width={HATCH} height={HATCH} fill={color.surface} />
+          <Rect width={HATCH_LINE} height={HATCH} fill={color.zone.easy} />
         </Pattern>
       </Defs>
-      <Rect width="100%" height={h} fill="url(#hatch)" />
+      <Rect width="100%" height="100%" fill={`url(#${id})`} />
     </Svg>
   );
 }
 
-/** Garis segmen horizontal proporsional durasi (kartu 2.1). */
+/** Garis segmen horizontal proporsional durasi (kartu 2.1): tinggi 12, jarak 3. */
 export function SegmentBar({
   segments,
+  height = space[3],
 }: {
   segments: { zone: LaneZone; weight: number; drill?: boolean }[];
+  height?: number;
 }) {
   return (
-    <View style={styles.segBar}>
+    <View style={[styles.segBar, { height }]}>
       {segments.map((s, i) => (
         <View key={i} style={[styles.segPart, { flex: Math.max(0.05, s.weight) }]}>
-          <LaneFill zone={s.zone} drill={s.drill} w="100%" h={space[5]} />
+          <LaneFill zone={s.zone} drill={s.drill} />
         </View>
       ))}
     </View>
   );
 }
 
-/** Penanda lajur vertikal kecil di daftar segmen. */
-export function LaneMark({ zone, drill, tall }: { zone: LaneZone; drill?: boolean; tall?: boolean }) {
+/** Penanda lajur vertikal 6 px: pendek 20 (daftar kartu) atau mengisi tinggi baris (`stretch`). */
+export function LaneMark({
+  zone,
+  drill,
+  stretch,
+}: {
+  zone: LaneZone;
+  drill?: boolean;
+  stretch?: boolean;
+  tall?: boolean;
+}) {
   return (
-    <View style={[styles.mark, tall && styles.markTall]}>
-      <LaneFill
-        zone={zone}
-        drill={drill}
-        w={space[2] + space[1]}
-        h={tall ? space[10] + space[4] : space[6] + space[2]}
-      />
+    <View style={[styles.mark, stretch ? styles.markStretch : styles.markShort]}>
+      <LaneFill zone={zone} drill={drill} />
     </View>
   );
 }
 
-/** Grafik intensitas sepanjang latihan (2.2): tinggi per zona. */
+/** Grafik intensitas (2.2): tinggi 64, jarak 3, easy 30%, drill 45%, tempo/interval 100%. */
 export function IntensityChart({
   segments,
 }: {
   segments: { zone: LaneZone; weight: number; drill?: boolean }[];
 }) {
-  const height: Record<LaneZone, number> = {
-    recovery: space[5],
-    easy: space[6] + space[3],
-    long: space[8],
-    tempo: space[10] * 2 + space[10],
-    interval: space[10] * 3,
-  };
+  const pct: Record<LaneZone, number> = { recovery: 0.2, easy: 0.3, long: 0.4, tempo: 1, interval: 1 };
+  const h = space[10] + space[6];
   return (
-    <View style={styles.intensity}>
+    <View style={[styles.intensity, { height: h }]}>
       {segments.map((s, i) => (
-        <View key={i} style={[styles.intPart, { flex: Math.max(0.03, s.weight) }]}>
-          <View style={[styles.intBar, { height: s.drill ? space[10] + space[4] : height[s.zone] }]}>
-            <LaneFill
-              zone={s.zone}
-              drill={s.drill}
-              w="100%"
-              h={s.drill ? space[10] + space[4] : height[s.zone]}
-            />
-          </View>
+        <View
+          key={i}
+          style={[
+            styles.intBar,
+            { flex: Math.max(0.03, s.weight), height: h * (s.drill ? 0.45 : pct[s.zone]) },
+          ]}
+        >
+          <LaneFill zone={s.zone} drill={s.drill} />
         </View>
       ))}
     </View>
@@ -98,15 +104,25 @@ export type LaneDay = {
   onPress?: () => void;
 };
 
-/** 7 lajur minggu (2.1, 3.1). */
+/** 7 lajur minggu (2.1): tinggi 44, cincin 2.5 warna zona, hari ini garis luar 2 px. */
 export function LaneWeek({ days }: { days: LaneDay[] }) {
   return (
     <View style={styles.week}>
       {days.map((d, i) => {
         const z = d.zone ? color.zone[d.zone] : color.surfaceSunken;
-        const fill = d.state === 'completed' ? z : d.state === 'rest' ? color.surfaceSunken : color.surface;
-        const borderColor =
-          d.state === 'rest' ? color.surfaceSunken : d.state === 'missed' ? color.status.behindInk : z;
+        const lane =
+          d.state === 'rest'
+            ? { backgroundColor: color.surfaceSunken }
+            : d.state === 'completed'
+              ? { backgroundColor: z }
+              : d.state === 'missed'
+                ? {
+                    backgroundColor: color.surface,
+                    borderWidth: border.selected,
+                    borderStyle: 'dashed' as const,
+                    borderColor: color.status.behindInk,
+                  }
+                : { backgroundColor: color.surface, ...ring(border.selected, z) };
         return (
           <Pressable
             key={i}
@@ -115,21 +131,16 @@ export function LaneWeek({ days }: { days: LaneDay[] }) {
             style={styles.dayCol}
             disabled={!d.onPress}
           >
-            <View style={[styles.todayRing, d.today && { borderColor: color.text }]}>
-              <View
-                style={[
-                  styles.dayLane,
-                  {
-                    backgroundColor: fill,
-                    borderColor,
-                    borderStyle: d.state === 'missed' ? 'dashed' : 'solid',
-                  },
-                ]}
-              >
-                {d.state === 'completed' ? <Icon name="check" size={space[5]} color={color.text} /> : null}
-              </View>
+            <View style={[styles.dayLane, lane, d.today && styles.todayOutline]}>
+              {d.state === 'completed' ? (
+                <Icon name="check" size={space[4]} color={color.text} strokeWidth={3} />
+              ) : null}
             </View>
-            <Text variant="label" color={d.today ? 'text' : 'textMuted'} style={d.today ? styles.bold : null}>
+            <Text
+              variant="caption"
+              color={d.today ? 'text' : 'textMuted'}
+              style={d.today ? styles.bold : null}
+            >
               {d.label}
             </Text>
           </Pressable>
@@ -236,39 +247,50 @@ export function StatusChip({
   label: string;
   tone: 'onTrack' | 'attention' | 'behind' | 'recovery' | 'neutral';
 }) {
-  const bg = tone === 'neutral' ? color.surface : color.status[tone];
+  if (tone === 'neutral') {
+    return (
+      <View style={[styles.badge, styles.statusNeutral]}>
+        <Text variant="badge">{label}</Text>
+      </View>
+    );
+  }
   return (
-    <View style={[styles.status, { backgroundColor: bg }, tone === 'neutral' && styles.statusNeutral]}>
-      <Text variant="heading">{label}</Text>
+    <View style={[styles.status, { backgroundColor: color.status[tone] }]}>
+      <Text variant="controlSmStrong">{label}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  segBar: { flexDirection: 'row', gap: space[2], height: space[5] },
+  segBar: { flexDirection: 'row', gap: border.selected + border.hairline / 2 },
   segPart: { borderRadius: radius.stadium, overflow: 'hidden' },
-  mark: { borderRadius: radius.stadium, overflow: 'hidden' },
-  markTall: {},
-  intensity: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1], height: space[10] * 3 },
-  intPart: { justifyContent: 'flex-end' },
-  intBar: { borderRadius: radius.sm, overflow: 'hidden' },
-  week: { flexDirection: 'row', justifyContent: 'space-between' },
-  dayCol: { alignItems: 'center', gap: space[2], flex: 1 },
-  todayRing: {
-    borderRadius: radius.stadium,
-    borderWidth: border.selected,
-    borderColor: 'transparent',
-    padding: border.hairline,
+  mark: { width: space[1] + space[1] / 2, borderRadius: radius.stadium, overflow: 'hidden' },
+  markShort: { height: space[5] },
+  markStretch: { alignSelf: 'stretch' },
+  intensity: { flexDirection: 'row', alignItems: 'flex-end', gap: border.selected + border.hairline / 2 },
+  intBar: {
+    overflow: 'hidden',
+    borderTopLeftRadius: space[2],
+    borderTopRightRadius: space[2],
+    borderBottomLeftRadius: space[1],
+    borderBottomRightRadius: space[1],
+  },
+  week: { flexDirection: 'row', gap: space[2] },
+  dayCol: { alignItems: 'center', gap: space[1] + space[1] / 2, flex: 1 },
+  todayOutline: {
+    outlineWidth: border.selected - border.hairline / 2,
+    outlineColor: color.text,
+    outlineStyle: 'solid',
+    outlineOffset: border.selected - border.hairline / 2,
   },
   dayLane: {
-    width: size.touchMin - space[1],
-    height: size.buttonPrimary + space[3],
+    width: '100%',
+    height: size.touchMin,
     borderRadius: radius.stadium,
-    borderWidth: border.selected,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bold: { fontWeight: '700' },
+  bold: { fontFamily: fontFiles.ui800 },
   phaseWrap: { gap: space[2] },
   phaseRow: { flexDirection: 'row', gap: space[1] },
   phaseCell: {
@@ -300,5 +322,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'flex-start',
   },
-  statusNeutral: { borderWidth: border.control, borderColor: color.line, minHeight: size.touchMin },
+  statusNeutral: { ...ring(border.hairline, color.line) },
+  badge: {
+    paddingVertical: space[1] + space[1] / 2,
+    paddingHorizontal: space[3],
+    borderRadius: radius.stadium,
+    backgroundColor: color.surface,
+    alignSelf: 'flex-start',
+  },
 });

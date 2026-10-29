@@ -1,14 +1,15 @@
-import { totalDuration, type EngineMessageKey } from '@run-coach/training-engine';
+import type { EngineMessageKey } from '@run-coach/training-engine';
 import {
   BibTag,
   border,
-  Card,
   color,
   IconButton,
   InfoBox,
   IntensityChart,
   LaneMark,
   PrimaryButton,
+  radius,
+  ring,
   SecondaryButton,
   SegmentedControl,
   space,
@@ -23,9 +24,16 @@ import { Screen } from '@/components/Screen';
 import { useProfile, useUpdateProfile, useWorkout, useWorkoutActions } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
 import { et } from '@/lib/rationale';
-import { intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
+import {
+  intensityAxis,
+  intensitySegments,
+  minutesOf,
+  segmentRows,
+  TYPE_ZONE,
+  typeName,
+} from '@/lib/workoutView';
 
-/** 2.2 Detail latihan. */
+/** 2.2 Detail latihan. Tata letak = wireframe WorkoutDetail. */
 export default function WorkoutDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const w = useWorkout(id);
@@ -46,7 +54,7 @@ export default function WorkoutDetail() {
   }
   const wk = w.data;
   const rows = segmentRows(wk.steps, wk.type);
-  const totalMin = Math.round(totalDuration(wk.steps) / 60);
+  const axis = intensityAxis(wk.steps);
   const hard = wk.type === 'tempo' || wk.type === 'interval';
   const scheduled = wk.status === 'scheduled';
   const why = [
@@ -68,7 +76,7 @@ export default function WorkoutDetail() {
               onPress={() => router.push(`/timer/${wk.id}`)}
               testID="start"
             />
-            <View style={styles.row}>
+            <View style={styles.pair}>
               <View style={styles.flex}>
                 <SecondaryButton
                   label={t('detail.move')}
@@ -95,84 +103,108 @@ export default function WorkoutDetail() {
     >
       <View style={styles.top}>
         <IconButton icon="back" label={t('detail.back')} onPress={back} testID="back" />
-        <Text color="textMuted" style={styles.flex} align="center">
+        <Text variant="controlStrong" color="textMuted" align="center" style={styles.flex}>
           {formatDate(wk.date)}
         </Text>
         <View style={styles.spacer} />
       </View>
-      <BibTag label={typeName(wk.type)} zone={TYPE_ZONE[wk.type]} />
-      <Text variant="title">{t('detail.title', { type: typeName(wk.type), min: minutesOf(wk.steps) })}</Text>
-      {!scheduled ? <Text color="textMuted">{t(`detail.status.${wk.status}` as MessageKey)}</Text> : null}
-      {easyDone ? (
-        <InfoBox tone="ok">
-          <Text>{t('detail.toEasyDone')}</Text>
-        </InfoBox>
-      ) : null}
-      <Text variant="label" color="textMuted">
-        {t('detail.intensity')}
-      </Text>
-      <IntensityChart segments={intensitySegments(wk.steps)} />
-      <View style={styles.axis}>
-        <Text variant="caption" color="textMuted">
-          {t('detail.axisStart')}
+      <View style={styles.titleBlock}>
+        <BibTag label={typeName(wk.type)} zone={TYPE_ZONE[wk.type]} />
+        <Text variant="title">
+          {t('detail.title', { type: typeName(wk.type), min: minutesOf(wk.steps) })}
         </Text>
-        <Text variant="caption" color="textMuted">
-          {t('detail.axisEnd', { min: totalMin })}
+        {!scheduled ? (
+          <Text variant="bodySm" color="textMuted">
+            {t(`detail.status.${wk.status}` as MessageKey)}
+          </Text>
+        ) : null}
+      </View>
+      {easyDone ? <InfoBox tone="ok">{t('detail.toEasyDone')}</InfoBox> : null}
+      <View style={styles.chartBlock}>
+        <Text variant="label" color="textMuted">
+          {t('detail.intensity')}
         </Text>
+        <IntensityChart segments={intensitySegments(wk.steps)} />
+        <View style={styles.axis}>
+          {axis.map((m, i) => (
+            <Text key={i} variant="axis" color="textMuted">
+              {i === axis.length - 1 ? t('detail.axisEnd', { min: m }) : String(m)}
+            </Text>
+          ))}
+        </View>
       </View>
       <View>
         {rows.map((r, i) => (
           <View key={r.key} style={styles.seg}>
-            <LaneMark zone={r.zone} drill={r.drill} tall />
+            <LaneMark zone={r.zone} drill={r.drill} stretch />
             <View style={styles.flex}>
-              <Text variant="heading">{t('detail.segment', { n: i + 1, label: r.label })}</Text>
+              <Text variant="row">{t('detail.segment', { n: i + 1, label: r.label })}</Text>
               {r.sub ? (
-                <Text variant="label" color="textMuted">
+                <Text variant="captionStrong" color="textMuted" style={styles.sub}>
                   {r.sub}
                 </Text>
               ) : null}
             </View>
-            <Text color="textMuted">{r.durationLabel}</Text>
-            <Text variant="heading" style={styles.detail} align="right">
+            <Text variant="numberRow" color="textMuted">
+              {r.durationLabel}
+            </Text>
+            <Text variant="numberRowStrong" align="right" style={styles.detail}>
               {r.detail}
             </Text>
           </View>
         ))}
       </View>
-      <Card variant="outline">
-        <Text variant="heading">{t('detail.why')}</Text>
-        <Text color="textMuted">{why}</Text>
+      <View style={styles.why}>
+        <Text variant="cardTitle">{t('detail.why')}</Text>
+        <Text variant="bodySm" color="textMuted">
+          {why}
+        </Text>
         <RationaleList items={wk.rationale} />
-      </Card>
-      <Text variant="label" color="textMuted">
-        {t('detail.guide')}
-      </Text>
-      <SegmentedControl
-        value={profile.data?.intensity_guide ?? 'pace'}
-        onChange={(v) => updateProfile.mutate({ intensity_guide: v })}
-        items={[
-          { value: 'pace', label: t('detail.guide.pace') },
-          { value: 'hr', label: t('detail.guide.hr'), disabled: true },
-          { value: 'rpe', label: t('detail.guide.rpe') },
-        ]}
-      />
+      </View>
+      <View style={styles.guide}>
+        <Text variant="label" color="textMuted">
+          {t('detail.guide')}
+        </Text>
+        <SegmentedControl
+          compact
+          value={profile.data?.intensity_guide ?? 'pace'}
+          onChange={(v) => updateProfile.mutate({ intensity_guide: v })}
+          items={[
+            { value: 'pace', label: t('detail.guide.pace') },
+            { value: 'hr', label: t('detail.guide.hr'), disabled: true },
+            { value: 'rpe', label: t('detail.guide.rpe') },
+          ]}
+        />
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  row: { flexDirection: 'row', gap: space[3] },
-  top: { flexDirection: 'row', alignItems: 'center' },
-  spacer: { width: space[10] + space[2] },
+  pair: { flexDirection: 'row', gap: space[2] },
+  top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  spacer: { width: space[10] + space[1] },
+  titleBlock: { gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
+  chartBlock: { gap: space[2] },
   axis: { flexDirection: 'row', justifyContent: 'space-between' },
   seg: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: space[3],
-    paddingVertical: space[3],
+    minHeight: space[10] + space[2],
+    paddingVertical: space[1] + space[1] / 2,
     borderBottomWidth: border.hairline,
     borderBottomColor: color.line,
   },
-  detail: { minWidth: space[10] * 2 },
+  sub: { marginTop: border.selected - border.hairline / 2 },
+  detail: { minWidth: space[10] * 2 - space[2] },
+  why: {
+    gap: space[2],
+    padding: space[5],
+    borderRadius: radius.lg,
+    backgroundColor: color.surface,
+    ...ring(border.hairline, color.line),
+  },
+  guide: { gap: space[2] + space[1] / 2 },
 });

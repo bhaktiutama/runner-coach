@@ -197,3 +197,15 @@ export function intensitySegments(steps: Step[]): { zone: ViewZone; weight: numb
 export function workoutKm(steps: Step[]): number {
   return runningDistance(steps);
 }
+
+/** Label sumbu grafik intensitas 2.2: menit di setiap batas segmen, terakhir "{n} mnt". */
+export function intensityAxis(steps: Step[]): number[] {
+  const segs = intensitySegments(steps);
+  const out = [0];
+  let acc = 0;
+  for (const s of segs) {
+    acc += s.weight;
+    out.push(Math.round(acc / 60));
+  }
+  return out;
+}

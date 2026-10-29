@@ -7,6 +7,7 @@ import {
   PlusJakartaSans_500Medium,
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { color } from '@run-coach/ui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -31,6 +32,7 @@ export default function RootLayout() {
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
+    PlusJakartaSans_800ExtraBold,
   });
   const ready = fontsLoaded || !!fontError;
 

@@ -161,11 +161,14 @@ export function SegmentedControl<T extends string>({
   value,
   onChange,
   testID,
+  compact,
 }: {
   items: { value: T; label: string; disabled?: boolean }[];
   value: T;
   onChange: (v: T) => void;
   testID?: string;
+  /** Tinggi item 40 (2.2) alih-alih 44. */
+  compact?: boolean;
 }) {
   return (
     <View style={styles.seg} accessibilityRole="tablist" testID={testID}>
@@ -179,7 +182,12 @@ export function SegmentedControl<T extends string>({
             accessibilityLabel={it.label}
             disabled={it.disabled}
             onPress={() => onChange(it.value)}
-            style={[styles.segItem, on && styles.segOn, { opacity: it.disabled ? 0.4 : 1 }]}
+            style={[
+              styles.segItem,
+              compact && styles.segCompact,
+              on && styles.segOn,
+              { opacity: it.disabled ? 0.4 : 1 },
+            ]}
           >
             <Text
               variant={on ? 'controlSmStrong' : 'controlSm'}
@@ -525,6 +533,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space[1] + space[1] / 2,
   },
+  segCompact: { minHeight: space[10] },
   segOn: { backgroundColor: color.surface, ...shadow.card },
   stepper: {
     flexDirection: 'row',

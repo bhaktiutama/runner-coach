@@ -77,18 +77,30 @@ export function SecondaryButton({
 }
 
 /** Tautan teks (warna primary-ink), area sentuh min 44. */
-export function LinkButton({ label, icon, disabled, ...rest }: Base) {
+export function LinkButton({
+  label,
+  icon,
+  disabled,
+  size: linkSize = 'md',
+  tone = 'primary',
+  ...rest
+}: Base & { size?: 'md' | 'sm'; tone?: 'primary' | 'text' }) {
+  const fg = tone === 'text' ? color.text : color.primaryInk;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       disabled={disabled}
       {...rest}
-      style={({ pressed }) => [styles.link, { opacity: disabled ? 0.4 : pressed ? 0.6 : 1 }]}
+      style={({ pressed }) => [
+        styles.link,
+        linkSize === 'sm' && styles.linkSm,
+        { opacity: disabled ? 0.4 : pressed ? 0.6 : 1 },
+      ]}
     >
-      <View style={styles.row}>
-        {icon ? <Icon name={icon} color={color.primaryInk} size={space[5]} /> : null}
-        <Text variant="row" style={{ color: color.primaryInk }}>
+      <View style={[styles.row, styles.rowLink]}>
+        {icon ? <Icon name={icon} color={fg} size={space[5]} /> : null}
+        <Text variant={linkSize === 'sm' ? 'controlStrong' : 'row'} style={{ color: fg }}>
           {label}
         </Text>
       </View>
@@ -121,4 +133,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[2],
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  rowLink: { gap: space[2] },
+  linkSm: { minHeight: space[8] + space[1] },
 });
