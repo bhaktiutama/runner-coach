@@ -25,7 +25,7 @@ button{font-family:inherit}
     </div>
     <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px"><div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Target</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: -0.01em">1:05:00</span></div><div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Per minggu</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: -0.01em">4 hari</span></div><div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: var(--radius-md); background: var(--surface-sunken)"><span style="font-size: 12px; font-weight: 700; color: var(--text-muted)">Race</span><span style="font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: -0.01em">3 Jan</span></div></div>
     <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card)"><span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Volume per minggu (km)</span>
-      <div role="img" aria-label="Grafik volume mingguan: naik dari 14 km ke puncak 24 km di minggu 7, lalu turun untuk taper" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; align-items: end; height: 124px">
+      <div role="img" aria-label="Grafik volume mingguan: naik dari 14 km ke puncak 20 km di minggu 9 dengan cutback di minggu 4 dan 8, lalu taper 10 km di minggu 10" style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px; align-items: end; height: 124px">
         <sc-for list="{{weeks}}" as="w" hint-placeholder-count="10">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
             <span style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--text-muted)">{{w.km}}</span>
@@ -36,6 +36,16 @@ button{font-family:inherit}
       <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text-muted)"><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--phase-base)"></span>Base</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--phase-build)"></span>Build</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--phase-peak)"></span>Peak</span><span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 4px; background: var(--phase-taper)"></span>Taper</span></div></div>
     <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card)"><span style="font-size: 13px; font-weight: 700; color: var(--text-muted)">Pace latihanmu</span>
       <div style="display: flex; align-items: center; justify-content: space-between; font-size: 14px"><span class="ln-bib ln-bib--easy"><span class="ln-bib-inner">EASY</span></span><b style="font-family: var(--font-display); font-size: 17px">7:40 - 8:20 /km</b></div><div style="display: flex; align-items: center; justify-content: space-between; font-size: 14px"><span class="ln-bib ln-bib--tempo"><span class="ln-bib-inner">TEMPO</span></span><b style="font-family: var(--font-display); font-size: 17px">6:45 /km</b></div><div style="display: flex; align-items: center; justify-content: space-between; font-size: 14px"><span class="ln-bib ln-bib--interval"><span class="ln-bib-inner">INTERVAL</span></span><b style="font-family: var(--font-display); font-size: 17px">6:15 /km</b></div></div>
+    <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card)">
+      <div style="display: flex; align-items: center; justify-content: space-between"><span style="font-family: var(--font-display); font-size: 17px; font-weight: 800">Kenapa plan ini?</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></div>
+      <sc-for list="{{reasons}}" as="r" hint-placeholder-count="4">
+        <div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 12px; box-shadow: 0 1px 0 var(--line)">
+          <span style="font-size: 14px; line-height: 1.45">{{r.text}}</span>
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-stadium); background: var(--surface-sunken); color: var(--text)"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{r.dot}}"></span>{{r.grade}}</span><a href="#" style="color: var(--primary-ink)">Lihat sumber</a></div>
+        </div>
+      </sc-for>
+      <a href="#" style="font-size: 14px; font-weight: 700; color: var(--primary-ink)">Lihat semua 6 alasan</a>
+    </div>
   </div>
   <div style="flex: 1"></div>
   <div style="display: flex; flex-direction: column; gap: 10px; padding: 20px 20px 32px; border-radius: var(--radius-sheet) var(--radius-sheet) 0 0; background: var(--surface); box-shadow: 0 -2px 0 var(--line)">
@@ -49,12 +59,27 @@ button{font-family:inherit}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   renderVals() {
-    var km = [14, 16, 18, 15, 20, 22, 24, 20, 18, 12];
-    var phase = ['base', 'base', 'base', 'build', 'build', 'build', 'peak', 'peak', 'taper', 'taper'];
+    // Contoh patuh TRD 4.2: naik maks 10% dari minggu non-cutback terakhir (E-05),
+    // cutback 20-30% di minggu 4 dan 8 (E-07), taper 1 minggu turun 50% dari puncak (E-11).
+    var km = [14, 15, 16, 12, 17, 18, 19, 15, 20, 10];
+    var phase = ['base', 'base', 'base', 'base', 'build', 'build', 'build', 'build', 'peak', 'taper'];
+    var grade = {
+      A: { grade: 'Bukti kuat', dot: 'var(--success)' },
+      B: { grade: 'Bukti sedang', dot: 'var(--success)' },
+      C: { grade: 'Bukti terbatas', dot: 'var(--accent)' },
+      D: { grade: 'Praktik pelatih', dot: 'var(--text-muted)' }
+    };
+    var reasons = [
+      { g: 'B', text: 'Long run maks 10% di atas lari terjauhmu 30 hari terakhir (6 km), jadi minggu 1 long run 6,5 km.' },
+      { g: 'B', text: 'Volume naik bertahap, maks 10% per minggu, dari 14 km sesuai volumemu sekarang.' },
+      { g: 'A', text: 'Sekitar 80% waktu larimu di pace easy, sisanya 1-2 sesi tempo atau interval per minggu.' },
+      { g: 'A', text: 'Minggu terakhir taper: volume turun 50%, intensitas tetap, supaya kakimu segar saat race.' }
+    ];
     return {
       weeks: km.map(function (k, i) {
-        return { km: k, n: i + 1, h: Math.round(k / 24 * 96) + 'px', color: 'var(--phase-' + phase[i] + ')' };
-      })
+        return { km: k, n: i + 1, h: Math.round(k / 20 * 96) + 'px', color: 'var(--phase-' + phase[i] + ')' };
+      }),
+      reasons: reasons.map(function (r) { return { text: r.text, grade: grade[r.g].grade, dot: grade[r.g].dot }; })
     };
   }
 }

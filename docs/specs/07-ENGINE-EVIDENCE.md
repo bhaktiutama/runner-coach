@@ -29,7 +29,7 @@ Kolom "Putusan": **Didukung** = bukti sejalan dengan aturan; **Sebagian** = arah
 
 | ID | Aturan (TRD) | Tingkat | Temuan kunci | Putusan |
 |----|--------------|---------|--------------|---------|
-| E-01 | Prediksi waktu Riegel `T2 = T1 x (D2/D1)^1.06`, tampil rentang (4.1) | C | Rumus dari kurva rekor dunia [R1]. Pada 2.303 pelari rekreasional, Riegel terkalibrasi baik sampai HM, tetapi untuk maraton meleset >= 10 menit terlalu cepat pada separuh pelari [R2] | Sebagian. Untuk target FM, hasil Riegel = batas **tercepat** rentang. Cara hitung batas terlambat = E-O1 |
+| E-01 | Prediksi waktu Riegel `T2 = T1 x (D2/D1)^1.06`, tampil rentang (4.1) | C | Rumus dari kurva rekor dunia [R1]. Pada 2.303 pelari rekreasional, Riegel terkalibrasi baik sampai HM, tetapi untuk maraton terlalu cepat: median selisih 10:09 menit, 25% pelari meleset > 20 menit, persentil ke-90 +2:53 menit (validasi n = 156) [R2] | Sebagian. Rentang per 4.1 (keputusan E-O1) |
 | E-02 | Zona pace kerangka Daniels / VDOT (4.1) | C | VDOT = model empiris dari performa race (Daniels dan Gilbert 1979, disempurnakan di edisi buku) [R3]. Standar praktik, bukan hasil RCT | Didukung sebagai kerangka. Koefisien rumus wajib dicek ke buku edisi 4 (E-O4) |
 | E-20 | Waktu race / time trial baru: hitung ulang zona dan prediksi (4.3) | C | VDOT diturunkan dari performa terbaru [R3]; performa lebih baru lebih mewakili kondisi sekarang | Didukung |
 
@@ -39,14 +39,14 @@ Kolom "Putusan": **Didukung** = bukti sejalan dengan aturan; **Sebagian** = arah
 |----|--------------|---------|--------------|---------|
 | E-03 | Durasi plan 5K 8 / 10K 10 / HM 12 / FM 16-18 / Bugar 8 minggu (4.2) | D | Tidak ditemukan studi yang membandingkan durasi plan untuk pelari rekreasional | Heuristik |
 | E-04 | Fase Base -> Build -> Peak -> Taper (4.2) | C | Konsensus ECSS/ACSM: latihan butuh overload, tetapi overload berlebih tanpa pemulihan cukup harus dihindari [R4]. Urutan fase spesifik tidak diuji | Sebagian |
-| E-05 | Kenaikan volume mingguan maks 10% (4.2) | B | RCT 13 minggu (aturan 10%) vs 8 minggu pada pelari pemula: cedera 20,8% vs 20,3%, tidak beda [R5]. Kohort 874 pemula: kenaikan > 30% dalam 2 minggu, HR 1,59 (95% CI 0,96-2,66; p = 0,07) untuk cedera terkait jarak [R6]. Kohort 5.205 pelari: perubahan minggu ke minggu hampir tidak berhubungan dengan cedera [R7] | Sebagian. Dipertahankan sebagai batas konservatif; **teks app tidak boleh mengklaim 10% mencegah cedera** |
+| E-05 | Kenaikan volume mingguan maks 10%, dibanding minggu non-cutback terakhir (4.2) | B | RCT 13 minggu (aturan 10%) vs 8 minggu pada pelari pemula: cedera 20,8% vs 20,3%, tidak beda [R5]. Kohort 874 pemula: kenaikan > 30% dalam 2 minggu, HR 1,59 (95% CI 0,96-2,66; p = 0,07) untuk cedera terkait jarak [R6]. Kohort 5.205 pelari: perubahan minggu ke minggu hampir tidak berhubungan dengan cedera [R7] | Sebagian. Dipertahankan sebagai batas konservatif; **teks app tidak boleh mengklaim 10% mencegah cedera** |
 | E-06 | **Baru.** Jarak satu sesi maks 110% dari lari terjauh 30 hari terakhir | B | Kohort 5.205 pelari, 588.071 sesi: risiko cedera overuse naik bila satu sesi > 10% di atas lari terjauh 30 hari terakhir (naik 64% untuk +10-30%, 52% untuk +30-100%, 128% untuk > +100%) [R7]. Observasional; jendela 30 hari dipilih peneliti, hasil serupa untuk 14 hari | Diubah (aturan ditambah). Nilai awal = `goals.longest_run_m` (layar 1.5, "lari terjauh 4 minggu") |
 | E-07 | Cutback week tiap minggu ke-3/4, volume turun 20-30% (4.2) | D | Tidak ditemukan review sistematis tentang frekuensi atau besaran cutback pada pelari. Prinsip keseimbangan beban-pemulihan dari [R4] | Heuristik |
 | E-08 | Long run maks 30% volume mingguan (4.2) | D | Tidak ditemukan studi langsung. Kerangka beban-kapasitas: cedera terjadi bila beban per sesi melebihi kapasitas jaringan [R8]; E-06 adalah versi berbukti dari batas per sesi | Heuristik. Berlaku bersama E-06; yang lebih ketat menang |
 | E-09 | ~80% waktu lari di intensitas easy (4.2) | A | Meta-analisis 17 studi (n = 437): polarized lebih baik untuk VO2peak (SMD 0,24; 95% CI 0,01-0,48), tetapi **tidak beda** untuk time trial (SMD -0,01; 95% CI -0,28-0,25); keunggulan terutama pada atlet terlatih tinggi [R9]. RCT 30 pelari rekreasional 10 minggu: 10K membaik 5,0% (77% easy) vs 3,6% (46% easy), beda tidak signifikan [R10] | Sebagian. Porsi easy besar didukung sebagai praktik aman; keunggulan atas distribusi lain untuk pelari rekreasional belum terbukti |
 | E-10 | Sesi berat maks 2/minggu, pemula 0-1, tidak di 2 hari berurutan (4.2) | C | Pemulihan saraf otonom setelah sesi di atas ambang ventilasi 1 lebih lama dari sesi easy; pada atlet kurang terlatih >= 90 menit vs ~30 menit pada atlet terlatih tinggi (n = 17) [R11]. Pelari pemula: 17,8 cedera per 1.000 jam vs 7,7 pada rekreasional [R12] | Sebagian. Arah (jeda antar sesi berat, pemula lebih konservatif) didukung; angka 2 dan 0-1 heuristik |
 | E-11 | Taper 5K/10K 1 mgg, HM 1-2, FM 2-3 (4.2) | A | Meta-analisis 27 studi: taper 2 minggu, volume turun 41-60% secara eksponensial, intensitas dan frekuensi dipertahankan memberi efek terbesar [R13] | Diubah. Durasi tetap; **ditambah: volume turun 40-60% dari minggu puncak, intensitas dan frekuensi sesi dipertahankan** |
-| E-14 | Run-walk untuk pemula (library, PLANNING 4.4) | B | RCT 42 pelari maraton: run-walk vs lari terus, waktu finish tidak beda (4:14 vs 4:08, p = 0,377), nyeri otot dan kelelahan lebih rendah (p = 0,006) [R14]. Bukti dari maraton, bukan pemula 5K | Sebagian. Kriteria kapan run-walk dipakai belum ada di TRD (E-O2) |
+| E-14 | Run-walk untuk pemula (kriteria: keputusan E-O2) | B | RCT 42 pelari maraton: run-walk vs lari terus, waktu finish tidak beda (4:14 vs 4:08, p = 0,377), nyeri otot dan kelelahan lebih rendah (p = 0,006) [R14]. Pelari pemula punya risiko cedera per jam lebih tinggi [R12]. Bukti dari maraton, bukan pemula 5K | Sebagian. Kriteria masuk dan keluar run-walk tingkat D |
 | E-15 | ABC drill 8-12 mnt setelah pemanasan easy, sebelum sesi kualitas (4.2, F-17) | C | Pemanasan memperbaiki performa pada 79% kriteria yang diukur (32 studi) [R15]; bukti pencegahan cedera belum cukup, tetapi condong ke manfaat [R16]. Tidak ditemukan studi khusus ABC drill | Sebagian (pemanasan didukung; drill spesifik heuristik) |
 
 ### 2.3 Keamanan
@@ -107,7 +107,8 @@ Teks tidak disimpan di database. Registri statis di `packages/training-engine/sr
 
 | ID | Template |
 |----|----------|
-| E-01 | "Perkiraan waktumu {range} dihitung dari waktu {baseline} kamu dengan rumus Riegel. Untuk maraton rumus ini cenderung terlalu cepat, jadi anggap batas cepatnya sebagai skenario terbaik." |
+| E-01 | "Perkiraan waktumu {range}, paling mungkin {likely}, dihitung dari waktu {baseline} kamu dengan rumus Riegel. Untuk maraton rumus ini rata-rata 10 menit terlalu cepat pada pelari rekreasional, jadi batas cepatnya adalah skenario terbaik." |
+| E-14 | "Larimu diselingi jalan: {run_min} menit lari, {walk_min} menit jalan. Cara ini mengurangi pegal dan lelah tanpa memperlambat progres; blok lari bertambah tiap minggu sampai kamu lari 20 menit tanpa berhenti." |
 | E-05 | "Volume minggu ini {week_km} km, naik {pct}% dari minggu lalu. Kami menaikkan bertahap (maks 10%) sebagai batas aman; penelitian belum membuktikan angka 10% itu sendiri mencegah cedera." |
 | E-06 | "Long run {distance_km} km, maks 10% di atas lari terjauhmu 30 hari terakhir ({longest_km} km). Studi pada 5.205 pelari menemukan risiko cedera naik saat satu lari melewati batas ini." |
 | E-09 | "Sekitar {easy_pct}% waktu larimu minggu ini di pace easy. Porsi easy yang besar membangun daya tahan dengan beban pemulihan rendah." |
@@ -123,7 +124,7 @@ Template aturan lain mengikuti pola yang sama dan ditulis di registri saat M2. S
 
 | Layar | Isi |
 |-------|-----|
-| 1.8 Preview | Bagian lipat "Kenapa plan ini?" di bawah grafik: daftar rationale level plan. Wireframe 1.8 belum memuatnya (E-O3) |
+| 1.8 Preview | Kartu lipat "Kenapa plan ini?" di bawah pace: 4 rationale level plan teratas + "Lihat semua" (wireframe 1.8) |
 | 2.2 Detail latihan | "Kenapa latihan ini?" (sudah ada di F-04) diisi rationale latihan |
 | 2.5 Ringkasan minggu | Alasan usulan adaptasi dari rationale adaptasi |
 | 3.2 Pindah latihan | Pesan cek aturan memakai template E-06, E-08, E-10 |
@@ -139,18 +140,21 @@ Setiap item: teks template + label tingkat bukti (bagian 1) + "Lihat sumber" (da
 1. Setiap aturan di TRD 4.2 dan 4.3 punya entri registri dengan `grade` dan `refs` (boleh kosong hanya untuk tingkat D).
 2. Setiap plan hasil generator punya rationale level plan sesuai tabel 3.1; setiap `planned_workout` selain `rest` punya >= 1 rationale.
 3. Setiap placeholder di template terisi oleh `values` untuk semua kombinasi target x level x hari tersedia (3-6).
-4. E-06: tidak ada sesi di plan yang melebihi 110% lari terjauh 30 hari (dihitung dari plan itu sendiri + `longest_run_m`).
-5. E-11: volume minggu taper terakhir 40-60% di bawah minggu puncak; jumlah sesi kualitas per minggu tidak berkurang (kecuali mode ringan).
+4. E-01: rentang FM = `[Riegel, Riegel + 20 mnt]`; 5K-HM = Riegel +-3%. E-14: run-walk hanya untuk `beginner` dengan lari terjauh < 3 km dan berhenti setelah blok lari 20 menit.
+5. E-06: tidak ada sesi di plan yang melebihi 110% lari terjauh 30 hari (dihitung dari plan itu sendiri + `longest_run_m`).
+6. E-11: volume minggu taper terakhir 40-60% di bawah minggu puncak; jumlah sesi kualitas per minggu tidak berkurang (kecuali mode ringan).
 
-## 4. Keputusan terbuka
+## 4. Keputusan
 
-| ID | Pertanyaan | Default sementara |
-|----|-----------|-------------------|
-| E-O1 | Batas terlambat rentang prediksi FM. Riegel terlalu cepat untuk maraton rekreasional [R2] | Tampilkan Riegel sebagai batas cepat; batas lambat dari rentang yang direview pelatih. Jangan menebak eksponen tanpa sumber |
-| E-O2 | Kriteria pemula masuk run-walk (volume, lari terjauh) | Level `beginner` + target 5K/Bugar; angka ambang ditentukan pelatih (D6) |
-| E-O3 | Wireframe 1.8 belum punya bagian "Kenapa plan ini?" | Update wireframe sebelum M3 |
-| E-O4 | Koefisien rumus VDOT yang beredar berasal dari sumber sekunder | Implementasi dari Daniels' Running Formula edisi 4 [R3] + unit test terhadap tabel di buku |
-| E-O5 | E-06 memakai lari terjauh 30 hari; plan 3 hari/minggu dengan volume sangat rendah bisa membuat long run naik lambat | Ikuti E-06; jika durasi plan tidak cukup mencapai long run minimum target, tawarkan target lebih pendek (FL-1 layar 1.3/1.5) |
+Diputuskan 2026-10-29 oleh pemilik produk: E-O1 dan E-O2 memakai usulan di bawah (disusun dari bukti yang ada), tetap direview pelatih (D6).
+
+| ID | Pertanyaan | Keputusan | Dasar | Tingkat |
+|----|-----------|-----------|-------|---------|
+| E-O1 | Rentang prediksi waktu race | **5K-HM:** `[T x 0,97, T x 1,03]`, `T` = Riegel 1,06. **FM:** `[T, T + 20 menit]`, titik "paling mungkin" `T + 10 menit`. Jika waktu acuan 5K atau 10K (bukan HM) untuk target FM: label "perkiraan kasar" + saran time trial 10K/HM di minggu Build (E-20) | FM: median selisih Riegel 10:09 menit terlalu cepat, 75% pelari meleset <= 20 menit [R2]. R2 memakai race non-maraton terjauh pelari (umumnya HM) sebagai acuan, jadi acuan 5K/10K kemungkinan lebih meleset (inferensi, tidak diukur). Lebar +-3% untuk 5K-HM tidak berasal dari studi | FM: B. 5K-HM: D |
+| E-O2 | Kapan pemula memakai run-walk | **Masuk:** level `beginner` (tanpa waktu acuan) **dan** lari terjauh 4 minggu < 3 km, apa pun targetnya. **Progresi:** porsi lari per blok naik tiap minggu, total waktu sesi tetap (aturan E-05 berlaku pada menit lari). **Keluar:** saat blok lari mencapai 20 menit tanpa jalan, latihan easy berikutnya jadi lari kontinu | 3 km ~ 20-25 menit pada pace pemula; ambang "lari 20-30 menit tanpa berhenti" adalah syarat 10K di PLANNING 4.3. Manfaat run-walk: [R14] | D |
+| E-O3 | Wireframe 1.8 belum punya "Kenapa plan ini?" | Selesai: wireframe 1.8 diperbarui (kartu lipat, 4 alasan + label bukti + "Lihat sumber", "Lihat semua") | | |
+| E-O4 | Koefisien rumus VDOT yang beredar berasal dari sumber sekunder | Terbuka. Implementasi dari Daniels' Running Formula edisi 4 [R3] + unit test terhadap tabel di buku | | |
+| E-O5 | E-06 bisa membuat long run naik lambat pada volume rendah | Ikuti E-06; jika durasi plan tidak cukup mencapai long run minimum target, tawarkan target lebih pendek (FL-1 layar 1.3/1.5) | | |
 
 ## 5. Referensi
 
@@ -159,7 +163,7 @@ Semua dicek 2026-10-29 dari abstrak atau metadata. "PMID" = PubMed ID.
 | ID | Referensi | Pengenal |
 |----|-----------|----------|
 | R1 | Riegel PS. Athletic records and human endurance. American Scientist 1981;69(3):285-290 | JSTOR 27850427 |
-| R2 | Vickers AJ, Vertosick EA. An empirical study of race times in recreational endurance runners. BMC Sports Sci Med Rehabil 2016;8 | PMC5000509 |
+| R2 | Vickers AJ, Vertosick EA. An empirical study of race times in recreational endurance runners. BMC Sports Sci Med Rehabil 2016;8. Full text (Tabel 4) dibaca untuk E-O1 | PMC5000509 |
 | R3 | Daniels J. Daniels' Running Formula, edisi 4. Human Kinetics (c) 2022. Asal VDOT: Daniels J, Gilbert J. Oxygen Power, 1979 | ISBN 9781718203662 |
 | R4 | Meeusen R, dkk. Prevention, diagnosis and treatment of the overtraining syndrome: joint consensus statement ECSS/ACSM. Med Sci Sports Exerc 2013;45(1):186-205; juga Eur J Sport Sci 2013;13(1):1-24 | doi:10.1080/17461391.2012.730061 |
 | R5 | Buist I, dkk. No effect of a graded training program on the number of running-related injuries in novice runners: a randomized controlled trial. Am J Sports Med 2008;36(1):33-39 | Protokol: GRONORUN, BMC Musculoskelet Disord 2007 |
@@ -185,7 +189,7 @@ Semua dicek 2026-10-29 dari abstrak atau metadata. "PMID" = PubMed ID.
 
 ## 6. Batasan
 
-- Hanya abstrak yang dibaca; angka efek dan populasi bisa punya nuansa di full text. Sebelum beta publik, pelatih/peneliti membaca full text R5, R7, R9, R13 (yang mengubah aturan).
+- Hanya abstrak yang dibaca (kecuali R2); angka efek dan populasi bisa punya nuansa di full text. Sebelum beta publik, pelatih/peneliti membaca full text R5, R7, R9, R13 (yang mengubah aturan).
 - Sebagian besar bukti dari pelari terlatih atau populasi Eropa/AS. Konteks lokal (panas, lembab; PLANNING 1.4) belum ada buktinya di dokumen ini.
 - R7 observasional: menunjukkan hubungan, bukan sebab-akibat.
 - Menambah aturan baru ke engine wajib menambah entri registri (bagian 2) di PR yang sama; tanpa entri, test 3.5 gagal.

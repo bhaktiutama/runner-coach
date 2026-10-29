@@ -39,8 +39,7 @@ Prasyarat di luar kode:
 |-------|-----------|
 | Sebelum M1 | Project Supabase cloud dibuat pemilik produk. URL + anon key disimpan sebagai environment secret session (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`), bukan di chat atau repo. Izin jaringan session: `*.supabase.co`, `api.supabase.com` |
 | Sebelum M1 (login) | Provider Apple dan Google dikonfigurasi di Supabase Auth (butuh akun Apple Developer dan Google Cloud) |
-| Paralel M1-M6 | Review aturan plan termasuk O2 dan O3 oleh pelatih bersertifikat (D6), memakai `07-ENGINE-EVIDENCE.md` sebagai checklist; putuskan E-O1, E-O2 |
-| Sebelum M3 | Wireframe 1.8 ditambah bagian "Kenapa plan ini?" (07 E-O3) |
+| Paralel M1-M6 | Review aturan plan termasuk O2 dan O3 oleh pelatih bersertifikat (D6), memakai `07-ENGINE-EVIDENCE.md` sebagai checklist; review keputusan E-O1, E-O2 |
 | Sebelum M7 | Kebijakan privasi yang menjelaskan model "data di HP" + formulir App Privacy / Data safety sesuai |
 
 ## 3. Setelah MVP (ringkas)

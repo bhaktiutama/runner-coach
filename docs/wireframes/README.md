@@ -48,6 +48,7 @@ Status: v0.3 (2026-10-29), memakai design system Lintas. Salinan dari artifact w
 | Latihan contoh hari ini memakai drill ABC (F-17): 10 + 8 + 14 + 10 = 42 menit | 2.1, 2.2, 2.3, 2.3b, 2.4, 3.1 |
 | Layar yang dulu belum ada (O1, O4): log manual, login email, hapus akun, segmen drill | 1.9, 2.3b, 2.6, 4.6 |
 | Status sinkron Strava di 2.1 diganti tautan "Catat lari manual" | 2.1 |
+| Kartu "Kenapa plan ini?" (alasan + label tingkat bukti + Lihat sumber, spec 07). Contoh grafik volume dibuat patuh TRD 4.2: naik maks 10%, cutback minggu 4 dan 8, taper 10K 1 minggu turun 50% | 1.8 |
 
 ## Catatan membaca gambar
 

@@ -107,7 +107,7 @@ Karena tidak ada sinkron, data hanya berpindah lewat file milik pengguna:
 
 | Kebutuhan | Metode |
 |-----------|--------|
-| Prediksi waktu antar jarak (E-01) | Riegel: `T2 = T1 x (D2 / D1)^1.06`, tampilkan sebagai rentang. Untuk FM, hasil Riegel = batas tercepat (07 E-O1) |
+| Prediksi waktu antar jarak (E-01) | Riegel: `T2 = T1 x (D2 / D1)^1.06`, tampilkan sebagai rentang: 5K-HM `T x 0,97` s.d. `T x 1,03`; FM `T` s.d. `T + 20 mnt` (paling mungkin `T + 10 mnt`). Dasar: 07 E-O1 |
 | Zona pace (E-02) | Kerangka Jack Daniels (Easy, Marathon, Threshold, Interval, Repetition), implementasi dari Daniels' Running Formula edisi 4 + unit test |
 
 ### 4.2 Aturan wajib (diuji otomatis)
@@ -118,7 +118,8 @@ Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom
 |----|--------|---------------|
 | E-03 | Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
 | E-04 | Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
-| E-05 | Kenaikan volume mingguan | Maks 10% (batas konservatif; tidak diklaim mencegah cedera) |
+| E-05 | Kenaikan volume mingguan | Maks 10% dari minggu non-cutback terakhir (batas konservatif; tidak diklaim mencegah cedera) |
+| E-14 | Run-walk | Level `beginner` + lari terjauh 4 minggu < 3 km. Blok lari naik tiap minggu; jadi lari kontinu setelah blok lari 20 mnt (07 E-O2) |
 | E-06 | Jarak satu sesi | Maks 110% dari lari terjauh 30 hari terakhir (awal: `goals.longest_run_m`) |
 | E-07 | Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
 | E-08 | Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna. Berlaku bersama E-06; yang lebih ketat menang |
