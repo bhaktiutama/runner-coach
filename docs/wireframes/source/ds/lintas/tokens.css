@@ -1,19 +1,19 @@
 :root, [data-theme="light"] {
-  --bg: #FFF9F2;
+  --bg: #F5F4F2;
   --surface: #FFFFFF;
-  --surface-sunken: #F6EDE3;
+  --surface-sunken: #EAE8E5;
   --text: #242C32;
   --text-muted: #5E6670;
-  --line: #EADFD3;
+  --line: #DDDAD6;
   --line-strong: #858C94;
   --primary: #F26B38;
   --on-primary: #242C32;
-  --primary-ink: #CB410D;
+  --primary-ink: #C63F0D;
   --accent: #E9B79D;
-  --accent-ink: #B35828;
-  --success: #477B63;
+  --accent-ink: #AD5527;
+  --success: #467861;
   --on-success: #FFFFFF;
-  --success-ink: #477B63;
+  --success-ink: #467861;
   --focus-ring: #242C32;
   --status-on-track: #70D6B3;
   --status-on-track-ink: #247F60;

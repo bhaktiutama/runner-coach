@@ -107,41 +107,47 @@ Karena tidak ada sinkron, data hanya berpindah lewat file milik pengguna:
 
 | Kebutuhan | Metode |
 |-----------|--------|
-| Prediksi waktu antar jarak | Riegel: `T2 = T1 x (D2 / D1)^1.06`, tampilkan sebagai rentang |
-| Zona pace | Kerangka Jack Daniels (Easy, Marathon, Threshold, Interval, Repetition), implementasi dari referensi asli + unit test |
+| Prediksi waktu antar jarak (E-01) | Riegel: `T2 = T1 x (D2 / D1)^1.06`, tampilkan sebagai rentang: 5K-HM `T x 0,97` s.d. `T x 1,03`; FM `T` s.d. `T + 20 mnt` (paling mungkin `T + 10 mnt`). Dasar: 07 E-O1 |
+| Zona pace (E-02) | Kerangka Jack Daniels (Easy, Marathon, Threshold, Interval, Repetition), implementasi dari Daniels' Running Formula edisi 4 + unit test |
 
 ### 4.2 Aturan wajib (diuji otomatis)
 
-Angka adalah heuristik umum coaching (PLANNING 4.3), bukan hasil riset; wajib direview pelatih (D6).
+Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom ID). Aturan tingkat D adalah heuristik coaching; semua wajib direview pelatih (D6).
 
-| Aturan | Nilai default |
-|--------|---------------|
-| Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
-| Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
-| Kenaikan volume mingguan | Maks 10% |
-| Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
-| Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna |
-| Intensitas | ~80% easy |
-| Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
-| Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg |
-| Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
-| Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
-| ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
+| ID | Aturan | Nilai default |
+|----|--------|---------------|
+| E-03 | Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
+| E-04 | Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
+| E-05 | Kenaikan volume mingguan | Maks 10% dari minggu non-cutback terakhir (batas konservatif; tidak diklaim mencegah cedera) |
+| E-14 | Run-walk | Level `beginner` + lari terjauh 4 minggu < 3 km. Blok lari naik tiap minggu; jadi lari kontinu setelah blok lari 20 mnt (07 E-O2) |
+| E-06 | Jarak satu sesi | Maks 110% dari lari terjauh 30 hari terakhir (awal: `goals.longest_run_m`) |
+| E-07 | Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
+| E-08 | Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna. Berlaku bersama E-06; yang lebih ketat menang |
+| E-09 | Intensitas | ~80% easy |
+| E-10 | Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
+| E-11 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg. Volume turun 40-60% dari minggu puncak; intensitas dan jumlah sesi kualitas dipertahankan |
+| E-12 | Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
+| E-13 | Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
+| E-15 | ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
 
 ### 4.3 Adaptasi (F-11, layar 2.5)
 
 Dihitung engine di akhir minggu, ditampilkan sebagai **usulan**; plan baru berubah setelah pengguna menekan "Oke, terapkan".
 
-| Kondisi | Usulan |
-|---------|--------|
-| RPE >= 8 pada easy run 2x berturut-turut | Volume minggu depan turun ~10%, 1 sesi berat diganti easy |
-| RPE <= 4 pada sesi kualitas 3x berturut-turut | Target pace sesi kualitas naik 1 tingkat |
-| 1 latihan terlewat | Tidak diganti; lanjut plan |
-| >= 2 latihan terlewat dalam seminggu | Ulangi minggu tersebut (volume tidak dinaikkan) |
-| Tidak lari >= 10 hari | Tawarkan 1 minggu Return to run |
-| Waktu race / time trial baru | Hitung ulang zona pace dan prediksi |
+| ID | Kondisi | Usulan |
+|----|---------|--------|
+| E-17 | RPE >= 8 pada easy run 2x berturut-turut | Volume minggu depan turun ~10%, 1 sesi berat diganti easy |
+| E-18 | RPE <= 4 pada sesi kualitas 3x berturut-turut | Target pace sesi kualitas naik 1 tingkat, atau tawarkan time trial (E-20) |
+| E-19 | 1 latihan terlewat | Tidak diganti; lanjut plan |
+| E-19 | >= 2 latihan terlewat dalam seminggu | Ulangi minggu tersebut (volume tidak dinaikkan) |
+| E-13 | Tidak lari >= 10 hari | Tawarkan 1 minggu Return to run |
+| E-20 | Waktu race / time trial baru | Hitung ulang zona pace dan prediksi |
 
-Sumber: PLANNING 4.5.
+Sumber: PLANNING 4.5; bukti per aturan di `07-ENGINE-EVIDENCE.md` 2.4. `plan_adjustments.rule` berisi ID di kolom pertama.
+
+### 4.4 Reasoning (rationale)
+
+Setiap keputusan engine (plan, latihan, usulan adaptasi) mengembalikan daftar `rationale` `{rule, values}` yang merujuk ID aturan di atas. Teks, tingkat bukti dan referensi diambil dari registri statis di `training-engine` (tanpa tabel DB) dan ditampilkan di 1.8, 2.2, 2.5, 3.2. Format, template teks dan test wajib: `07-ENGINE-EVIDENCE.md` bagian 3. Aturan baru tanpa entri registri = test gagal.
 
 ## 5. Batasan platform
 
@@ -185,3 +191,40 @@ Service role key **tidak** perlu diberikan ke repo, CI, atau session; Edge Funct
 | Aksesibilitas | Kontras teks min 4.5:1, area sentuh min 44 x 44 (sesuai wireframe) |
 | Biaya infra beta | Tier gratis Supabase / PostHog / Sentry |
 | Backup | Export dan import 1 tahun data selesai < 5 detik di HP kelas menengah (usulan, diukur di M6) |
+
+## 8. Bahasa dan format
+
+MVP hanya bahasa Indonesia, tetapi kode disiapkan untuk multibahasa (pasar global, D9) supaya menambah bahasa tidak perlu membongkar komponen.
+
+| Aturan | Nilai |
+|--------|-------|
+| Bahasa MVP | Indonesia saja (`id`), sapaan "kamu". Tidak ada pemilih bahasa di UI |
+| Katalog teks | Semua teks yang tampil ke pengguna (UI, pesan error, notifikasi, cue timer, template rationale 07 bagian 3.2, nama + cue gerakan drill) diambil dari katalog: `apps/app/src/i18n/id.ts` dan `packages/training-engine/src/i18n/id.ts`. Kunci stabil (mis. `today.start`), nilainya teks. Tidak ada teks UI tertulis langsung di komponen |
+| Placeholder | `{nama}` di dalam teks katalog. Angka diformat dulu (baris Format) sebelum dimasukkan |
+| Format | Satu modul `format.ts` di `packages/ui`: angka dan tanggal lewat `Intl.NumberFormat` / `Intl.DateTimeFormat` dengan locale dari `profile.locale` (MVP selalu `id-ID`). Pace dan durasi (`6:45 /km`, `38:45`) diformat manual. Tampilan: 04-UI-UX bagian 6 |
+| Engine | `training-engine` mengembalikan kode + nilai (enum tipe latihan, rationale `{rule, values}`), bukan teks jadi. Teks dibentuk di UI dari katalog |
+| Data tersimpan | Database menyimpan kode, bukan teks (mis. `type = 'tempo'`, bukan "Tempo"). File backup ikut aturan ini |
+| Library | Tanpa library i18n di MVP (1 bahasa cukup dengan katalog TypeScript). Library dipilih saat D9 diputuskan, lewat perubahan stack bagian 1 |
+| Test | CI memeriksa: tidak ada teks literal di JSX `apps/app/src` dan `packages/ui` (kecuali angka/simbol); setiap kunci yang dipakai ada di `id.ts`; snapshot format `5,2 km`, `6:45 /km`, `Selasa, 27 Okt`, `2j 21m` |
+
+Saat multibahasa (D9): tambah katalog per bahasa (mis. `en.ts`), pemilih bahasa di 4.1 + bahasa awal dari perangkat, `profile.locale` diisi, satuan awal mengikuti negara (mi untuk US/UK), notifikasi dan cue ikut bahasa, dan konten yang khas Indonesia ditinjau ulang (zona waktu default, konteks panas, race lokal, kebijakan privasi per negara).
+
+## 9. Notifikasi
+
+Semua notifikasi **lokal**: dijadwalkan di perangkat lewat Expo Notifications. Tidak ada push dari server dan tidak ada token push yang dikirim ke server (sesuai TRD 2 aturan 4).
+
+| Jenis | Kapan | Contoh isi | Aturan |
+|-------|-------|------------|--------|
+| Pengingat latihan (F-12) | Jam `profile.reminder_time` di hari yang punya latihan `scheduled` | "Hari ini: Tempo 42 menit. Siap lari?" | Tidak dikirim di hari istirahat, saat plan `paused`, atau jika latihan hari itu sudah `completed`. Dijadwalkan untuk 7 hari ke depan dan dijadwalkan ulang saat app dibuka, plan berubah (pindah, gabung, adaptasi, jeda, lanjut) atau jam diubah |
+| Cue timer (F-05) | Tiap pergantian segmen saat timer `running` | "Segmen 3 dari 4: Tempo 14 menit, 6:45 /km" | Dibatalkan saat `paused` / `finished` (App Flow 3.2) |
+
+Tidak ada di MVP: notifikasi pemasaran, streak, ringkasan minggu, usulan adaptasi. Pengingat backup tetap kartu di dalam app (TRD 3.3), bukan notifikasi.
+
+Aturan:
+
+1. **Isi tanpa data kesehatan.** Boleh: tipe latihan, durasi, jarak, pace target. Dilarang: RPE, tag catatan, alasan jeda/cedera, jawaban screening. Notifikasi bisa terbaca di layar kunci.
+2. **Izin diminta saat dibutuhkan**, dengan 1 kalimat penjelasan sebelum dialog sistem: di 1.6 saat pengguna memilih jam pengingat, dan saat Mulai timer pertama kali jika belum diizinkan. Tidak diminta saat app pertama dibuka.
+3. **Izin ditolak:** app tetap berjalan. 4.1 menampilkan "Pengingat mati: izin notifikasi ditolak" + tombol "Buka pengaturan". Timer tetap memakai suara + getar selama app aktif.
+4. **Web:** pengingat tidak didukung di MVP; pilihan jam di 1.6 dan 4.1 nonaktif dengan keterangan. Cue timer hanya saat tab aktif (bagian 5).
+5. Teks dari katalog (bagian 8); jam mengikuti `profile.timezone`.
+6. Test: pengingat hanya di hari latihan, tidak saat `paused`, dijadwalkan ulang setelah pindah latihan; isi notifikasi tidak memuat field pribadi di aturan 1.

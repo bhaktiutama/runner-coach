@@ -7,6 +7,7 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 - 4 tab: **Hari ini | Plan | Progres | Profil**. Pengguna baru: Selamat datang -> 6 pertanyaan -> preview plan -> login -> Hari ini.
 - Loop inti: Hari ini -> Mulai -> Timer -> Selesai + RPE -> Simpan. Setelah latihan terakhir minggu itu: Ringkasan minggu.
 - Status latihan dan timer punya state yang jelas (bagian 3); agent wajib mengikuti transisi di sini.
+- Semua teks dari katalog bahasa Indonesia (TRD 8). Notifikasi hanya lokal (TRD 9).
 - Semua flow membaca/menulis SQLite di perangkat. Hanya login (1.8, 1.9) dan hapus akun (4.6) yang butuh internet.
 
 ## 1. Peta layar
@@ -45,9 +46,9 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 | 1.3 | Tanggal race (kalender) + nama race (opsional), atau "Belum ada race" | Tampilkan "X minggu lagi" + cocok/tidak. Kurang dari durasi minimum: tawarkan target lebih pendek atau plan dipadatkan dengan peringatan. Dilewati untuk target Bugar |
 | 1.4 | "Saya tahu waktunya" (jarak + waktu) atau "Saya tidak tahu" (pilih level) | Tampilkan estimasi waktu target sebagai rentang (Riegel) |
 | 1.5 | Volume km/minggu (stepper + chip cepat) + lari terjauh 4 minggu | Di bawah syarat minimum target: sarankan target lebih pendek atau base building |
-| 1.6 | Hari tersedia (3-6) + hari long run (Sabtu/Minggu) + jam pengingat | < 3 hari: tombol Lanjut nonaktif. Tampilkan "X hari/minggu: pas untuk plan ..." |
+| 1.6 | Hari tersedia (3-6) + hari long run (Sabtu/Minggu) + jam pengingat | < 3 hari: tombol Lanjut nonaktif. Tampilkan "X hari/minggu: pas untuk plan ...". Saat jam pengingat dipilih: penjelasan 1 kalimat lalu dialog izin notifikasi (FL-11). Web: jam pengingat nonaktif |
 | 1.7 | 5 pertanyaan Ya/Tidak + centang disclaimer | Ada "Ya": tampilkan saran ke dokter, plan mode ringan (O3). Disclaimer wajib dicentang |
-| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
+| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, kartu lipat "Kenapa plan ini?" (rationale level plan + label bukti + sumber, 07 bagian 3.3), catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
 
 Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah terakhir. Login gagal: tetap di 1.8, plan tidak hilang.
 
@@ -120,6 +121,18 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 "Keluar" -> pilihan: "Keluar, data tetap di HP ini" atau "Keluar dan hapus data di HP ini" (tawarkan backup dulu). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
 
+### FL-11 Pengingat dan izin notifikasi (F-12, F-05)
+
+| Kasus | Perilaku |
+|-------|----------|
+| Pilih jam di 1.6 atau 4.1 | Penjelasan "Kami ingatkan di hari latihan saja" -> dialog izin sistem. Diizinkan: jadwalkan pengingat 7 hari ke depan (TRD 9) |
+| Izin ditolak | Lanjut tanpa pengingat; `reminder_time` tetap tersimpan. 4.1: "Pengingat mati: izin notifikasi ditolak" + "Buka pengaturan" |
+| Izin diberikan belakangan lewat pengaturan HP | Saat app dibuka: deteksi izin, jadwalkan pengingat |
+| Mulai timer pertama kali tanpa izin | Penjelasan cue saat layar terkunci -> dialog izin. Ditolak: timer tetap jalan dengan suara + getar selama app aktif |
+| Plan dijeda / dilanjutkan | Jeda: semua pengingat dibatalkan. Lanjut: dijadwalkan ulang |
+| Latihan dipindah, digabung, atau adaptasi diterapkan | Pengingat 7 hari ke depan dijadwalkan ulang |
+| Latihan hari itu sudah selesai sebelum jam pengingat | Pengingat hari itu dibatalkan |
+
 ## 3. State
 
 ### 3.1 Status latihan terjadwal
@@ -149,4 +162,4 @@ Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanp
 
 ### 3.3 Status plan
 
-`active` -> `paused` (FL-6) -> `active` (dengan minggu Return to run). `active` -> `archived` saat target diganti dari 4.1.
+`active` -> `paused` (FL-6, pengingat dibatalkan) -> `active` (dengan minggu Return to run, pengingat dijadwalkan ulang). `active` -> `archived` saat target diganti dari 4.1.

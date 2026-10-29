@@ -52,6 +52,7 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | display_name | text null | Diisi pengguna, tidak diambil dari provider login |
 | unit | text default 'km' | check in ('km','mi') |
 | timezone | text default 'Asia/Jakarta' | IANA |
+| locale | text default 'id-ID' | Locale format angka/tanggal (TRD 8). MVP selalu `id-ID`; dipakai pemilih bahasa saat multibahasa (D9) |
 | reminder_time | text null | `HH:MM`, layar 1.6; null = mati |
 | intensity_guide | text default 'pace' | check in ('pace','hr','rpe'); 'hr' aktif di fase 2 |
 | health_flag | boolean default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |
@@ -80,7 +81,7 @@ Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1
 |-------|------|---------|
 | goal_id | uuid FK -> goals | |
 | start_date / end_date | date | |
-| params | json | `{available_days, long_run_day, light_mode, engine_version}` |
+| params | json | `{available_days, long_run_day, light_mode, engine_version, rationale}`. `rationale` = daftar `{rule, values}` level plan (07 bagian 3.1) |
 | version | int default 1 | Naik setiap adaptasi diterapkan |
 | status | text default 'active' | check in ('active','paused','archived') |
 | pause_reason | text null | check in ('injury','sick','busy'); layar 4.3. Bagian nyeri tidak disimpan |
@@ -101,6 +102,7 @@ Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1
 | target_duration_s | int null | |
 | status | text default 'scheduled' | check in ('scheduled','completed','skipped','missed') |
 | original_date | date null | Terisi jika dipindah (3.2) |
+| rationale | json default '[]' | Daftar `{rule, values}` dari engine (07 bagian 3.1); teks dari registri statis, tidak disimpan |
 
 Index: `(date)`. Gabung 2 latihan (3.2): latihan tujuan di-update, latihan yang dipindah dihapus.
 
@@ -135,7 +137,7 @@ Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is no
 |-------|------|---------|
 | plan_id | uuid FK -> plans on delete cascade | |
 | week_index | int | Minggu yang diubah |
-| rule | text | Kode aturan TRD 4.3 |
+| rule | text | ID aturan TRD 4.3 (`E-xx`, 07 bagian 2.4) |
 | changes | json | Daftar perubahan untuk ditampilkan |
 | status | text | check in ('proposed','accepted','rejected') |
 

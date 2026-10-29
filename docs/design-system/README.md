@@ -17,7 +17,7 @@ Tampilan visual (warna, tipe, 11 komponen dalam tema terang dan gelap): artifact
 | 1 | **Intensitas = panas** | Zona latihan memakai satu skala hangat: recovery lavender (sejuk), easy peach, long peach tua, tempo oranye, interval bara | Sekali lihat tahu seberapa berat. Kecerahan menurun berurutan, jadi tetap terbaca oleh buta warna. Cocok dengan konteks lari pagi di iklim panas |
 | 2 | **Bentuk lintasan** | Tombol dan chip berbentuk stadium; progres memakai cincin **oval lintasan** (2 lurus + 2 tikungan), bukan lingkaran; minggu digambar sebagai 7 lajur | Bentuk ikonik lari, tetap kontrol standar (tombol tetap tombol) |
 | 3 | **Label bib** | Tipe latihan ditulis seperti nomor dada race: kotak, huruf kapital rapat, 4 titik peniti di sudut | Membedakan tipe latihan dari tombol dan status. Dipakai hanya di kartu latihan, maksimal 1 per kartu |
-| 4 | **Kertas hangat + oranye** | Latar krem `#FFF9F2`, kartu putih dengan bayangan keras 2 px, tombol oranye dengan teks charcoal | Hangat dan beda dari app olahraga hitam/neon. Teks gelap di oranye lebih terbaca (4.68:1) daripada putih (3.03:1) |
+| 4 | **Abu-abu hangat + oranye** | Latar abu-abu hangat `#F5F4F2`, kartu putih dengan bayangan keras 2 px, tombol oranye dengan teks charcoal | Hangat dan beda dari app olahraga hitam/neon. Teks gelap di oranye lebih terbaca (4.68:1) daripada putih (3.03:1) |
 
 Tipografi juga jadi pembeda: **Bricolage Grotesque** (judul, angka) dan **Plus Jakarta Sans** (UI, buatan foundry Jakarta). Keduanya punya digit tabular (`tnum`, sudah diuji: lebar "1111" = "8888"), sehingga timer tidak bergoyang.
 

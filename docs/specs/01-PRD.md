@@ -6,6 +6,7 @@ Status: Draft v0.3 (2026-10-29) | Latar belakang: `docs/PLANNING.md` bagian 1, 2
 
 - Run Coach memberi tahu pelari **apa yang harus dilari hari ini**, memandu lewat **timer interval**, dan menunjukkan **progres**.
 - Target MVP: pelari Pemula dan Rekreasional dengan target 5K, 10K, HM, FM, atau sekadar bugar. Web, iOS, Android.
+- Bahasa Indonesia di MVP; multibahasa untuk pasar global menyusul (D9).
 - MVP 100% gratis. Sukses diukur dari aktivasi dan retensi, bukan pendapatan.
 - **Privasi dulu:** semua data pribadi (target, plan, latihan, RPE, kesehatan) hanya tersimpan di HP pengguna. Server hanya menyimpan akun login. Ini juga jadi pembeda produk.
 
@@ -48,16 +49,16 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 |----|-------|-------|-----------|-------------------|
 | F-01 | Akun & login | 1.1, 1.8, 1.9 | Must | Apple, Google, Email. Diminta **setelah** preview plan. "Sudah punya akun? Masuk" di 1.1 -> 1.9. Akun hanya untuk masuk; data tetap di perangkat. Login di HP tanpa data: tawarkan pulihkan dari file (F-18) |
 | F-02 | Onboarding | 1.2-1.7 | Must | 6 langkah dengan progress bar. Data tersimpan lokal sebelum login |
-| F-03 | Plan generator | 1.8 | Must | Plan 5K/10K/HM/FM/Bugar sesuai tanggal race, hari tersedia, kemampuan. Preview: target waktu, hari per minggu, grafik volume per fase, zona pace. Lolos aturan TRD 4 |
-| F-04 | Hari ini + detail latihan | 2.1, 2.2 | Must | Kartu latihan + Mulai dalam 1 layar. Detail: segmen, grafik intensitas, "Kenapa latihan ini?", Pindah hari, Ganti jadi easy |
+| F-03 | Plan generator | 1.8 | Must | Plan 5K/10K/HM/FM/Bugar sesuai tanggal race, hari tersedia, kemampuan. Preview: target waktu, hari per minggu, grafik volume per fase, zona pace, bagian "Kenapa plan ini?" (alasan + tingkat bukti + sumber per aturan, 07 bagian 3). Lolos aturan TRD 4 |
+| F-04 | Hari ini + detail latihan | 2.1, 2.2 | Must | Kartu latihan + Mulai dalam 1 layar. Detail: segmen, grafik intensitas, "Kenapa latihan ini?" dari rationale engine (07 bagian 3), Pindah hari, Ganti jadi easy |
 | F-05 | Workout timer | 2.3 | Must | Countdown per segmen, sisa total, target pace, segmen berikut, Jeda/Akhiri. Suara + getar per segmen, juga saat layar terkunci |
 | F-06 | Selesai + RPE | 2.4 | Must | Durasi, jarak (bisa diedit), pace rata-rata, RPE 1-10 dengan deskripsi, tag catatan opsional, Simpan |
 | F-07 | Progres | 3.3 | Must | Rentang 8 mgg / Plan / Semua; volume mingguan, tren pace easy run, kepatuhan, prediksi race (rentang), aktivitas terakhir |
 | F-08 | Kalender + pindah latihan | 3.1, 3.2 | Must | Bar fase Base/Build/Peak/Taper, daftar minggu. Pindah ke hari lain dengan pesan cek aturan; bisa gabung 2 latihan; Lewati |
 | F-09 | Jeda plan | 4.3 | Must | Alasan (Cedera/Sakit/Sibuk-libur), perkiraan durasi, bagian nyeri (opsional). Saat lanjut: 1 minggu "Return to run" |
 | F-10 | Hapus akun | 4.5 -> 4.6 | Must | Ketik "HAPUS". Akun Auth di server dihapus + semua data di perangkat dihapus. Tawarkan backup dulu |
-| F-11 | Ringkasan minggu + adaptasi | 2.5 | Should | Muncul setelah latihan terakhir minggu itu. Usulan perubahan plan dengan alasan; "Oke, terapkan" / "Tetap plan awal" |
-| F-12 | Pengingat | 1.6, 4.1 | Should | Jam pengingat dipilih di onboarding, bisa diubah/dimatikan di Profil |
+| F-11 | Ringkasan minggu + adaptasi | 2.5 | Should | Muncul setelah latihan terakhir minggu itu. Usulan perubahan plan dengan alasan (template aturan `E-xx`, 07 bagian 3.2); "Oke, terapkan" / "Tetap plan awal" |
+| F-12 | Pengingat | 1.6, 4.1 | Should | Jam pengingat dipilih di onboarding, bisa diubah/dimatikan di Profil. Notifikasi lokal hanya di hari latihan, tidak saat plan dijeda, isi tanpa data kesehatan. Izin diminta di 1.6; jika ditolak, Profil menampilkan status + tombol ke pengaturan. Web: tidak didukung di MVP. Detail TRD 9 |
 | F-13 | Backup data | 4.5 | **Must** | "Backup ke file": semua data lokal ke 1 file JSON lewat share sheet. Tampilkan "Backup terakhir". Pengingat setelah 30 hari |
 | F-14 | Detail aktivitas | 3.4 | Should | Ringkasan, segmen vs target, split per km, RPE |
 | F-15 | Log manual | 2.6 | Must | Catat lari tanpa timer: tanggal, jarak, durasi, RPE, tag. Dicocokkan ke latihan hari itu |
@@ -76,6 +77,7 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | Bagikan kartu ringkasan | Fase 4 | Tombol di 2.5 disembunyikan di MVP |
 | Strength kaki + core bodyweight 2x/minggu | Fase 2 (gratis, uji minat) | PLANNING 4.7; butuh wireframe kartu strength + mode gerakan di timer |
 | Strength lanjutan (beban, plyometrik), mobility, library gerakan + animasi Rive | Fase 3 (Premium) | PLANNING 4.7, 8.2; format animasi = D8 |
+| Multibahasa (mulai bahasa Inggris) untuk pasar global | Fase lanjut (D9) | Pemilih bahasa di 4.1. Kode MVP sudah disiapkan (TRD 8) |
 | GPS sendiri, sosial, AI coach, app jam native | Fase 4 / backlog | |
 
 ## 6. Metrik sukses
@@ -101,6 +103,7 @@ Exit criteria beta: 50-100 beta tester aktif (PLANNING bagian 7).
 | D3 | Pace atau HR sebagai default? | Pace (pengguna bisa pilih RPE di 2.2) |
 | D5 | Nama dan brand | "Run Coach" (nama kerja, dipakai di 1.1). Cek merek dagang dan ketersediaan nama di App Store, Play Store dan domain belum dilakukan |
 | D6 | Pelatih bersertifikat untuk review aturan plan | Wajib sebelum beta publik |
+| D9 | Multibahasa untuk pasar global: bahasa kedua, library i18n, kapan rilis | MVP bahasa Indonesia saja; teks lewat katalog dan format lewat `Intl` sejak M1 (TRD 8) |
 | P1 | Login wajib di 1.8 atau boleh "Nanti saja"? Tanpa sinkron, login di MVP belum memberi manfaat langsung ke pengguna (dipakai untuk Premium di fase 3) | Wajib, sesuai keputusan pemilik produk. Pantau drop-off di 1.8; jika tinggi, jadikan opsional |
 | P2 | File backup berpassword (terenkripsi) | Tidak di MVP |
 | P3 | Backup cloud terenkripsi end-to-end (server tidak bisa membaca) sebagai opt-in, untuk pindah HP tanpa file | Tidak di MVP; dievaluasi setelah beta |

@@ -1,6 +1,6 @@
 # Wireframes: Run Coach
 
-Status: v0.3 (2026-10-29), memakai design system Lintas. Salinan dari artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka).
+Status: v0.4 (2026-10-29), memakai design system Lintas (latar abu-abu hangat). Salinan dari artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka).
 
 - **26 layar HP** (lebar 390) dalam 4 journey. Nomor layar dipakai di semua dokumen `docs/specs/`.
 - Warna, tipe dan bentuk sudah memakai Lintas (`source/ds/lintas/`, salinan dari `docs/design-system/`). Layar memakai variabel token (`var(--primary)`), tidak ada hex lepas.
@@ -38,6 +38,13 @@ Status: v0.3 (2026-10-29), memakai design system Lintas. Salinan dari artifact w
 | 4.4 | Premium | [png](png/4-4-premium.png) | Fase 3 |
 | 4.5 | Data & privasi | [png](png/4-5-data-privasi.png) | F-13, F-18, F-19 |
 | 4.6 | Hapus akun | [png](png/4-6-hapus-akun.png) | F-10 |
+
+## Yang berubah di v0.4
+
+| Perubahan | Layar |
+|-----------|-------|
+| Latar krem diganti abu-abu hangat `#F5F4F2` (+ `surface-sunken` `#EAE8E5`, `line` `#DDDAD6`); `primary-ink`, `accent-ink`, `success` sedikit digelapkan agar kontras tetap >= 4.5:1 | Semua |
+| Kartu "Kenapa plan ini?" (alasan + label tingkat bukti + Lihat sumber, spec 07). Contoh grafik volume patuh TRD 4.2: naik maks 10%, cutback minggu 4 dan 8, taper 10K 1 minggu turun 50% | 1.8 |
 
 ## Yang berubah di v0.3
 
