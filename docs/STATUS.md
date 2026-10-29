@@ -46,7 +46,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | # | Item | Untuk | Status |
 |---|---|---|---|
 | B1 | `EXPO_TOKEN` | EAS | Selesai: project `@bhaktiutama/run-coach`, web preview di EAS Hosting, EAS Update channel `preview`, build APK preview |
-| B2 | Google aktif. Apple belum (butuh akun Apple Developer). Redirect URL app belum diizinkan (agent ditolak): Supabase > Authentication > URL Configuration > Redirect URLs, tambahkan `runcoach://**`, `https://run-coach--4eyuth15g3.expo.app/**`, `http://localhost:8081/**` | Login Google/Apple (F-01) | Sebagian |
+| B2 | Google aktif. Apple belum (butuh akun Apple Developer). Redirect URL app belum diizinkan (agent ditolak): Supabase > Authentication > URL Configuration > Redirect URLs, tambahkan `runcoach://**`, `https://run-coach--*.expo.app/**`, `http://localhost:8081/**` | Login Google/Apple (F-01) | Sebagian |
 | B3 | Uji di HP fisik: cue timer saat layar terkunci, lanjut posisi setelah app ditutup | Verifikasi M0, M4 | Menunggu build |
 | B4 | Review aturan engine oleh pelatih (D6) | Sebelum beta publik | Menunggu |
 | B6 | Deploy Edge Function `delete-account` | Hapus akun (F-10) | Selesai: ter-deploy, dicek tanpa JWT = 401, OPTIONS = 204 |
@@ -57,7 +57,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 
 | Cara | Link |
 |---|---|
-| Web (preview) | https://run-coach--4eyuth15g3.expo.app |
+| Web (preview) | https://run-coach--pit42nxhdz.expo.app (tiap deploy dapat URL baru; yang terbaru selalu di sini) |
 | APK Android (preview) | expo.dev > project run-coach > Builds (profil `preview`), unduh dan pasang di HP |
 | Update tanpa build ulang | `eas update --branch preview` (APK preview mengambil update saat dibuka) |
 
