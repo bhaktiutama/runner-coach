@@ -47,7 +47,7 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 | 1.5 | Volume km/minggu (stepper + chip cepat) + lari terjauh 4 minggu | Di bawah syarat minimum target: sarankan target lebih pendek atau base building |
 | 1.6 | Hari tersedia (3-6) + hari long run (Sabtu/Minggu) + jam pengingat | < 3 hari: tombol Lanjut nonaktif. Tampilkan "X hari/minggu: pas untuk plan ..." |
 | 1.7 | 5 pertanyaan Ya/Tidak + centang disclaimer | Ada "Ya": tampilkan saran ke dokter, plan mode ringan (O3). Disclaimer wajib dicentang |
-| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
+| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, bagian lipat "Kenapa plan ini?" (rationale level plan, 07 bagian 3.3), catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
 
 Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah terakhir. Login gagal: tetap di 1.8, plan tidak hilang.
 

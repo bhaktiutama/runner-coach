@@ -80,7 +80,7 @@ Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1
 |-------|------|---------|
 | goal_id | uuid FK -> goals | |
 | start_date / end_date | date | |
-| params | json | `{available_days, long_run_day, light_mode, engine_version}` |
+| params | json | `{available_days, long_run_day, light_mode, engine_version, rationale}`. `rationale` = daftar `{rule, values}` level plan (07 bagian 3.1) |
 | version | int default 1 | Naik setiap adaptasi diterapkan |
 | status | text default 'active' | check in ('active','paused','archived') |
 | pause_reason | text null | check in ('injury','sick','busy'); layar 4.3. Bagian nyeri tidak disimpan |
@@ -101,6 +101,7 @@ Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1
 | target_duration_s | int null | |
 | status | text default 'scheduled' | check in ('scheduled','completed','skipped','missed') |
 | original_date | date null | Terisi jika dipindah (3.2) |
+| rationale | json default '[]' | Daftar `{rule, values}` dari engine (07 bagian 3.1); teks dari registri statis, tidak disimpan |
 
 Index: `(date)`. Gabung 2 latihan (3.2): latihan tujuan di-update, latihan yang dipindah dihapus.
 
@@ -135,7 +136,7 @@ Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is no
 |-------|------|---------|
 | plan_id | uuid FK -> plans on delete cascade | |
 | week_index | int | Minggu yang diubah |
-| rule | text | Kode aturan TRD 4.3 |
+| rule | text | ID aturan TRD 4.3 (`E-xx`, 07 bagian 2.4) |
 | changes | json | Daftar perubahan untuk ditampilkan |
 | status | text | check in ('proposed','accepted','rejected') |
 

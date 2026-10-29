@@ -6,7 +6,7 @@ Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang 
 
 **Acuan visual:** [`docs/wireframes/`](../wireframes/README.md), 26 layar HP dalam 4 journey, sudah memakai design system Lintas, diekspor dari artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka). Nomor layar (1.1 sampai 4.6) dipakai di semua spec.
 
-## Urutan baca (total ~20 menit)
+## Urutan baca (total ~26 menit)
 
 | # | Dokumen | Pertanyaan yang dijawab | Waktu baca |
 |---|---------|-------------------------|------------|
@@ -16,6 +16,7 @@ Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang 
 | 4 | [04-UI-UX.md](04-UI-UX.md) | Token desain dari wireframe, komponen | 3 menit |
 | 5 | [05-BACKEND-SCHEMA.md](05-BACKEND-SCHEMA.md) | Tabel, kolom, RLS, API | 4 menit |
 | 6 | [06-IMPLEMENTATION-PLAN.md](06-IMPLEMENTATION-PLAN.md) | Urutan build, test, cek selesai | 3 menit |
+| 7 | [07-ENGINE-EVIDENCE.md](07-ENGINE-EVIDENCE.md) | Dasar ilmiah tiap aturan engine, reasoning yang dilihat pengguna | 6 menit |
 
 Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 
@@ -39,6 +40,7 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | R7 | ~~Token Strava hanya di server~~ Diganti PV: token di secure-store perangkat; Edge Function hanya menukar token tanpa menyimpan | |
 | R8 | MVP hanya memuat ABC drill sebagai segmen pemanasan (F-17, Should). Strength + core bodyweight di fase 2, strength lanjutan + mobility di fase 3 | Mengikuti PLANNING 2.1, 4.7 dan 7 (update 2026-10-29) |
 | R9 | ~~Sinkron offline last-write-wins~~ Diganti PV: tidak ada sinkron; pindah HP lewat file backup | |
+| R10 | Setiap aturan engine diberi ID `E-xx`, tingkat bukti dan referensi; engine menyimpan `rationale` per plan/latihan. Aturan baru E-06 (sesi maks 110% lari terjauh 30 hari), taper diberi besaran volume | Validasi ilmiah, `07-ENGINE-EVIDENCE.md` |
 
 ## Revisi dari wireframe (v0.2)
 

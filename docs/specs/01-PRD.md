@@ -48,15 +48,15 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 |----|-------|-------|-----------|-------------------|
 | F-01 | Akun & login | 1.1, 1.8, 1.9 | Must | Apple, Google, Email. Diminta **setelah** preview plan. "Sudah punya akun? Masuk" di 1.1 -> 1.9. Akun hanya untuk masuk; data tetap di perangkat. Login di HP tanpa data: tawarkan pulihkan dari file (F-18) |
 | F-02 | Onboarding | 1.2-1.7 | Must | 6 langkah dengan progress bar. Data tersimpan lokal sebelum login |
-| F-03 | Plan generator | 1.8 | Must | Plan 5K/10K/HM/FM/Bugar sesuai tanggal race, hari tersedia, kemampuan. Preview: target waktu, hari per minggu, grafik volume per fase, zona pace. Lolos aturan TRD 4 |
-| F-04 | Hari ini + detail latihan | 2.1, 2.2 | Must | Kartu latihan + Mulai dalam 1 layar. Detail: segmen, grafik intensitas, "Kenapa latihan ini?", Pindah hari, Ganti jadi easy |
+| F-03 | Plan generator | 1.8 | Must | Plan 5K/10K/HM/FM/Bugar sesuai tanggal race, hari tersedia, kemampuan. Preview: target waktu, hari per minggu, grafik volume per fase, zona pace, bagian "Kenapa plan ini?" (alasan + tingkat bukti + sumber per aturan, 07 bagian 3). Lolos aturan TRD 4 |
+| F-04 | Hari ini + detail latihan | 2.1, 2.2 | Must | Kartu latihan + Mulai dalam 1 layar. Detail: segmen, grafik intensitas, "Kenapa latihan ini?" dari rationale engine (07 bagian 3), Pindah hari, Ganti jadi easy |
 | F-05 | Workout timer | 2.3 | Must | Countdown per segmen, sisa total, target pace, segmen berikut, Jeda/Akhiri. Suara + getar per segmen, juga saat layar terkunci |
 | F-06 | Selesai + RPE | 2.4 | Must | Durasi, jarak (bisa diedit), pace rata-rata, RPE 1-10 dengan deskripsi, tag catatan opsional, Simpan |
 | F-07 | Progres | 3.3 | Must | Rentang 8 mgg / Plan / Semua; volume mingguan, tren pace easy run, kepatuhan, prediksi race (rentang), aktivitas terakhir |
 | F-08 | Kalender + pindah latihan | 3.1, 3.2 | Must | Bar fase Base/Build/Peak/Taper, daftar minggu. Pindah ke hari lain dengan pesan cek aturan; bisa gabung 2 latihan; Lewati |
 | F-09 | Jeda plan | 4.3 | Must | Alasan (Cedera/Sakit/Sibuk-libur), perkiraan durasi, bagian nyeri (opsional). Saat lanjut: 1 minggu "Return to run" |
 | F-10 | Hapus akun | 4.5 -> 4.6 | Must | Ketik "HAPUS". Akun Auth di server dihapus + semua data di perangkat dihapus. Tawarkan backup dulu |
-| F-11 | Ringkasan minggu + adaptasi | 2.5 | Should | Muncul setelah latihan terakhir minggu itu. Usulan perubahan plan dengan alasan; "Oke, terapkan" / "Tetap plan awal" |
+| F-11 | Ringkasan minggu + adaptasi | 2.5 | Should | Muncul setelah latihan terakhir minggu itu. Usulan perubahan plan dengan alasan (template aturan `E-xx`, 07 bagian 3.2); "Oke, terapkan" / "Tetap plan awal" |
 | F-12 | Pengingat | 1.6, 4.1 | Should | Jam pengingat dipilih di onboarding, bisa diubah/dimatikan di Profil |
 | F-13 | Backup data | 4.5 | **Must** | "Backup ke file": semua data lokal ke 1 file JSON lewat share sheet. Tampilkan "Backup terakhir". Pengingat setelah 30 hari |
 | F-14 | Detail aktivitas | 3.4 | Should | Ringkasan, segmen vs target, split per km, RPE |

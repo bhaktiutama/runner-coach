@@ -107,41 +107,46 @@ Karena tidak ada sinkron, data hanya berpindah lewat file milik pengguna:
 
 | Kebutuhan | Metode |
 |-----------|--------|
-| Prediksi waktu antar jarak | Riegel: `T2 = T1 x (D2 / D1)^1.06`, tampilkan sebagai rentang |
-| Zona pace | Kerangka Jack Daniels (Easy, Marathon, Threshold, Interval, Repetition), implementasi dari referensi asli + unit test |
+| Prediksi waktu antar jarak (E-01) | Riegel: `T2 = T1 x (D2 / D1)^1.06`, tampilkan sebagai rentang. Untuk FM, hasil Riegel = batas tercepat (07 E-O1) |
+| Zona pace (E-02) | Kerangka Jack Daniels (Easy, Marathon, Threshold, Interval, Repetition), implementasi dari Daniels' Running Formula edisi 4 + unit test |
 
 ### 4.2 Aturan wajib (diuji otomatis)
 
-Angka adalah heuristik umum coaching (PLANNING 4.3), bukan hasil riset; wajib direview pelatih (D6).
+Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom ID). Aturan tingkat D adalah heuristik coaching; semua wajib direview pelatih (D6).
 
-| Aturan | Nilai default |
-|--------|---------------|
-| Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
-| Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
-| Kenaikan volume mingguan | Maks 10% |
-| Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
-| Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna |
-| Intensitas | ~80% easy |
-| Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
-| Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg |
-| Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
-| Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
-| ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
+| ID | Aturan | Nilai default |
+|----|--------|---------------|
+| E-03 | Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
+| E-04 | Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
+| E-05 | Kenaikan volume mingguan | Maks 10% (batas konservatif; tidak diklaim mencegah cedera) |
+| E-06 | Jarak satu sesi | Maks 110% dari lari terjauh 30 hari terakhir (awal: `goals.longest_run_m`) |
+| E-07 | Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
+| E-08 | Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna. Berlaku bersama E-06; yang lebih ketat menang |
+| E-09 | Intensitas | ~80% easy |
+| E-10 | Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
+| E-11 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg. Volume turun 40-60% dari minggu puncak; intensitas dan jumlah sesi kualitas dipertahankan |
+| E-12 | Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
+| E-13 | Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
+| E-15 | ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
 
 ### 4.3 Adaptasi (F-11, layar 2.5)
 
 Dihitung engine di akhir minggu, ditampilkan sebagai **usulan**; plan baru berubah setelah pengguna menekan "Oke, terapkan".
 
-| Kondisi | Usulan |
-|---------|--------|
-| RPE >= 8 pada easy run 2x berturut-turut | Volume minggu depan turun ~10%, 1 sesi berat diganti easy |
-| RPE <= 4 pada sesi kualitas 3x berturut-turut | Target pace sesi kualitas naik 1 tingkat |
-| 1 latihan terlewat | Tidak diganti; lanjut plan |
-| >= 2 latihan terlewat dalam seminggu | Ulangi minggu tersebut (volume tidak dinaikkan) |
-| Tidak lari >= 10 hari | Tawarkan 1 minggu Return to run |
-| Waktu race / time trial baru | Hitung ulang zona pace dan prediksi |
+| ID | Kondisi | Usulan |
+|----|---------|--------|
+| E-17 | RPE >= 8 pada easy run 2x berturut-turut | Volume minggu depan turun ~10%, 1 sesi berat diganti easy |
+| E-18 | RPE <= 4 pada sesi kualitas 3x berturut-turut | Target pace sesi kualitas naik 1 tingkat, atau tawarkan time trial (E-20) |
+| E-19 | 1 latihan terlewat | Tidak diganti; lanjut plan |
+| E-19 | >= 2 latihan terlewat dalam seminggu | Ulangi minggu tersebut (volume tidak dinaikkan) |
+| E-13 | Tidak lari >= 10 hari | Tawarkan 1 minggu Return to run |
+| E-20 | Waktu race / time trial baru | Hitung ulang zona pace dan prediksi |
 
-Sumber: PLANNING 4.5.
+Sumber: PLANNING 4.5; bukti per aturan di `07-ENGINE-EVIDENCE.md` 2.4. `plan_adjustments.rule` berisi ID di kolom pertama.
+
+### 4.4 Reasoning (rationale)
+
+Setiap keputusan engine (plan, latihan, usulan adaptasi) mengembalikan daftar `rationale` `{rule, values}` yang merujuk ID aturan di atas. Teks, tingkat bukti dan referensi diambil dari registri statis di `training-engine` (tanpa tabel DB) dan ditampilkan di 1.8, 2.2, 2.5, 3.2. Format, template teks dan test wajib: `07-ENGINE-EVIDENCE.md` bagian 3. Aturan baru tanpa entri registri = test gagal.
 
 ## 5. Batasan platform
 
