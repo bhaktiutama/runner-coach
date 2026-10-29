@@ -1,4 +1,4 @@
-# Spec-Driven Development: Runner Coach
+# Spec-Driven Development: Run Coach
 
 Status: Draft v0.2 (2026-10-28), disinkronkan dengan wireframe
 

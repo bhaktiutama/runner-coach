@@ -1,4 +1,4 @@
-# Runner Coach: Product & Technical Planning
+# Run Coach: Product & Technical Planning
 
 Status: Draft v0.1 (2026-10-26)
 Owner: Bhakti Utama

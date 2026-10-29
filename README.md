@@ -1,4 +1,4 @@
-# Runner Coach
+# Run Coach
 
 Aplikasi latihan lari harian untuk target 5K, 10K, Half Marathon dan Full Marathon. Web, iOS dan Android dari satu codebase.
 

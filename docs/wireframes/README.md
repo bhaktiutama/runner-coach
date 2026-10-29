@@ -1,4 +1,4 @@
-# Wireframes: Runner Coach
+# Wireframes: Run Coach
 
 Status: salinan dari artifact "Runner Coach Wireframes" (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka), diekspor 2026-10-28.
 

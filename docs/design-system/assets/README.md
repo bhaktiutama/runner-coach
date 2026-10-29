@@ -1,6 +1,6 @@
 # Aset Lintas
 
-Logo, ikon app dan set ikon untuk Runner Coach. Semua warna dari `../tokens.json`.
+Logo, ikon app dan set ikon untuk Run Coach. Semua warna dari `../tokens.json`.
 
 ## Isi
 
@@ -20,7 +20,7 @@ Logo, ikon app dan set ikon untuk Runner Coach. Semua warna dari `../tokens.json
 ## Logo
 
 - **Mark**: lintasan lari (bentuk stadium, sama dengan TrackRing) yang terbuka di kanan atas, titik charcoal = pelari yang sedang keluar dari tikungan. Arti: progres yang terus berjalan.
-- **Wordmark**: "runner coach" huruf kecil, Bricolage Grotesque 800, lebar 88, sudah diubah ke path (tidak butuh font terpasang).
+- **Wordmark**: "run coach" huruf kecil, Bricolage Grotesque 800, lebar 88, sudah diubah ke path (tidak butuh font terpasang).
 - Warna: lintasan `primary` #F26B38, titik `text` #242C32 (versi gelap: titik `bg` #FFF9F2). Di ikon app, lintasan krem di atas oranye.
 - Ukuran minimum mark: 20 px. Ruang kosong di sekeliling minimal setinggi titik.
 - Jangan: memutar mark, mengganti warna di luar token, memberi efek bayangan/gradien, memisahkan titik dari lintasan.

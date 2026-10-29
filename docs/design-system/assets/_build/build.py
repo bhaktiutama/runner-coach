@@ -52,7 +52,7 @@ def text_path(text, size, x0, baseline, tracking=-0.02):
     return " ".join(p for p in parts if p), x - tracking * size
 
 
-WORD = "runner coach"
+WORD = "run coach"
 wd, wend = text_path(WORD, 40, 0, 40)
 write("wordmark.svg", svg(round(wend), 52, f'<path d="{wd}" fill="{TEXT}"/>'))
 

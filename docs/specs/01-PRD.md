@@ -4,7 +4,7 @@ Status: Draft v0.2 (2026-10-28) | Latar belakang: `docs/PLANNING.md` bagian 1, 2
 
 ## Ringkasan
 
-- Runner Coach memberi tahu pelari **apa yang harus dilari hari ini**, memandu lewat **timer interval**, dan menunjukkan **progres**.
+- Run Coach memberi tahu pelari **apa yang harus dilari hari ini**, memandu lewat **timer interval**, dan menunjukkan **progres**.
 - Target MVP: pelari Pemula dan Rekreasional dengan target 5K, 10K, HM, FM, atau sekadar bugar. Web, iOS, Android.
 - MVP 100% gratis. Sukses diukur dari aktivasi dan retensi, bukan pendapatan.
 
@@ -84,6 +84,6 @@ Exit criteria beta: 50-100 beta tester aktif (PLANNING bagian 7).
 | D1 | Persona utama: pemula atau rekreasional? | Keduanya |
 | D2 | GPS sendiri atau cukup integrasi? | Tanpa GPS |
 | D3 | Pace atau HR sebagai default? | Pace (pengguna bisa pilih RPE di 2.2) |
-| D5 | Nama dan brand | "Runner Coach" (nama kerja, dipakai di 1.1) |
+| D5 | Nama dan brand | "Run Coach" (nama kerja, dipakai di 1.1). Cek merek dagang dan ketersediaan nama di App Store, Play Store dan domain belum dilakukan |
 | D6 | Pelatih bersertifikat untuk review aturan plan | Wajib sebelum beta publik |
 | O1-O3 | Lihat `README.md` | |

@@ -33,7 +33,7 @@ Konteks: gerakan yang dianimasikan adalah drill, strength, core dan mobility dar
  [B2] Rive MCP: bangun animasi per gerakan di atas rig karakter
         |
         v
- runner-coach.riv  ----->  App (rive-react-native / @rive-app/react-canvas)
+ run-coach.riv  ----->  App (rive-react-native / @rive-app/react-canvas)
 ```
 
 ## 2. Status lingkungan (dicek 2026-10-27 di container cloud ini)
@@ -127,7 +127,7 @@ Ketiganya belum saya uji. Klaim fitur di atas berasal dari deskripsi paket/listi
 
 - Script mengubah `exercises/<id>.json` menjadi rotasi tulang per keyframe dan memanggil MCP untuk membuat 1 timeline per gerakan.
 - State machine: input `exercise` (enum), `playing` (bool), `speed` (number).
-- Export `runner-coach.riv`, preview otomatis dirender ke gambar untuk dicek.
+- Export `run-coach.riv`, preview otomatis dirender ke gambar untuk dicek.
 
 ### B3. Integrasi app
 
