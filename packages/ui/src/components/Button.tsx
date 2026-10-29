@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, View, type PressableProps } from 'react-native';
-import { border, color, radius, size, space } from '../theme';
+import { border, color, radius, ring, shadow, size, space } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
@@ -70,7 +70,7 @@ export function SecondaryButton({
     >
       <View style={styles.row}>
         {icon ? <Icon name={icon} color={color.text} /> : null}
-        <Text variant="button">{label}</Text>
+        <Text variant="row">{label}</Text>
       </View>
     </Pressable>
   );
@@ -88,7 +88,7 @@ export function LinkButton({ label, icon, disabled, ...rest }: Base) {
     >
       <View style={styles.row}>
         {icon ? <Icon name={icon} color={color.primaryInk} size={space[5]} /> : null}
-        <Text variant="heading" style={{ color: color.primaryInk }}>
+        <Text variant="row" style={{ color: color.primaryInk }}>
           {label}
         </Text>
       </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space[6],
   },
-  raised: { boxShadow: `0px 4px 0px 0px ${color.line}` },
+  raised: shadow.raised,
   pressed: { transform: [{ translateY: 2 }] },
   secondary: {
     minHeight: size.buttonSecondary,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space[5],
   },
-  outline: { borderWidth: border.control, borderColor: color.lineStrong, backgroundColor: color.surface },
+  outline: { ...ring(border.control, color.lineStrong), backgroundColor: color.surface },
   link: {
     minHeight: size.touchMin,
     alignItems: 'center',

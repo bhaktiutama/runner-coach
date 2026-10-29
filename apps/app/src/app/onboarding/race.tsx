@@ -1,8 +1,9 @@
 import { assessGoal, type EngineMessageKey } from '@run-coach/training-engine';
-import { InfoBox, LinkButton, SecondaryButton, Text, TextField } from '@run-coach/ui';
+import { InfoBox, LinkButton, SecondaryButton, TextField } from '@run-coach/ui';
 import { formatDateFull } from '@run-coach/ui/format';
 import { useState } from 'react';
 import { Calendar } from '@/components/Calendar';
+import { LeadText } from '@/components/LeadText';
 import { OnboardingStep } from '@/components/OnboardingStep';
 import { useToday } from '@/data/hooks';
 import { useOnboarding } from '@/data/useOnboarding';
@@ -49,38 +50,40 @@ export default function RaceStep() {
       />
       {a && d.raceDate ? (
         <InfoBox tone={a.fit === 'ok' ? 'ok' : a.fit === 'compressed' ? 'warn' : 'danger'} testID="race-fit">
-          <Text>
-            {a.fit === 'ok'
-              ? t('race.fitOk', {
-                  date: formatDateFull(d.raceDate),
-                  weeks: a.weeksUntilRace ?? 0,
-                  distance: distanceName,
-                })
-              : a.fit === 'compressed'
-                ? shorter
-                  ? t('race.fitCompressed', {
-                      date: formatDateFull(d.raceDate),
-                      weeks: a.weeksUntilRace ?? 0,
-                      distance: distanceName,
-                      defaultWeeks: a.defaultWeeks,
-                      shorter,
-                    })
-                  : t('race.fitCompressedNoShorter', {
-                      date: formatDateFull(d.raceDate),
-                      weeks: a.weeksUntilRace ?? 0,
-                      distance: distanceName,
-                      defaultWeeks: a.defaultWeeks,
-                    })
-                : shorter
-                  ? t('race.tooShort', {
-                      date: formatDateFull(d.raceDate),
-                      weeks: a.weeksUntilRace ?? 0,
-                      distance: distanceName,
-                      minWeeks: a.minWeeks,
-                      shorter,
-                    })
-                  : t('race.tooShortNoShorter', { date: formatDateFull(d.raceDate), minWeeks: a.minWeeks })}
-          </Text>
+          <LeadText
+            text={
+              a.fit === 'ok'
+                ? t('race.fitOk', {
+                    date: formatDateFull(d.raceDate),
+                    weeks: a.weeksUntilRace ?? 0,
+                    distance: distanceName,
+                  })
+                : a.fit === 'compressed'
+                  ? shorter
+                    ? t('race.fitCompressed', {
+                        date: formatDateFull(d.raceDate),
+                        weeks: a.weeksUntilRace ?? 0,
+                        distance: distanceName,
+                        defaultWeeks: a.defaultWeeks,
+                        shorter,
+                      })
+                    : t('race.fitCompressedNoShorter', {
+                        date: formatDateFull(d.raceDate),
+                        weeks: a.weeksUntilRace ?? 0,
+                        distance: distanceName,
+                        defaultWeeks: a.defaultWeeks,
+                      })
+                  : shorter
+                    ? t('race.tooShort', {
+                        date: formatDateFull(d.raceDate),
+                        weeks: a.weeksUntilRace ?? 0,
+                        distance: distanceName,
+                        minWeeks: a.minWeeks,
+                        shorter,
+                      })
+                    : t('race.tooShortNoShorter', { date: formatDateFull(d.raceDate), minWeeks: a.minWeeks })
+            }
+          />
         </InfoBox>
       ) : null}
       {a && a.fit !== 'ok' && a.shorterTarget ? (

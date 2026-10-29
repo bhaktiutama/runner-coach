@@ -21,8 +21,7 @@ test('screenshot alur utama', async ({ page }) => {
   await page.locator('[data-testid^="day-"]').nth(20).click();
   await shot(page, '1-3');
   await next(page, 'race');
-  await page.getByTestId('screen-ability').getByTestId('time-m').fill('32');
-  await page.getByTestId('screen-ability').getByTestId('time-s').fill('30');
+  await page.getByTestId('screen-ability').getByTestId('time').fill('3230');
   await shot(page, '1-4');
   await next(page, 'ability');
   await page.getByRole('button', { name: '10-20 km' }).click();

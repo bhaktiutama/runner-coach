@@ -1,9 +1,13 @@
+import { Children, isValidElement, useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
-import { border, color, radius, size, space, typography } from '../theme';
+import { border, color, radius, ring, shadow, size, space, typography } from '../theme';
+import { digitsToSeconds, formatTimeDigits, nextTimeDigits, secondsToDigits } from '../format';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
-/** Tombol ikon bulat (mis. kembali), area sentuh >= 44. */
+// Kontrol dasar. Ukuran mengikuti wireframe v0.4 (docs/wireframes/source), nilai dari token.
+
+/** Tombol ikon bulat 44 px (kembali, bulan kalender). */
 export function IconButton({
   icon,
   label,
@@ -34,12 +38,12 @@ export function IconButton({
         variant === 'outline' && styles.outline,
       ]}
     >
-      <Icon name={icon} color={variant === 'primary' ? color.onPrimary : color.text} />
+      <Icon name={icon} size={size.iconSm} color={variant === 'primary' ? color.onPrimary : color.text} />
     </Pressable>
   );
 }
 
-/** Kartu pilihan besar (1.2). */
+/** Kartu pilihan (1.2): grid 2 kolom, atau lebar penuh dengan chevron. */
 export function ChoiceCard({
   title,
   subtitle,
@@ -64,41 +68,65 @@ export function ChoiceCard({
       testID={testID}
       style={({ pressed }) => [
         styles.choice,
-        wide && styles.choiceWide,
+        wide ? styles.choiceWide : styles.choiceGrid,
         selected ? styles.choiceSelected : null,
         { opacity: pressed ? 0.85 : 1 },
       ]}
     >
-      <View style={styles.choiceHead}>
-        <Text variant={wide ? 'heading' : 'title'} style={styles.flex}>
-          {title}
-        </Text>
-        {selected ? (
-          <View style={styles.check}>
-            <Icon name="check" size={space[5]} color={color.palette.cream} />
+      {wide ? (
+        <>
+          <View style={styles.flex}>
+            <Text variant="row">{title}</Text>
+            {subtitle ? (
+              <Text variant="control" color="textMuted" style={styles.wideSub}>
+                {subtitle}
+              </Text>
+            ) : null}
           </View>
-        ) : wide ? (
-          <Icon name="chevron-right" />
-        ) : null}
-      </View>
-      {subtitle ? <Text color="textMuted">{subtitle}</Text> : null}
+          {selected ? <Check /> : <Icon name="chevron-right" size={space[5]} />}
+        </>
+      ) : (
+        <>
+          <View style={styles.choiceHead}>
+            <Text variant="title">{title}</Text>
+            {selected ? <Check /> : null}
+          </View>
+          {subtitle ? (
+            <Text variant="control" color="textMuted" style={styles.choiceSub}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </>
+      )}
     </Pressable>
   );
 }
 
-/** Chip stadium (pilihan cepat). */
+function Check() {
+  return (
+    <View style={styles.check}>
+      <Icon name="check" size={space[4]} color={color.bg} strokeWidth={3} />
+    </View>
+  );
+}
+
+/** Chip stadium. `size="option"` 44 px (pilihan setara, `fill` = lebar rata), `quick` 40 px. */
 export function Chip({
   label,
   selected,
   onPress,
   testID,
   disabled,
+  fill,
+  size: chipSize = 'option',
 }: {
   label: string;
   selected?: boolean;
   onPress?: () => void;
   testID?: string;
   disabled?: boolean;
+  fill?: boolean;
+  size?: 'option' | 'quick';
 }) {
   return (
     <Pressable
@@ -110,18 +138,24 @@ export function Chip({
       testID={testID}
       style={({ pressed }) => [
         styles.chip,
-        selected ? styles.chipSelected : null,
+        { minHeight: chipSize === 'quick' ? size.chip : size.touchMin },
+        fill && styles.chipFill,
+        selected ? styles.chipSelected : styles.chipIdle,
         { opacity: disabled ? 0.4 : pressed ? 0.8 : 1 },
       ]}
     >
-      <Text variant="heading" style={{ color: selected ? color.palette.cream : color.text }}>
+      <Text
+        variant={selected ? 'controlStrong' : 'control'}
+        numberOfLines={1}
+        style={{ color: selected ? color.bg : color.text }}
+      >
         {label}
       </Text>
     </Pressable>
   );
 }
 
-/** Segmented control 2-3 item. */
+/** Segmented control 2-4 item (teks 13, terpilih kartu putih + bayangan). */
 export function SegmentedControl<T extends string>({
   items,
   value,
@@ -147,7 +181,12 @@ export function SegmentedControl<T extends string>({
             onPress={() => onChange(it.value)}
             style={[styles.segItem, on && styles.segOn, { opacity: it.disabled ? 0.4 : 1 }]}
           >
-            <Text variant="heading" color={on ? 'text' : 'textMuted'} align="center">
+            <Text
+              variant={on ? 'controlSmStrong' : 'controlSm'}
+              color={on ? 'text' : 'textMuted'}
+              align="center"
+              numberOfLines={1}
+            >
               {it.label}
             </Text>
           </Pressable>
@@ -157,7 +196,7 @@ export function SegmentedControl<T extends string>({
   );
 }
 
-/** Stepper - angka + (1.5). */
+/** Stepper - angka + (1.5): tombol 60, angka 64, satuan 14/700. */
 export function Stepper({
   value,
   unitLabel,
@@ -192,7 +231,7 @@ export function Stepper({
         <Text variant="numberXl" align="center" testID="stepper-value">
           {String(value)}
         </Text>
-        <Text variant="label" color="textMuted" align="center">
+        <Text variant="controlStrong" color="textMuted" align="center">
           {unitLabel}
         </Text>
       </View>
@@ -209,7 +248,7 @@ export function Stepper({
   );
 }
 
-/** Kotak info berwarna status, selalu dengan ikon + teks. */
+/** Kotak info berwarna status + ikon. Anak berupa teks otomatis memakai body-sm (14/1.45). */
 export function InfoBox({
   tone,
   children,
@@ -217,7 +256,7 @@ export function InfoBox({
   testID,
 }: {
   tone: 'ok' | 'warn' | 'info' | 'danger';
-  children: React.ReactNode;
+  children: ReactNode;
   icon?: IconName;
   testID?: string;
 }) {
@@ -230,27 +269,98 @@ export function InfoBox({
   const ic: IconName = icon ?? (tone === 'ok' ? 'check' : tone === 'info' ? 'info' : 'alert');
   return (
     <View style={[styles.info, { backgroundColor: bg }]} testID={testID} accessibilityRole="alert">
-      <Icon name={ic} color={color.status.onStatus} />
-      <View style={styles.flex}>{children}</View>
+      <View style={styles.infoIcon}>
+        <Icon name={ic} size={space[5]} color={color.status.onStatus} />
+      </View>
+      <View style={styles.infoBody}>
+        {Children.map(children, (c) =>
+          typeof c === 'string' || typeof c === 'number' ? (
+            <Text variant="bodySm">{c}</Text>
+          ) : isValidElement<{ variant?: string }>(c) && c.type === Text && !c.props.variant ? (
+            <Text {...(c.props as object)} variant="bodySm" />
+          ) : (
+            c
+          ),
+        )}
+      </View>
     </View>
   );
 }
 
+/** Input teks 52 px, radius 10, garis 1.5 line-strong. */
 export function TextField(props: TextInputProps & { label?: string }) {
   const { label, style, ...rest } = props;
+  const input = (
+    <TextInput
+      placeholderTextColor={color.textMuted}
+      accessibilityLabel={label}
+      {...rest}
+      style={[styles.field, typography.body, styles.fieldText, style]}
+    />
+  );
+  return label ? <Field label={label}>{input}</Field> : input;
+}
+
+/**
+ * Input waktu satu kotak "j : mm : dd" (1.4). Pengguna mengetik angka saja (maks 5 digit,
+ * diisi dari kanan); nilai dikembalikan dalam detik, null jika kosong.
+ */
+export function TimeField({
+  label,
+  seconds,
+  onChange,
+  testID,
+}: {
+  label: string;
+  seconds: number | null;
+  onChange: (s: number | null) => void;
+  testID?: string;
+}) {
+  const [digits, setDigits] = useState(() => (seconds ? secondsToDigits(seconds) : ''));
   return (
-    <View style={styles.fieldWrap}>
-      {label ? (
-        <Text variant="label" color="textMuted">
-          {label}
+    <Field label={label}>
+      <TextInput
+        testID={testID}
+        accessibilityLabel={label}
+        keyboardType="number-pad"
+        inputMode="numeric"
+        placeholder={formatTimeDigits('')}
+        placeholderTextColor={color.textMuted}
+        value={digits ? formatTimeDigits(digits) : ''}
+        onChangeText={(v) => {
+          const d = nextTimeDigits(digits, v);
+          setDigits(d);
+          onChange(d ? digitsToSeconds(d) : null);
+        }}
+        style={[styles.field, typography.numberInput, styles.numberText]}
+      />
+    </Field>
+  );
+}
+
+/** Label bagian (13/700) + kontrolnya dengan jarak 8 (input) atau 12 (pilihan). */
+export function Field({
+  label,
+  children,
+  hint,
+  gap = 'tight',
+}: {
+  label: string;
+  children: ReactNode;
+  hint?: string;
+  gap?: 'tight' | 'group';
+}) {
+  return (
+    <View style={{ gap: gap === 'group' ? space[3] : space[2] }}>
+      <Text variant="label" color="textMuted">
+        {label}
+      </Text>
+      {children}
+      {hint ? (
+        <Text variant="caption" color="textMuted">
+          {hint}
         </Text>
       ) : null}
-      <TextInput
-        placeholderTextColor={color.textMuted}
-        accessibilityLabel={label}
-        {...rest}
-        style={[styles.field, typography.body, style]}
-      />
     </View>
   );
 }
@@ -276,14 +386,16 @@ export function Checkbox({
       style={styles.checkRow}
     >
       <View style={[styles.box, checked && styles.boxOn]}>
-        {checked ? <Icon name="check" size={space[5]} color={color.palette.cream} strokeWidth={3} /> : null}
+        {checked ? <Icon name="check" size={space[4]} color={color.bg} strokeWidth={3} /> : null}
       </View>
-      <Text style={styles.flex}>{label}</Text>
+      <Text variant="bodyStrong" style={styles.flex}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
-/** Progress onboarding 6 lajur + tombol kembali (1.2-1.7). */
+/** Header onboarding (1.2-1.7): kembali 44 + 6 lajur progres 8 px + penghitung. */
 export function OnboardingHeader({
   step,
   total,
@@ -312,55 +424,93 @@ export function OnboardingHeader({
           />
         ))}
       </View>
-      <Text variant="label" color="textMuted">
+      <Text variant="counter" color="textMuted">
         {counter}
       </Text>
     </View>
   );
 }
 
+/** Judul layar (28/800) + subjudul (15/1.45), jarak 8. */
+export function ScreenTitle({
+  title,
+  subtitle,
+  large,
+}: {
+  title: string;
+  subtitle?: string;
+  large?: boolean;
+}) {
+  return (
+    <View style={{ gap: large ? space[3] : space[2] }}>
+      <Text variant={large ? 'display' : 'title'} accessibilityRole="header">
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text variant="subtitle" color="textMuted">
+          {subtitle}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+const CHECK = space[6];
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   iconBtn: {
-    width: size.touchMin + 4,
-    height: size.touchMin + 4,
+    width: size.touchMin,
+    height: size.touchMin,
     borderRadius: radius.stadium,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  outline: { borderWidth: border.control, borderColor: color.line, backgroundColor: color.surface },
+  outline: { ...ring(border.control, color.line), backgroundColor: color.surface },
   choice: {
-    flex: 1,
-    minHeight: size.buttonPrimary + size.touchMin,
     backgroundColor: color.surface,
     borderRadius: radius.lg,
-    borderWidth: border.control,
-    borderColor: color.line,
-    padding: space[4],
-    gap: space[2],
+    ...ring(border.control, color.line),
   },
-  choiceWide: { flex: 0, minHeight: 0, paddingVertical: space[5] },
-  choiceSelected: { borderWidth: border.selected, borderColor: color.text },
-  choiceHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+  choiceGrid: {
+    flex: 1,
+    minHeight: size.buttonPrimary + size.touchMin,
+    padding: space[4],
+    gap: space[1] + space[1] / 2,
+  },
+  choiceWide: {
+    minHeight: size.buttonPrimary,
+    paddingHorizontal: space[5],
+    paddingVertical: space[3],
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  choiceSelected: ring(border.selected, color.text),
+  choiceHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+  },
+  choiceSub: { ...typography.controlSm, lineHeight: typography.label.lineHeight },
+  wideSub: { marginTop: space[1] },
   check: {
-    width: size.touchMin - space[4],
-    height: size.touchMin - space[4],
+    width: CHECK,
+    height: CHECK,
     borderRadius: radius.stadium,
     backgroundColor: color.text,
     alignItems: 'center',
     justifyContent: 'center',
   },
   chip: {
-    minHeight: size.chip,
-    paddingHorizontal: space[5],
+    paddingHorizontal: space[4],
     borderRadius: radius.stadium,
-    borderWidth: border.control,
-    borderColor: color.line,
-    backgroundColor: color.surface,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  chipSelected: { backgroundColor: color.text, borderColor: color.text },
+  chipFill: { flex: 1, paddingHorizontal: space[1] },
+  chipIdle: { backgroundColor: color.surface, ...ring(border.control, color.line) },
+  chipSelected: { backgroundColor: color.text },
   seg: {
     flexDirection: 'row',
     backgroundColor: color.surfaceSunken,
@@ -373,10 +523,16 @@ const styles = StyleSheet.create({
     borderRadius: radius.stadium,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: space[2],
+    paddingHorizontal: space[1] + space[1] / 2,
   },
-  segOn: { backgroundColor: color.surface, boxShadow: `0px 2px 0px 0px ${color.line}` },
-  stepper: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  segOn: { backgroundColor: color.surface, ...shadow.card },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: space[2],
+    paddingHorizontal: space[1],
+  },
   stepBtn: {
     width: size.buttonPrimary,
     height: size.buttonPrimary,
@@ -384,29 +540,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepValue: { flex: 1 },
+  stepValue: { flex: 1, gap: space[1] },
   info: {
     flexDirection: 'row',
     gap: space[3],
-    padding: space[4],
+    paddingVertical: space[3] + space[1] / 2,
+    paddingHorizontal: space[4],
     borderRadius: radius.md,
     alignItems: 'flex-start',
   },
-  fieldWrap: { gap: space[2] },
+  infoIcon: { paddingTop: border.hairline },
+  infoBody: { flex: 1, gap: space[1] },
   field: {
-    minHeight: size.input,
-    borderWidth: border.control,
-    borderColor: color.lineStrong,
-    borderRadius: radius.md,
+    height: size.input,
+    ...ring(border.control, color.lineStrong),
+    borderRadius: radius.sm,
     paddingHorizontal: space[4],
     backgroundColor: color.surface,
-    color: color.text,
   },
-  checkRow: { flexDirection: 'row', alignItems: 'center', gap: space[3], minHeight: size.touchMin },
+  fieldText: { color: color.text, fontFamily: typography.control.fontFamily },
+  numberText: { color: color.text },
+  checkRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3], minHeight: size.touchMin },
   box: {
-    width: size.touchMin - space[4],
-    height: size.touchMin - space[4],
-    borderRadius: radius.bib,
+    width: size.iconSm,
+    height: size.iconSm,
+    borderRadius: radius.bib / 1.5,
     borderWidth: border.control,
     borderColor: color.lineStrong,
     alignItems: 'center',

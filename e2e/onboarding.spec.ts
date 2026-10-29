@@ -13,8 +13,7 @@ async function onboard(page: Page) {
   await page.locator('[data-testid^="day-"]').nth(10).click();
   await expect(page.getByTestId('race-fit')).toBeVisible();
   await next(page, 'race');
-  await page.getByTestId('screen-ability').getByTestId('time-m').fill('32');
-  await page.getByTestId('screen-ability').getByTestId('time-s').fill('30');
+  await page.getByTestId('screen-ability').getByTestId('time').fill('3230');
   await expect(page.getByTestId('estimate')).toBeVisible();
   await next(page, 'ability');
   await page.getByRole('button', { name: '10-20 km' }).click();

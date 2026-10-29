@@ -1,5 +1,5 @@
 import { StyleSheet, View, type ViewProps } from 'react-native';
-import { border, color, radius, shadow, space } from '../theme';
+import { border, color, radius, ring, shadow, space } from '../theme';
 
 export function Card({
   style,
@@ -12,6 +12,6 @@ export function Card({
 const styles = StyleSheet.create({
   base: { borderRadius: radius.lg, padding: space[5] },
   raised: { backgroundColor: color.surface, ...shadow.card },
-  outline: { backgroundColor: color.surface, borderWidth: border.hairline, borderColor: color.line },
+  outline: { backgroundColor: color.surface, ...ring(border.hairline, color.line) },
   sunken: { backgroundColor: color.surfaceSunken },
 });

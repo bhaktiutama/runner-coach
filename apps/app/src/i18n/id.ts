@@ -2,6 +2,7 @@
 // Kunci stabil; nilainya teks. Placeholder `{nama}` diisi nilai yang sudah diformat.
 export const id = {
   'app.name': 'Run Coach',
+  'brand.wordmark': 'run coach',
   'common.next': 'Lanjut',
   'common.back': 'Kembali',
   'common.save': 'Simpan',
@@ -91,7 +92,7 @@ export const id = {
   'volume.chip.20to40': '20-40 km',
   'volume.chip.gt40': '> 40 km',
   'volume.longestLabel': 'Lari terjauh dalam 4 minggu terakhir',
-  'volume.longest.0': 'Belum ada',
+  'volume.longest.lt3': '< 3 km',
   'volume.longest.km': '{km} km',
   'volume.longest.10': '10+ km',
   'volume.belowMin':
@@ -397,7 +398,7 @@ export const id = {
   'activity.notFound': 'Aktivitas tidak ditemukan.',
   'profile.nameEmpty': 'Pelari',
   'profile.namePlaceholder': 'Nama panggilan (opsional)',
-  'profile.nameSub': 'Paket Gratis · nama diisi sendiri, hanya di HP ini',
+  'profile.nameSub': 'Paket Gratis · nama hanya di HP ini',
   'profile.editName': 'Ubah nama',
   'profile.sectionTraining': 'LATIHAN',
   'profile.sectionData': 'DATA',

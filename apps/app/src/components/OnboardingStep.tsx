@@ -1,4 +1,4 @@
-import { OnboardingHeader, PrimaryButton, Text } from '@run-coach/ui';
+import { OnboardingHeader, PrimaryButton, ScreenTitle } from '@run-coach/ui';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Screen } from '@/components/Screen';
@@ -17,6 +17,8 @@ type Props = {
   loading?: boolean;
   onBack?: () => void;
   extraFooter?: ReactNode;
+  /** Jarak antarblok 24 (wireframe 1.2, 1.5) atau 20. */
+  gap?: 'normal' | 'loose';
 };
 
 /** Kerangka layar 1.2-1.7: header progres 6 lajur, judul, isi, 1 tombol primary di bawah. */
@@ -24,6 +26,7 @@ export function OnboardingStep(p: Props) {
   const n = ORDER.indexOf(p.step) + 1;
   return (
     <Screen
+      gap={p.gap}
       testID={`screen-${p.step}`}
       footer={
         <>
@@ -45,8 +48,7 @@ export function OnboardingStep(p: Props) {
         counter={t('onboarding.counter', { step: n, total: ORDER.length })}
         onBack={p.onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/welcome')))}
       />
-      <Text variant="title">{p.title}</Text>
-      {p.subtitle ? <Text color="textMuted">{p.subtitle}</Text> : null}
+      <ScreenTitle title={p.title} subtitle={p.subtitle} />
       {p.children}
     </Screen>
   );

@@ -12,8 +12,7 @@ export async function onboard(page: Page, opts: { days?: number[] } = {}) {
   for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Bulan berikutnya' }).click();
   await page.locator('[data-testid^="day-"]').nth(10).click();
   await next(page, 'race');
-  await page.getByTestId('screen-ability').getByTestId('time-m').fill('32');
-  await page.getByTestId('screen-ability').getByTestId('time-s').fill('30');
+  await page.getByTestId('screen-ability').getByTestId('time').fill('3230');
   await next(page, 'ability');
   await page.getByRole('button', { name: '10-20 km' }).click();
   await page.getByTestId('longest-7').click();

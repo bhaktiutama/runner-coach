@@ -13,6 +13,7 @@ export const breakpoint = tokens.breakpoint;
 
 /** Nama font yang dimuat di app (lihat apps/app/src/app/_layout.tsx). */
 export const fontFiles = {
+  display500: 'BricolageGrotesque_500Medium',
   display700: 'BricolageGrotesque_700Bold',
   display800: 'BricolageGrotesque_800ExtraBold',
   ui500: 'PlusJakartaSans_500Medium',
@@ -24,7 +25,8 @@ type TypoKey = keyof typeof tokens.typography;
 
 function fontFor(family: readonly string[], weight: number): string {
   const display = family[0] === tokens.font.family.display[0];
-  if (display) return weight >= 800 ? fontFiles.display800 : fontFiles.display700;
+  if (display)
+    return weight >= 800 ? fontFiles.display800 : weight >= 700 ? fontFiles.display700 : fontFiles.display500;
   if (weight >= 700) return fontFiles.ui700;
   if (weight >= 600) return fontFiles.ui600;
   return fontFiles.ui500;
@@ -53,6 +55,15 @@ export const typography = Object.fromEntries(
 
 export type TypographyVariant = TypoKey;
 
+/**
+ * Garis dalam tanpa memakan ruang (wireframe memakai `inset box-shadow`), supaya isi tidak
+ * bergeser saat garis menebal (terpilih 2.5 px).
+ */
+export function ring(width: number, c: string) {
+  return { boxShadow: `inset 0px 0px 0px ${width}px ${c}` };
+}
+
+/** Bayangan keras 2/4 px (token shadow.card / shadow.raised). */
 export const shadow = {
   card: {
     boxShadow: `${tokens.shadow.card.offsetX}px ${tokens.shadow.card.offsetY}px ${tokens.shadow.card.blur}px ${tokens.shadow.card.spread}px ${tokens.shadow.card.color}`,

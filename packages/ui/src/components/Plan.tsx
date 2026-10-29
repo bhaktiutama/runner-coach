@@ -175,32 +175,53 @@ export function PhaseBar({
   );
 }
 
-/** Grafik batang volume per minggu (1.8, 3.3). Nilai label sudah diformat. */
+/** Grafik batang volume per minggu (1.8, 3.3): tinggi area 124, jarak 6, label angka di atas batang. */
 export function BarChart({
   bars,
   highlightIndex,
 }: {
-  bars: { value: number; label: string; phase: PhaseKey }[];
+  bars: { value: number; label: string; phase: PhaseKey; outline?: boolean }[];
   highlightIndex?: number;
 }) {
   const max = Math.max(1, ...bars.map((b) => b.value));
-  const chartH = space[10] * 3;
+  const area = space[10] * 3 + space[1];
+  const labelH = space[4];
   return (
-    <View style={styles.bars} accessibilityRole="image">
-      {bars.map((b, i) => (
-        <View key={i} style={styles.barCol}>
+    <View style={[styles.bars, { height: area }]} accessibilityRole="image">
+      {bars.map((b, i) => {
+        const fill = i === highlightIndex ? color.primary : phaseColor(b.phase);
+        return (
+          <View key={i} style={styles.barCol}>
+            <Text variant="chartLabel" color="textMuted">
+              {b.label}
+            </Text>
+            <View
+              style={[
+                styles.bar,
+                {
+                  height: Math.max(space[2], (b.value / max) * (area - labelH - space[1])),
+                  backgroundColor: b.outline ? color.surface : fill,
+                },
+                b.outline && { borderWidth: border.selected, borderColor: fill },
+              ]}
+            />
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+/** Legenda fase: kotak 12 px radius 4 + label 12/600, rata kiri-kanan. */
+export function PhaseLegend({ items }: { items: { phase: PhaseKey; label: string }[] }) {
+  return (
+    <View style={styles.legend}>
+      {items.map((l) => (
+        <View key={l.phase} style={styles.legendItem}>
+          <View style={[styles.legendDot, { backgroundColor: phaseColor(l.phase) }]} />
           <Text variant="caption" color="textMuted">
-            {b.label}
+            {l.label}
           </Text>
-          <View
-            style={[
-              styles.bar,
-              {
-                height: Math.max(space[2], (b.value / max) * chartH),
-                backgroundColor: i === highlightIndex ? color.primary : phaseColor(b.phase),
-              },
-            ]}
-          />
         </View>
       ))}
     </View>
@@ -260,9 +281,9 @@ const styles = StyleSheet.create({
   phaseCurrent: { borderColor: color.text },
   phasePill: { height: space[5], borderRadius: radius.stadium },
   legend: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[2] },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-  legendDot: { width: space[3], height: space[3], borderRadius: radius.bib / 2 },
-  bars: { flexDirection: 'row', alignItems: 'flex-end', gap: space[2], minHeight: space[10] * 3 + space[6] },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+  legendDot: { width: space[3], height: space[3], borderRadius: space[1] },
+  bars: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1] + space[1] / 2 },
   barCol: { flex: 1, alignItems: 'center', gap: space[1], justifyContent: 'flex-end' },
   bar: {
     width: '100%',

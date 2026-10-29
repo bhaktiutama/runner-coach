@@ -94,3 +94,11 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 - Mode gelap untuk seluruh app (token `color.dark` sudah ada, dipakai Timer).
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
 - Kartu share, konfeti.
+
+## 8. Kesetiaan ke wireframe (v0.5, 2026-10-29)
+
+- Ukuran pasti layar diambil dari sumber HTML wireframe (`docs/wireframes/source/*.dc.html`), bukan dari PNG. Skala tipe wireframe sudah masuk `tokens.json` (subtitle 15, label 13/700, control 14/600, control-sm 13, row 15/700, title 28/800, title-lg 32, stat 22/800, dst.).
+- Garis kontrol memakai garis dalam (`ring()` di `packages/ui/src/theme.ts`, setara `inset box-shadow` wireframe), supaya isi tidak bergeser saat terpilih.
+- Kontainer layar: padding atas min 56, samping 20, jarak antarblok 20 (24 untuk 1.2 dan 1.5), footer 12/20/32.
+- Cek visual: `SHOTS_DIR=<folder> pnpm test:e2e e2e/compare.spec.ts` lalu `python3 scripts/compare-wireframes.py <folder>` (kiri wireframe, kanan app, @2x).
+- Perbedaan yang disengaja: tautan "Isi otomatis dari Strava / Apple Health" (1.4) disembunyikan sampai fase 2 (PRD 5); lari terjauh punya pilihan "< 3 km" agar kriteria run-walk E-14 bisa terpenuhi.

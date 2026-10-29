@@ -33,13 +33,20 @@ export function rationaleText(r: Rationale, unit: Unit = 'km'): string {
   );
 }
 
-export type RationaleView = { id: string; text: string; gradeLabel: string; refs: Reference[] };
+export type RationaleView = {
+  id: string;
+  text: string;
+  gradeKey: string | null;
+  gradeLabel: string;
+  refs: Reference[];
+};
 
 export function rationaleView(r: Rationale, unit: Unit = 'km'): RationaleView {
   const entry = RULES[r.rule];
   return {
     id: r.rule,
     text: rationaleText(r, unit),
+    gradeKey: entry?.grade ?? null,
     gradeLabel: entry ? engineId[`grade.${entry.grade}` as EngineMessageKey] : '',
     refs: (entry?.refs ?? []).map((id) => REFERENCES[id]).filter((x): x is Reference => !!x),
   };

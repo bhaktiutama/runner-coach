@@ -140,8 +140,8 @@ export const tokens = {
       ],
       "fontSize": 36,
       "fontWeight": 800,
-      "lineHeight": 1.05,
-      "letterSpacing": "-0.03em"
+      "lineHeight": 1.1,
+      "letterSpacing": "-0.02em"
     },
     "title": {
       "fontFamily": [
@@ -150,8 +150,8 @@ export const tokens = {
         "sans-serif"
       ],
       "fontSize": 28,
-      "fontWeight": 700,
-      "lineHeight": 1.15,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
       "letterSpacing": "-0.02em"
     },
     "heading": {
@@ -194,9 +194,9 @@ export const tokens = {
         "sans-serif"
       ],
       "fontSize": 13,
-      "fontWeight": 600,
+      "fontWeight": 700,
       "lineHeight": 1.3,
-      "letterSpacing": "0.01em"
+      "letterSpacing": "0"
     },
     "bib": {
       "fontFamily": [
@@ -219,6 +219,259 @@ export const tokens = {
       "fontWeight": 600,
       "lineHeight": 1.3,
       "letterSpacing": "0.01em"
+    },
+    "subtitle": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 15,
+      "fontWeight": 500,
+      "lineHeight": 1.45,
+      "letterSpacing": "0"
+    },
+    "bodySm": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 14,
+      "fontWeight": 500,
+      "lineHeight": 1.45,
+      "letterSpacing": "0"
+    },
+    "bodyStrong": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeight": 1.4,
+      "letterSpacing": "0"
+    },
+    "control": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 14,
+      "fontWeight": 600,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "controlStrong": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "controlSm": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 13,
+      "fontWeight": 600,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "controlSmStrong": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 13,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "row": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 15,
+      "fontWeight": 700,
+      "lineHeight": 1.3,
+      "letterSpacing": "0"
+    },
+    "counter": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 14,
+      "fontWeight": 700,
+      "lineHeight": 1,
+      "letterSpacing": "0"
+    },
+    "numberInput": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 22,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "numberSm": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 20,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
+      "letterSpacing": "0"
+    },
+    "subheading": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 18,
+      "fontWeight": 800,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "estimate": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 36,
+      "fontWeight": 800,
+      "lineHeight": 1,
+      "letterSpacing": "-0.02em"
+    },
+    "note": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 13,
+      "fontWeight": 500,
+      "lineHeight": 1.45,
+      "letterSpacing": "0"
+    },
+    "wordmark": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 24,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
+      "letterSpacing": "-0.02em"
+    },
+    "calendarDay": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 16,
+      "fontWeight": 500,
+      "lineHeight": 1,
+      "letterSpacing": "0"
+    },
+    "eyebrow": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 13,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0.08em"
+    },
+    "titleLg": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 32,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
+      "letterSpacing": "-0.02em"
+    },
+    "captionStrong": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 12,
+      "fontWeight": 700,
+      "lineHeight": 1.3,
+      "letterSpacing": "0"
+    },
+    "stat": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 22,
+      "fontWeight": 800,
+      "lineHeight": 1.1,
+      "letterSpacing": "-0.01em"
+    },
+    "chartLabel": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 11,
+      "fontWeight": 700,
+      "lineHeight": 1,
+      "letterSpacing": "0"
+    },
+    "pace": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 17,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "cardTitle": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 17,
+      "fontWeight": 800,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
     }
   },
   "space": {
@@ -230,7 +483,9 @@ export const tokens = {
     "6": 24,
     "8": 32,
     "10": 40,
-    "screenX": 20
+    "screenX": 20,
+    "screenTop": 56,
+    "screenBottom": 32
   },
   "radius": {
     "sm": 10,
@@ -248,7 +503,8 @@ export const tokens = {
     "chip": 40,
     "icon": 24,
     "trackStroke": 10,
-    "contentMax": 640
+    "contentMax": 640,
+    "iconSm": 22
   },
   "border": {
     "hairline": 1,

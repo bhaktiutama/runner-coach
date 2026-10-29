@@ -113,6 +113,12 @@ export function formatDayMonth(date: string, locale = DEFAULT_LOCALE): string {
   );
 }
 
+/** Tanggal angka ringkas untuk sumbu grafik: "7/9". */
+export function formatDayMonthNumeric(date: string): string {
+  const d = parseLocalDate(date);
+  return `${d.getUTCDate()}/${d.getUTCMonth() + 1}`;
+}
+
 /** Nama hari singkat: "Sel". */
 export function formatWeekdayShort(date: string, locale = DEFAULT_LOCALE): string {
   return new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(parseLocalDate(date));
@@ -154,4 +160,34 @@ export function weekdayLongName(index: number, locale = DEFAULT_LOCALE): string 
   return new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' }).format(
     new Date(Date.UTC(2026, 10, 2 + index, 12)),
   );
+}
+
+/** Input waktu 1.4: digit diisi dari kanan -> "0 : 32 : 30". */
+export function formatTimeDigits(d: string): string {
+  const p = d.padStart(5, '0');
+  return `${Number(p.slice(0, 1))} : ${p.slice(1, 3)} : ${p.slice(3, 5)}`;
+}
+export function digitsToSeconds(d: string): number {
+  const p = d.padStart(5, '0');
+  return Number(p.slice(0, 1)) * 3600 + Number(p.slice(1, 3)) * 60 + Number(p.slice(3, 5));
+}
+export function secondsToDigits(s: number): string {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return `${h}${String(m).padStart(2, '0')}${String(sec).padStart(2, '0')}`.replace(/^0+/, '');
+}
+
+/**
+ * Digit baru dari teks input terformat. Hapus 1 karakter = hapus 1 digit terakhir;
+ * mengetik menambah digit di kanan; tempel = ambil semua digit. Maks 5 digit.
+ */
+export function nextTimeDigits(prev: string, text: string): string {
+  const raw = text.replace(/\D/g, '');
+  const prevRaw = prev ? formatTimeDigits(prev).replace(/\D/g, '') : '';
+  let d: string;
+  if (prevRaw && raw.length < prevRaw.length) d = prev.slice(0, -1);
+  else if (prevRaw && raw.startsWith(prevRaw)) d = prev + raw.slice(prevRaw.length);
+  else d = raw;
+  return d.replace(/^0+/, '').slice(0, 5);
 }

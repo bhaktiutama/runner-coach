@@ -1,4 +1,5 @@
 import {
+  BricolageGrotesque_500Medium,
   BricolageGrotesque_700Bold,
   BricolageGrotesque_800ExtraBold,
 } from '@expo-google-fonts/bricolage-grotesque';
@@ -24,6 +25,7 @@ export default function RootLayout() {
     () => new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } }),
   );
   const [fontsLoaded, fontError] = useFonts({
+    BricolageGrotesque_500Medium,
     BricolageGrotesque_700Bold,
     BricolageGrotesque_800ExtraBold,
     PlusJakartaSans_500Medium,

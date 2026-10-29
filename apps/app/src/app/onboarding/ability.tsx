@@ -1,7 +1,6 @@
 import { predictRange, type EngineMessageKey, type RaceDistance } from '@run-coach/training-engine';
-import { Card, ChoiceCard, Chip, SegmentedControl, space, Text, TextField } from '@run-coach/ui';
+import { Card, ChoiceCard, Chip, Field, SegmentedControl, space, Text, TimeField } from '@run-coach/ui';
 import { formatRaceRange } from '@run-coach/ui/format';
-import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { OnboardingStep } from '@/components/OnboardingStep';
 import { useOnboarding } from '@/data/useOnboarding';
@@ -10,30 +9,16 @@ import { et } from '@/lib/rationale';
 
 const DISTANCES: RaceDistance[] = ['5k', '10k', 'hm', 'fm'];
 
-const split = (s?: number) => ({
-  h: s ? String(Math.floor(s / 3600)) : '',
-  m: s ? String(Math.floor((s % 3600) / 60)) : '',
-  s: s ? String(s % 60) : '',
-});
-
-/** 1.4 Kemampuan: waktu acuan (Riegel) atau level. */
+/** 1.4 Kemampuan: waktu acuan (Riegel) atau level. Tata letak = wireframe OB4-Kemampuan. */
 export default function AbilityStep() {
   const o = useOnboarding('ability');
   const d = o.draft;
   const mode = d.abilityMode ?? 'known';
-  const [hms, setHms] = useState(split(d.baselineTimeS));
   const base = d.baselineDistance ?? '5k';
-  const seconds = Number(hms.h || 0) * 3600 + Number(hms.m || 0) * 60 + Number(hms.s || 0);
-  const validTime =
-    seconds >= 600 && seconds < 8 * 3600 && Number(hms.m || 0) < 60 && Number(hms.s || 0) < 60;
+  const seconds = d.baselineTimeS ?? null;
+  const validTime = seconds != null && seconds >= 600 && seconds < 8 * 3600;
   const target = d.distance && d.distance !== 'fitness' ? d.distance : null;
   const pred = validTime && target ? predictRange(base, seconds, target) : null;
-
-  const setPart = (k: 'h' | 'm' | 's', v: string) => {
-    const next = { ...hms, [k]: v.replace(/\D/g, '').slice(0, 2) };
-    setHms(next);
-  };
-
   const canNext = o.ready && (mode === 'known' ? validTime : !!d.level);
 
   return (
@@ -46,7 +31,7 @@ export default function AbilityStep() {
       onNext={() =>
         void o.next(
           mode === 'known'
-            ? { abilityMode: 'known', baselineDistance: base, baselineTimeS: seconds }
+            ? { abilityMode: 'known', baselineDistance: base, baselineTimeS: seconds ?? undefined }
             : { abilityMode: 'unknown', baselineTimeS: undefined, baselineDistance: undefined },
         )
       }
@@ -62,46 +47,37 @@ export default function AbilityStep() {
       />
       {mode === 'known' ? (
         <>
-          <Text variant="label" color="textMuted">
-            {t('ability.bestLabel')}
-          </Text>
-          <View style={styles.chips}>
-            {DISTANCES.map((x) => (
-              <Chip
-                key={x}
-                testID={`base-${x}`}
-                label={t(`goal.${x}.title` as MessageKey)}
-                selected={base === x}
-                onPress={() => o.update({ baselineDistance: x })}
-              />
-            ))}
-          </View>
-          <Text variant="label" color="textMuted">
-            {t('ability.timeLabel')}
-          </Text>
-          <View style={styles.time}>
-            {(['h', 'm', 's'] as const).map((k) => (
-              <View key={k} style={styles.timeField}>
-                <TextField
-                  testID={`time-${k}`}
-                  accessibilityLabel={t(
-                    k === 'h' ? 'ability.hours' : k === 'm' ? 'ability.minutes' : 'ability.seconds',
-                  )}
-                  placeholder={k === 'h' ? '0' : '00'}
-                  keyboardType="number-pad"
-                  value={hms[k]}
-                  onChangeText={(v) => setPart(k, v)}
-                />
+          <View style={styles.group}>
+            <Field label={t('ability.bestLabel')} gap="group">
+              <View style={styles.chips}>
+                {DISTANCES.map((x) => (
+                  <Chip
+                    key={x}
+                    fill
+                    testID={`base-${x}`}
+                    label={t(`goal.${x}.title` as MessageKey)}
+                    selected={base === x}
+                    onPress={() => o.update({ baselineDistance: x })}
+                  />
+                ))}
               </View>
-            ))}
+            </Field>
+            {o.ready ? (
+              <TimeField
+                testID="time"
+                label={t('ability.timeLabel')}
+                seconds={seconds}
+                onChange={(s) => o.update({ baselineTimeS: s ?? undefined })}
+              />
+            ) : null}
           </View>
           {pred && target ? (
-            <Card testID="estimate">
+            <Card testID="estimate" style={styles.card}>
               <Text variant="label" color="textMuted">
                 {t('ability.estimateTitle', { distance: et(`distance.${target}` as EngineMessageKey) })}
               </Text>
-              <Text variant="numberXl">{formatRaceRange(pred.minS, pred.maxS)}</Text>
-              <Text variant="label" color="textMuted">
+              <Text variant="estimate">{formatRaceRange(pred.minS, pred.maxS)}</Text>
+              <Text variant="note" color="textMuted">
                 {pred.rough
                   ? t('ability.estimateRough')
                   : t('ability.estimateNote', { baseline: et(`distance.${base}` as EngineMessageKey) })}
@@ -110,10 +86,7 @@ export default function AbilityStep() {
           ) : null}
         </>
       ) : (
-        <>
-          <Text variant="label" color="textMuted">
-            {t('ability.levelLabel')}
-          </Text>
+        <Field label={t('ability.levelLabel')} gap="group">
           <ChoiceCard
             wide
             testID="level-beginner"
@@ -130,14 +103,14 @@ export default function AbilityStep() {
             selected={d.level === 'recreational'}
             onPress={() => o.update({ level: 'recreational' })}
           />
-        </>
+        </Field>
       )}
     </OnboardingStep>
   );
 }
 
 const styles = StyleSheet.create({
-  chips: { flexDirection: 'row', gap: space[2], flexWrap: 'wrap' },
-  time: { flexDirection: 'row', gap: space[3] },
-  timeField: { flex: 1 },
+  group: { gap: space[3] },
+  chips: { flexDirection: 'row', gap: space[2] },
+  card: { gap: space[2] },
 });

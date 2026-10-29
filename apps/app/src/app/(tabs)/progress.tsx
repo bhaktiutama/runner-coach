@@ -13,6 +13,7 @@ import {
 } from '@run-coach/ui';
 import {
   formatDayMonth,
+  formatDayMonthNumeric,
   formatDistance,
   formatDuration,
   formatNumber,
@@ -87,7 +88,7 @@ export default function ProgressTab() {
         <View style={styles.row}>
           {weeks.slice(-12).map((w) => (
             <Text key={w.weekStart} variant="caption" color="textMuted" align="center" style={styles.flex}>
-              {w.current ? t('progress.thisWeek') : formatDayMonth(w.weekStart).replace(' ', ' ')}
+              {w.current ? t('progress.thisWeek') : formatDayMonthNumeric(w.weekStart)}
             </Text>
           ))}
         </View>

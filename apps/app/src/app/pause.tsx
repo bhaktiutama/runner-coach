@@ -1,4 +1,4 @@
-import { Chip, IconButton, InfoBox, PrimaryButton, SegmentedControl, space, Text } from '@run-coach/ui';
+import { Chip, IconButton, InfoBox, PrimaryButton, space, Text } from '@run-coach/ui';
 import { formatDateLong } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -88,11 +88,11 @@ export default function Pause() {
       <Text variant="label" color="textMuted">
         {t('pause.duration')}
       </Text>
-      <SegmentedControl
-        value={dur}
-        onChange={setDur}
-        items={DUR.map((x) => ({ value: x.v, label: t(x.label) }))}
-      />
+      <View style={styles.row}>
+        {DUR.map((x) => (
+          <Chip key={x.v} label={t(x.label)} selected={dur === x.v} onPress={() => setDur(x.v)} />
+        ))}
+      </View>
       {reason === 'injury' ? (
         <>
           <Text variant="label" color="textMuted">

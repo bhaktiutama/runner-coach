@@ -50,7 +50,7 @@ export function SettingsRow({
     >
       {icon ? <Icon name={icon} color={fg} /> : null}
       <View style={styles.flex}>
-        <Text variant="heading" style={{ color: fg }}>
+        <Text variant="control" style={{ color: fg }} numberOfLines={2}>
           {label}
         </Text>
         {sub ? (
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     paddingVertical: space[3],
   },
   sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
-  value: { maxWidth: '50%' },
+  value: { maxWidth: '45%', flexShrink: 1 },
   switch: {
     width: KNOB * 2 + space[2],
     height: KNOB + space[2],

@@ -62,11 +62,6 @@ export default function Today() {
           <StatusChip tone="neutral" label={t('today.week', { n: wIdx, total: params.weeks?.length ?? 0 })} />
         ) : null}
       </View>
-      {process.env.EXPO_OS === 'web' ? (
-        <Text variant="caption" color="textMuted">
-          {t('today.webWarning')}
-        </Text>
-      ) : null}
       {backupDue(meta.data, today) ? (
         <Card variant="outline" testID="backup-card" style={styles.backup}>
           <Text variant="heading">
@@ -149,6 +144,11 @@ export default function Today() {
         onPress={() => router.push('/log')}
         testID="manual-log"
       />
+      {process.env.EXPO_OS === 'web' ? (
+        <Text variant="caption" color="textMuted" align="center">
+          {t('today.webWarning')}
+        </Text>
+      ) : null}
     </Screen>
   );
 

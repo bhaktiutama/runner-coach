@@ -17,26 +17,29 @@ export default function GoalStep() {
   return (
     <OnboardingStep
       step="goal"
+      gap="loose"
       title={t('goal.title')}
       subtitle={t('goal.subtitle')}
       canNext={!!sel && o.ready}
       loading={o.saving}
       onNext={() => void o.next()}
     >
-      {GRID.map((row, i) => (
-        <View key={i} style={styles.row}>
-          {row.map((d) => (
-            <ChoiceCard
-              key={d}
-              testID={`goal-${d}`}
-              title={t(`goal.${d}.title` as MessageKey)}
-              subtitle={t(`goal.${d}.sub` as MessageKey)}
-              selected={sel === d}
-              onPress={() => o.update({ distance: d })}
-            />
-          ))}
-        </View>
-      ))}
+      <View style={styles.grid}>
+        {GRID.map((row, i) => (
+          <View key={i} style={styles.row}>
+            {row.map((d) => (
+              <ChoiceCard
+                key={d}
+                testID={`goal-${d}`}
+                title={t(`goal.${d}.title` as MessageKey)}
+                subtitle={t(`goal.${d}.sub` as MessageKey)}
+                selected={sel === d}
+                onPress={() => o.update({ distance: d })}
+              />
+            ))}
+          </View>
+        ))}
+      </View>
       <ChoiceCard
         wide
         testID="goal-fitness"
@@ -48,4 +51,4 @@ export default function GoalStep() {
   );
 }
 
-const styles = StyleSheet.create({ row: { flexDirection: 'row', gap: space[4] } });
+const styles = StyleSheet.create({ grid: { gap: space[3] }, row: { flexDirection: 'row', gap: space[3] } });
