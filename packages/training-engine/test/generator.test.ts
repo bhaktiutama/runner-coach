@@ -252,6 +252,23 @@ describe('kasus khusus', () => {
     expect(() => generatePlan({ ...base, availableDays: [0, 2, 4], longRunDay: 6 })).toThrow();
   });
 
+  it.each(['2027-01-04', '2027-01-05', '2027-01-07', '2027-01-10'])(
+    'race %s: taper tidak kosong, tidak ada long run/sesi berat < 3 hari sebelum race',
+    (race) => {
+      const plan = generatePlan({ ...base, goal: { ...base.goal, raceDate: race } });
+      const last = plan.weeks[plan.weeks.length - 1]!;
+      const peak = Math.max(...plan.weeks.filter((w) => w.phase !== 'taper').map((w) => w.volumeM));
+      expect(last.phase).toBe('taper');
+      expect(1 - last.volumeM / peak).toBeLessThanOrEqual(0.6);
+      for (const w of plan.workouts) {
+        const d = diffDays(w.date, race);
+        expect(d).toBeGreaterThan(0);
+        if (w.type === 'long' || w.type === 'tempo' || w.type === 'interval')
+          expect(d).toBeGreaterThanOrEqual(3);
+      }
+    },
+  );
+
   it('long run selalu di hari pilihan pengguna', () => {
     const plan = generatePlan(base);
     for (const w of plan.workouts.filter((x) => x.type === 'long'))

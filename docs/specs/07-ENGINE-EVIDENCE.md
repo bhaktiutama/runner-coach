@@ -210,7 +210,7 @@ Angka di bawah adalah pilihan implementasi (tingkat D, konservatif) untuk hal ya
 | E-08 | Long run = min(30% volume, batas E-06), dicek ulang terhadap volume aktual setelah pembulatan |
 | E-10 | Base: 0 sesi berat; Build: 1; Peak/Taper: 2 jika rekreasional dan >= 4 hari lari, selain itu 1; cutback maks 1. Sesi berat tidak bersebelahan dengan sesi berat lain maupun long run |
 | E-11 | Fraksi volume puncak per minggu taper: 1 mgg [50%], 2 mgg [70%, 50%], 3 mgg [80%, 65%, 50%]. HM taper 2 mgg jika plan >= 12 mgg; FM 3 mgg jika >= 18 mgg |
-| Minggu race | Tidak ada latihan pada/sesudah hari race; sesi berat paling lambat 3 hari sebelum race |
+| Minggu race | Tidak ada latihan pada/sesudah hari race; long run dan sesi berat paling lambat 3 hari sebelum race. Race Senin/Selasa: minggu race tidak dihitung sebagai minggu latihan, taper = minggu sebelumnya |
 | Jumlah sesi | Maks hari tersedia, tetapi tidak lebih dari volume/2,5 km; easy run min 2 km. Hari tersedia = boleh dipakai, bukan wajib |
 | E-14 run-walk | Mulai 1 mnt lari / 2 mnt jalan; grid 15 detik; menit lari aktual per sesi naik maks 10%/minggu; sesi easy 30 mnt, long 40 mnt (termasuk 5+5 mnt jalan). Minggu run-walk tanpa cutback (kenaikan sudah kecil); taper memotong ulangan 50% |
 | E-15 | 5 gerakan x 2 set x 20 m (A-skip, B-skip, C-skip, high knees, carioca), estimasi 1 mnt per set = 10 mnt |

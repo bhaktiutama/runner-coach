@@ -43,7 +43,16 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <StatusBar style="dark" />
         <DbGate>
-          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }} />
+          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
+            <Stack.Screen
+              name="move/[id]"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'fade',
+                contentStyle: { backgroundColor: 'transparent' },
+              }}
+            />
+          </Stack>
         </DbGate>
       </QueryClientProvider>
     </SafeAreaProvider>

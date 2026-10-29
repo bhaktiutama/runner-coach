@@ -11,5 +11,10 @@
     "react": "*",
     "react-native": "*",
     "react-native-svg": "*"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./format": "./src/format.ts",
+    "./tokens": "./src/tokens.ts"
   }
 }

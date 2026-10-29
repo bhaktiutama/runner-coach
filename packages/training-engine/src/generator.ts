@@ -93,7 +93,9 @@ export function planWeeks(input: PlanInput): number {
   const { distance, raceDate } = input.goal;
   if (!raceDate || distance === 'fitness') return DEFAULT_WEEKS[distance];
   if (raceDate <= input.startDate) throw new EngineError('race_in_past');
-  const weeks = diffDays(mondayOf(input.startDate), mondayOf(raceDate)) / 7 + 1;
+  // Race Senin/Selasa: minggu race bukan minggu latihan; taper = minggu sebelumnya.
+  const raceWeekCounts = weekday(raceDate) >= 2 ? 1 : 0;
+  const weeks = diffDays(mondayOf(input.startDate), mondayOf(raceDate)) / 7 + raceWeekCounts;
   if (weeks < MIN_WEEKS[distance]) throw new EngineError('race_too_soon');
   return Math.min(weeks, MAX_WEEKS);
 }
@@ -426,6 +428,7 @@ function dateOf(monday: string, d: Weekday) {
 function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: number; hard: number } {
   const { input, weekIndex, phase, monday, target, cutback, zones, raceDate } = a;
   const longDay = input.longRunDay;
+  const daysToRace = (d: Weekday) => (raceDate ? diffDays(dateOf(monday, d), raceDate) : Infinity);
   const weekRationale: Rationale[] = [];
   if (cutback) weekRationale.push({ rule: 'E-07', values: { week: weekIndex, pct: 20 } });
   if (phase === 'taper') weekRationale.push({ rule: 'E-11', values: { pct: a.taperPct, weeks: 1 } });
@@ -450,10 +453,9 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
     const rw = a.runWalk;
     const factor = phase === 'taper' ? 1 - a.taperPct / 100 : 1;
     const runDays = chooseRunDays(input.availableDays, Math.min(input.availableDays.length, 4), longDay);
-    const inRace = raceDate != null && mondayOf(raceDate) === monday;
     const vals = { run_min: rw.runS / 60, walk_min: rw.walkS / 60 };
     const workouts = runDays
-      .filter((d) => !inRace || d < weekday(raceDate!))
+      .filter((d) => daysToRace(d) > 0)
       .map((d) => {
         const r = Math.max(1, Math.round((d === longDay ? rw.longReps : rw.easyReps) * factor));
         return mk(d, 'run_walk', runWalk(r, rw.runS, rw.walkS, zones), [{ rule: 'E-14', values: vals }]);
@@ -465,11 +467,11 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
     return { workouts, volume: full, hard: 0 };
   }
 
-  // Minggu race: tidak ada latihan pada/sesudah hari race; sesi berat >= 3 hari sebelum race.
+  // Menjelang race: tidak ada latihan pada/sesudah hari race; long run dan sesi berat >= 3 hari sebelum race.
   const inRaceWeek = raceDate != null && mondayOf(raceDate) === monday;
   const raceWd = raceDate ? weekday(raceDate) : null;
-  const pool = input.availableDays.filter((d) => !inRaceWeek || d < raceWd!);
-  const hasLong = pool.includes(longDay);
+  const pool = input.availableDays.filter((d) => daysToRace(d) > 0);
+  const hasLong = pool.includes(longDay) && daysToRace(longDay) >= 3;
 
   // Jumlah hari lari: volume kecil tidak dipecah ke terlalu banyak sesi.
   const sessions = Math.min(pool.length, Math.max(2, Math.floor(target / 2500)));
@@ -477,10 +479,10 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
 
   let h = hardCount(phase, a.level, usable.length, input, cutback);
   if (phase === 'taper') h = Math.max(h, Math.min(a.peakHard, h === 0 ? 0 : 2));
-  const latest = inRaceWeek ? ((raceWd! - 3) as Weekday) : undefined;
   // Minggu race tanpa long run: hari race diperlakukan sebagai sesi kunci untuk aturan jarak.
-  const anchor = hasLong ? longDay : (raceWd ?? longDay);
-  const hardDays: Weekday[] = h > 0 ? chooseHardDays(usable, anchor as Weekday, h, latest) : [];
+  const anchor = hasLong || !inRaceWeek ? longDay : raceWd!;
+  const hardPool = usable.filter((d) => daysToRace(d) >= 3);
+  const hardDays: Weekday[] = h > 0 ? chooseHardDays(hardPool, anchor, h) : [];
 
   const workouts: GeneratedWorkout[] = [];
   const histAll = () => [...a.history, ...workouts];

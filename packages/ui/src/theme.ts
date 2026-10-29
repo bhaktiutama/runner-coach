@@ -2,7 +2,8 @@ import type { TextStyle } from 'react-native';
 import { tokens } from './tokens';
 
 export { tokens };
-export const color = tokens.color;
+/** Warna dasar + overlay sheet (charcoal 40%, diturunkan dari token text). */
+export const color = { ...tokens.color, overlay: `${tokens.color.text}66` } as const;
 export const space = tokens.space;
 export const radius = tokens.radius;
 export const size = tokens.size;

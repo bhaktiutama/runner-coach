@@ -19,7 +19,7 @@ CREATE TABLE app_meta (
   last_backup_at TEXT NULL,
   analytics_opt_in INTEGER NOT NULL DEFAULT 1 CHECK (analytics_opt_in IN (0, 1)),
   backup_reminder_dismissed INTEGER NOT NULL DEFAULT 0 CHECK (backup_reminder_dismissed IN (0, 1)),
-  onboarding_step TEXT NULL
+  onboarding_draft TEXT NULL
 );
 CREATE TABLE profile (
   id INTEGER PRIMARY KEY CHECK (id = 1),

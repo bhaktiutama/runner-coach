@@ -1,13 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test('app terbuka dengan 4 tab', async ({ page }) => {
+test('app baru terbuka di layar Selamat datang tanpa error', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
-  for (const tab of ['Hari ini', 'Plan', 'Progres', 'Profil']) {
-    await expect(page.getByRole('tab', { name: tab })).toBeVisible();
-  }
-  await page.getByRole('tab', { name: 'Plan' }).click();
-  await expect(page.getByText('Plan').first()).toBeVisible();
+  await expect(page.getByTestId('screen-welcome')).toBeVisible();
+  await expect(page.getByText('Tahu harus lari apa, setiap hari.')).toBeVisible();
+  await expect(page.getByText('Data latihanmu tersimpan di HP ini')).toBeVisible();
   expect(errors).toEqual([]);
 });

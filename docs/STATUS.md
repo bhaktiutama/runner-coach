@@ -9,9 +9,9 @@ Terakhir diperbarui: 2026-10-29
 | Milestone | Status | Catatan |
 |---|---|---|
 | M0 Spike | Selesai (perlu device) | `docs/specs/spikes.md`: SQLite web OK, grafik pakai react-native-svg. Timer background + backup OS perlu HP |
-| M1 Fondasi | Berjalan | Monorepo, 4 tab, token, format, migrasi SQLite, CI selesai. Layar login dibuat bersama 1.8/1.9 di M3 |
+| M1 Fondasi | Selesai (sebagian menunggu B2/B5) | Login Apple/Google/Email ada di kode; Google/Apple butuh B2, kode email butuh B5. Belum dicek di HP |
 | M2 Engine | Selesai | 2.294 test (5 target x 4 profil x 3-6 hari x mode ringan), coverage baris 99,6%. Keputusan angka: 07 bagian 7 |
-| M3 Onboarding, Hari ini, Plan | Belum mulai | |
+| M3 Onboarding, Hari ini, Plan | Selesai (web) | 1.1-1.9, 2.1, 2.2, 3.1, 3.2 sesuai wireframe (dicek screenshot). E2E: onboarding -> Hari ini, reload, pindah hari; 0 request ke luar localhost. Pulihkan dari file (1.9) menunggu M6 |
 | M4 Timer | Belum mulai | Uji layar terkunci butuh HP fisik |
 | M5 Feedback, Progres | Belum mulai | |
 | M6 Privasi, Akun | Belum mulai | |
@@ -32,6 +32,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | Tanggal | Milestone | Langkah | Hasil test |
 |---|---|---|---|
 | 2026-10-29 | M1 | Monorepo pnpm, Expo SDK 58 + Router, 4 tab, tokens.ts dari tokens.json, format.ts id-ID, migrasi SQLite v1-v4, klien Supabase (Auth saja), ESLint larangan teks literal JSX, CI GitHub Actions | lint OK, typecheck OK, unit 11/11, E2E smoke 1/1, privacy (schema public kosong) 1/1 |
+| 2026-10-29 | M3 | Onboarding 1.1-1.7 (draft lokal bisa dilanjutkan), 1.8 preview + Kenapa plan ini, 1.9 masuk, 2.1 Hari ini, 2.2 detail + ganti jadi easy, 3.1 kalender, 3.2 pindah/gabung/lewati. Fix engine: race Senin/Selasa | unit 2.323/2.323, E2E 4/4, lint + typecheck OK |
 
 ## Blocker dan butuh dari pemilik
 
@@ -41,7 +42,17 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | B2 | Provider Apple dan Google di Supabase Auth | Login Apple/Google (F-01). Email sudah bisa | Menunggu |
 | B3 | Uji di HP fisik: cue timer saat layar terkunci, lanjut posisi setelah app ditutup | Verifikasi M0, M4 | Menunggu build |
 | B4 | Review aturan engine oleh pelatih (D6) | Sebelum beta publik | Menunggu |
+| B5 | Template email Supabase Auth belum memuat kode masuk. Di dashboard Supabase > Authentication > Email Templates, tambahkan `{{ .Token }}` ke template "Magic Link" dan "Confirm signup" (agent ditolak saat mencoba mengubahnya lewat API). Catatan: OTP 8 digit; SMTP bawaan dibatasi 2 email/jam, perlu SMTP sendiri sebelum beta | Login email (F-01) di HP | Menunggu |
 
 ## Cara test
 
-Akan diisi setelah M1 (perintah `pnpm dev`, link Expo, dsb).
+Di komputer sendiri (butuh Node 22 + pnpm):
+
+```bash
+pnpm install
+pnpm dev          # Expo: tekan w untuk web, atau scan QR dengan Expo Go
+pnpm test         # unit test
+pnpm test:e2e     # E2E web (setelah: EXPO_PUBLIC_E2E=1 pnpm --filter app export:web)
+```
+
+Isi `.env` di root `apps/app` dari `.env.example` (URL + anon key Supabase). `EXPO_PUBLIC_E2E=1` memunculkan tombol "Lewati login (mode uji)", hanya untuk uji.

@@ -5,3 +5,6 @@ export * from './components/Icon';
 export * from './components/Logo';
 export * from './components/Button';
 export * from './components/Card';
+export * from './components/BibTag';
+export * from './components/Controls';
+export * from './components/Plan';

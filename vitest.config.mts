@@ -1,6 +1,8 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  resolve: { alias: { '@': fileURLToPath(new URL('./apps/app/src', import.meta.url)) } },
   test: {
     include: ['packages/*/test/**/*.test.ts', 'apps/app/test/**/*.test.ts'],
     exclude: ['apps/app/test/privacy/**', '**/node_modules/**'],

@@ -122,3 +122,36 @@ export function formatWeekdayShort(date: string, locale = DEFAULT_LOCALE): strin
 export function formatPercent(ratio: number, locale = DEFAULT_LOCALE): string {
   return new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
 }
+
+/** "Januari 2027". */
+export function formatMonthYear(year: number, month0: number, locale = DEFAULT_LOCALE): string {
+  return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+    new Date(Date.UTC(year, month0, 15)),
+  );
+}
+
+/** "Minggu, 3 Jan 2027". */
+export function formatDateFull(date: string, locale = DEFAULT_LOCALE): string {
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(parseLocalDate(date));
+}
+
+/** Nama hari singkat dari indeks 0 = Senin: "Sen". */
+export function weekdayShortName(index: number, locale = DEFAULT_LOCALE): string {
+  // 2026-11-02 adalah Senin.
+  return new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(
+    new Date(Date.UTC(2026, 10, 2 + index, 12)),
+  );
+}
+
+/** Nama hari panjang dari indeks 0 = Senin: "Sabtu". */
+export function weekdayLongName(index: number, locale = DEFAULT_LOCALE): string {
+  return new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' }).format(
+    new Date(Date.UTC(2026, 10, 2 + index, 12)),
+  );
+}
