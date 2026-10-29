@@ -26,3 +26,4 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 - Angka (pace, jarak, waktu) memakai font display + `tnum`. Teks UI bahasa Indonesia, sapaan "kamu".
 - Branch `feat/<milestone>-<nama>` dari `development`, PR kecil ke `development`.
 - Credential Supabase dibaca dari environment (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`). Jangan menulis credential ke repo.
+- Supabase MCP (`.mcp.json`, token dari env `SUPABASE_ACCESS_TOKEN`) dan skill `.claude/skills/supabase*` boleh dipakai untuk Auth, Edge Function, log dan dokumentasi. **Jangan** memakai tool database/migration untuk membuat tabel data pengguna; schema `public` harus tetap kosong (Schema bagian 5). Skill `supabase-postgres-best-practices` hanya relevan jika kelak ada tabel non-pribadi yang disetujui spec.
