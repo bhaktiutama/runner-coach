@@ -68,6 +68,7 @@ Harga dan fitur detail kompetitor **belum diverifikasi** di dokumen ini; lakukan
 | Akun & sync | Login email/Google/Apple, data tersimpan cloud | Must |
 | Penyesuaian plan dasar | Aturan sederhana dari RPE dan latihan terlewat | Should |
 | Notifikasi pengingat | Pengingat jam latihan | Should |
+| ABC drill sebagai pemanasan | Segmen drill sebelum Tempo/Interval, teks + animasi sederhana (lihat 4.7) | Should |
 
 ### 2.2 Out of scope MVP (backlog)
 
@@ -75,7 +76,7 @@ Harga dan fitur detail kompetitor **belum diverifikasi** di dokumen ini; lakukan
 - Aplikasi watchOS / Wear OS native.
 - Fitur sosial, leaderboard, club.
 - AI chat coach.
-- Plan kekuatan/mobility.
+- Plan strength kaki, core dan mobility penuh (fase 2-3, lihat 4.7). MVP hanya memuat ABC drill sebagai pemanasan.
 
 Alasan: setiap item di atas menambah kompleksitas teknis atau review store yang besar, sementara nilai inti (tahu harus lari apa + melihat progres) bisa diuji tanpa itu.
 
@@ -97,7 +98,7 @@ Alasan: setiap item di atas menambah kompleksitas teknis atau review store yang 
 2. Tanggal race (atau "tidak ada, ingin lebih baik saja")
 3. Kemampuan saat ini: waktu 5K/10K terakhir, atau "tidak tahu" (pilih level)
 4. Rata-rata lari per minggu saat ini (km atau kali)
-5. Hari yang tersedia (pilih hari, dan hari long run)
+5. Hari yang tersedia (pilih hari, dan hari long run); opsional: mau latihan kekuatan + alat yang dimiliki (fase 2)
 6. Screening kesehatan singkat (pertanyaan gaya PAR-Q) + disclaimer
 
 Hasil: preview plan (grafik volume per minggu) + tombol "Mulai Plan".
@@ -207,8 +208,10 @@ Aturan default (heuristik umum, dapat dikonfigurasi):
 | Interval | 6 x 800 m @ interval, jog 2 menit | Merah |
 | Strides | 6 x 20 detik cepat setelah easy run | Kuning |
 | Recovery / Rest | Jalan, istirahat | Abu-abu |
+| Drill | ABC drill 8-12 mnt sebelum sesi kualitas | Biru (segmen pemanasan) |
+| Strength / Core / Mobility | Lihat 4.7 | Ungu |
 
-Setiap workout disimpan sebagai daftar **step** (warmup, work, recovery, cooldown, repeat) sehingga timer, kalender dan export (fase lanjut, mis. ke jam) memakai struktur yang sama.
+Setiap workout disimpan sebagai daftar **step** (warmup, work, recovery, cooldown, repeat; untuk strength: exercise dengan sets/reps atau durasi) sehingga timer, kalender dan export (fase lanjut, mis. ke jam) memakai struktur yang sama.
 
 ### 4.5 Adaptasi (versi sederhana, rule-based)
 
@@ -228,6 +231,62 @@ Model adaptif berbasis ML ditunda sampai data cukup, dan **tidak boleh** memakai
 - Disclaimer: bukan nasihat medis.
 - Screening kesehatan saat onboarding; jika ada flag (nyeri dada, pusing, kondisi jantung), sarankan konsultasi dokter sebelum mulai.
 - Tombol "Saya cedera / sakit" yang menjeda plan.
+
+### 4.7 Strength & Drill (latihan pendukung lari)
+
+Strength dan drill **masuk ke plan yang sama**, bukan modul terpisah: muncul di layar "Hari ini" dan memakai timer yang sama dengan lari (struktur "workout = daftar step").
+
+#### 4.7.1 Jenis sesi
+
+| Sesi | Isi contoh | Durasi | Kapan |
+|------|-----------|--------|-------|
+| ABC drill | A-skip, B-skip, C-skip (butt kick), high knees, carioca, strides | 8-12 mnt | Ditempel sebagai segmen pemanasan sebelum Tempo/Interval |
+| Strength kaki | Squat, lunge, step-up, single-leg deadlift, calf raise, glute bridge | 20-30 mnt | Hari easy run atau hari tanpa lari |
+| Core | Plank, side plank, dead bug, bird dog, Copenhagen plank | 10-15 mnt | Digabung dengan strength atau berdiri sendiri |
+| Mobility | Hip flexor stretch, hamstring, calf, foam rolling | 8-10 mnt | Setelah lari atau hari istirahat |
+| Plyometrik (level lanjut) | Pogo jump, skipping, box jump rendah | 5-10 mnt | Hanya fase Build, bukan untuk pemula |
+
+#### 4.7.2 Integrasi ke periodisasi
+
+| Fase | Strength / minggu | Fokus | Drill |
+|------|-------------------|-------|-------|
+| Base | 2x | Fondasi, bodyweight, volume sedang | Setiap sebelum sesi kualitas |
+| Build | 2x | Beban naik (dumbbell/ransel), plyo ringan untuk level menengah ke atas | Sama |
+| Peak | 1x | Pertahankan, volume turun | Sama |
+| Taper | 0-1x | Ringan saja, tidak ada latihan baru | Pemanasan race |
+
+#### 4.7.3 Aturan penempatan (default, divalidasi pelatih)
+
+| Aturan | Alasan |
+|--------|--------|
+| Strength berat di hari yang sama dengan lari kualitas (setelahnya), atau di hari easy | Prinsip "hari berat dibuat berat, hari ringan dibuat ringan" |
+| Tidak ada strength kaki berat dalam 48 jam sebelum Long Run atau Interval | Kaki tidak lelah saat sesi kunci |
+| Tidak ada strength di minggu race (kecuali mobility) | Taper |
+| Pemula: bodyweight saja di 4 minggu pertama | Adaptasi dan keamanan |
+| Progresi gerakan (mis. squat -> split squat -> Bulgarian split squat) setiap 2-3 minggu jika RPE sesi <= 6 | Overload bertahap |
+
+Angka frekuensi dan jeda 48 jam di atas adalah heuristik umum coaching, **belum diverifikasi terhadap literatur** di dokumen ini; wajib di-review pelatih/fisioterapis. Secara umum ada studi dan review sistematis bahwa latihan kekuatan membantu running economy pelari jarak jauh; besar efeknya tidak dikutip karena belum dicek ulang.
+
+#### 4.7.4 UX (memakai pola yang sudah ada)
+
+| Layar | Perubahan |
+|-------|-----------|
+| Onboarding | Pertanyaan opsional di layar hari latihan: "Mau latihan kekuatan?" (ya / nanti) dan "Alat yang kamu punya?" (tidak ada / dumbbell / gym) |
+| Hari ini | Kartu kedua di bawah lari: "Strength 20 mnt" dengan warna zona baru (ungu) |
+| Timer | Mode gerakan: nama gerakan + animasi, hitungan repetisi atau countdown (mis. 40 detik), set 2/3, istirahat otomatis |
+| Selesai | RPE yang sama + "terlalu berat / pas / terlalu ringan" per sesi |
+| Plan | Ikon kecil "S" di hari yang ada strength; bisa dipindah dengan aturan 4.7.3 |
+| Library | Daftar gerakan dengan animasi dan cue teknik (fase lanjut) |
+
+Animasi gerakan: prototipe SVG di `docs/prototypes/exercise-animations.html`; rencana produksi (MediaPipe + Rive) di `docs/ANIMATION_PIPELINE.md`.
+
+#### 4.7.5 Biaya & konten
+
+| Item | Catatan |
+|------|---------|
+| Animasi/video gerakan | Biaya terbesar. Opsi: SVG berbasis pose (prototipe ada), Rive dengan aset ilustrator, atau video pelatih. Jangan memakai video orang lain tanpa izin |
+| Review pelatih/fisioterapis | Wajib untuk library gerakan, dosis dan aturan progresi |
+| Pengembangan | Relatif kecil: timer dan struktur step sudah ada |
 
 ---
 
@@ -313,12 +372,15 @@ runner-coach/
 | profiles | id, nama, tanggal lahir (opsional), jenis kelamin (opsional), unit (km/mi), zona waktu |
 | goals | id, user_id, distance (5k/10k/hm/fm), race_date, target_time, status |
 | plans | id, goal_id, start_date, end_date, params (jsonb), version |
-| planned_workouts | id, plan_id, date, type, steps (jsonb), target_distance_m, target_duration_s, status |
+| planned_workouts | id, plan_id, date, type (run/drill/strength/core/mobility), steps (jsonb), target_distance_m, target_duration_s, status |
+| exercises | id, name, category (drill/strength/core/mobility/plyo), level, equipment, target_muscles, cues, animation_ref, progression_next_id |
 | activities | id, user_id, source (manual/timer/strava/healthkit/health_connect), external_id, started_at, distance_m, duration_s, avg_hr, splits (jsonb) |
 | workout_feedback | id, planned_workout_id, activity_id, rpe (1-10), notes |
 | fitness_snapshots | id, user_id, date, vdot_estimate, weekly_volume_m |
 | integrations | id, user_id, provider, encrypted tokens, scopes, connected_at |
 | subscriptions | id, user_id, provider (revenuecat/stripe), entitlement, expires_at |
+
+Step strength di `planned_workouts.steps`: `{ type: "strength" | "drill" | "mobility", exercise_id, sets, reps | duration_s, rest_s, load: "bodyweight" | "dumbbell_light" | ... }`.
 
 Satuan disimpan dalam meter dan detik; konversi ke km/mi dan pace di UI.
 
@@ -337,9 +399,9 @@ Estimasi durasi mengasumsikan 1-2 developer full-stack; ini perkiraan kasar, buk
 | Fase | Durasi estimasi | Output | Exit criteria |
 |------|-----------------|--------|---------------|
 | 0. Discovery | 2-3 minggu | Hasil survey, 8-12 wawancara, analisis kompetitor, landing page + waitlist | Problem P1-P4 terkonfirmasi (atau direvisi); persona MVP final |
-| 1. MVP (gratis) | 6-8 minggu | Onboarding, plan 5K/10K/HM/FM, Hari ini, timer, log + RPE, 3 grafik, auth. Rilis Web + TestFlight + Play internal testing | 50-100 beta tester aktif |
-| 2. Integrasi & adaptif | 4-6 minggu | Strava, Apple Health, Health Connect, aturan adaptasi, notifikasi | Retensi W4 terukur, sinkronisasi stabil |
-| 3. Monetisasi | 3-4 minggu | Paywall Premium, RevenueCat + Stripe, trial | Konversi free-to-paid terukur |
+| 1. MVP (gratis) | 6-8 minggu | Onboarding, plan 5K/10K/HM/FM, Hari ini, timer, log + RPE, 3 grafik, auth, ABC drill sebagai pemanasan. Rilis Web + TestFlight + Play internal testing | 50-100 beta tester aktif |
+| 2. Integrasi & adaptif | 4-6 minggu | Strava, Apple Health, Health Connect, aturan adaptasi, notifikasi, strength dasar bodyweight 2x/minggu + core (gratis, uji minat) | Retensi W4 terukur, sinkronisasi stabil |
+| 3. Monetisasi | 3-4 minggu | Paywall Premium, RevenueCat + Stripe, trial, strength Premium (progresi beban, plyometrik, animasi lengkap, program pencegahan cedera) | Konversi free-to-paid terukur |
 | 4. Growth | Berkelanjutan | Race lokal, challenge, share card ke IG, run club, export workout ke jam, AI coach | Ditentukan dari data |
 
 ### 7.1 Breakdown MVP per minggu (indikatif)
@@ -377,7 +439,9 @@ Estimasi durasi mengasumsikan 1-2 developer full-stack; ini perkiraan kasar, buk
 | Adaptasi plan otomatis | Dasar | Penuh |
 | Prediksi waktu race + zona pace/HR detail | Tidak | Ya |
 | Banyak target sekaligus / plan custom | Tidak | Ya |
-| Plan kekuatan & mobility | Tidak | Ya |
+| ABC drill (pemanasan) | Ya | Ya |
+| Strength dasar bodyweight + core | Ya (fase 2) | Ya |
+| Strength lanjutan (progresi beban, plyometrik, pencegahan cedera spesifik) + mobility | Tidak | Ya |
 | Export workout ke jam (Garmin/Apple Watch) | Tidak | Ya |
 
 ### 8.3 Harga
@@ -425,6 +489,8 @@ Event analytics minimum: `onboarding_completed`, `plan_created`, `workout_starte
 | Retensi rendah setelah minggu 2 | Tinggi | Pengingat, streak ringan, ringkasan mingguan, plan yang realistis |
 | Review App Store/Play (data kesehatan) | Sedang | Privacy policy jelas, izin minimal, isi formulir data safety dengan benar |
 | Pasar sudah ramai | Sedang | Fokus kesederhanaan + konteks lokal; validasi di Discovery sebelum build penuh |
+| Cedera saat strength/plyo (teknik salah) | Sedang | Bodyweight dulu, animasi + cue teknik, plyo hanya level lanjut, review fisioterapis |
+| Biaya produksi animasi gerakan | Sedang | Mulai dari SVG berbasis pose; Rive/video hanya untuk gerakan prioritas |
 | Biaya infrastruktur | Rendah di awal | Tier gratis Supabase/PostHog/Sentry cukup untuk beta; pantau saat skala |
 
 ---
@@ -439,6 +505,8 @@ Event analytics minimum: `onboarding_completed`, `plan_created`, `workout_starte
 | D4 | Apakah sinkron Strava gratis atau Premium | Sebelum fase 3, berdasarkan data akuisisi |
 | D5 | Nama dan brand aplikasi | Fase 0 |
 | D6 | Kolaborasi pelatih bersertifikat untuk review template plan | Fase 0-1 |
+| D7 | Strength jadi pembeda utama atau cukup fitur Premium? | Setelah survey (pertanyaan 17a-17b) + data pemakaian fase 2 |
+| D8 | Format animasi gerakan: SVG pose, Rive, atau video | Sebelum fase 2 |
 
 ## 12. Langkah Berikutnya (2 minggu pertama)
 
