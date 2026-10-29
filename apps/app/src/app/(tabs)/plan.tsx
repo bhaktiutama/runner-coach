@@ -6,6 +6,9 @@ import {
   LaneMark,
   PhaseBar,
   radius,
+  ring,
+  shadow,
+  size,
   space,
   Text,
   weekdayShortName,
@@ -23,7 +26,7 @@ import { weekIndexOf } from '@/lib/planView';
 import { et } from '@/lib/rationale';
 import { approxKm, hasDrill, minutesOf, TYPE_ZONE, typeName } from '@/lib/workoutView';
 
-/** 3.1 Kalender plan. */
+/** 3.1 Kalender plan. Tata letak = wireframe Plan (jarak antarblok 16). */
 export default function PlanTab() {
   const today = useToday();
   const plan = useActivePlan();
@@ -42,22 +45,24 @@ export default function PlanTab() {
   const weekKm = workouts.reduce((a, w) => a + (w.target_distance_m ?? 0), 0);
 
   return (
-    <Screen testID="screen-plan">
-      <Text variant="title">
-        {g.distance === 'fitness'
-          ? t('plan.titleFitness')
-          : t('plan.title', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
-      </Text>
-      <Text color="textMuted">
-        {g.race_date
-          ? g.race_date === today
-            ? t('plan.raceToday')
-            : t('plan.raceIn', {
-                date: formatDateFull(g.race_date),
-                days: Math.max(0, diffDays(today, g.race_date)),
-              })
-          : t('plan.noRace', { weeks: weeks.length })}
-      </Text>
+    <Screen testID="screen-plan" gap="plan">
+      <View style={styles.head}>
+        <Text variant="title">
+          {g.distance === 'fitness'
+            ? t('plan.titleFitness')
+            : t('plan.title', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
+        </Text>
+        <Text variant="control" color="textMuted">
+          {g.race_date
+            ? g.race_date === today
+              ? t('plan.raceToday')
+              : t('plan.raceIn', {
+                  date: formatDateFull(g.race_date),
+                  days: Math.max(0, diffDays(today, g.race_date)),
+                })
+            : t('plan.noRace', { weeks: weeks.length })}
+        </Text>
+      </View>
       <PhaseBar
         weeks={weeks.map((w) => w.phase as PhaseKey)}
         current={idx}
@@ -73,11 +78,11 @@ export default function PlanTab() {
           onPress={() => setSel(idx - 1)}
           testID="prev-week"
         />
-        <View style={styles.flex}>
-          <Text variant="heading" align="center">
+        <View style={styles.navCenter}>
+          <Text variant="subheading" align="center">
             {t('plan.weekTitle', { n: idx })}
           </Text>
-          <Text color="textMuted" align="center">
+          <Text variant="controlSm" color="textMuted" align="center">
             {t('plan.weekRange', {
               from: formatDayMonth(from),
               to: formatDayMonth(to),
@@ -93,81 +98,85 @@ export default function PlanTab() {
           testID="next-week"
         />
       </View>
-      {Array.from({ length: 7 }, (_, i) => {
-        const date = addDays(from, i);
-        const w = workouts.find((x) => x.date === date);
-        const isToday = date === today;
-        return (
-          <Pressable
-            key={date}
-            testID={`plan-day-${date}`}
-            disabled={!w}
-            onPress={() => w && router.push(`/workout/${w.id}`)}
-            style={[styles.day, w ? styles.dayWorkout : styles.dayRest, isToday && styles.dayToday]}
-          >
-            <View style={styles.date}>
-              <Text variant="label" color="textMuted">
-                {weekdayShortName(i)}
-              </Text>
-              <Text variant="numberMd">{String(Number(date.slice(8)))}</Text>
-            </View>
-            {w ? <LaneMark zone={TYPE_ZONE[w.type]} tall /> : <View style={styles.restMark} />}
-            <View style={styles.flex}>
-              <Text
-                variant="heading"
-                color={w ? 'text' : 'textMuted'}
-                style={w && w.status !== 'scheduled' && w.status !== 'completed' ? styles.strike : null}
-              >
-                {w ? typeName(w.type) : t('plan.rest')}
-              </Text>
-              <Text variant="label" color="textMuted">
-                {w
-                  ? `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
-                  : i === 0
-                    ? t('plan.restSub')
-                    : ''}
-              </Text>
-            </View>
-            {isToday ? (
-              <View style={styles.todayBadge}>
-                <Text variant="caption" style={{ color: color.palette.cream }}>
-                  {t('plan.today')}
+      <View style={styles.days}>
+        {Array.from({ length: 7 }, (_, i) => {
+          const date = addDays(from, i);
+          const w = workouts.find((x) => x.date === date);
+          const isToday = date === today;
+          const struck = w && (w.status === 'skipped' || w.status === 'missed');
+          return (
+            <Pressable
+              key={date}
+              testID={`plan-day-${date}`}
+              disabled={!w}
+              onPress={() => w && router.push(`/workout/${w.id}`)}
+              style={[styles.day, w ? styles.dayWorkout : styles.dayRest, isToday && styles.dayToday]}
+            >
+              <View style={styles.date}>
+                <Text variant="dow" color="textMuted">
+                  {weekdayShortName(i)}
                 </Text>
+                <Text variant="subheading">{String(Number(date.slice(8)))}</Text>
               </View>
-            ) : null}
-          </Pressable>
-        );
-      })}
+              {w ? <LaneMark zone={TYPE_ZONE[w.type]} stretch /> : <View style={styles.restMark} />}
+              <View style={styles.body}>
+                <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
+                  {w ? typeName(w.type) : t('plan.rest')}
+                </Text>
+                {w || i === 0 ? (
+                  <Text variant="caption" color="textMuted">
+                    {w
+                      ? `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
+                      : t('plan.restSub')}
+                  </Text>
+                ) : null}
+              </View>
+              {isToday ? (
+                <View style={styles.tag}>
+                  <Text variant="tag" style={{ color: color.bg }}>
+                    {t('plan.today')}
+                  </Text>
+                </View>
+              ) : null}
+            </Pressable>
+          );
+        })}
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  nav: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  head: { gap: space[1] },
+  nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },
+  days: { gap: space[2] },
   day: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: space[4],
-    padding: space[4],
-    borderRadius: radius.lg,
-    borderWidth: border.control,
+    gap: space[3],
+    minHeight: size.dayRow,
+    paddingVertical: space[2],
+    paddingLeft: space[2] + space[1] / 2,
+    paddingRight: space[3] + space[1] / 2,
+    borderRadius: radius.md,
   },
-  dayWorkout: { backgroundColor: color.surface, borderColor: color.surface },
-  dayRest: { borderColor: color.line },
-  dayToday: { borderWidth: border.selected, borderColor: color.text },
+  dayWorkout: { backgroundColor: color.surface, ...shadow.card },
+  dayRest: ring(border.control, color.line),
+  dayToday: { backgroundColor: color.surface, ...ring(border.selected, color.text) },
   date: { width: space[10], alignItems: 'center' },
+  body: { flex: 1, gap: border.selected - border.hairline / 2 },
   restMark: {
-    width: space[2] + space[1],
-    height: space[10] + space[4],
+    width: space[1] + space[1] / 2,
+    alignSelf: 'stretch',
     borderRadius: radius.stadium,
     backgroundColor: color.surfaceSunken,
   },
   strike: { textDecorationLine: 'line-through' },
-  todayBadge: {
+  tag: {
     backgroundColor: color.text,
     borderRadius: radius.stadium,
-    paddingHorizontal: space[3],
+    paddingHorizontal: space[2],
     paddingVertical: space[1],
   },
 });

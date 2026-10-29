@@ -1,6 +1,7 @@
 import type { EngineMessageKey } from '@run-coach/training-engine';
 import { paceZones } from '@run-coach/training-engine';
 import {
+  border,
   color,
   PrimaryButton,
   radius,
@@ -54,12 +55,14 @@ export default function ProfileTab() {
   const reminder = profile.data.reminder_time;
 
   return (
-    <Screen testID="screen-profile">
+    <Screen testID="screen-profile" gap="today">
       <View style={styles.head}>
         <View style={styles.avatar}>
-          <Text variant="title">{display.slice(0, 1).toUpperCase()}</Text>
+          <Text variant="wordmark" style={styles.avatarText}>
+            {display.slice(0, 1).toUpperCase()}
+          </Text>
         </View>
-        <View style={styles.flex}>
+        <View style={styles.nameCol}>
           {editName ? (
             <TextField
               value={name}
@@ -74,7 +77,8 @@ export default function ProfileTab() {
             />
           ) : (
             <Text
-              variant="title"
+              variant="stat"
+              numberOfLines={1}
               onPress={() => setEditName(true)}
               accessibilityRole="button"
               accessibilityHint={t('profile.editName')}
@@ -82,7 +86,7 @@ export default function ProfileTab() {
               {display}
             </Text>
           )}
-          <Text variant="label" color="textMuted">
+          <Text variant="controlSm" color="textMuted">
             {t('profile.nameSub')}
           </Text>
         </View>
@@ -164,14 +168,16 @@ export default function ProfileTab() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  head: { flexDirection: 'row', alignItems: 'center', gap: space[4] },
+  head: { flexDirection: 'row', alignItems: 'center', gap: space[3] + space[1] / 2 },
+  nameCol: { flex: 1, gap: border.selected - border.hairline / 2 },
   avatar: {
-    width: space[10] * 2,
-    height: space[10] * 2,
+    width: space[10] + space[4],
+    height: space[10] + space[4],
     borderRadius: radius.stadium,
     backgroundColor: color.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  avatarText: { color: color.zone.onEasy },
   confirm: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
 });

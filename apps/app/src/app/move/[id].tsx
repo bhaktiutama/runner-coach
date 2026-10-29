@@ -4,10 +4,11 @@ import {
   border,
   color,
   IconButton,
-  InfoBox,
   LinkButton,
   PrimaryButton,
   radius,
+  shadow,
+  ring,
   size,
   space,
   Text,
@@ -60,27 +61,38 @@ export default function MoveSheet() {
     close();
   };
 
+  const tone =
+    check.verdict === 'safe' || check.verdict === 'origin'
+      ? color.status.onTrack
+      : check.verdict === 'hard_adjacent'
+        ? color.status.behind
+        : color.status.attention;
+  const dayLabel = t('move.day', { wd: weekdayShortName(weekday(sel)), d: Number(sel.slice(8)) });
+
   return (
     <View style={styles.backdrop}>
       <Pressable style={styles.flex} onPress={close} accessibilityLabel={t('move.close')} />
-      <View style={[styles.sheet, { paddingBottom: insets.bottom + space[5] }]} testID="move-sheet">
+      <View
+        style={[styles.sheet, { paddingBottom: Math.max(space.screenBottom, insets.bottom + space[2]) }]}
+        testID="move-sheet"
+      >
         <View style={styles.handle} />
         <View style={styles.head}>
-          <Text variant="title" style={styles.flex}>
-            {t('move.title')}
-          </Text>
+          <View style={styles.headText}>
+            <Text variant="stat">{t('move.title')}</Text>
+            <View style={styles.row}>
+              <BibTag label={typeName(wk.type)} zone={TYPE_ZONE[wk.type]} />
+              <Text variant="control">
+                {t('move.summary', { type: typeName(wk.type), min: minutesOf(wk.steps) })}
+              </Text>
+            </View>
+            <Text variant="note" color="textMuted">
+              {t('move.original', { date: formatDate(wk.original_date ?? wk.date) })}
+            </Text>
+          </View>
           <IconButton icon="close" label={t('move.close')} onPress={close} />
         </View>
-        <View style={styles.row}>
-          <BibTag label={typeName(wk.type)} zone={TYPE_ZONE[wk.type]} />
-          <Text variant="heading">
-            {t('move.summary', { type: typeName(wk.type), min: minutesOf(wk.steps) })}
-          </Text>
-        </View>
-        <Text variant="label" color="textMuted">
-          {t('move.original', { date: formatDate(wk.original_date ?? wk.date) })}
-        </Text>
-        {days.length === 0 ? <Text>{t('move.noDays')}</Text> : null}
+        {days.length === 0 ? <Text variant="bodySm">{t('move.noDays')}</Text> : null}
         <View style={styles.days}>
           {days.map((d) => {
             const other = week.data!.find((x) => x.date === d && x.id !== wk.id);
@@ -93,12 +105,12 @@ export default function MoveSheet() {
                 accessibilityState={{ selected: on }}
                 accessibilityLabel={weekdayLongName(weekday(d))}
                 onPress={() => setTarget(d)}
-                style={[styles.day, on && styles.dayOn]}
+                style={[styles.day, on ? styles.dayOn : styles.dayOff]}
               >
-                <Text variant="label" style={{ color: on ? color.palette.cream : color.text }}>
+                <Text variant="captionStrong" style={{ color: on ? color.bg : color.text }}>
                   {weekdayShortName(weekday(d))}
                 </Text>
-                <Text variant="numberMd" style={{ color: on ? color.palette.cream : color.text }}>
+                <Text variant="numberSm" style={{ color: on ? color.bg : color.text }}>
                   {String(Number(d.slice(8)))}
                 </Text>
                 <View
@@ -111,49 +123,38 @@ export default function MoveSheet() {
             );
           })}
         </View>
-        <InfoBox
-          tone={
-            check.verdict === 'safe' || check.verdict === 'origin'
-              ? 'ok'
-              : check.verdict === 'hard_adjacent'
-                ? 'danger'
-                : 'warn'
-          }
-          testID="move-verdict"
-        >
-          <Text>{t(`move.verdict.${check.verdict}` as MessageKey)}</Text>
+        <View style={[styles.msg, { backgroundColor: tone }]} testID="move-verdict">
+          <Text variant="bodySm">{t(`move.verdict.${check.verdict}` as MessageKey)}</Text>
           {merged ? (
-            <Text variant="label">
+            <Text variant="note">
               {t('move.mergeCap', {
                 total: formatDistance(Number(merged.distance_m)),
                 cap: formatDistance(Number(merged.cap_m)),
               })}
             </Text>
           ) : null}
-        </InfoBox>
-        <PrimaryButton
-          testID="move-apply"
-          label={
-            check.verdict === 'occupied'
-              ? t('move.merge', {
-                  day: t('move.day', { wd: weekdayShortName(weekday(sel)), d: Number(sel.slice(8)) }),
-                })
-              : t('move.cta', {
-                  day: t('move.day', { wd: weekdayShortName(weekday(sel)), d: Number(sel.slice(8)) }),
-                })
-          }
-          disabled={check.verdict === 'origin' || check.verdict === 'hard_adjacent'}
-          loading={busy}
-          onPress={() => void apply()}
-        />
-        <LinkButton
-          label={t('move.skip')}
-          testID="move-skip"
-          onPress={async () => {
-            await actions.skip.mutateAsync(wk.id);
-            close();
-          }}
-        />
+        </View>
+        <View style={styles.actions}>
+          <PrimaryButton
+            testID="move-apply"
+            label={
+              check.verdict === 'occupied'
+                ? t('move.merge', { day: dayLabel })
+                : t('move.cta', { day: dayLabel })
+            }
+            disabled={check.verdict === 'origin' || check.verdict === 'hard_adjacent'}
+            loading={busy}
+            onPress={() => void apply()}
+          />
+          <LinkButton
+            label={t('move.skip')}
+            testID="move-skip"
+            onPress={async () => {
+              await actions.skip.mutateAsync(wk.id);
+              close();
+            }}
+          />
+        </View>
       </View>
     </View>
   );
@@ -166,32 +167,45 @@ const styles = StyleSheet.create({
     backgroundColor: color.bg,
     borderTopLeftRadius: radius.sheet,
     borderTopRightRadius: radius.sheet,
-    padding: space[5],
-    gap: space[3],
+    paddingTop: space[3],
+    paddingHorizontal: space.screenX,
+    gap: space[4] + space[1] / 2,
     width: '100%',
-    maxWidth: size.contentMax,
+    maxWidth: size.contentMax + space.screenX * 2,
     alignSelf: 'center',
+    ...shadow.raised,
   },
   handle: {
     alignSelf: 'center',
-    width: space[10] * 2,
-    height: space[1],
+    width: space[10],
+    height: space[1] + border.hairline,
     borderRadius: radius.stadium,
     backgroundColor: color.lineStrong,
   },
-  head: { flexDirection: 'row', alignItems: 'center' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  days: { flexDirection: 'row', gap: space[2] },
+  head: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: space[3] },
+  headText: { flex: 1, gap: space[1] },
+  row: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+  days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
   day: {
     flex: 1,
+    height: space[10] * 2 + space[1],
     alignItems: 'center',
+    justifyContent: 'center',
     gap: space[1],
-    paddingVertical: space[4],
     borderRadius: radius.stadium,
-    borderWidth: border.control,
-    borderColor: color.line,
-    backgroundColor: color.surface,
   },
-  dayOn: { backgroundColor: color.text, borderColor: color.text },
-  dot: { width: space[3], height: space[3], borderRadius: radius.stadium },
+  dayOn: { backgroundColor: color.text },
+  dayOff: { backgroundColor: color.surface, ...ring(border.control, color.line) },
+  dot: {
+    width: space[2] + border.selected - border.hairline / 2,
+    height: space[2] + border.selected - border.hairline / 2,
+    borderRadius: radius.stadium,
+  },
+  msg: {
+    paddingVertical: space[3] + space[1] / 2,
+    paddingHorizontal: space[4],
+    borderRadius: radius.md,
+    gap: space[1],
+  },
+  actions: { gap: space[1] },
 });

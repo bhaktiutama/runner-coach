@@ -2,7 +2,7 @@
 
 Diperbarui otomatis oleh agent setiap langkah selesai. Branch kerja: `claude/relaxed-galileo-lknyhx`, di-merge langsung ke `development`.
 
-Terakhir diperbarui: 2026-10-29 (setelah M6)
+Terakhir diperbarui: 2026-10-29 (setelah penyamaan UI ke wireframe)
 
 ## Ringkasan
 
@@ -39,6 +39,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | 2026-10-29 | M4 | Timer 2.3/2.3b: hitung mundur, jeda/lanjut, lewati, kunci layar, drill per set, cue suara+getar, notifikasi terjadwal, keep-awake/Wake Lock, lanjut setelah app ditutup. Bug ditemukan E2E: hitung mundur tertahan (diperbaiki) | timer 8/8 |
 | 2026-10-29 | M5 | 2.4 Selesai+RPE+tag, 2.6 log manual (dicocokkan ke latihan hari itu), 3.3 Progres (volume, tren pace easy, kepatuhan, prediksi), 3.4 detail. Tanggal lokal per zona waktu profil | unit 2.340/2.340, E2E 6/6 |
 | 2026-10-29 | M6 | Backup ke file + pulihkan (validasi, versi lebih baru ditolak, rollback), hapus data di HP, keluar, hapus akun (Edge Function + handler), jeda/lanjut + Return to run, adaptasi 2.5 (E-13/17/18/19), atur ulang hari, pengingat 7 hari, event anonim dengan daftar properti | unit 2.358, privacy 15/15, E2E 10/10 |
+| 2026-10-29 | UI | Semua 26 layar disamakan ke wireframe PNG (1.x, 2.x, 3.x, 4.x): ukuran font dari token, input waktu satu kotak, chip/pil, jarak antarblok, tinggi baris, sakelar 52x32, ikon tombol 20. Dicek berdampingan lewat `e2e/compare.spec.ts` + `scripts/compare-wireframes.py` | unit 2.361, E2E 15/15 + compare 3/3, lint + typecheck OK |
 
 ## Blocker dan butuh dari pemilik
 

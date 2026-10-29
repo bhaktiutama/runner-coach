@@ -7,6 +7,8 @@ import {
   InfoBox,
   LinkButton,
   radius,
+  ring,
+  ScreenTitle,
   SecondaryButton,
   space,
   Text,
@@ -33,77 +35,93 @@ export default function DeleteAccount() {
   const ok = word.trim().toUpperCase() === t('delete.confirmWord');
 
   return (
-    <Screen testID="screen-delete">
+    <Screen
+      testID="screen-delete"
+      footer={
+        <>
+          <DangerButton
+            label={t('delete.cta')}
+            testID="delete-confirm"
+            disabled={!ok || !session.data}
+            loading={a.deleteAccount.isPending}
+            onPress={async () => {
+              setError(null);
+              try {
+                await a.deleteAccount.mutateAsync();
+                track('account_deleted');
+                if (router.canDismiss()) router.dismissAll();
+                router.replace('/welcome');
+              } catch (e) {
+                const code = String((e as Error).message);
+                setError(t('delete.failed', { reason: t(REASON[code] ?? 'auth.failed') }));
+              }
+            }}
+          />
+          <LinkButton label={t('common.cancel')} onPress={back} />
+        </>
+      }
+    >
       <IconButton icon="back" label={t('common.back')} onPress={back} />
-      <Text variant="display">{t('delete.title')}</Text>
-      <Text color="textMuted">{t('delete.subtitle')}</Text>
-      {(['delete.item1', 'delete.item2', 'delete.item3'] as const).map((k) => (
-        <View key={k} style={styles.item}>
-          <Icon name="close" color={color.status.behindInk} />
-          <Text style={styles.flex}>{t(k)}</Text>
-        </View>
-      ))}
+      <ScreenTitle title={t('delete.title')} subtitle={t('delete.subtitle')} />
+      <View style={styles.list}>
+        {(['delete.item1', 'delete.item2', 'delete.item3'] as const).map((k) => (
+          <View key={k} style={styles.item}>
+            <View style={styles.itemIcon}>
+              <Icon name="close" size={space[4] + space[1] / 2} color={color.status.behindInk} />
+            </View>
+            <Text variant="subtitle" style={styles.flex}>
+              {t(k)}
+            </Text>
+          </View>
+        ))}
+      </View>
       <View style={styles.card}>
-        <Text variant="heading">{t('delete.backupTitle')}</Text>
-        <Text color="textMuted">{t('delete.backupBody')}</Text>
+        <Text variant="boxTitle">{t('delete.backupTitle')}</Text>
+        <Text variant="bodySm" color="textMuted">
+          {t('delete.backupBody')}
+        </Text>
         <SecondaryButton
           label={t('privacy.backupCta')}
           icon="share"
           onPress={() => void a.exportFile.mutateAsync(today)}
         />
       </View>
-      {!session.data && session.isFetched ? (
-        <InfoBox tone="info">
-          <Text>{t('delete.notSignedIn')}</Text>
-        </InfoBox>
-      ) : null}
+      {!session.data && session.isFetched ? <InfoBox tone="info">{t('delete.notSignedIn')}</InfoBox> : null}
       <TextField
         label={t('delete.typeLabel')}
         value={word}
         onChangeText={setWord}
         autoCapitalize="characters"
+        numeric
+        keyboardType="default"
         testID="delete-word"
       />
       <InfoBox tone="warn" icon="info">
-        <Text>{t('delete.internet')}</Text>
+        {t('delete.internet')}
       </InfoBox>
       {error ? (
         <InfoBox tone="danger" testID="delete-error">
-          <Text>{error}</Text>
+          {error}
         </InfoBox>
       ) : null}
-      <DangerButton
-        label={t('delete.cta')}
-        testID="delete-confirm"
-        disabled={!ok || !session.data}
-        loading={a.deleteAccount.isPending}
-        onPress={async () => {
-          setError(null);
-          try {
-            await a.deleteAccount.mutateAsync();
-            track('account_deleted');
-            if (router.canDismiss()) router.dismissAll();
-            router.replace('/welcome');
-          } catch (e) {
-            const code = String((e as Error).message);
-            setError(t('delete.failed', { reason: t(REASON[code] ?? 'auth.failed') }));
-          }
-        }}
-      />
-      <LinkButton label={t('common.cancel')} onPress={back} />
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  item: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
+  list: { gap: space[3] },
+  item: {
+    flexDirection: 'row',
+    gap: space[2] + border.selected - border.hairline / 2,
+    alignItems: 'flex-start',
+  },
+  itemIcon: { paddingTop: border.selected - border.hairline / 2 },
   card: {
-    borderWidth: border.hairline,
-    borderColor: color.line,
+    ...ring(border.hairline, color.line),
     borderRadius: radius.lg,
-    padding: space[5],
-    gap: space[3],
+    padding: space[4],
+    gap: space[2] + border.selected - border.hairline / 2,
     backgroundColor: color.surface,
   },
 });

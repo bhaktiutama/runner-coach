@@ -126,8 +126,10 @@ export function Chip({
   testID?: string;
   disabled?: boolean;
   fill?: boolean;
-  size?: 'option' | 'quick';
+  /** option 44, quick 40, large 48 (4.3, teks tebal). */
+  size?: 'option' | 'quick' | 'large';
 }) {
+  const h = chipSize === 'quick' ? size.chip : chipSize === 'large' ? size.buttonSecondary : size.touchMin;
   return (
     <Pressable
       accessibilityRole="button"
@@ -138,14 +140,14 @@ export function Chip({
       testID={testID}
       style={({ pressed }) => [
         styles.chip,
-        { minHeight: chipSize === 'quick' ? size.chip : size.touchMin },
+        { minHeight: h },
         fill && styles.chipFill,
         selected ? styles.chipSelected : styles.chipIdle,
         { opacity: disabled ? 0.4 : pressed ? 0.8 : 1 },
       ]}
     >
       <Text
-        variant={selected ? 'controlStrong' : 'control'}
+        variant={selected || chipSize === 'large' ? 'controlStrong' : 'control'}
         numberOfLines={1}
         style={{ color: selected ? color.bg : color.text }}
       >

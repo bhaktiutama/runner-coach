@@ -1,4 +1,16 @@
-import { Chip, IconButton, InfoBox, PrimaryButton, space, Text } from '@run-coach/ui';
+import {
+  border,
+  Chip,
+  color,
+  IconButton,
+  InfoBox,
+  PrimaryButton,
+  radius,
+  ScreenTitle,
+  SegmentedControl,
+  space,
+  Text,
+} from '@run-coach/ui';
 import { formatDateLong } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -34,10 +46,10 @@ export default function Pause() {
     return (
       <Screen testID="screen-pause">
         <IconButton icon="back" label={t('common.back')} onPress={back} />
-        <Text variant="display">{t('pause.pausedTitle')}</Text>
-        <Text color="textMuted">
-          {t('pause.pausedBody', { date: formatDateLong((p.paused_at ?? today).slice(0, 10)) })}
-        </Text>
+        <ScreenTitle
+          title={t('pause.pausedTitle')}
+          subtitle={t('pause.pausedBody', { date: formatDateLong((p.paused_at ?? today).slice(0, 10)) })}
+        />
         <PrimaryButton
           label={t('pause.resume')}
           testID="resume"
@@ -69,56 +81,73 @@ export default function Pause() {
       }
     >
       <IconButton icon="back" label={t('common.back')} onPress={back} />
-      <Text variant="display">{t('pause.title')}</Text>
-      <Text color="textMuted">{t('pause.subtitle')}</Text>
-      <Text variant="label" color="textMuted">
-        {t('pause.reason')}
-      </Text>
-      <View style={styles.row}>
-        {REASONS.map((r) => (
-          <Chip
-            key={r}
-            testID={`reason-${r}`}
-            label={t(`pause.${r}` as MessageKey)}
-            selected={reason === r}
-            onPress={() => setReason(r)}
-          />
-        ))}
+      <ScreenTitle title={t('pause.title')} subtitle={t('pause.subtitle')} />
+      <View style={styles.group}>
+        <Text variant="label" color="textMuted">
+          {t('pause.reason')}
+        </Text>
+        <View style={styles.row}>
+          {REASONS.map((r) => (
+            <Chip
+              key={r}
+              fill
+              size="large"
+              testID={`reason-${r}`}
+              label={t(`pause.${r}` as MessageKey)}
+              selected={reason === r}
+              onPress={() => setReason(r)}
+            />
+          ))}
+        </View>
       </View>
-      <Text variant="label" color="textMuted">
-        {t('pause.duration')}
-      </Text>
-      <View style={styles.row}>
-        {DUR.map((x) => (
-          <Chip key={x.v} label={t(x.label)} selected={dur === x.v} onPress={() => setDur(x.v)} />
-        ))}
+      <View style={styles.group}>
+        <Text variant="label" color="textMuted">
+          {t('pause.duration')}
+        </Text>
+        <SegmentedControl
+          items={DUR.map((x) => ({ value: x.v, label: t(x.label) }))}
+          value={dur}
+          onChange={setDur}
+        />
       </View>
       {reason === 'injury' ? (
-        <>
+        <View style={styles.group}>
           <Text variant="label" color="textMuted">
-            {t('pause.bodyPart')}
+            {t('pause.bodyPart')}{' '}
+            <Text variant="note" color="textMuted">
+              {t('pause.bodyPartNote')}
+            </Text>
           </Text>
-          <View style={styles.row}>
+          <View style={styles.wrap}>
             {PARTS.map((k) => (
               <Chip
                 key={k}
+                size="quick"
                 label={t(k)}
                 selected={parts.includes(k)}
                 onPress={() => setParts(parts.includes(k) ? parts.filter((x) => x !== k) : [...parts, k])}
               />
             ))}
           </View>
-          <InfoBox tone="danger">
-            <Text>{t('pause.warn')}</Text>
-          </InfoBox>
-        </>
+          <InfoBox tone="danger">{t('pause.warn')}</InfoBox>
+        </View>
       ) : null}
-      <InfoBox tone="info" icon="sync">
-        <Text variant="heading">{t('pause.returnTitle')}</Text>
-        <Text>{t('pause.returnBody')}</Text>
-      </InfoBox>
+      <View style={styles.returnBox}>
+        <Text variant="boxTitle">{t('pause.returnTitle')}</Text>
+        <Text variant="bodySm">{t('pause.returnBody')}</Text>
+      </View>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({ row: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] } });
+const styles = StyleSheet.create({
+  group: { gap: space[2] + border.selected - border.hairline / 2 },
+  row: { flexDirection: 'row', gap: space[2] },
+  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+  returnBox: {
+    gap: space[1] + space[1] / 2,
+    padding: space[4],
+    borderRadius: radius.lg,
+    backgroundColor: color.status.recovery,
+  },
+});

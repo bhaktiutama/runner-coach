@@ -38,7 +38,7 @@ export function PrimaryButton({
         <ActivityIndicator color={fg} />
       ) : (
         <View style={styles.row}>
-          {icon ? <Icon name={icon} color={fg} /> : null}
+          {icon ? <Icon name={icon} size={space[5]} color={fg} /> : null}
           <Text variant="button" style={{ color: fg }}>
             {label}
           </Text>
@@ -53,8 +53,9 @@ export function SecondaryButton({
   icon,
   disabled,
   variant = 'outline',
+  tall,
   ...rest
-}: Base & { variant?: 'outline' | 'ghost' }) {
+}: Base & { variant?: 'outline' | 'ghost'; /** Tinggi 52 (4.5). */ tall?: boolean }) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -64,12 +65,13 @@ export function SecondaryButton({
       {...rest}
       style={({ pressed }) => [
         styles.secondary,
+        tall && styles.tall,
         variant === 'outline' ? styles.outline : null,
         { opacity: disabled ? 0.4 : pressed ? 0.7 : 1 },
       ]}
     >
       <View style={styles.row}>
-        {icon ? <Icon name={icon} color={color.text} /> : null}
+        {icon ? <Icon name={icon} size={space[5]} color={color.text} /> : null}
         <Text variant="row">{label}</Text>
       </View>
     </Pressable>
@@ -125,6 +127,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space[5],
   },
+  tall: { minHeight: size.input },
   outline: { ...ring(border.control, color.lineStrong), backgroundColor: color.surface },
   link: {
     minHeight: size.touchMin,
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space[2],
   },
-  row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  row: { flexDirection: 'row', alignItems: 'center', gap: space[2] + border.selected - border.hairline / 2 },
   rowLink: { gap: space[2] },
   linkSm: { minHeight: space[8] + space[1] },
 });

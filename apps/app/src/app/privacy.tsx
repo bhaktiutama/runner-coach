@@ -1,5 +1,6 @@
 import { diffDays, type EngineMessageKey } from '@run-coach/training-engine';
 import {
+  border,
   color,
   DangerButton,
   IconButton,
@@ -73,53 +74,58 @@ export default function Privacy() {
     <Screen testID="screen-privacy">
       <View style={styles.top}>
         <IconButton icon="back" label={t('common.back')} onPress={back} />
-        <Text color="textMuted" align="center" style={styles.flex}>
+        <Text variant="controlStrong" color="textMuted" align="center" style={styles.flex}>
           {t('privacy.header')}
         </Text>
         <View style={styles.spacer} />
       </View>
       <View style={styles.hero}>
         <View style={styles.heroHead}>
-          <Logo variant="mark" dark height={space[8]} />
-          <Text variant="title" color="darkText" style={styles.flex}>
+          <Logo variant="mark" dark height={space[8] + space[1]} />
+          <Text variant="stat" color="darkText" style={styles.flex}>
             {t('privacy.heroTitle')}
           </Text>
         </View>
-        <Text color="darkText">{t('privacy.heroBody')}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text variant="heading">{t('privacy.backup')}</Text>
-        <Text
-          variant="label"
-          style={{ color: days == null || days >= 30 ? color.status.attentionInk : color.textMuted }}
-          testID="last-backup"
-        >
-          {t('privacy.lastBackup', {
-            when:
-              days == null
-                ? t('privacy.never')
-                : days === 0
-                  ? t('privacy.today')
-                  : t('privacy.daysAgo', { n: days }),
-          })}
+        <Text variant="bodySm" color="darkText" style={styles.heroBody}>
+          {t('privacy.heroBody')}
         </Text>
       </View>
-      <PrimaryButton
-        label={t('privacy.backupCta')}
-        icon="share"
-        testID="backup"
-        loading={a.exportFile.isPending}
-        onPress={() => void doBackup()}
-      />
-      <SecondaryButton
-        label={t('privacy.restoreCta')}
-        icon="sync"
-        testID="restore"
-        onPress={() => void doPick()}
-      />
-      <Text variant="label" color="textMuted">
-        {t('privacy.backupNote')}
-      </Text>
+      <View style={styles.group}>
+        <View style={styles.row}>
+          <Text variant="subheading">{t('privacy.backup')}</Text>
+          <Text
+            variant="label"
+            style={{ color: days == null || days >= 30 ? color.status.attentionInk : color.textMuted }}
+            testID="last-backup"
+          >
+            {t('privacy.lastBackup', {
+              when:
+                days == null
+                  ? t('privacy.never')
+                  : days === 0
+                    ? t('privacy.today')
+                    : t('privacy.daysAgo', { n: days }),
+            })}
+          </Text>
+        </View>
+        <PrimaryButton
+          label={t('privacy.backupCta')}
+          icon="share"
+          testID="backup"
+          loading={a.exportFile.isPending}
+          onPress={() => void doBackup()}
+        />
+        <SecondaryButton
+          tall
+          label={t('privacy.restoreCta')}
+          icon="sync"
+          testID="restore"
+          onPress={() => void doPick()}
+        />
+        <Text variant="note" color="textMuted">
+          {t('privacy.backupNote')}
+        </Text>
+      </View>
       {process.env.EXPO_OS === 'web' ? (
         <Text variant="caption" color="textMuted">
           {t('privacy.webStorage')}
@@ -263,7 +269,13 @@ const styles = StyleSheet.create({
   top: { flexDirection: 'row', alignItems: 'center' },
   spacer: { width: space[10] + space[2] },
   hero: { backgroundColor: color.text, borderRadius: radius.lg, padding: space[5], gap: space[3] },
-  heroHead: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  heroHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space[2] + border.selected - border.hairline / 2,
+  },
+  heroBody: { lineHeight: space[5] + border.hairline, opacity: 0.85 },
+  group: { gap: space[2] + border.selected - border.hairline / 2 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   sheet: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
 });

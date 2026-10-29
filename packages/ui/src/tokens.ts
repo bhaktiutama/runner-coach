@@ -593,6 +593,72 @@ export const tokens = {
       "fontWeight": 800,
       "lineHeight": 1.1,
       "letterSpacing": "0"
+    },
+    "dow": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 11,
+      "fontWeight": 700,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "tag": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 11,
+      "fontWeight": 800,
+      "lineHeight": 1.2,
+      "letterSpacing": "0.06em"
+    },
+    "axisSm": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 10,
+      "fontWeight": 500,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "rowRegular": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 15,
+      "fontWeight": 600,
+      "lineHeight": 1.3,
+      "letterSpacing": "0"
+    },
+    "boxTitle": {
+      "fontFamily": [
+        "Bricolage Grotesque",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 16,
+      "fontWeight": 800,
+      "lineHeight": 1.2,
+      "letterSpacing": "0"
+    },
+    "sectionCaps": {
+      "fontFamily": [
+        "Plus Jakarta Sans",
+        "system-ui",
+        "sans-serif"
+      ],
+      "fontSize": 12,
+      "fontWeight": 800,
+      "lineHeight": 1.2,
+      "letterSpacing": "0.08em"
     }
   },
   "space": {
@@ -625,6 +691,7 @@ export const tokens = {
     "icon": 24,
     "trackStroke": 10,
     "contentMax": 640,
+    "dayRow": 70,
     "iconSm": 22
   },
   "border": {

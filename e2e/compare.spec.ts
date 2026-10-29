@@ -68,10 +68,6 @@ test('onboarding', async ({ page }) => {
   await page.getByTestId('screen-detail').waitFor();
   await page.waitForTimeout(300);
   await shot(page, '2-2-detail-latihan');
-  await page
-    .getByRole('tab', { name: 'Plan' })
-    .click()
-    .catch(() => undefined);
 });
 
 test('latihan', async ({ page }) => {
@@ -118,4 +114,55 @@ test('latihan', async ({ page }) => {
   await page.getByTestId('screen-finish').waitFor();
   await page.getByTestId('rpe-6').click();
   await shot(page, '2-4-selesai-rpe');
+});
+
+test('plan-akun', async ({ page }) => {
+  test.setTimeout(180_000);
+  const { onboard } = await import('./helpers');
+  await onboard(page);
+  await page.getByTestId('manual-log').click();
+  await page.getByTestId('log-km').fill('5,2');
+  await page.getByTestId('log-duration').fill('38:45');
+  await page.getByTestId('screen-log').getByTestId('rpe-6').click();
+  await page.getByTestId('log-save').click();
+  await page.getByTestId('screen-today').waitFor();
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  await page.getByTestId('screen-plan').waitFor();
+  await page.waitForTimeout(300);
+  await shot(page, '3-1-kalender-plan');
+  const q = page
+    .getByTestId('screen-plan')
+    .locator('[data-testid^="plan-day-"]')
+    .filter({ hasText: /Tempo|Interval/ });
+  for (let i = 0; i < 8 && (await q.count()) === 0; i++) {
+    if (await page.getByTestId('next-week').isDisabled()) break;
+    await page.getByTestId('next-week').click();
+  }
+  await q.first().click();
+  await page.getByTestId('screen-detail').getByTestId('move').click();
+  await page.getByTestId('move-sheet').waitFor();
+  await page.waitForTimeout(300);
+  await shot(page, '3-2-pindah-latihan');
+  await page.goto('/progress');
+  await page.getByTestId('screen-progress').waitFor();
+  await page.waitForTimeout(300);
+  await shot(page, '3-3-progres');
+  await page.locator('[data-testid^="activity-"]').first().click();
+  await page.getByTestId('screen-activity').waitFor();
+  await shot(page, '3-4-detail-aktivitas');
+  await page.goto('/profile');
+  await page.getByTestId('screen-profile').waitFor();
+  await page.waitForTimeout(300);
+  await shot(page, '4-1-profil');
+  await page.getByTestId('row-pause').click();
+  await page.getByTestId('screen-pause').waitFor();
+  await shot(page, '4-3-jeda-plan');
+  await page.goto('/profile');
+  await page.getByTestId('row-privacy').click();
+  await page.getByTestId('screen-privacy').waitFor();
+  await shot(page, '4-5-data-privasi');
+  await page.getByTestId('delete-account').click();
+  await page.getByTestId('screen-delete').waitFor();
+  await page.getByTestId('delete-word').fill('HAPUS');
+  await shot(page, '4-6-hapus-akun');
 });

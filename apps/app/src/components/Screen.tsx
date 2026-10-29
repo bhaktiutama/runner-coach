@@ -10,16 +10,18 @@ type Props = {
   dark?: boolean;
   testID?: string;
   /** Jarak antarblok: 20 (default) atau 24 (wireframe 1.2, 1.5). */
-  gap?: 'normal' | 'loose' | 'today' | 'finish';
+  gap?: keyof typeof GAP;
 };
 
 /** Kerangka layar: padding 20, konten maks 640 di tengah (UI/UX 5), footer tombol di bawah. */
-/** Jarak antarblok per layar wireframe: 20 umum, 24 (1.2, 1.5), 18 (2.1), 22 (2.4). */
+/** Jarak antarblok per layar wireframe: 20 umum, 24 (1.2, 1.5), 18 (2.1), 22 (2.4), 16 (3.1), 14 (3.3). */
 const GAP = {
   normal: space[5],
   loose: space[6],
   today: space[4] + space[1] / 2,
   finish: space[5] + space[1] / 2,
+  plan: space[4],
+  progress: space[3] + space[1] / 2,
 } as const;
 
 export function Screen({ children, footer, scroll = true, dark = false, testID, gap = 'normal' }: Props) {

@@ -53,19 +53,21 @@ export function SegmentBar({
   );
 }
 
-/** Penanda lajur vertikal 6 px: pendek 20 (daftar kartu) atau mengisi tinggi baris (`stretch`). */
+/** Penanda lajur vertikal 6 px: pendek 20 (daftar kartu), 24 (`tall`) atau mengisi tinggi baris (`stretch`). */
 export function LaneMark({
   zone,
   drill,
   stretch,
+  tall,
 }: {
   zone: LaneZone;
   drill?: boolean;
   stretch?: boolean;
+  /** Tinggi 24 (tabel segmen 3.4). */
   tall?: boolean;
 }) {
   return (
-    <View style={[styles.mark, stretch ? styles.markStretch : styles.markShort]}>
+    <View style={[styles.mark, stretch ? styles.markStretch : tall ? styles.markTall : styles.markShort]}>
       <LaneFill zone={zone} drill={drill} />
     </View>
   );
@@ -153,7 +155,7 @@ export function LaneWeek({ days }: { days: LaneDay[] }) {
 export type PhaseKey = 'base' | 'build' | 'peak' | 'taper' | 'return';
 const phaseColor = (p: PhaseKey) => (p === 'return' ? color.status.recovery : color.phase[p]);
 
-/** Bar fase per minggu (1.8, 3.1). */
+/** Bar fase per minggu (3.1): pil 14 px jarak 4, minggu ini garis luar 2 px; legenda kotak 10. */
 export function PhaseBar({
   weeks,
   current,
@@ -167,16 +169,21 @@ export function PhaseBar({
     <View style={styles.phaseWrap}>
       <View style={styles.phaseRow}>
         {weeks.map((p, i) => (
-          <View key={i} style={[styles.phaseCell, i + 1 === current && styles.phaseCurrent]}>
-            <View style={[styles.phasePill, { backgroundColor: phaseColor(p) }]} />
-          </View>
+          <View
+            key={i}
+            style={[
+              styles.phasePill,
+              { backgroundColor: phaseColor(p) },
+              i + 1 === current && styles.todayOutline,
+            ]}
+          />
         ))}
       </View>
       <View style={styles.legend}>
         {legend.map((l) => (
           <View key={l.phase} style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: phaseColor(l.phase) }]} />
-            <Text variant="label" color="textMuted">
+            <View style={[styles.legendDotSm, { backgroundColor: phaseColor(l.phase) }]} />
+            <Text variant="caption" color="textMuted">
               {l.label}
             </Text>
           </View>
@@ -190,15 +197,21 @@ export function PhaseBar({
 export function BarChart({
   bars,
   highlightIndex,
+  height,
 }: {
   bars: { value: number; label: string; phase: PhaseKey; outline?: boolean }[];
   highlightIndex?: number;
+  /** Tinggi area grafik; default 124 (1.8), 96 untuk 3.3. */
+  height?: number;
 }) {
   const max = Math.max(1, ...bars.map((b) => b.value));
-  const area = space[10] * 3 + space[1];
+  const area = height ?? space[10] * 3 + space[1];
   const labelH = space[4];
   return (
-    <View style={[styles.bars, { height: area }]} accessibilityRole="image">
+    <View
+      style={[styles.bars, { height: area, gap: height ? space[2] : space[1] + space[1] / 2 }]}
+      accessibilityRole="image"
+    >
       {bars.map((b, i) => {
         const fill = i === highlightIndex ? color.primary : phaseColor(b.phase);
         return (
@@ -266,6 +279,7 @@ const styles = StyleSheet.create({
   segPart: { borderRadius: radius.stadium, overflow: 'hidden' },
   mark: { width: space[1] + space[1] / 2, borderRadius: radius.stadium, overflow: 'hidden' },
   markShort: { height: space[5] },
+  markTall: { height: space[6] },
   markStretch: { alignSelf: 'stretch' },
   intensity: { flexDirection: 'row', alignItems: 'flex-end', gap: border.selected + border.hairline / 2 },
   intBar: {
@@ -293,15 +307,16 @@ const styles = StyleSheet.create({
   bold: { fontFamily: fontFiles.ui800 },
   phaseWrap: { gap: space[2] },
   phaseRow: { flexDirection: 'row', gap: space[1] },
-  phaseCell: {
+  phasePill: {
     flex: 1,
+    height: space[3] + border.selected - border.hairline / 2,
     borderRadius: radius.stadium,
-    borderWidth: border.selected,
-    borderColor: 'transparent',
-    padding: border.hairline,
   },
-  phaseCurrent: { borderColor: color.text },
-  phasePill: { height: space[5], borderRadius: radius.stadium },
+  legendDotSm: {
+    width: space[2] + border.selected - border.hairline / 2,
+    height: space[2] + border.selected - border.hairline / 2,
+    borderRadius: border.selected + border.hairline / 2,
+  },
   legend: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[2] },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   legendDot: { width: space[3], height: space[3], borderRadius: space[1] },

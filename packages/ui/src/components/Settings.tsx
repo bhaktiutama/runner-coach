@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { border, color, radius, size, space } from '../theme';
+import { border, color, radius, shadow, size, space } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
@@ -8,7 +8,7 @@ export function SettingsGroup({ children, title }: { children: ReactNode; title?
   return (
     <View style={styles.group}>
       {title ? (
-        <Text variant="label" color="textMuted" style={styles.groupTitle}>
+        <Text variant="sectionCaps" color="textMuted" style={styles.groupTitle}>
           {title}
         </Text>
       ) : null}
@@ -46,25 +46,37 @@ export function SettingsRow({
       disabled={!onPress}
       onPress={onPress}
       testID={testID}
-      style={({ pressed }) => [styles.row, !first && styles.sep, { opacity: pressed ? 0.7 : 1 }]}
+      style={({ pressed }) => [
+        styles.row,
+        sub && styles.rowTall,
+        !first && styles.sep,
+        { opacity: pressed ? 0.7 : 1 },
+      ]}
     >
-      {icon ? <Icon name={icon} color={fg} /> : null}
-      <View style={styles.flex}>
-        <Text variant="control" style={{ color: fg }} numberOfLines={2}>
+      {icon ? <Icon name={icon} size={space[5]} color={fg} /> : null}
+      <View style={styles.labelCol}>
+        <Text variant="rowRegular" style={{ color: fg }} numberOfLines={2}>
           {label}
         </Text>
         {sub ? (
-          <Text variant="label" color="textMuted">
+          <Text variant="caption" color="textMuted">
             {sub}
           </Text>
         ) : null}
       </View>
-      {value ? (
-        <Text color="textMuted" style={styles.value} numberOfLines={1}>
-          {value}
-        </Text>
+      {value || (!right && onPress) ? (
+        <View style={styles.valueWrap}>
+          {value ? (
+            <Text variant="bodySm" color="textMuted" style={styles.value} numberOfLines={1}>
+              {value}
+            </Text>
+          ) : null}
+          {!right && onPress ? (
+            <Icon name="chevron-right" size={space[4] + space[1] / 2} color={color.textMuted} />
+          ) : null}
+        </View>
       ) : null}
-      {right ?? (onPress ? <Icon name="chevron-right" color={color.textMuted} /> : null)}
+      {right ?? null}
     </Pressable>
   );
 }
@@ -124,27 +136,31 @@ export function DangerButton({
   );
 }
 
-const KNOB = size.touchMin - space[3];
+/** Sakelar 52 x 32, kenop 26, celah 3 (4.5). */
+const KNOB = space[6] + border.selected - border.hairline / 2;
+const KNOB_PAD = (space[8] - KNOB) / 2;
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
+  labelCol: { flex: 1, gap: border.selected - border.hairline / 2 },
+  rowTall: { minHeight: space[10] + space[6] },
   group: { gap: space[2] },
-  groupTitle: { paddingHorizontal: space[2] },
-  card: { backgroundColor: color.surface, borderRadius: radius.lg, overflow: 'hidden' },
+  groupTitle: { paddingLeft: space[1] },
+  card: { backgroundColor: color.surface, borderRadius: radius.md, overflow: 'hidden', ...shadow.card },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: space[3],
-    minHeight: size.buttonPrimary,
-    paddingHorizontal: space[5],
-    paddingVertical: space[3],
+    minHeight: size.input,
+    paddingHorizontal: space[4],
+    paddingVertical: space[2],
   },
   sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
-  value: { maxWidth: '45%', flexShrink: 1 },
+  valueWrap: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2, maxWidth: '55%' },
+  value: { flexShrink: 1 },
   switch: {
-    width: KNOB * 2 + space[2],
-    height: KNOB + space[2],
+    width: size.input,
+    height: space[8],
     borderRadius: radius.stadium,
-    padding: space[1],
+    padding: KNOB_PAD,
     justifyContent: 'center',
   },
   knob: { width: KNOB, height: KNOB, borderRadius: radius.stadium, backgroundColor: color.surface },
