@@ -1,4 +1,4 @@
-import { color, Icon, LinkButton, Logo, PrimaryButton, radius, space, Text } from '@run-coach/ui';
+import { border, color, Icon, LinkButton, Logo, PrimaryButton, radius, space, Text } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
@@ -54,8 +54,8 @@ export default function Welcome() {
 
 const styles = StyleSheet.create({
   art: {
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
+    borderTopWidth: border.hairline,
+    borderBottomWidth: border.hairline,
     borderColor: color.lineStrong,
     paddingVertical: space[4],
     gap: space[3],

@@ -26,7 +26,7 @@ import {
 } from '@/data/hooks';
 import { localDateOf } from '@/lib/today';
 import { track } from '@/lib/analytics';
-import { planParams } from '@/data/rows';
+import { planParams, type Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
 import { weekDates, weekIndexOf } from '@/lib/planView';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
@@ -162,21 +162,21 @@ export default function Today() {
   function nextWorkout(ws: typeof workouts, from: string) {
     return ws.find((w) => w.date > from && w.status === 'scheduled') ?? null;
   }
+}
 
-  function RestCard({ next }: { next: (typeof workouts)[number] | null }) {
-    return (
-      <Card testID="rest-card" style={styles.rest}>
-        <Text variant="title">{t('today.restTitle')}</Text>
-        <Text color="textMuted">{t('today.restBody')}</Text>
-        {next ? (
-          <LinkButton
-            label={t('today.next', { type: typeName(next.type), date: formatDate(next.date) })}
-            onPress={() => router.push(`/workout/${next.id}`)}
-          />
-        ) : null}
-      </Card>
-    );
-  }
+function RestCard({ next }: { next: Workout | null }) {
+  return (
+    <Card testID="rest-card" style={styles.rest}>
+      <Text variant="title">{t('today.restTitle')}</Text>
+      <Text color="textMuted">{t('today.restBody')}</Text>
+      {next ? (
+        <LinkButton
+          label={t('today.next', { type: typeName(next.type), date: formatDate(next.date) })}
+          onPress={() => router.push(`/workout/${next.id}`)}
+        />
+      ) : null}
+    </Card>
+  );
 }
 
 const styles = StyleSheet.create({

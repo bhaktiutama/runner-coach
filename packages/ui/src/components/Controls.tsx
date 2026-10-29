@@ -75,7 +75,7 @@ export function ChoiceCard({
         </Text>
         {selected ? (
           <View style={styles.check}>
-            <Icon name="check" size={18} color={color.palette.cream} />
+            <Icon name="check" size={space[5]} color={color.palette.cream} />
           </View>
         ) : wide ? (
           <Icon name="chevron-right" />
@@ -276,7 +276,7 @@ export function Checkbox({
       style={styles.checkRow}
     >
       <View style={[styles.box, checked && styles.boxOn]}>
-        {checked ? <Icon name="check" size={18} color={color.palette.cream} strokeWidth={3} /> : null}
+        {checked ? <Icon name="check" size={space[5]} color={color.palette.cream} strokeWidth={3} /> : null}
       </View>
       <Text style={styles.flex}>{label}</Text>
     </Pressable>

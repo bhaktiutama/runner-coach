@@ -2,7 +2,17 @@
 
 Aplikasi latihan lari harian untuk target 5K, 10K, Half Marathon dan Full Marathon. Web, iOS dan Android dari satu codebase.
 
-Status: tahap perencanaan.
+Status: MVP M0-M6 sudah dibangun dan diuji di web; uji di HP dan rilis beta (M7) belum. Progres: [docs/STATUS.md](docs/STATUS.md).
+
+## Menjalankan
+
+```bash
+pnpm install
+pnpm dev        # Expo (web: tekan w; HP: Expo Go)
+pnpm test       # unit test
+```
+
+Struktur: `apps/app` (Expo Router), `packages/training-engine` (logika plan, TS murni), `packages/ui` (design system Lintas), `supabase/functions` (Edge Function delete-account).
 
 ## Dokumen
 

@@ -126,7 +126,7 @@ export function LaneWeek({ days }: { days: LaneDay[] }) {
                   },
                 ]}
               >
-                {d.state === 'completed' ? <Icon name="check" size={18} color={color.text} /> : null}
+                {d.state === 'completed' ? <Icon name="check" size={space[5]} color={color.text} /> : null}
               </View>
             </View>
             <Text variant="label" color={d.today ? 'text' : 'textMuted'} style={d.today ? styles.bold : null}>

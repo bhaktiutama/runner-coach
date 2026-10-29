@@ -87,7 +87,7 @@ export function LinkButton({ label, icon, disabled, ...rest }: Base) {
       style={({ pressed }) => [styles.link, { opacity: disabled ? 0.4 : pressed ? 0.6 : 1 }]}
     >
       <View style={styles.row}>
-        {icon ? <Icon name={icon} color={color.primaryInk} size={20} /> : null}
+        {icon ? <Icon name={icon} color={color.primaryInk} size={space[5]} /> : null}
         <Text variant="heading" style={{ color: color.primaryInk }}>
           {label}
         </Text>
