@@ -143,13 +143,16 @@ Satu struktur untuk timer, kalender, dan export ke jam (fase lanjut).
 ]
 ```
 
-Aturan: `kind` in (warmup, work, recovery, cooldown, repeat). Setiap step non-repeat wajib punya `duration_s` atau `distance_m`. Tipe TypeScript + validator zod di `training-engine` jadi satu-satunya sumber kebenaran. Contoh angka di atas hanya ilustrasi format.
+Segmen drill (F-17), contoh: `{ "kind": "drill", "exercise_id": "askip", "sets": 2, "distance_m": 20 }`. `exercise_id` merujuk daftar gerakan statis di `training-engine` (id sama dengan prototipe, mis. `askip`, `bskip`, `cskip`).
+
+Aturan: `kind` in (warmup, work, recovery, cooldown, repeat, drill). Step drill wajib punya `exercise_id` dan `sets`, plus `distance_m`, `duration_s` atau `reps`. Step lain (non-repeat) wajib punya `duration_s` atau `distance_m`. Tipe TypeScript + validator zod di `training-engine` jadi satu-satunya sumber kebenaran. Contoh angka di atas hanya ilustrasi format.
 
 ## 4. Tabel fase lanjut
 
 | Tabel | Fase | Kolom utama | RLS |
 |-------|------|-------------|-----|
 | integrations | 2 | provider ('strava'), athlete_id, access_token_enc, refresh_token_enc, expires_at, scopes text[], last_synced_at | **Tidak ada policy untuk client**. Client membaca lewat view `integration_status` (provider, connected_at, last_synced_at) untuk layar 2.1 dan 4.2 |
+| exercises | 2 | name, category ('drill','strength','core','mobility','plyo'), level, equipment, target_muscles, cues, animation_ref, progression_next_id | Data referensi: semua user boleh select, tulis hanya admin. Menggantikan daftar statis MVP. `planned_workouts.type` ditambah 'strength','core','mobility' (PLANNING 6.4) |
 | subscriptions | 3 | provider ('revenuecat','stripe'), entitlement, expires_at | Client: select saja. Tulis hanya dari webhook |
 
 ## 5. Auth & otorisasi

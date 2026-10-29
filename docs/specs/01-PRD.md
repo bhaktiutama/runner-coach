@@ -49,6 +49,7 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | F-14 | Detail aktivitas | 3.4 | Should | Ringkasan, segmen vs target, split per km, RPE |
 | F-15 | Log manual | Belum ada (O1) | Must | Catat lari tanpa timer: jarak, durasi, RPE |
 | F-16 | Profil | 4.1 | Must | Target aktif, zona pace, hari & pengingat, jeda plan, satuan, akun |
+| F-17 | ABC drill sebagai pemanasan | 2.2, 2.3 (belum ada di wireframe, O4) | Should | Tempo dan Interval diawali segmen drill 8-12 mnt. Timer menampilkan nama gerakan, dosis (mis. 2 x 20 m) dan cue teknik |
 
 ## 4. Di luar MVP
 
@@ -58,7 +59,9 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | Panduan intensitas detak jantung | Fase 2 | Pilihan "Detak jantung" di 2.2 nonaktif sampai ada data HR |
 | Paywall Premium | Fase 3 | Layar 4.4; kartu "Coba Premium" di 4.1 disembunyikan di MVP |
 | Bagikan kartu ringkasan | Fase 4 | Tombol di 2.5 disembunyikan di MVP |
-| GPS sendiri, sosial, AI coach, app jam native, library gerakan | Fase 4 / backlog | |
+| Strength kaki + core bodyweight 2x/minggu | Fase 2 (gratis, uji minat) | PLANNING 4.7; butuh wireframe kartu strength + mode gerakan di timer |
+| Strength lanjutan (beban, plyometrik), mobility, library gerakan + animasi Rive | Fase 3 (Premium) | PLANNING 4.7, 8.2; format animasi = D8 |
+| GPS sendiri, sosial, AI coach, app jam native | Fase 4 / backlog | |
 
 ## 5. Metrik sukses
 

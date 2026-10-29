@@ -117,6 +117,8 @@ Profil -> Hapus akun -> ketik "HAPUS" -> `delete-account` -> logout -> 1.1. Offl
 
 Saat `paused`: notifikasi terjadwal dibatalkan, dijadwalkan ulang saat `running`.
 
+Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS, jadi segmen ini tidak memakai countdown. Layar menampilkan nama gerakan, set ke-berapa, dan cue; pengguna menekan "Lanjut" setiap set selesai. Dosis berbasis waktu tetap memakai countdown.
+
 ### 3.3 Status plan
 
 `active` -> `paused` (FL-6) -> `active` (dengan minggu Return to run). `active` -> `archived` saat target diganti dari 4.1.

@@ -49,6 +49,8 @@ Timer (gelap): bg #0A0A0A, teks #FAFAFA, teks kedua #A1A1AA.
 | Tempo / Threshold | #F59E0B | Amber |
 | Interval | #DC2626 | Merah |
 | Istirahat / Recovery | #E4E4E7 | Abu-abu |
+| Drill (segmen pemanasan, F-17) | #2563EB | Biru, dengan label "Drill" (PLANNING 4.4; sama dengan `--drill` di prototipe) |
+| Strength / Core / Mobility (fase 2) | #7C3AED | Ungu (PLANNING 4.4; `--strength` di prototipe) |
 
 Teks di atas amber memakai ink gelap, bukan putih (kontras).
 
@@ -135,4 +137,5 @@ Setiap komponen punya state: default, ditekan, nonaktif, loading, error.
 ## 6. Ditunda
 
 - Mode gelap untuk seluruh app (token gelap dari `docs/prototypes/exercise-animations.html` sudah tersedia).
-- Animasi karakter gerakan, kartu share, konfeti.
+- Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
+- Kartu share, konfeti.

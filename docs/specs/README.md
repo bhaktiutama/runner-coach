@@ -37,7 +37,7 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | R5 | Jawaban screening kesehatan tidak disimpan, hanya flag + waktu persetujuan disclaimer | Data kesehatan sensitif |
 | R6 | `activities.planned_workout_id` ditambahkan | Pencocokan aktivitas ke latihan cukup 1 kolom |
 | R7 | Token Strava tidak bisa dibaca client sama sekali | Hanya Edge Function |
-| R8 | Library gerakan + animasi masuk backlog | PLANNING 2.2 menaruh plan kekuatan di luar MVP |
+| R8 | MVP hanya memuat ABC drill sebagai segmen pemanasan (F-17, Should). Strength + core bodyweight di fase 2, strength lanjutan + mobility di fase 3 | Mengikuti PLANNING 2.1, 4.7 dan 7 (update 2026-10-29) |
 | R9 | Sinkron offline: UUID dari client + last-write-wins | Aturan konflik belum ada di PLANNING |
 
 ## Revisi dari wireframe (v0.2)
@@ -62,3 +62,5 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | O1 | Layar Log manual, konfirmasi Hapus akun, dan form Login email belum ada di wireframe (menu Hapus akun dan Privasi & export data sudah ada di 4.1) | Dibangun dengan pola komponen yang sama; wireframe menyusul |
 | O2 | Isi plan "Bugar" (W2) | Blok 8 minggu easy + 1 sesi kualitas, tanpa taper, bisa diulang. Perlu review pelatih |
 | O3 | Screening "Ya" = "plan lebih ringan" (layar 1.7) | Tanpa sesi berat sampai pengguna mengubahnya. Perlu review pelatih |
+| O4 | Segmen drill (F-17) belum ada di wireframe 2.2 dan 2.3 | Segmen pemanasan biasa + nama gerakan, dosis, cue teknik; animasi SVG dari prototipe jika siap, jika belum cukup teks |
+| D7, D8 | Strength jadi pembeda utama atau Premium; format animasi gerakan | Lihat PLANNING 11. Tidak memengaruhi MVP |

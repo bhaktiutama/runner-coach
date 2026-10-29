@@ -85,6 +85,7 @@ Angka adalah heuristik umum coaching (PLANNING 4.3), bukan hasil riset; wajib di
 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg |
 | Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
 | Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
+| ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
 
 ### 4.3 Adaptasi (F-11, layar 2.5)
 
