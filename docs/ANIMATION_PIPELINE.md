@@ -4,6 +4,8 @@ Status: Draft v0.1 (2026-10-27)
 
 ## Ringkasan
 
+Konteks: gerakan yang dianimasikan adalah drill, strength, core dan mobility dari `docs/PLANNING.md` bagian 4.7.
+
 - **Gerakan** diambil dari video pelatih sungguhan dengan MediaPipe Pose Landmarker, lalu dikonversi otomatis menjadi data sudut sendi (format yang sudah dipakai `docs/prototypes/exercise-animations.html`).
 - **Tampilan karakter** dipindah ke Rive (rig tulang + mesh), sehingga rambut, baju dan badan bisa jauh lebih detail dan tetap ringan di app.
 - Semua langkah bisa dijalankan dari Claude Code. Yang dibutuhkan dari Anda: **video gerakan**, **install 1 MCP Rive**, dan (opsional) **aset ilustrasi karakter**.

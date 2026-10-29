@@ -54,6 +54,8 @@ Tujuan: memvalidasi problem P1-P4 dan menjawab keputusan terbuka D1-D4 di `docs/
     - Latihan kekuatan & stretching
     - Pengingat latihan
 17. Lebih suka panduan intensitas berdasarkan: Pace (menit/km) / Detak jantung / Rasa (mudah-sedang-berat) / Tidak tahu
+17a. Apakah kamu melakukan latihan kekuatan (strength/core) saat ini? Tidak pernah / Kadang / 1x per minggu / 2x+ per minggu
+17b. Alat apa yang kamu punya untuk latihan kekuatan? (boleh lebih dari satu) Tidak ada / Dumbbell / Resistance band / Kettlebell / Akses gym
 
 ## E. Kesediaan Membayar (Van Westendorp)
 
@@ -81,6 +83,7 @@ Konteks untuk responden: "Bayangkan aplikasi yang memberi plan latihan personal 
 | Pace atau HR default? (D3) | 12, 17 | % pemilik smartwatch, preferensi |
 | Prioritas fitur | 16 | Skor rata-rata ranking per persona |
 | Rentang harga | 18-21 | Kurva Van Westendorp: titik harga optimal dan rentang harga yang dapat diterima |
+| Strength: pembeda utama atau fitur Premium? (D7) | 16, 17a, 17b | % yang sudah latihan kekuatan, ranking fitur strength, ketersediaan alat (menentukan default bodyweight vs beban) |
 | Prioritas platform (iOS vs Android) | 11 | Split platform untuk prioritas QA dan rilis |
 
 Catatan: sampel dari komunitas lari cenderung bias ke pelari yang sudah aktif. Catat kanal asal tiap responden dan laporkan hasil per kanal.
