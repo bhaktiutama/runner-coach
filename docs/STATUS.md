@@ -44,15 +44,22 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 
 | # | Item | Untuk | Status |
 |---|---|---|---|
-| B1 | `EXPO_TOKEN` di environment session (expo.dev > Account settings > Access tokens), lalu mulai session baru | EAS Update (buka di Expo Go), EAS Build APK, EAS Hosting web | Menunggu |
-| B2 | Provider Apple dan Google di Supabase Auth | Login Apple/Google (F-01). Email sudah bisa | Menunggu |
+| B1 | `EXPO_TOKEN` | EAS | Selesai: project `@bhaktiutama/run-coach`, web preview di EAS Hosting, EAS Update channel `preview`, build APK preview |
+| B2 | Google aktif. Apple belum (butuh akun Apple Developer). Redirect URL app belum diizinkan (agent ditolak): Supabase > Authentication > URL Configuration > Redirect URLs, tambahkan `runcoach://**`, `https://run-coach--4eyuth15g3.expo.app/**`, `http://localhost:8081/**` | Login Google/Apple (F-01) | Sebagian |
 | B3 | Uji di HP fisik: cue timer saat layar terkunci, lanjut posisi setelah app ditutup | Verifikasi M0, M4 | Menunggu build |
 | B4 | Review aturan engine oleh pelatih (D6) | Sebelum beta publik | Menunggu |
-| B6 | Deploy Edge Function: token Supabase di session ditolak (`You do not have permission`). Jalankan sekali dari komputermu: `supabase functions deploy delete-account --no-verify-jwt --project-ref axdhmrjifnuylwgztqpt`, atau beri token dengan izin deploy | Hapus akun (F-10) | Menunggu |
+| B6 | Deploy Edge Function `delete-account` | Hapus akun (F-10) | Selesai: ter-deploy, dicek tanpa JWT = 401, OPTIONS = 204 |
 | B7 | Kunci PostHog (`EXPO_PUBLIC_POSTHOG_KEY`) dan DSN Sentry (`EXPO_PUBLIC_SENTRY_DSN`) di environment/EAS | Analitik anonim + error monitoring (TRD 6) | Menunggu (app jalan normal tanpa ini) |
 | B5 | Template email Supabase Auth belum memuat kode masuk. Di dashboard Supabase > Authentication > Email Templates, tambahkan `{{ .Token }}` ke template "Magic Link" dan "Confirm signup" (agent ditolak saat mencoba mengubahnya lewat API). Catatan: OTP 8 digit; SMTP bawaan dibatasi 2 email/jam, perlu SMTP sendiri sebelum beta | Login email (F-01) di HP | Menunggu |
 
 ## Cara test
+
+| Cara | Link |
+|---|---|
+| Web (preview) | https://run-coach--4eyuth15g3.expo.app |
+| APK Android (preview) | expo.dev > project run-coach > Builds (profil `preview`), unduh dan pasang di HP |
+| Update tanpa build ulang | `eas update --branch preview` (APK preview mengambil update saat dibuka) |
+
 
 Di komputer sendiri (butuh Node 22 + pnpm):
 
