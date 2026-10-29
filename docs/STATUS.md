@@ -2,9 +2,12 @@
 
 Diperbarui otomatis oleh agent setiap langkah selesai. Branch kerja: `claude/relaxed-galileo-lknyhx`, di-merge langsung ke `development`.
 
-Terakhir diperbarui: 2026-10-29
+Terakhir diperbarui: 2026-10-29 (setelah M6)
 
 ## Ringkasan
+
+Posisi sekarang: M0-M6 selesai dan diuji di web (unit 2.358, E2E 10, privasi 15). Yang tersisa butuh kamu: uji di HP (B3), login Google/Apple (B2), kode email (B5), deploy `delete-account` (B6), kunci analitik/Sentry (B7), dan M7 rilis beta.
+
 
 | Milestone | Status | Catatan |
 |---|---|---|
