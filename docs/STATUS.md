@@ -8,8 +8,8 @@ Terakhir diperbarui: 2026-10-29
 
 | Milestone | Status | Catatan |
 |---|---|---|
-| M0 Spike | Belum mulai | Bagian device (timer background, backup OS) butuh HP fisik |
-| M1 Fondasi | Belum mulai | |
+| M0 Spike | Selesai (perlu device) | `docs/specs/spikes.md`: SQLite web OK, grafik pakai react-native-svg. Timer background + backup OS perlu HP |
+| M1 Fondasi | Berjalan | Monorepo, 4 tab, token, format, migrasi SQLite, CI selesai. Layar login dibuat bersama 1.8/1.9 di M3 |
 | M2 Engine | Belum mulai | |
 | M3 Onboarding, Hari ini, Plan | Belum mulai | |
 | M4 Timer | Belum mulai | Uji layar terkunci butuh HP fisik |
@@ -31,6 +31,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 
 | Tanggal | Milestone | Langkah | Hasil test |
 |---|---|---|---|
+| 2026-10-29 | M1 | Monorepo pnpm, Expo SDK 58 + Router, 4 tab, tokens.ts dari tokens.json, format.ts id-ID, migrasi SQLite v1-v4, klien Supabase (Auth saja), ESLint larangan teks literal JSX, CI GitHub Actions | lint OK, typecheck OK, unit 11/11, E2E smoke 1/1, privacy (schema public kosong) 1/1 |
 
 ## Blocker dan butuh dari pemilik
 

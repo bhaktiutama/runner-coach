@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Run Coach",
+    "slug": "run-coach",
+    "scheme": "runcoach",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.runcoach",
+      "usesAppleSignIn": true,
+      "infoPlist": { "UIBackgroundModes": ["audio"] }
+    },
+    "android": {
+      "package": "app.runcoach",
+      "adaptiveIcon": {
+        "backgroundColor": "#F26B38",
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/adaptive-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "output": "single"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "headers": {
+            "Cross-Origin-Embedder-Policy": "credentialless",
+            "Cross-Origin-Opener-Policy": "same-origin"
+          }
+        }
+      ],
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-splash-screen",
+        { "image": "./assets/splash-icon.png", "backgroundColor": "#F5F4F2", "imageWidth": 160 }
+      ],
+      "expo-audio",
+      "expo-sharing",
+      "expo-web-browser",
+      "expo-apple-authentication",
+      "expo-notifications"
+    ],
+    "experiments": { "typedRoutes": true }
+  }
+}

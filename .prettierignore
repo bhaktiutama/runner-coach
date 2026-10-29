@@ -1,0 +1,14 @@
+docs/
+pnpm-lock.yaml
+**/dist/
+**/.expo/
+coverage/
+test-results/
+playwright-report/
+packages/ui/src/tokens.ts
+packages/ui/src/logos.ts
+packages/ui/src/icons.json
+apps/app/AGENTS.md
+CLAUDE.md
+README.md
+.claude/
