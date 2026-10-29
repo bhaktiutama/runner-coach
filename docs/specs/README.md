@@ -63,6 +63,7 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | DS2 | Zona memakai skala panas (lavender, peach, peach tua, oranye, bara); menggantikan biru/amber/merah |
 | DS3 | Strength/core/mobility memakai charcoal, bukan ungu seperti PLANNING 4.4, agar tidak bentrok dengan lavender recovery |
 | DS4 | Font Inter diganti Bricolage Grotesque + Plus Jakarta Sans |
+| DS5 | Nama app jadi "Run Coach" (dari "Runner Coach"). Logo, ikon app dan 40 ikon UI ada di `docs/design-system/assets/` |
 
 ## Keputusan terbuka dari sinkronisasi
 

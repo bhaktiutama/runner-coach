@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.3 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
+Status: Draft v0.4 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
@@ -20,7 +20,7 @@ Status: Draft v0.3 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes
 
 - Sumber tunggal: `docs/design-system/tokens.json` (format W3C Design Tokens). Di M1 file ini diubah otomatis jadi `packages/ui/tokens.ts`.
 - **Tidak boleh ada hex atau ukuran lepas di komponen.** Butuh nilai baru = tambah token dulu.
-- Perubahan warna wajib lolos `python3 docs/design-system/check_contrast.py` (saat ini 32/32 pasangan lolos).
+- Perubahan warna wajib lolos `python3 docs/design-system/check_contrast.py` (saat ini 39/39 pasangan lolos).
 
 Ringkasan isi (nilai lengkap di `tokens.json`):
 
@@ -57,8 +57,21 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | PhaseBar | 1.8, 3.1 |
 | BarChart, LineTrend, TrackRing | 1.8, 3.3 |
 | PrimaryButton, SecondaryButton, SegmentedControl, TabBar | Semua |
+| Icon (`name`, `size`, `color`) dari `assets/icons/icons.json` | Semua |
+| Logo (mark / horizontal) | 1.1, web |
 
-## 4. Layout & breakpoint
+## 4. Aset
+
+Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disalin ke app.
+
+| Aset | Pakai |
+|------|-------|
+| Logo mark + wordmark "run coach" | 1.1, header web |
+| `icon.png`, `adaptive-icon.png` (+ monochrome), `splash-icon.png`, `favicon.png` | `app.json`: icon, adaptiveIcon (latar #F26B38), splash (latar #FFF9F2), web.favicon |
+| 40 ikon garis 24 px | Komponen Icon; tab bar: today, plan, progress, profile |
+| Karakter animasi gerakan | Belum ada (D8). MVP pakai teks + SVG prototipe |
+
+## 5. Layout & breakpoint
 
 | Lebar | Layout |
 |-------|--------|
@@ -66,13 +79,13 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | 600-1023 | Tablet: tab bar bawah, konten maks 560 di tengah |
 | >= 1024 | Web desktop: navigasi samping kiri, konten maks 640 di tengah |
 
-## 5. Format angka
+## 6. Format angka
 
 - Pace `6:45 /km`, jarak `5,2 km` (koma desimal), durasi `38:45`, total `2j 21m`.
 - Tanggal `Selasa, 27 Okt`; rentang prediksi `1:05 - 1:08`.
 - Placeholder yang belum ada datanya ditulis `[NAMA]`, `[HARGA]`, tidak diisi angka karangan.
 
-## 6. Ditunda
+## 7. Ditunda
 
 - Mode gelap untuk seluruh app (token `color.dark` sudah ada, dipakai Timer).
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
