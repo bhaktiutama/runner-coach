@@ -101,7 +101,7 @@ Contoh latihan long run:
 ]
 ```
 
-Teks tidak disimpan di database. Registri statis di `packages/training-engine/src/evidence/` (seperti daftar ABC drill, tanpa tabel DB) berisi per aturan: `id`, `grade`, `refs[]`, dan template teks bahasa Indonesia. UI mengisi template dengan `values` dan memformat satuan di layer UI (TRD 2 aturan 3).
+Teks tidak disimpan di database. Registri statis di `packages/training-engine/src/evidence/` (seperti daftar ABC drill, tanpa tabel DB) berisi per aturan: `id`, `grade`, `refs[]`, dan kunci template teks; teksnya di katalog `packages/training-engine/src/i18n/id.ts` (TRD 8). UI mengisi template dengan `values` dan memformat satuan di layer UI (TRD 2 aturan 3).
 
 ### 3.2 Template teks (sapaan "kamu")
 

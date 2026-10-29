@@ -14,7 +14,7 @@ Status: Draft v0.4 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes
 2. Angka besar, teks sedikit. Timer terbaca dari jarak lengan.
 3. Warna = makna (zona, status), selalu disertai label teks.
 4. Feedback 1 tap (RPE).
-5. Sapaan "kamu", kalimat pendek.
+5. Sapaan "kamu", kalimat pendek. Semua teks dari katalog `id.ts`, bukan ditulis langsung di komponen (TRD 8).
 
 ## 2. Token
 
@@ -84,6 +84,7 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 
 ## 6. Format angka
 
+- Semua angka dan tanggal lewat modul `format.ts` dengan locale `id-ID` (TRD 8); jangan format manual di komponen.
 - Pace `6:45 /km`, jarak `5,2 km` (koma desimal), durasi `38:45`, total `2j 21m`.
 - Tanggal `Selasa, 27 Okt`; rentang prediksi `1:05 - 1:08`.
 - Placeholder yang belum ada datanya ditulis `[NAMA]`, `[HARGA]`, tidak diisi angka karangan.

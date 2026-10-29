@@ -191,3 +191,40 @@ Service role key **tidak** perlu diberikan ke repo, CI, atau session; Edge Funct
 | Aksesibilitas | Kontras teks min 4.5:1, area sentuh min 44 x 44 (sesuai wireframe) |
 | Biaya infra beta | Tier gratis Supabase / PostHog / Sentry |
 | Backup | Export dan import 1 tahun data selesai < 5 detik di HP kelas menengah (usulan, diukur di M6) |
+
+## 8. Bahasa dan format
+
+MVP hanya bahasa Indonesia, tetapi kode disiapkan untuk multibahasa (pasar global, D9) supaya menambah bahasa tidak perlu membongkar komponen.
+
+| Aturan | Nilai |
+|--------|-------|
+| Bahasa MVP | Indonesia saja (`id`), sapaan "kamu". Tidak ada pemilih bahasa di UI |
+| Katalog teks | Semua teks yang tampil ke pengguna (UI, pesan error, notifikasi, cue timer, template rationale 07 bagian 3.2, nama + cue gerakan drill) diambil dari katalog: `apps/app/src/i18n/id.ts` dan `packages/training-engine/src/i18n/id.ts`. Kunci stabil (mis. `today.start`), nilainya teks. Tidak ada teks UI tertulis langsung di komponen |
+| Placeholder | `{nama}` di dalam teks katalog. Angka diformat dulu (baris Format) sebelum dimasukkan |
+| Format | Satu modul `format.ts` di `packages/ui`: angka dan tanggal lewat `Intl.NumberFormat` / `Intl.DateTimeFormat` dengan locale dari `profile.locale` (MVP selalu `id-ID`). Pace dan durasi (`6:45 /km`, `38:45`) diformat manual. Tampilan: 04-UI-UX bagian 6 |
+| Engine | `training-engine` mengembalikan kode + nilai (enum tipe latihan, rationale `{rule, values}`), bukan teks jadi. Teks dibentuk di UI dari katalog |
+| Data tersimpan | Database menyimpan kode, bukan teks (mis. `type = 'tempo'`, bukan "Tempo"). File backup ikut aturan ini |
+| Library | Tanpa library i18n di MVP (1 bahasa cukup dengan katalog TypeScript). Library dipilih saat D9 diputuskan, lewat perubahan stack bagian 1 |
+| Test | CI memeriksa: tidak ada teks literal di JSX `apps/app/src` dan `packages/ui` (kecuali angka/simbol); setiap kunci yang dipakai ada di `id.ts`; snapshot format `5,2 km`, `6:45 /km`, `Selasa, 27 Okt`, `2j 21m` |
+
+Saat multibahasa (D9): tambah katalog per bahasa (mis. `en.ts`), pemilih bahasa di 4.1 + bahasa awal dari perangkat, `profile.locale` diisi, satuan awal mengikuti negara (mi untuk US/UK), notifikasi dan cue ikut bahasa, dan konten yang khas Indonesia ditinjau ulang (zona waktu default, konteks panas, race lokal, kebijakan privasi per negara).
+
+## 9. Notifikasi
+
+Semua notifikasi **lokal**: dijadwalkan di perangkat lewat Expo Notifications. Tidak ada push dari server dan tidak ada token push yang dikirim ke server (sesuai TRD 2 aturan 4).
+
+| Jenis | Kapan | Contoh isi | Aturan |
+|-------|-------|------------|--------|
+| Pengingat latihan (F-12) | Jam `profile.reminder_time` di hari yang punya latihan `scheduled` | "Hari ini: Tempo 42 menit. Siap lari?" | Tidak dikirim di hari istirahat, saat plan `paused`, atau jika latihan hari itu sudah `completed`. Dijadwalkan untuk 7 hari ke depan dan dijadwalkan ulang saat app dibuka, plan berubah (pindah, gabung, adaptasi, jeda, lanjut) atau jam diubah |
+| Cue timer (F-05) | Tiap pergantian segmen saat timer `running` | "Segmen 3 dari 4: Tempo 14 menit, 6:45 /km" | Dibatalkan saat `paused` / `finished` (App Flow 3.2) |
+
+Tidak ada di MVP: notifikasi pemasaran, streak, ringkasan minggu, usulan adaptasi. Pengingat backup tetap kartu di dalam app (TRD 3.3), bukan notifikasi.
+
+Aturan:
+
+1. **Isi tanpa data kesehatan.** Boleh: tipe latihan, durasi, jarak, pace target. Dilarang: RPE, tag catatan, alasan jeda/cedera, jawaban screening. Notifikasi bisa terbaca di layar kunci.
+2. **Izin diminta saat dibutuhkan**, dengan 1 kalimat penjelasan sebelum dialog sistem: di 1.6 saat pengguna memilih jam pengingat, dan saat Mulai timer pertama kali jika belum diizinkan. Tidak diminta saat app pertama dibuka.
+3. **Izin ditolak:** app tetap berjalan. 4.1 menampilkan "Pengingat mati: izin notifikasi ditolak" + tombol "Buka pengaturan". Timer tetap memakai suara + getar selama app aktif.
+4. **Web:** pengingat tidak didukung di MVP; pilihan jam di 1.6 dan 4.1 nonaktif dengan keterangan. Cue timer hanya saat tab aktif (bagian 5).
+5. Teks dari katalog (bagian 8); jam mengikuti `profile.timezone`.
+6. Test: pengingat hanya di hari latihan, tidak saat `paused`, dijadwalkan ulang setelah pindah latihan; isi notifikasi tidak memuat field pribadi di aturan 1.

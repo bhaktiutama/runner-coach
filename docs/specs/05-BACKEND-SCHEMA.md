@@ -52,6 +52,7 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | display_name | text null | Diisi pengguna, tidak diambil dari provider login |
 | unit | text default 'km' | check in ('km','mi') |
 | timezone | text default 'Asia/Jakarta' | IANA |
+| locale | text default 'id-ID' | Locale format angka/tanggal (TRD 8). MVP selalu `id-ID`; dipakai pemilih bahasa saat multibahasa (D9) |
 | reminder_time | text null | `HH:MM`, layar 1.6; null = mati |
 | intensity_guide | text default 'pace' | check in ('pace','hr','rpe'); 'hr' aktif di fase 2 |
 | health_flag | boolean default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |

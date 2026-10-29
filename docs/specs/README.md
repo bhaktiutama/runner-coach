@@ -41,6 +41,8 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | R8 | MVP hanya memuat ABC drill sebagai segmen pemanasan (F-17, Should). Strength + core bodyweight di fase 2, strength lanjutan + mobility di fase 3 | Mengikuti PLANNING 2.1, 4.7 dan 7 (update 2026-10-29) |
 | R9 | ~~Sinkron offline last-write-wins~~ Diganti PV: tidak ada sinkron; pindah HP lewat file backup | |
 | R10 | Setiap aturan engine diberi ID `E-xx`, tingkat bukti dan referensi; engine menyimpan `rationale` per plan/latihan. Aturan baru E-06 (sesi maks 110% lari terjauh 30 hari), taper diberi besaran volume | Validasi ilmiah, `07-ENGINE-EVIDENCE.md` |
+| R11 | MVP bahasa Indonesia saja, tetapi teks lewat katalog `id.ts`, format lewat `Intl` `id-ID`, engine dan DB menyimpan kode bukan teks. Multibahasa untuk pasar global = D9 | TRD 8; disiapkan sejak M1 supaya tidak bongkar ulang |
+| R12 | Aturan notifikasi: lokal saja, hanya hari latihan, isi tanpa data kesehatan, izin diminta saat dibutuhkan, web tidak didukung di MVP | TRD 9, App Flow FL-11 |
 
 ## Revisi dari wireframe (v0.2)
 
