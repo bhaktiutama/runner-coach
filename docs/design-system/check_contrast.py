@@ -43,6 +43,13 @@ PAIRS = [
     ("color.dark.text-muted", "color.dark.surface", 4.5, "timer kartu"),
     ("color.primary", "color.dark.bg", 3.0, "cincin progres timer"),
     ("color.dark.zone-interval", "color.dark.bg", 3.0, "cincin interval di timer"),
+    ("color.dark.text-muted", "color.dark.surface-sunken", 4.5, "gelap: teks kedua di kotak statistik"),
+    ("color.dark.line-strong", "color.dark.surface", 3.0, "gelap: border kontrol di kartu"),
+    ("color.dark.line-strong", "color.dark.bg", 3.0, "gelap: border kontrol"),
+    ("color.dark.primary-ink", "color.dark.surface", 4.5, "gelap: link di kartu"),
+    ("color.dark.success-ink", "color.dark.surface", 4.5, "gelap: teks sukses"),
+    ("color.dark.text", "color.dark.zone-strength", 4.5, "gelap: bib strength"),
+    ("color.on-primary", "color.primary", 4.5, "gelap: tombol utama (sama)"),
 ]
 
 

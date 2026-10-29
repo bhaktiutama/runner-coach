@@ -2,10 +2,12 @@
 
 Status: v0.1 (2026-10-29) | Token: [`tokens.json`](tokens.json) | Cek kontras: `python3 docs/design-system/check_contrast.py`
 
+Tampilan visual (warna, tipe, 11 komponen dalam tema terang dan gelap): artifact "Lintas" https://claude.ai/artifact/3W87Kuo9E1X7eZFNDjc5j2 (dibuat dari file ini; jika token berubah, artifact diperbarui).
+
 ## Ringkasan
 
 - **Unik dari 4 ciri khas**, masing-masing punya fungsi: skala panas intensitas, bentuk lintasan (stadium dan oval), label bib race, latar kertas hangat dengan tombol oranye bertulisan gelap.
-- **Mudah dipakai tetap nomor satu**: semua pasangan teks/latar lolos WCAG (32/32 pasangan dicek otomatis), area sentuh min 44 px, warna tidak pernah jadi satu-satunya penanda.
+- **Mudah dipakai tetap nomor satu**: semua pasangan teks/latar lolos WCAG (39 pasangan, termasuk tema gelap, dicek otomatis), area sentuh min 44 px, warna tidak pernah jadi satu-satunya penanda.
 - `tokens.json` adalah satu-satunya sumber nilai. Kode (`packages/ui`) dan artifact visual diturunkan dari file ini.
 
 ## 1. Ciri khas (yang membuat app tidak pasaran)
