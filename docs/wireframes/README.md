@@ -41,7 +41,7 @@ Belum ada wireframe (keputusan O1 di `docs/specs/README.md`): log manual, konfir
 - Setiap layar digambar di **state awalnya** (contoh: timer berjalan, RPE 6 terpilih, alasan jeda "Cedera").
 - Di artifact, setiap layar dipotong di tinggi 844 px. Di sini layar dibiarkan setinggi isinya, supaya tombol bawah tidak hilang. Layar yang lebih tinggi dari 844 px (1.3, 1.4, 1.7, 2.2, 2.3, 4.2, 4.3) berarti bisa di-scroll di app.
 - Angka di layar (pace, jarak, tanggal) adalah contoh tampilan, bukan data atau hasil engine.
-- Warna dan ukuran untuk kode diambil dari token di `docs/specs/04-UI-UX.md`, bukan dari hex di file sumber.
+- Wireframe ini dibuat sebelum design system. Pakai untuk **tata letak** saja; warna, tipe dan bentuk dari `docs/design-system/`.
 
 ## Isi folder
 

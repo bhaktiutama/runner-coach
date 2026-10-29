@@ -11,6 +11,7 @@ Status: tahap perencanaan.
 | [docs/PLANNING.md](docs/PLANNING.md) | Problem, persona, scope MVP, UX, training engine (termasuk strength & drill), sumber data, arsitektur, roadmap, monetisasi, metrik, risiko |
 | [docs/SURVEY.md](docs/SURVEY.md) | Kuesioner discovery + rencana analisis |
 | [docs/specs/](docs/specs/README.md) | **Acuan build** (6 dokumen spec-driven): PRD, TRD, App Flow, UI/UX, Backend Schema, Implementation Plan |
-| [docs/wireframes/](docs/wireframes/README.md) | Wireframe 21 layar (PNG + sumber), acuan visual spec |
+| [docs/wireframes/](docs/wireframes/README.md) | Wireframe 21 layar (PNG + sumber), acuan tata letak |
+| [docs/design-system/](docs/design-system/README.md) | Design system "Lintas": tokens.json, aturan, komponen, cek kontras |
 | [docs/ANIMATION_PIPELINE.md](docs/ANIMATION_PIPELINE.md) | Rencana animasi gerakan (MediaPipe + Rive) |
 | [docs/prototypes/exercise-animations.html](docs/prototypes/exercise-animations.html) | Prototipe animasi drill, strength dan core |

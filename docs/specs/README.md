@@ -47,13 +47,22 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | W1 | Login dipindah ke **akhir** onboarding, setelah preview plan. Data onboarding disimpan lokal dulu | 1.1, 1.8 |
 | W2 | Target baru "Bugar" (tanpa target jarak) | 1.2 |
 | W3 | Onboarding juga menanyakan nama race (opsional), lari terjauh 4 minggu, jam pengingat | 1.3, 1.5, 1.6 |
-| W4 | Warna zona ikut wireframe: Easy biru, Long biru tua, Tempo kuning-oranye (amber), Interval merah | Semua |
+| W4 | (Diganti DS1) Warna zona dari wireframe tidak dipakai lagi | Semua |
 | W5 | Tema app terang; layar Timer gelap. Mode gelap penuh ditunda | Semua |
 | W6 | Layar baru: Detail latihan (2.2), Ringkasan minggu + usulan adaptasi (2.5), Detail aktivitas (3.4) | 2.2, 2.5, 3.4 |
 | W7 | Progres menampilkan prediksi waktu race (rentang). Gratis di MVP; batas Free/Premium diputuskan di fase 3 | 3.3 |
 | W8 | Feedback punya tag catatan cepat (Cuaca panas, Kurang tidur, Kaki pegal, Ada nyeri) | 2.4 |
 | W9 | Jeda plan menyimpan alasan + perkiraan durasi; setelah jeda selalu mulai dengan 1 minggu "Return to run" | 4.3 |
 | W10 | Pindah latihan dicek aturan dan bisa menggabungkan 2 latihan | 3.2 |
+
+## Revisi dari design system (v0.3)
+
+| # | Revisi |
+|---|--------|
+| DS1 | Warna, tipe dan bentuk pindah ke `docs/design-system/` ("Lintas"). Wireframe tetap acuan tata letak saja |
+| DS2 | Zona memakai skala panas (lavender, peach, peach tua, oranye, bara); menggantikan biru/amber/merah |
+| DS3 | Strength/core/mobility memakai charcoal, bukan ungu seperti PLANNING 4.4, agar tidak bentrok dengan lavender recovery |
+| DS4 | Font Inter diganti Bricolage Grotesque + Plus Jakarta Sans |
 
 ## Keputusan terbuka dari sinkronisasi
 

@@ -1,130 +1,68 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.2 (2026-10-28) | Acuan visual: [`docs/wireframes/`](../wireframes/README.md) (sumber: artifact "Runner Coach Wireframes")
+Status: Draft v0.3 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
-- Ikuti wireframe per nomor layar. Token di bawah diambil dari wireframe supaya kode tidak menyalin hex satu per satu.
-- Tema terang, netral abu-abu (zinc); layar Timer gelap. Warna = zona intensitas, selalu disertai label teks.
-- Mobile-first (390 x 844). Di web, konten tetap satu kolom dengan lebar maksimum.
+- **Tata letak** mengikuti wireframe per nomor layar. **Warna, tipe, bentuk** mengikuti design system "Lintas" (`docs/design-system/tokens.json`). Wireframe yang masih biru/abu-abu bukan acuan warna.
+- Ciri khas: intensitas = skala panas, bentuk lintasan (stadium/oval), label bib, latar kertas hangat + tombol oranye bertulisan gelap.
+- Mobile-first (390 x 844). Semua pasangan warna teks lolos WCAG, dicek otomatis.
 
 ## 1. Prinsip
 
-1. Satu keputusan per layar; satu tombol utama hitam di bawah.
+1. Satu keputusan per layar; satu tombol primary (oranye) di bawah.
 2. Angka besar, teks sedikit. Timer terbaca dari jarak lengan.
-3. Warna = zona intensitas, selalu disertai label teks.
+3. Warna = makna (zona, status), selalu disertai label teks.
 4. Feedback 1 tap (RPE).
-5. Sapaan "kamu", kalimat pendek (sesuai wireframe).
+5. Sapaan "kamu", kalimat pendek.
 
-## 2. Design token (`packages/ui/tokens.ts`)
+## 2. Token
 
-Tidak boleh ada hex langsung di komponen.
+- Sumber tunggal: `docs/design-system/tokens.json` (format W3C Design Tokens). Di M1 file ini diubah otomatis jadi `packages/ui/tokens.ts`.
+- **Tidak boleh ada hex atau ukuran lepas di komponen.** Butuh nilai baru = tambah token dulu.
+- Perubahan warna wajib lolos `python3 docs/design-system/check_contrast.py` (saat ini 32/32 pasangan lolos).
 
-### 2.1 Netral & status
+Ringkasan isi (nilai lengkap di `tokens.json`):
 
-| Token | Hex | Dipakai untuk |
-|-------|-----|---------------|
-| bg | #FFFFFF | Latar layar |
-| surface | #F4F4F5 | Kartu statistik, segmented control |
-| ink | #18181B | Teks utama, tombol utama |
-| muted | #52525B | Teks kedua |
-| subtle | #71717A | Keterangan kecil, ikon |
-| line | #E4E4E7 | Border, garis, hari istirahat |
-| line-strong | #D4D4D8 | Border tombol sekunder |
-| link | #1D4ED8 | Tautan |
-| success | #15803D | "Selesai", perubahan positif |
-| danger | #B91C1C | Aksi berisiko (Jeda plan, nyeri) |
-| info-bg / info-fg | #EFF6FF / #1E3A8A | Kotak informasi |
-| ok-bg / ok-fg | #ECFDF5 / #065F46 | Kotak validasi positif |
-| warn-bg / warn-fg | #FFF7ED / #7C2D12 | Kotak peringatan |
-
-Timer (gelap): bg #0A0A0A, teks #FAFAFA, teks kedua #A1A1AA.
-
-### 2.2 Zona intensitas
-
-| Tipe latihan | Hex | Catatan |
-|--------------|-----|---------|
-| Easy, Run-walk, Easy + strides | #2563EB | Biru |
-| Long run | #1E3A8A | Biru tua |
-| Tempo / Threshold | #F59E0B | Amber |
-| Interval | #DC2626 | Merah |
-| Istirahat / Recovery | #E4E4E7 | Abu-abu |
-| Drill (segmen pemanasan, F-17) | #2563EB | Biru, dengan label "Drill" (PLANNING 4.4; sama dengan `--drill` di prototipe) |
-| Strength / Core / Mobility (fase 2) | #7C3AED | Ungu (PLANNING 4.4; `--strength` di prototipe) |
-
-Teks di atas amber memakai ink gelap, bukan putih (kontras).
-
-### 2.3 Fase plan
-
-| Fase | Hex |
+| Grup | Isi |
 |------|-----|
-| Base | #93C5FD |
-| Build | #2563EB |
-| Peak | #F59E0B |
-| Taper | #A1A1AA |
-
-### 2.4 Skala RPE (layar 2.4)
-
-| RPE | Latar | Contoh deskripsi |
-|-----|-------|------------------|
-| 1-3 | #DBEAFE | "Ringan, bisa ngobrol lancar" |
-| 4-7 | #FEF3C7 | "Berat tapi terkontrol" |
-| 8-10 | #FEE2E2 | "Berat, sulit bicara" / "Maksimal" |
-
-### 2.5 Tipografi (Inter, fallback font sistem)
-
-| Peran | Ukuran / berat |
-|-------|----------------|
-| Angka timer | 84 / 800, angka tabular |
-| Angka input besar (volume) | 72 / 800 |
-| Judul sambutan (1.1) | 34 / 800 |
-| Judul layar | 28 / 800 |
-| Angka statistik | 18-26 / 800 |
-| Teks tombol utama | 17 / 700 |
-| Teks | 15-16 / 400-600 |
-| Label | 13 / 600 |
-| Keterangan | 11-12 / 600 |
-
-### 2.6 Ukuran & bentuk
-
-| Token | Nilai |
-|-------|-------|
-| Padding layar | 24 kiri-kanan |
-| Spasi | 4, 8, 12, 16, 20, 24, 28, 32 |
-| Tombol utama | Tinggi 56, radius 16 |
-| Tombol sekunder | Tinggi 44-52, radius 12-14 |
-| Kartu pilihan | Radius 18, border 1.5 (terpilih: 2.5 ink + latar surface) |
-| Chip | Tinggi 40, radius 20 (area sentuh tetap 44) |
-| Input | Tinggi 48, radius 12 |
-| Area sentuh minimum | 44 x 44 |
+| Warna dasar | bg krem #FFF9F2, surface putih, text charcoal #242C32, primary oranye #F26B38 (teks di atasnya charcoal), accent peach #E9B79D, success hijau #477B63 |
+| Status plan | On track #70D6B3, Perhatian #F2C66D, Tertinggal #FF806E, Recovery #A6B8FF; masing-masing punya varian `-ink` untuk teks |
+| Zona (skala panas) | recovery lavender, easy peach, long #D9946F, tempo oranye, interval #B4361A, strength charcoal |
+| Fase | base peach, build peach tua, peak oranye, taper lavender |
+| RPE | 1-3 easy, 4-6 long, 7-8 tempo, 9-10 interval |
+| Timer (gelap) | bg #161B1F, teks krem, interval memakai #E0522E |
+| Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
+| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
+| Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
+| Gerak | 120 / 200 / 320 ms; easing `stride` hanya untuk progres |
 
 ## 3. Komponen inti (`packages/ui`)
 
-| Komponen | Layar | Perilaku |
-|----------|-------|----------|
-| OnboardingHeader | 1.2-1.7 | Kembali + progress bar 6 bagian + "x/6" |
-| ChoiceCard | 1.2 | Kartu 2 kolom, centang saat dipilih |
-| Stepper | 1.5 | Tombol - / + 60 px, angka besar |
-| DayPicker | 1.6, 3.2 | 7 tombol hari, status pressed |
-| InfoBox | 1.3, 1.6, 1.7 | Varian info / ok / warn dengan ikon |
-| WorkoutCard | 2.1, 3.1 | Chip tipe (warna zona), jarak/durasi, segmen |
-| SegmentBar | 2.2 | Grafik intensitas per segmen |
-| TimerDisplay | 2.3 | Angka besar, "sisa dari", target pace, rasa, segmen berikut |
-| RpePicker | 2.4 | 10 tombol + deskripsi dinamis |
-| TagChips | 2.4, 4.3 | Pilihan ganda opsional |
-| WeekStrip | 2.1 | 7 hari, titik warna zona, hari ini disorot |
-| PhaseBar | 1.8, 3.1 | 4 fase berwarna |
-| BarChart / LineTrend / StatRing | 1.8, 3.3 | Volume, tren pace, kepatuhan |
-| PrimaryButton | Semua | Lebar penuh, hitam |
-| TabBar | 2.1, 3.1, 3.3, 4.1 | 4 tab, ikon + label |
+Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 
-Setiap komponen punya state: default, ditekan, nonaktif, loading, error.
+| Komponen | Layar |
+|----------|-------|
+| OnboardingHeader (progress 6 lajur) | 1.2-1.7 |
+| ChoiceCard | 1.2 |
+| Stepper | 1.5 |
+| DayPicker | 1.6, 3.2 |
+| InfoBox | 1.3, 1.6, 1.7 |
+| BibTag + WorkoutCard | 2.1, 2.2, 3.1 |
+| SegmentBar | 2.2 |
+| TimerDisplay + TrackRing | 2.3 |
+| RpePicker, TagChips | 2.4, 4.3 |
+| LaneWeek | 2.1, 3.1 |
+| StatusChip | 2.1, 2.5, 3.1 |
+| PhaseBar | 1.8, 3.1 |
+| BarChart, LineTrend, TrackRing | 1.8, 3.3 |
+| PrimaryButton, SecondaryButton, SegmentedControl, TabBar | Semua |
 
 ## 4. Layout & breakpoint
 
 | Lebar | Layout |
 |-------|--------|
-| < 600 | HP: sesuai wireframe, tab bar bawah |
+| < 600 | HP: sesuai wireframe, tab bar bawah, padding 20 |
 | 600-1023 | Tablet: tab bar bawah, konten maks 560 di tengah |
 | >= 1024 | Web desktop: navigasi samping kiri, konten maks 640 di tengah |
 
@@ -136,6 +74,6 @@ Setiap komponen punya state: default, ditekan, nonaktif, loading, error.
 
 ## 6. Ditunda
 
-- Mode gelap untuk seluruh app (token gelap dari `docs/prototypes/exercise-animations.html` sudah tersedia).
+- Mode gelap untuk seluruh app (token `color.dark` sudah ada, dipakai Timer).
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
 - Kartu share, konfeti.
