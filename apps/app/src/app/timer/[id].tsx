@@ -46,12 +46,20 @@ export default function TimerScreen() {
 
   // Layar tetap menyala selama timer (native: keep-awake, web: Wake Lock).
   useEffect(() => {
-    void activateKeepAwakeAsync('timer');
+    const web = process.env.EXPO_OS === 'web';
+    // Web: Wake Lock API langsung (bisa ditolak browser; timer tetap jalan).
+    if (!web) activateKeepAwakeAsync('timer').catch(() => undefined);
     let lock: { release: () => Promise<void> } | null = null;
-    void requestWakeLock().then((l) => (lock = l));
+    if (web) void requestWakeLock().then((l) => (lock = l));
     return () => {
-      deactivateKeepAwake('timer');
-      void lock?.release();
+      if (!web) {
+        try {
+          void deactivateKeepAwake('timer');
+        } catch {
+          /* belum aktif */
+        }
+      }
+      void lock?.release().catch(() => undefined);
     };
   }, []);
 
