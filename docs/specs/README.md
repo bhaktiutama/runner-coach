@@ -1,6 +1,6 @@
 # Spec-Driven Development: Run Coach
 
-Status: Draft v0.2 (2026-10-28), disinkronkan dengan wireframe
+Status: Draft v0.3 (2026-10-29), model privasi "data di HP"
 
 Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang (riset, alasan, monetisasi). Jika ada konflik, dokumen di folder ini yang dipakai.
 
@@ -32,13 +32,13 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 |---|--------|--------|
 | R1 | "Jeda plan (cedera/sakit)" jadi Must (F-09), layar 4.3 | Fitur keselamatan; ada di PLANNING 4.6 dan wireframe |
 | R2 | Hapus akun dari dalam app jadi Must (F-10) | Aturan Apple + hak pengguna UU PDP. Cek ulang aturan terbaru sebelum rilis |
-| R3 | Semua tabel milik pengguna punya `user_id` langsung | RLS cukup `user_id = auth.uid()` |
+| R3 | ~~Semua tabel milik pengguna punya `user_id` langsung~~ Diganti PV: tabel lokal tanpa `user_id` | |
 | R4 | Tanggal lahir dan jenis kelamin tidak dikumpulkan di MVP | Wireframe tidak memintanya; data pribadi seminimal mungkin |
 | R5 | Jawaban screening kesehatan tidak disimpan, hanya flag + waktu persetujuan disclaimer | Data kesehatan sensitif |
 | R6 | `activities.planned_workout_id` ditambahkan | Pencocokan aktivitas ke latihan cukup 1 kolom |
-| R7 | Token Strava tidak bisa dibaca client sama sekali | Hanya Edge Function |
+| R7 | ~~Token Strava hanya di server~~ Diganti PV: token di secure-store perangkat; Edge Function hanya menukar token tanpa menyimpan | |
 | R8 | MVP hanya memuat ABC drill sebagai segmen pemanasan (F-17, Should). Strength + core bodyweight di fase 2, strength lanjutan + mobility di fase 3 | Mengikuti PLANNING 2.1, 4.7 dan 7 (update 2026-10-29) |
-| R9 | Sinkron offline: UUID dari client + last-write-wins | Aturan konflik belum ada di PLANNING |
+| R9 | ~~Sinkron offline last-write-wins~~ Diganti PV: tidak ada sinkron; pindah HP lewat file backup | |
 
 ## Revisi dari wireframe (v0.2)
 
@@ -64,6 +64,17 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | DS3 | Strength/core/mobility memakai charcoal, bukan ungu seperti PLANNING 4.4, agar tidak bentrok dengan lavender recovery |
 | DS4 | Font Inter diganti Bricolage Grotesque + Plus Jakarta Sans |
 | DS5 | Nama app jadi "Run Coach" (dari "Runner Coach"). Logo, ikon app dan 40 ikon UI ada di `docs/design-system/assets/` |
+
+## Revisi privasi (v0.3)
+
+| # | Revisi | Dokumen |
+|---|--------|---------|
+| PV | **Semua data pribadi hanya di perangkat.** Supabase cloud hanya untuk login/sesi; schema `public` kosong | PRD 3, TRD 2-3 dan 6, Schema |
+| PV-a | Tidak ada sinkron antar perangkat. Backup ke file (F-13, jadi Must) dan Pulihkan dari file (F-18, baru) | PRD, App Flow FL-8, FL-9 |
+| PV-b | Layar baru: 1.9 Masuk, 4.5 Data & privasi, 4.6 Hapus akun. Hapus akun = akun server + data lokal | App Flow, wireframe |
+| PV-c | Edge Function tinggal `delete-account` (MVP) dan `strava-token` (fase 2, tanpa simpan). `export-data`, `plan-adjust`, webhook Strava dan tabel `subscriptions` dihapus | Schema 5 |
+| PV-d | Analitik dan Sentry tanpa data pribadi, ada sakelar opt-out | TRD 6 |
+| PV-e | Supabase cloud (bukan lokal/Docker); credential lewat environment secret | TRD 6.1, Plan prasyarat |
 
 ## Keputusan terbuka dari sinkronisasi
 

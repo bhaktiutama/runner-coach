@@ -1,12 +1,12 @@
 # 02. Technical Requirements Document (TRD)
 
-Status: Draft v0.2 (2026-10-28) | Detail latar belakang: `docs/PLANNING.md` bagian 4, 5, 6
+Status: Draft v0.3 (2026-10-29) | Detail latar belakang: `docs/PLANNING.md` bagian 4, 5, 6
 
 ## Ringkasan
 
-- Satu codebase **Expo (React Native) + TypeScript** untuk Web, iOS, Android. Backend **Supabase**.
-- Logika plan ada di paket TypeScript murni `packages/training-engine`, dipakai offline di app dan di server.
-- Offline-first: timer dan log tetap jalan tanpa internet, sinkron saat online.
+- Satu codebase **Expo (React Native) + TypeScript** untuk Web, iOS, Android.
+- **Privasi dulu: semua data pribadi hanya disimpan di perangkat pengguna.** Supabase (cloud) hanya dipakai untuk login/sesi. Tidak ada tabel data pengguna di server.
+- Logika plan ada di paket TypeScript murni `packages/training-engine` dan berjalan di perangkat. App berfungsi penuh tanpa internet, kecuali login dan hapus akun.
 
 ## 1. Stack (dikunci)
 
@@ -15,12 +15,13 @@ Agent tidak boleh mengganti atau menambah library di luar tabel ini tanpa update
 | Layer | Pilihan |
 |-------|---------|
 | App | Expo + Expo Router + TypeScript (strict) |
-| State server / cache | TanStack Query |
+| Query data lokal + panggilan Edge Function | TanStack Query |
 | State lokal UI | Zustand |
-| Database lokal | expo-sqlite |
+| Database lokal (satu-satunya tempat data pribadi) | expo-sqlite (web: penyimpanan browser via dukungan web expo-sqlite; cek di spike M0) |
+| Penyimpanan rahasia | expo-secure-store (sesi login, token Strava di fase 2) |
 | Validasi data | zod (tipe `steps`, input form, respons Edge Function) |
 | Grafik | Berbasis react-native-svg (kandidat: Victory Native; final setelah spike M0) |
-| Backend | Supabase: Postgres, Auth, Edge Functions (Deno) |
+| Backend | Supabase **cloud**: Auth + Edge Functions (Deno). Tanpa tabel data pengguna |
 | Notifikasi | Expo Notifications |
 | Analitik | PostHog |
 | Error monitoring | Sentry |
@@ -35,10 +36,13 @@ Versi: pakai versi stabil terbaru saat setup, lalu kunci di `package.json` dan l
 ## 2. Arsitektur
 
 ```
-apps/app (Expo)                     supabase/
-  UI -> TanStack Query                migrations/   skema + RLS
-     -> SQLite lokal  <--sync-->      functions/    Edge Functions
-     -> training-engine (offline)
+Perangkat pengguna (semua data pribadi)          Supabase cloud (tanpa data pribadi)
+apps/app (Expo)                                  Auth: akun + sesi login
+  UI -> hook di src/data/                        functions/
+     -> SQLite lokal (plan, latihan, RPE, ...)     delete-account
+     -> training-engine (plan, adaptasi)           strava-token (fase 2, tanpa simpan)
+     -> secure-store (sesi, token)
+     -> file backup (export / import)
 packages/
   training-engine  (TS murni, tanpa dependency React/Supabase)
   ui               (komponen + design token)
@@ -49,16 +53,53 @@ Aturan:
 1. `training-engine` tidak boleh import React, Expo, atau Supabase.
 2. Komponen UI tidak memanggil Supabase langsung; lewat hook di `apps/app/src/data/`.
 3. Semua satuan disimpan dalam **meter** dan **detik**. Konversi km/mi dan pace hanya di layer UI.
+4. **Tidak ada data pribadi yang dikirim ke server kita.** Data pribadi = semua isi SQLite lokal: profil, target, plan, aktivitas, RPE, catatan, jawaban kesehatan, jeda/cedera. Yang boleh ke Supabase hanya data Auth (bagian 3.2).
+5. Fitur baru yang butuh data pribadi di server wajib lewat perubahan spec + persetujuan eksplisit pengguna (opt-in), tidak boleh diam-diam.
 
-## 3. Sinkron offline
+## 3. Data lokal & privasi
+
+### 3.1 Penyimpanan
 
 | Aturan | Nilai |
 |--------|-------|
-| ID baris | UUID dibuat di client |
-| Konflik | Last-write-wins berdasarkan `updated_at` |
-| Hapus | Soft delete (`deleted_at`) agar ikut tersinkron |
-| Antrian | Perubahan lokal diantrikan, dikirim saat online, retry dengan backoff |
-| Sebelum login | Onboarding dan plan dibuat lokal tanpa `user_id` (login baru diminta di layar 1.8). Setelah login, semua baris lokal diberi `user_id` lalu disinkron. Login ke akun yang sudah punya plan: tanya pakai plan lama atau plan baru |
+| Tempat data pribadi | Hanya SQLite di perangkat. Skema: `05-BACKEND-SCHEMA.md` bagian 2 |
+| Sinkron ke server | **Tidak ada.** Tidak ada antrian sinkron, tidak ada tabel server |
+| ID baris | UUID dibuat di perangkat |
+| Hapus | Hapus langsung (hard delete); tidak perlu soft delete karena tidak ada sinkron |
+| Migrasi skema lokal | Script migrasi berurutan di app, versi di `PRAGMA user_version`. Wajib diuji naik dari versi sebelumnya tanpa kehilangan data |
+| Enkripsi | Mengandalkan enkripsi bawaan OS (iOS Data Protection, enkripsi berbasis file Android). Database terenkripsi tambahan (SQLCipher) tidak di MVP |
+| Web | Data di penyimpanan browser. Minta `navigator.storage.persist()`. Tampilkan peringatan: menghapus data browser = data hilang, sarankan backup |
+
+### 3.2 Yang ada di Supabase
+
+| Data | Alasan |
+|------|--------|
+| `auth.users`: id, email (Email/Apple/Google), provider, waktu dibuat/login terakhir | Dibutuhkan untuk login. Dikelola Supabase Auth |
+| Sesi (access + refresh token) | Disimpan di perangkat lewat `expo-secure-store` (web: penyimpanan browser) |
+
+Tidak ada: nama tampilan, target, plan, aktivitas, RPE, data kesehatan, lokasi. Nama dari provider login tidak disalin ke tabel apa pun.
+
+### 3.3 Pindah HP dan backup (F-13, F-18)
+
+Karena tidak ada sinkron, data hanya berpindah lewat file milik pengguna:
+
+| Cara | Detail |
+|------|--------|
+| Backup ke file | Export semua tabel lokal ke 1 file JSON (`run-coach-backup-YYYY-MM-DD.json`) berisi `schema_version`. Dibagikan lewat share sheet (simpan ke Files/Drive/email milik pengguna) |
+| Pulihkan dari file | Import file backup: validasi zod + `schema_version`, tampilkan ringkasan (target, jumlah aktivitas), konfirmasi, lalu ganti data lokal |
+| Backup OS | iOS: data app ikut backup iCloud/komputer bila diaktifkan pengguna. Android: Auto Backup. Perilaku pasti dicek di spike M0 dan tidak dijanjikan di UI |
+| Pengingat backup | Di Profil: "Backup terakhir: X hari lalu". Setelah 30 hari tanpa backup, tampilkan pengingat 1x (bisa dimatikan) |
+
+### 3.4 Login dan perangkat
+
+| Kasus | Perilaku |
+|-------|----------|
+| Sebelum login | Onboarding dan plan dibuat lokal; login diminta di 1.8 |
+| Login di perangkat yang sudah punya data | Data tetap; ditandai milik `auth.uid()` ini (kolom `owner_id` di `app_meta`) |
+| Login di perangkat baru (data kosong) | Tawarkan "Pulihkan dari file backup" atau "Buat plan baru" |
+| Login akun lain di perangkat yang sudah ada data milik akun lain | Wajib pilih: backup dulu lalu hapus data lokal, atau batal |
+| Logout | Data lokal tetap (ini data perangkat). Ada opsi "Keluar dan hapus data di HP ini" |
+| Sesi kedaluwarsa / offline | App tetap jalan penuh; login ulang hanya diminta untuk aksi akun |
 
 ## 4. Training engine
 
@@ -109,23 +150,38 @@ Sumber: PLANNING 4.5.
 | iOS membatasi eksekusi di background | Timer pakai timestamp absolut + notifikasi lokal terjadwal per pergantian segmen |
 | Web: timer hanya andal saat tab aktif | Wake Lock API jika tersedia + peringatan ke pengguna |
 | HealthKit butuh kode native | Expo dev build (bukan Expo Go); tidak tersedia di web |
-| Strava API | Kapasitas atlet awal terbatas, rate limit, larangan pakai data untuk training AI/ML. Verifikasi ulang syarat terbaru sebelum fase 2 |
+| Strava API | Kapasitas atlet awal terbatas, rate limit, larangan pakai data untuk training AI/ML. Verifikasi ulang syarat terbaru sebelum fase 2. Karena tanpa server data: token disimpan di perangkat, aktivitas diambil perangkat saat app dibuka (tanpa webhook) |
+| Data hanya di perangkat | HP hilang/rusak tanpa backup = data hilang. Mitigasi: backup ke file + pengingat (3.3). Dijelaskan jujur di 1.8 dan 4.5 |
 
 ## 6. Keamanan & privasi
 
-1. RLS aktif di **semua** tabel (detail di `05-BACKEND-SCHEMA.md`).
-2. Service role key hanya di Edge Function, tidak pernah di app.
-3. Token pihak ketiga (Strava) dienkripsi di server, tidak bisa dibaca client.
-4. Izin data kesehatan diminta seminimal mungkin dan hanya saat fitur dipakai.
-5. Data kesehatan tidak dipakai untuk iklan dan tidak dijual.
-6. Wajib: hapus akun (F-10), export data (F-13). Pemetaan ke UU PDP (UU No. 27/2022) dicek sebelum rilis publik.
-7. Secrets di GitHub Actions / EAS secrets, tidak di repo.
+1. **Data pribadi hanya di perangkat** (bagian 2 aturan 4 dan bagian 3). Server tidak punya tabel data pengguna.
+2. Jika kelak ada tabel di schema `public` (mis. data referensi gerakan), RLS wajib aktif dan tabel itu tidak boleh berisi data pribadi.
+3. Service role key hanya di Edge Function (disediakan otomatis oleh Supabase), tidak pernah di app atau repo.
+4. Token Strava (fase 2) disimpan di `expo-secure-store` perangkat. Edge Function `strava-token` hanya menukar/memperbarui token memakai client secret dan **tidak menyimpan apa pun**.
+5. Analitik (PostHog) dan error (Sentry) tanpa data pribadi: tanpa email/nama, tanpa nilai kesehatan (RPE, tag, alasan jeda, jawaban screening), IP tidak disimpan, Sentry `sendDefaultPii: false`. Event hanya nama + properti teknis (mis. `target_type`, `platform`). Ada sakelar "Kirim data pemakaian anonim" di 4.5 (default aktif, perlu dicek ulang terhadap UU PDP sebelum rilis).
+6. Izin data kesehatan (HealthKit, Health Connect) diminta seminimal mungkin dan hanya saat fitur dipakai; datanya tetap di perangkat.
+7. Data tidak dipakai untuk iklan dan tidak dijual.
+8. Wajib: hapus akun (F-10) menghapus akun Auth di server **dan** semua data lokal; backup/export (F-13). Pemetaan ke UU PDP (UU No. 27/2022) dicek sebelum rilis publik.
+9. Secrets: `.env` lokal (di-gitignore), environment secrets session cloud, GitHub Actions / EAS secrets. Tidak pernah di repo atau chat.
+
+### 6.1 Konfigurasi Supabase cloud
+
+| Variabel | Isi | Di mana |
+|----------|-----|---------|
+| `EXPO_PUBLIC_SUPABASE_URL` | URL project (`https://<ref>.supabase.co`) | `.env`, EAS, environment session |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Anon / publishable key (aman di app karena tidak ada tabel yang bisa dibaca) | `.env`, EAS, environment session |
+| `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` | Untuk `supabase functions deploy` dari CI/session | GitHub Actions, environment session |
+
+Service role key **tidak** perlu diberikan ke repo, CI, atau session; Edge Function sudah mendapatkannya dari Supabase. Session cloud perlu izin jaringan ke `*.supabase.co` dan `api.supabase.com`.
 
 ## 7. Target non-fungsional (usulan, belum diukur)
 
 | Area | Target |
 |------|--------|
 | Cue timer | Telat maks 1 detik dari jadwal saat app aktif |
-| Offline | Onboarding selesai = plan tersimpan lokal; timer + log bisa tanpa internet |
+| Offline | Semua fitur jalan tanpa internet kecuali login dan hapus akun |
+| Privasi | 0 baris data pribadi di server; dicek dengan test: tidak ada tabel di schema `public` kecuali yang disetujui di spec |
 | Aksesibilitas | Kontras teks min 4.5:1, area sentuh min 44 x 44 (sesuai wireframe) |
 | Biaya infra beta | Tier gratis Supabase / PostHog / Sentry |
+| Backup | Export dan import 1 tahun data selesai < 5 detik di HP kelas menengah (usulan, diukur di M6) |

@@ -1,120 +1,143 @@
-# 05. Backend Schema Document
+# 05. Data Schema (lokal) + Backend
 
-Status: Draft v0.2 (2026-10-28) | Platform: Supabase (Postgres + Auth + Edge Functions)
+Status: Draft v0.3 (2026-10-29) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
 
 ## Ringkasan
 
-- 8 tabel untuk MVP, 2 tabel menyusul (fase 2 dan 3). Semua tabel milik pengguna punya `user_id` dan RLS `user_id = auth.uid()`.
-- Satuan: meter (`_m`), detik (`_s`), detik per km untuk pace. Waktu: `timestamptz` (UTC); tanggal latihan: `date` sesuai zona waktu pengguna.
-- App membaca/menulis tabel langsung lewat Supabase client (PostgREST + RLS). Edge Function hanya untuk hal yang butuh service role atau pihak ketiga.
+- **Semua data pribadi disimpan di perangkat pengguna** (SQLite). 9 tabel lokal untuk MVP. Tidak ada sinkron ke server.
+- **Supabase hanya untuk login/sesi.** Tidak ada tabel di schema `public`. Satu Edge Function di MVP (`delete-account`), satu di fase 2 (`strava-token`, tanpa menyimpan data).
+- Satuan: meter (`_m`), detik (`_s`), detik per km untuk pace. Pindah HP = file backup milik pengguna (bagian 4).
 
-## 1. Kolom standar
+## 1. Aturan umum tabel lokal
 
-Semua tabel (kecuali disebut lain) punya:
+Satu database = satu pengguna di satu perangkat, jadi tabel **tidak punya `user_id`** dan tidak butuh RLS. Pemilik data dicatat sekali di `app_meta.owner_id`.
 
-| Kolom | Tipe | Catatan |
-|-------|------|---------|
-| id | uuid PK | Dibuat di client (offline-first) |
-| user_id | uuid not null FK -> auth.users on delete cascade | Di SQLite lokal boleh null sebelum login (TRD 3) |
-| created_at | timestamptz not null default now() | |
-| updated_at | timestamptz not null default now() | Trigger update otomatis; dasar last-write-wins |
-| deleted_at | timestamptz null | Soft delete untuk sinkron |
-
-## 2. Tabel MVP
-
-### profiles (id = auth.users.id, tanpa kolom `user_id`)
+Kolom standar semua tabel (kecuali `app_meta` dan `profile`):
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| display_name | text null | Dari provider login |
-| unit | text not null default 'km' | check in ('km','mi') |
-| timezone | text not null default 'Asia/Jakarta' | IANA |
-| reminder_time | time null | Layar 1.6; null = mati |
-| intensity_guide | text not null default 'pace' | check in ('pace','hr','rpe'); 'hr' baru aktif di fase 2 |
-| health_flag | boolean not null default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |
-| disclaimer_accepted_at | timestamptz not null | Dari centang di 1.7 |
+| id | uuid | Dibuat di perangkat |
+| created_at | timestamptz | |
+| updated_at | timestamptz | Diisi app setiap update |
+
+Pemetaan tipe ke SQLite:
+
+| Tipe di dokumen ini | SQLite |
+|---------------------|--------|
+| uuid, text | TEXT |
+| int, smallint | INTEGER |
+| numeric | REAL |
+| boolean | INTEGER 0/1 |
+| date | TEXT `YYYY-MM-DD` (tanggal lokal pengguna) |
+| timestamptz | TEXT ISO 8601 UTC |
+| json, text[] | TEXT berisi JSON |
+
+Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app. Foreign key aktif (`PRAGMA foreign_keys = ON`). Hapus = hard delete.
+
+## 2. Tabel lokal MVP
+
+### app_meta (1 baris)
+
+| Kolom | Tipe | Catatan |
+|-------|------|---------|
+| schema_version | int | Sama dengan `PRAGMA user_version`; ikut di file backup |
+| owner_id | uuid null | `auth.uid()` setelah login (TRD 3.4); null sebelum login |
+| last_backup_at | timestamptz null | Untuk pengingat backup |
+| analytics_opt_in | boolean default true | Sakelar di 4.5 |
+
+### profile (1 baris)
+
+| Kolom | Tipe | Catatan |
+|-------|------|---------|
+| display_name | text null | Diisi pengguna, tidak diambil dari provider login |
+| unit | text default 'km' | check in ('km','mi') |
+| timezone | text default 'Asia/Jakarta' | IANA |
+| reminder_time | text null | `HH:MM`, layar 1.6; null = mati |
+| intensity_guide | text default 'pace' | check in ('pace','hr','rpe'); 'hr' aktif di fase 2 |
+| health_flag | boolean default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |
+| disclaimer_accepted_at | timestamptz | Dari centang di 1.7 |
 
 ### goals
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| distance | text not null | check in ('5k','10k','hm','fm','fitness') |
+| distance | text | check in ('5k','10k','hm','fm','fitness') |
 | race_date | date null | null = tanpa race |
 | race_name | text null | Opsional, layar 1.3 |
 | target_time_s | int null | |
 | baseline_distance | text null | Layar 1.4, "Saya tahu waktunya" |
 | baseline_time_s | int null | |
 | level | text null | check in ('beginner','recreational'); dipakai jika "Saya tidak tahu" |
-| weekly_volume_m | int not null | Layar 1.5 |
-| longest_run_m | int not null | Layar 1.5 |
-| status | text not null default 'active' | check in ('active','completed','abandoned') |
+| weekly_volume_m | int | Layar 1.5 |
+| longest_run_m | int | Layar 1.5 |
+| status | text default 'active' | check in ('active','completed','abandoned') |
 
-Check: `baseline_time_s is not null or level is not null`. Index unik: 1 goal `active` per pengguna.
+Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1 goal `active`.
 
 ### plans
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| goal_id | uuid not null FK -> goals | |
-| start_date / end_date | date not null | |
-| params | jsonb not null | `{available_days, long_run_day, light_mode, engine_version}` |
-| version | int not null default 1 | Naik setiap adaptasi diterapkan |
-| status | text not null default 'active' | check in ('active','paused','archived') |
+| goal_id | uuid FK -> goals | |
+| start_date / end_date | date | |
+| params | json | `{available_days, long_run_day, light_mode, engine_version}` |
+| version | int default 1 | Naik setiap adaptasi diterapkan |
+| status | text default 'active' | check in ('active','paused','archived') |
 | pause_reason | text null | check in ('injury','sick','busy'); layar 4.3. Bagian nyeri tidak disimpan |
 | paused_at | timestamptz null | |
-| pause_expected_days | smallint null | 3, 7, 14, atau null = belum tahu |
+| pause_expected_days | int null | 3, 7, 14, atau null = belum tahu |
 
 ### planned_workouts
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| plan_id | uuid not null FK -> plans | |
-| date | date not null | |
-| week_index | smallint not null | Mulai dari 1 |
-| phase | text not null | check in ('base','build','peak','taper','return') |
-| type | text not null | check in ('easy','run_walk','long','tempo','interval','strides','recovery','rest') |
-| steps | jsonb not null | Format bagian 3 |
+| plan_id | uuid FK -> plans on delete cascade | |
+| date | date | |
+| week_index | int | Mulai dari 1 |
+| phase | text | check in ('base','build','peak','taper','return') |
+| type | text | check in ('easy','run_walk','long','tempo','interval','strides','recovery','rest') |
+| steps | json | Format bagian 3 |
 | target_distance_m | int null | |
 | target_duration_s | int null | |
-| status | text not null default 'scheduled' | check in ('scheduled','completed','skipped','missed') |
+| status | text default 'scheduled' | check in ('scheduled','completed','skipped','missed') |
 | original_date | date null | Terisi jika dipindah (3.2) |
 
-Index: `(user_id, date)`. Gabung 2 latihan (3.2): latihan tujuan di-update, latihan yang dipindah di-soft delete.
+Index: `(date)`. Gabung 2 latihan (3.2): latihan tujuan di-update, latihan yang dipindah dihapus.
 
 ### activities
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
 | planned_workout_id | uuid null FK -> planned_workouts on delete set null | Hasil pencocokan |
-| source | text not null | check in ('manual','timer','strava','healthkit','health_connect') |
+| source | text | check in ('manual','timer','strava','healthkit','health_connect') |
 | external_id | text null | ID dari sumber luar |
-| started_at | timestamptz not null | |
+| started_at | timestamptz | |
 | distance_m | int null | |
-| duration_s | int not null | check > 0 |
-| avg_hr | smallint null | |
-| segments | jsonb null | Hasil per segmen dari timer (layar 3.4 "Segmen vs target") |
-| splits | jsonb null | Split per km (layar 3.4) |
+| duration_s | int | check > 0 |
+| avg_hr | int null | |
+| segments | json null | Hasil per segmen dari timer (3.4 "Segmen vs target") |
+| splits | json null | Split per km (3.4) |
 
-Index: `(user_id, started_at desc)`. Unik: `(user_id, source, external_id) where external_id is not null`.
+Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is not null`.
 
 ### workout_feedback
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| activity_id | uuid not null unique FK -> activities on delete cascade | 1 feedback per aktivitas |
-| rpe | smallint not null | check 1-10 |
-| tags | text[] not null default '{}' | Subset dari ('hot','poor_sleep','sore_legs','pain'); layar 2.4 |
+| activity_id | uuid unique FK -> activities on delete cascade | 1 feedback per aktivitas |
+| rpe | int | check 1-10 |
+| tags | text[] default '[]' | Subset dari ('hot','poor_sleep','sore_legs','pain'); layar 2.4 |
 | notes | text null | |
 
 ### plan_adjustments (F-11, layar 2.5)
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| plan_id | uuid not null FK -> plans | |
-| week_index | smallint not null | Minggu yang diubah |
-| rule | text not null | Kode aturan TRD 4.3 |
-| changes | jsonb not null | Daftar perubahan untuk ditampilkan |
-| status | text not null | check in ('proposed','accepted','rejected') |
+| plan_id | uuid FK -> plans on delete cascade | |
+| week_index | int | Minggu yang diubah |
+| rule | text | Kode aturan TRD 4.3 |
+| changes | json | Daftar perubahan untuk ditampilkan |
+| status | text | check in ('proposed','accepted','rejected') |
 
 Unik: `(plan_id, week_index, rule)`, supaya usulan yang ditolak tidak muncul lagi.
 
@@ -122,18 +145,19 @@ Unik: `(plan_id, week_index, rule)`, supaya usulan yang ditolak tidak muncul lag
 
 | Kolom | Tipe | Catatan |
 |-------|------|---------|
-| date | date not null | unik per `(user_id, date)` |
-| vdot_estimate | numeric(4,1) null | |
+| date | date | unik |
+| vdot_estimate | numeric null | |
 | predicted_time_min_s / predicted_time_max_s | int null | Prediksi race di 3.3 |
-| weekly_volume_m | int not null | |
+| weekly_volume_m | int | |
 
-## 3. Format `steps` (jsonb)
+## 3. Format `steps` (json)
 
 Satu struktur untuk timer, kalender, dan export ke jam (fase lanjut).
 
 ```json
 [
   { "kind": "warmup",   "duration_s": 720, "zone": "easy" },
+  { "kind": "drill",    "exercise_id": "askip", "sets": 2, "distance_m": 20 },
   { "kind": "repeat",   "times": 6, "steps": [
       { "kind": "work",     "distance_m": 800, "zone": "interval",
         "pace_s_per_km": { "min": 370, "max": 380 } },
@@ -143,39 +167,68 @@ Satu struktur untuk timer, kalender, dan export ke jam (fase lanjut).
 ]
 ```
 
-Segmen drill (F-17), contoh: `{ "kind": "drill", "exercise_id": "askip", "sets": 2, "distance_m": 20 }`. `exercise_id` merujuk daftar gerakan statis di `training-engine` (id sama dengan prototipe, mis. `askip`, `bskip`, `cskip`).
+Segmen drill (F-17): `exercise_id` merujuk daftar gerakan statis di `training-engine` (id sama dengan prototipe, mis. `askip`, `bskip`, `cskip`).
 
 Aturan: `kind` in (warmup, work, recovery, cooldown, repeat, drill). Step drill wajib punya `exercise_id` dan `sets`, plus `distance_m`, `duration_s` atau `reps`. Step lain (non-repeat) wajib punya `duration_s` atau `distance_m`. Tipe TypeScript + validator zod di `training-engine` jadi satu-satunya sumber kebenaran. Contoh angka di atas hanya ilustrasi format.
 
-## 4. Tabel fase lanjut
+## 4. File backup (F-13, F-18)
 
-| Tabel | Fase | Kolom utama | RLS |
-|-------|------|-------------|-----|
-| integrations | 2 | provider ('strava'), athlete_id, access_token_enc, refresh_token_enc, expires_at, scopes text[], last_synced_at | **Tidak ada policy untuk client**. Client membaca lewat view `integration_status` (provider, connected_at, last_synced_at) untuk layar 2.1 dan 4.2 |
-| exercises | 2 | name, category ('drill','strength','core','mobility','plyo'), level, equipment, target_muscles, cues, animation_ref, progression_next_id | Data referensi: semua user boleh select, tulis hanya admin. Menggantikan daftar statis MVP. `planned_workouts.type` ditambah 'strength','core','mobility' (PLANNING 6.4) |
-| subscriptions | 3 | provider ('revenuecat','stripe'), entitlement, expires_at | Client: select saja. Tulis hanya dari webhook |
+Dibuat dan dibaca di perangkat. Tidak pernah dikirim ke server kita.
 
-## 5. Auth & otorisasi
+```json
+{
+  "format": "run-coach-backup",
+  "schema_version": 1,
+  "exported_at": "2026-10-29T06:00:00Z",
+  "app_version": "0.1.0",
+  "tables": { "profile": [], "goals": [], "plans": [], "planned_workouts": [],
+              "activities": [], "workout_feedback": [], "plan_adjustments": [], "fitness_snapshots": [] }
+}
+```
 
 | Aturan | Detail |
 |--------|--------|
-| Login | Supabase Auth: Apple, Google, Email. Diminta di layar 1.8 atau "Masuk" di 1.1 |
-| Profil | Dibuat saat login pertama, berisi data onboarding lokal |
-| RLS default | Semua tabel MVP: select/insert/update/delete jika `user_id = auth.uid()` (`profiles`: `id = auth.uid()`) |
-| Service role | Hanya di Edge Function |
-| Test RLS | Setiap migration punya test: user A tidak bisa membaca/mengubah data user B |
+| Isi | Semua tabel bagian 2 kecuali `app_meta.owner_id` dan `analytics_opt_in` |
+| Import | Validasi zod per tabel. `schema_version` lebih lama: jalankan migrasi; lebih baru dari app: tolak dengan pesan "Perbarui app dulu" |
+| Ganti data | Import mengganti seluruh data lokal dalam 1 transaksi; gagal = data lama utuh |
+| Enkripsi file | Tidak di MVP (file disimpan di lokasi pilihan pengguna). Backup berpassword = keputusan terbuka P2 |
 
-## 6. API contract (Edge Functions)
+## 5. Server: Supabase cloud
 
-CRUD biasa memakai Supabase client langsung. Edge Function hanya untuk daftar ini:
+### 5.1 Isi server
 
-| Fungsi | Method | Fase | Input | Output |
-|--------|--------|------|-------|--------|
-| delete-account | POST | MVP | JWT pengguna | 204; semua data + user auth terhapus |
-| export-data | GET | MVP (Should) | JWT pengguna | 200 JSON berisi semua tabel milik pengguna |
-| strava-oauth | GET | 2 | `code`, `state` | Redirect ke app; token disimpan terenkripsi |
-| strava-webhook | GET / POST | 2 | Verifikasi langganan / event aktivitas | 200; aktivitas di-upsert + dicocokkan |
-| plan-adjust | POST | 2 | `plan_id` | Usulan `plan_adjustments` dari data tersinkron |
-| revenuecat-webhook, stripe-webhook | POST | 3 | Event langganan (signature diverifikasi) | 200; `subscriptions` di-update |
+| Komponen | Isi | Data pribadi? |
+|----------|-----|---------------|
+| Auth (`auth.users`) | id, email, provider (Apple/Google/Email), waktu login | Ya, minimum untuk login. Satu-satunya |
+| Schema `public` | **Kosong** di MVP | Tidak |
+| Storage | Tidak dipakai | Tidak |
+
+Test wajib (CI): query ke `information_schema.tables` untuk schema `public` mengembalikan 0 tabel (atau hanya tabel yang disetujui spec dan tanpa data pribadi).
+
+### 5.2 Auth
+
+| Aturan | Detail |
+|--------|--------|
+| Provider | Apple, Google, Email (magic link atau OTP; dipilih di M1) |
+| Kapan | Layar 1.8 setelah preview plan, atau "Masuk" di 1.1 (layar 1.9) |
+| Profil server | Tidak dibuat. Tidak ada trigger yang menyalin data ke `public` |
+| Sesi | Disimpan di perangkat (`expo-secure-store`, web: penyimpanan browser) |
+
+### 5.3 Edge Functions
+
+| Fungsi | Method | Fase | Input | Output | Menyimpan data? |
+|--------|--------|------|-------|--------|-----------------|
+| delete-account | POST | MVP | JWT pengguna | 204; user Auth terhapus | Tidak (menghapus) |
+| strava-token | POST | 2 | `{grant: 'authorization_code', code}` atau `{grant: 'refresh_token', refresh_token}` + JWT | Token dari Strava diteruskan ke perangkat | **Tidak.** Hanya memakai client secret; tidak ada log isi token |
 
 Error: `{ "error": { "code": "string", "message": "string" } }` dengan HTTP status yang sesuai.
+
+Dihapus dibanding v0.2: `export-data` (sekarang lokal), `strava-oauth` + `strava-webhook` (diganti `strava-token`, aktivitas ditarik perangkat), `plan-adjust` (engine di perangkat), tabel server `profiles`, `goals`, `plans`, `planned_workouts`, `activities`, `workout_feedback`, `plan_adjustments`, `fitness_snapshots`, `integrations`, `subscriptions`.
+
+## 6. Fase lanjut
+
+| Data | Fase | Di mana | Catatan |
+|------|------|---------|---------|
+| integrations | 2 | Tabel lokal: provider, athlete_id, connected_at, last_synced_at | Token di `expo-secure-store`, tidak di SQLite dan tidak di server |
+| exercises | 2 | Data statis di app (`training-engine`) | Bukan data pribadi. Jika kelak dipindah ke server agar bisa diperbarui tanpa rilis app: tabel `public.exercises` read-only, RLS select untuk semua, tanpa data pribadi |
+| Langganan Premium | 3 | RevenueCat (entitlement per `auth.uid()`) | Tidak ada tabel `subscriptions` di server kita. Dukungan web (Stripe lewat RevenueCat) dicek di fase 3 |

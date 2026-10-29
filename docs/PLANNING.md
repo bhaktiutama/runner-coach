@@ -323,6 +323,8 @@ Prinsip privasi: minta izin seminimal mungkin, jelaskan kegunaannya, data keseha
 
 ## 6. Arsitektur Teknis
 
+> **Diperbarui 2026-10-29:** model data diganti jadi "data pribadi hanya di perangkat" (Supabase hanya untuk login). Bagian 6.3 dan 6.4 di bawah adalah rancangan lama; acuan yang berlaku: `docs/specs/02-TRD.md` dan `docs/specs/05-BACKEND-SCHEMA.md`.
+
 ### 6.1 Stack yang direkomendasikan
 
 | Layer | Pilihan | Alasan |

@@ -1,34 +1,39 @@
 # 03. App Flow Document
 
-Status: Draft v0.2 (2026-10-28) | Nomor layar = wireframe "Runner Coach Wireframes"
+Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 
 ## Ringkasan
 
 - 4 tab: **Hari ini | Plan | Progres | Profil**. Pengguna baru: Selamat datang -> 6 pertanyaan -> preview plan -> login -> Hari ini.
 - Loop inti: Hari ini -> Mulai -> Timer -> Selesai + RPE -> Simpan. Setelah latihan terakhir minggu itu: Ringkasan minggu.
 - Status latihan dan timer punya state yang jelas (bagian 3); agent wajib mengikuti transisi di sini.
+- Semua flow membaca/menulis SQLite di perangkat. Hanya login (1.8, 1.9) dan hapus akun (4.6) yang butuh internet.
 
 ## 1. Peta layar
 
 | No | Layar | Ke |
 |----|-------|----|
-| 1.1 | Selamat datang | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> login -> 2.1 |
+| 1.1 | Selamat datang | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> 1.9 |
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
-| 1.8 | Preview plan + simpan akun | Apple / Google / Email -> 2.1 |
-| 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2 |
+| 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1 |
+| 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |
+| 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6 |
 | 2.2 | Detail latihan | Mulai -> 2.3; Pindah hari -> 3.2; Ganti jadi easy |
 | 2.3 | Timer (gelap) | Selesai / Akhiri -> 2.4 |
+| 2.3b | Timer: segmen drill | "Lanjut" per set; set terakhir -> segmen berikut |
 | 2.4 | Selesai + RPE | Simpan -> 2.5 (jika latihan terakhir minggu itu) atau 2.1 |
 | 2.5 | Ringkasan minggu + adaptasi | 2.1 atau 3.1 |
+| 2.6 | Catat lari (manual) | Simpan -> 2.1 (atau 2.5 jika latihan terakhir minggu itu) |
 | 3.1 | Kalender plan (tab) | Tap latihan -> 2.2 atau 3.2 |
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
 | 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
-| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3; Privasi & export data; Hapus akun |
+| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3; Data & privasi -> 4.5 |
 | 4.2 | Integrasi | Fase 2 |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
 | 4.4 | Premium | Fase 3 |
-| - | Log manual, konfirmasi Hapus akun, Login email | Belum ada di wireframe (O1) |
+| 4.5 | Data & privasi | Backup ke file; Pulihkan dari file; sakelar data anonim; Keluar; Hapus akun -> 4.6 |
+| 4.6 | Hapus akun | Backup dulu (opsional) -> ketik "HAPUS" -> 1.1 |
 
 ## 2. Flow
 
@@ -42,7 +47,7 @@ Status: Draft v0.2 (2026-10-28) | Nomor layar = wireframe "Runner Coach Wirefram
 | 1.5 | Volume km/minggu (stepper + chip cepat) + lari terjauh 4 minggu | Di bawah syarat minimum target: sarankan target lebih pendek atau base building |
 | 1.6 | Hari tersedia (3-6) + hari long run (Sabtu/Minggu) + jam pengingat | < 3 hari: tombol Lanjut nonaktif. Tampilkan "X hari/minggu: pas untuk plan ..." |
 | 1.7 | 5 pertanyaan Ya/Tidak + centang disclaimer | Ada "Ya": tampilkan saran ke dokter, plan mode ringan (O3). Disclaimer wajib dicentang |
-| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace | Login Apple/Google/Email. Setelah login, data lokal diberi `user_id` lalu disinkron. Event `onboarding_completed`, `plan_created` |
+| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
 
 Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah terakhir. Login gagal: tetap di 1.8, plan tidak hilang.
 
@@ -59,13 +64,13 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 |-------|----------|
 | Akhiri di tengah | Konfirmasi. Ya -> 2.4 dengan durasi sebenarnya, segmen tuntas "x dari y" |
 | App ditutup sistem saat timer jalan | Saat dibuka lagi: hitung posisi dari timestamp mulai, tawarkan lanjut atau akhiri |
-| Offline | Semua langkah jalan, data masuk antrian sinkron |
+| Offline | Semua langkah jalan normal (data memang lokal) |
 | Sudah selesai hari ini | Tombol Mulai jadi "Latihan tambahan" (tidak mengubah plan) |
 | "Ganti jadi easy" di 2.2 | Sesi kualitas hari itu diganti easy dengan durasi sama; tidak dihitung terlewat |
 
 ### FL-3 Log manual (F-15)
 
-Hari ini -> "Catat lari" -> jarak, durasi, RPE -> Simpan. Dicocokkan ke latihan terjadwal hari itu jika ada; jika tidak, disimpan sebagai lari tambahan.
+2.1 -> "Catat lari manual" -> 2.6: tanggal (default hari ini), jarak, durasi, RPE, tag -> Simpan. Dicocokkan ke latihan terjadwal hari itu jika ada; jika tidak, disimpan sebagai lari tambahan.
 
 ### FL-4 Ringkasan minggu + adaptasi (F-11)
 
@@ -90,7 +95,30 @@ Hari ini -> "Catat lari" -> jarak, durasi, RPE -> Simpan. Dicocokkan ke latihan 
 
 ### FL-7 Hapus akun (F-10)
 
-Profil -> Hapus akun -> ketik "HAPUS" -> `delete-account` -> logout -> 1.1. Offline: tombol nonaktif dengan pesan butuh internet.
+4.1 -> Data & privasi (4.5) -> Hapus akun (4.6): tawaran "Backup dulu" -> ketik "HAPUS" -> `delete-account` (akun di server) -> hapus semua data lokal + sesi -> 1.1.
+
+| Kasus | Perilaku |
+|-------|----------|
+| Offline | Hapus akun nonaktif dengan pesan butuh internet. "Hapus data di HP ini saja" tetap bisa |
+| `delete-account` gagal | Data lokal **tidak** dihapus; tampilkan error + coba lagi |
+
+### FL-8 Backup dan pulihkan (F-13, F-18)
+
+| Langkah | Perilaku |
+|---------|----------|
+| 4.5 -> Backup ke file | Buat file JSON (Schema 4) -> share sheet. Berhasil -> `last_backup_at` diisi, tampil "Backup terakhir: hari ini" |
+| 4.5 -> Pulihkan dari file | Pilih file -> validasi -> ringkasan (target, jumlah latihan dan aktivitas, tanggal backup) -> "Ganti data di HP ini" -> 2.1 |
+| File rusak / bukan backup | Pesan "File ini bukan backup Run Coach"; data lama utuh |
+| File dari versi app lebih baru | Pesan "Perbarui app dulu"; data lama utuh |
+| 30 hari tanpa backup | Kartu pengingat 1x di 2.1, bisa ditutup atau dimatikan di 4.5 |
+
+### FL-9 Masuk di HP baru (F-01, F-18)
+
+1.1 -> "Sudah punya akun? Masuk" -> 1.9 -> login. Data lokal kosong -> pilihan "Pulihkan dari file backup" (FL-8) atau "Buat plan baru" (1.2). Teks menjelaskan: data tidak disimpan di server, jadi perlu file backup dari HP lama.
+
+### FL-10 Keluar (4.5)
+
+"Keluar" -> pilihan: "Keluar, data tetap di HP ini" atau "Keluar dan hapus data di HP ini" (tawarkan backup dulu). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
 
 ## 3. State
 
