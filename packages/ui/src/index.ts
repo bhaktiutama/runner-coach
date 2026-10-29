@@ -11,3 +11,4 @@ export * from './components/Plan';
 export * from './components/TrackRing';
 export * from './components/Feedback';
 export * from './components/LineTrend';
+export * from './components/Settings';

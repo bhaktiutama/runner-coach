@@ -101,3 +101,16 @@ export async function signOut(): Promise<void> {
   if (!isAuthConfigured) return;
   await supabase().auth.signOut();
 }
+
+/** Hapus akun Auth di server lewat Edge Function delete-account (F-10). */
+export async function deleteAccount(): Promise<{ ok: true } | { ok: false; error: AuthError }> {
+  if (!isAuthConfigured) return { ok: false, error: 'not_configured' };
+  try {
+    const { error } = await supabase().functions.invoke('delete-account', { method: 'POST' });
+    if (error) return { ok: false, error: mapError(error) };
+    await supabase().auth.signOut({ scope: 'local' });
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: mapError(e) };
+  }
+}

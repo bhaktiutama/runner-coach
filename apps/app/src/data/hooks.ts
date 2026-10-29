@@ -8,13 +8,24 @@ import {
   runningDistance,
   totalDuration,
   type GeneratedPlan,
+  type Proposal,
+  type Weekday,
 } from '@run-coach/training-engine';
+
+const APP_VERSION = Constants.expoConfig?.version ?? '0.1.0';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as auth from '@/auth/service';
 import { getDb } from '@/db/client';
 import { localDate, localDateOf } from '@/lib/today';
 import { draftToPlanInput, parseDraft, type Draft } from './onboarding';
+import Constants from 'expo-constants';
+import { cancelReminders } from '@/lib/reminderSync';
+import { cancelTimerCues } from '@/lib/notifications';
+import { shareTextFile, pickTextFile } from '@/lib/files';
+import { track } from '@/lib/analytics';
 import * as acts from './activities';
+import * as backup from './backup';
+import * as planOps from './planOps';
 import * as repo from './repo';
 
 // Hook data untuk komponen (TRD 2 aturan 2): komponen tidak memanggil SQLite/Supabase langsung.
@@ -136,7 +147,15 @@ export function useCompleteSignIn() {
     mutationFn: async (userId: string | null) => {
       const db = await getDb();
       if (userId) await repo.setOwner(db, userId);
+      const draft = parseDraft((await repo.getMeta(db)).onboarding_draft);
       await repo.setDraft(db, null);
+      if (draft?.distance) {
+        track('onboarding_completed', { target_type: draft.distance });
+        track('plan_created', {
+          target_type: draft.distance,
+          days_per_week: draft.availableDays?.length ?? 0,
+        });
+      }
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: keys.meta }),
   });
@@ -205,7 +224,11 @@ export function useWorkoutActions() {
     onSuccess: done,
   });
   const skip = useMutation({
-    mutationFn: async (id: string) => repo.setWorkoutStatus(await getDb(), id, 'skipped'),
+    mutationFn: async (id: string) => {
+      const db = await getDb();
+      track('workout_skipped', { workout_type: (await repo.getWorkout(db, id))?.type ?? 'unknown' });
+      await repo.setWorkoutStatus(db, id, 'skipped');
+    },
     onSuccess: done,
   });
   const toEasy = useMutation({
@@ -277,6 +300,11 @@ export function useSaveActivity() {
     mutationFn: async (a: acts.NewActivity & { clearTimer?: boolean }) => {
       const db = await getDb();
       const id = await acts.saveActivity(db, a);
+      const wt = a.plannedWorkoutId
+        ? ((await repo.getWorkout(db, a.plannedWorkoutId))?.type ?? 'extra')
+        : 'extra';
+      track('workout_completed', { workout_type: wt, source: a.source });
+      track('rpe_submitted', { workout_type: wt });
       if (a.clearTimer) await repo.setActiveTimer(db, null);
       let weekDone = false;
       if (a.plannedWorkoutId) {
@@ -304,5 +332,103 @@ export function useDiscardTimer() {
   return useMutation({
     mutationFn: async () => repo.setActiveTimer(await getDb(), null),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['activeTimer'] }),
+  });
+}
+
+// ---- Privasi, akun, jeda, adaptasi (M6) ----
+
+export function usePrivacyActions() {
+  const qc = useQueryClient();
+  const all = () => qc.invalidateQueries();
+  const exportFile = useMutation({
+    mutationFn: async (today: string) => {
+      const db = await getDb();
+      const file = await backup.exportBackup(db, APP_VERSION);
+      const ok = await shareTextFile(backup.backupFileName(today), JSON.stringify(file, null, 1));
+      if (ok) await repo.updateMeta(db, { last_backup_at: new Date().toISOString() });
+      return ok;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.meta }),
+  });
+  const pickRestore = useMutation({
+    mutationFn: async () => {
+      const text = await pickTextFile();
+      return text == null ? null : backup.parseBackup(text);
+    },
+  });
+  const restore = useMutation({
+    mutationFn: async (file: backup.BackupFile) => backup.importBackup(await getDb(), file),
+    onSuccess: all,
+  });
+  const wipe = useMutation({
+    mutationFn: async () => {
+      await cancelTimerCues();
+      await cancelReminders();
+      await backup.wipeLocalData(await getDb());
+    },
+    onSuccess: all,
+  });
+  const signOut = useMutation({ mutationFn: auth.signOut, onSuccess: all });
+  const deleteAccount = useMutation({
+    mutationFn: async () => {
+      const r = await auth.deleteAccount();
+      if (!r.ok) throw new Error(r.error);
+      // Hanya jika server berhasil: hapus data lokal (FL-7).
+      await cancelReminders();
+      await backup.wipeLocalData(await getDb());
+    },
+    onSuccess: all,
+  });
+  const setAnalytics = useMutation({
+    mutationFn: async (on: boolean) => repo.updateMeta(await getDb(), { analytics_opt_in: on ? 1 : 0 }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.meta }),
+  });
+  const setBackupReminder = useMutation({
+    mutationFn: async (dismissed: boolean) =>
+      repo.updateMeta(await getDb(), { backup_reminder_dismissed: dismissed ? 1 : 0 }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.meta }),
+  });
+  return { exportFile, pickRestore, restore, wipe, signOut, deleteAccount, setAnalytics, setBackupReminder };
+}
+
+export function usePlanOps() {
+  const qc = useQueryClient();
+  const all = () => qc.invalidateQueries();
+  return {
+    pause: useMutation({
+      mutationFn: async (a: { reason: 'injury' | 'sick' | 'busy'; days: number | null }) =>
+        planOps.pausePlan(await getDb(), a.reason, a.days),
+      onSuccess: all,
+    }),
+    resume: useMutation({
+      mutationFn: async (today: string) => planOps.resumePlan(await getDb(), today),
+      onSuccess: all,
+    }),
+    decide: useMutation({
+      mutationFn: async (a: { weekStart: string; proposal: Proposal; accept: boolean; today: string }) =>
+        planOps.decideProposal(await getDb(), a.weekStart, a.proposal, a.accept, a.today),
+      onSuccess: all,
+    }),
+    regenerate: useMutation({
+      mutationFn: async (a: { today: string; days: Weekday[]; longRunDay: Weekday }) =>
+        planOps.regenerateFromToday(await getDb(), a.today, a.days, a.longRunDay),
+      onSuccess: all,
+    }),
+    newGoal: useMutation({
+      mutationFn: async () => {
+        const db = await getDb();
+        await db.runAsync("UPDATE plans SET status = 'archived' WHERE status != 'archived'");
+        await db.runAsync("UPDATE goals SET status = 'abandoned' WHERE status = 'active'");
+        await repo.setDraft(db, { step: 'goal' });
+      },
+      onSuccess: all,
+    }),
+  };
+}
+
+export function useProposals(today: string, weekStart: string) {
+  return useQuery({
+    queryKey: ['proposals', weekStart, today],
+    queryFn: async () => planOps.weeklyProposals(await getDb(), today, weekStart),
   });
 }

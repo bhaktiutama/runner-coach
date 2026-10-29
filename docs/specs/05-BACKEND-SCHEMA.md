@@ -223,7 +223,7 @@ Test wajib (CI): query ke `information_schema.tables` untuk schema `public` meng
 
 | Fungsi | Method | Fase | Input | Output | Menyimpan data? |
 |--------|--------|------|-------|--------|-----------------|
-| delete-account | POST | MVP | JWT pengguna | 204; user Auth terhapus | Tidak (menghapus) |
+| delete-account | POST | MVP | JWT pengguna | 204; user Auth terhapus | Tidak (menghapus). Kode: `supabase/functions/delete-account/`. JWT divalidasi di fungsi (`auth.getUser`), jadi deploy dengan `--no-verify-jwt` agar preflight CORS dari web lolos |
 | strava-token | POST | 2 | `{grant: 'authorization_code', code}` atau `{grant: 'refresh_token', refresh_token}` + JWT | Token dari Strava diteruskan ke perangkat | **Tidak.** Hanya memakai client secret; tidak ada log isi token |
 
 Error: `{ "error": { "code": "string", "message": "string" } }` dengan HTTP status yang sesuai.

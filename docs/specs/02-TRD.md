@@ -23,8 +23,8 @@ Agent tidak boleh mengganti atau menambah library di luar tabel ini tanpa update
 | Grafik | Berbasis react-native-svg (kandidat: Victory Native; final setelah spike M0) |
 | Backend | Supabase **cloud**: Auth + Edge Functions (Deno). Tanpa tabel data pengguna |
 | Notifikasi | Expo Notifications |
-| Analitik | PostHog |
-| Error monitoring | Sentry |
+| Analitik | PostHog (lewat HTTP capture API, tanpa SDK; aktif hanya jika `EXPO_PUBLIC_POSTHOG_KEY` diisi; daftar properti di `apps/app/src/lib/analytics.ts`) |
+| Error monitoring | Sentry (SDK dipasang saat DSN tersedia; `sendDefaultPii: false`) |
 | Monorepo | pnpm workspaces |
 | Test | Vitest (engine, logika), React Native Testing Library (komponen), Playwright (web E2E) |
 | CI/CD | GitHub Actions + EAS Build/Submit |

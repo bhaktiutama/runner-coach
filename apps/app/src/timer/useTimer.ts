@@ -6,6 +6,7 @@ import * as repo from '@/data/repo';
 import type { Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
 import { cancelTimerCues, scheduleTimerCues } from '@/lib/notifications';
+import { track } from '@/lib/analytics';
 import { cueText } from './labels';
 import * as M from './machine';
 import { playCue, prepareCues, releaseCues } from './cues';
@@ -124,7 +125,10 @@ export function useTimer(workout: Workout | null | undefined) {
       setRestored(null);
       void persist(ended);
     },
-    start: () => apply((s, n) => M.start(s, n)),
+    start: () => {
+      track('workout_started', { workout_type: workout?.type ?? 'unknown' });
+      apply((s, n) => M.start(s, n));
+    },
     pause: () => apply((s, n) => M.pause(s, n)),
     resume: () => apply((s, n) => M.resume(s, n)),
     next: () => apply((s, n) => M.next(s, segs, n)),
