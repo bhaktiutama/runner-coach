@@ -65,6 +65,7 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | F-16 | Profil | 4.1 | Must | Target aktif, zona pace, hari & pengingat, jeda plan, satuan, menu Data & privasi |
 | F-17 | ABC drill sebagai pemanasan | 2.2, 2.3b | Should | Tempo dan Interval diawali segmen drill 8-12 mnt. Timer menampilkan nama gerakan, dosis (mis. 2 x 20 m) dan cue teknik; "Lanjut" per set |
 | F-18 | Pulihkan dari file | 4.5, 1.9 | Must | Pilih file backup, lihat ringkasan isi, konfirmasi, data lokal diganti. File dari versi app lebih baru ditolak dengan pesan jelas |
+| F-20 | Panduan & istilah | 4.7, hint (i) di 1.8, 2.1, 2.2, 2.4, 2.6, 3.1, 3.3 | Should | Penjelasan bahasa awam: cara kerja plan, istilah (volume, volume puncak, pace, zona, RPE, fase, taper, cutback), jenis lari (easy, recovery, long, tempo, interval, progression, strides, run-walk, drill) dan dasar ilmiah tiap aturan engine (tingkat bukti + sumber dari registri 07). Offline, teks dari katalog i18n. Tombol (i) di samping istilah membuka 4.7 langsung ke topiknya |
 | F-19 | Data & privasi | 4.5 | Must | Satu layar: data tersimpan di HP ini, backup, pulihkan, sakelar data pemakaian anonim, keluar (+ opsi hapus data di HP), hapus akun |
 
 ## 5. Di luar MVP

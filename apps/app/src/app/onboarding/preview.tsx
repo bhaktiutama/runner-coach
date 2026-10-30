@@ -28,6 +28,7 @@ import { CreateAccountButtons, useAuthFlow } from '@/components/AuthPanel';
 import { RationaleList } from '@/components/RationaleList';
 import { useActivePlan, useCompleteSignIn } from '@/data/hooks';
 import { planParams } from '@/data/rows';
+import { HelpHint } from '@/components/HelpHint';
 import { t } from '@/i18n/t';
 import { startFresh } from '@/lib/nav';
 import { et } from '@/lib/rationale';
@@ -94,9 +95,12 @@ export default function Preview() {
           </View>
           {params.light_mode ? <BibTag label={t('preview.light')} zone="recovery" /> : null}
           <Card style={styles.card}>
-            <Text variant="label" color="textMuted">
-              {t('preview.volumeTitle')}
-            </Text>
+            <View style={styles.hintRow}>
+              <Text variant="label" color="textMuted">
+                {t('preview.volumeTitle')}
+              </Text>
+              <HelpHint topic="volume-puncak" term={t('preview.volumeTitle')} />
+            </View>
             <BarChart
               highlightIndex={peakIdx}
               bars={weeks.map((w) => ({
@@ -112,9 +116,12 @@ export default function Preview() {
             />
           </Card>
           <Card style={styles.card}>
-            <Text variant="label" color="textMuted">
-              {t('preview.paceTitle')}
-            </Text>
+            <View style={styles.hintRow}>
+              <Text variant="label" color="textMuted">
+                {t('preview.paceTitle')}
+              </Text>
+              <HelpHint topic="zona" term={t('preview.paceTitle')} />
+            </View>
             <PaceRow
               label={et('zone.easy')}
               zone="easy"
@@ -190,6 +197,7 @@ function PaceRow({
 }
 
 const styles = StyleSheet.create({
+  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   root: { flex: 1, backgroundColor: color.bg },
   flex: { flex: 1 },
   scroll: { flexGrow: 1 },

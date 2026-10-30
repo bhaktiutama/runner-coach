@@ -41,7 +41,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | 2026-10-29 | M6 | Backup ke file + pulihkan (validasi, versi lebih baru ditolak, rollback), hapus data di HP, keluar, hapus akun (Edge Function + handler), jeda/lanjut + Return to run, adaptasi 2.5 (E-13/17/18/19), atur ulang hari, pengingat 7 hari, event anonim dengan daftar properti | unit 2.358, privacy 15/15, E2E 10/10 |
 | 2026-10-29 | UI | Semua 26 layar disamakan ke wireframe PNG (1.x, 2.x, 3.x, 4.x): ukuran font dari token, input waktu satu kotak, chip/pil, jarak antarblok, tinggi baris, sakelar 52x32, ikon tombol 20. Dicek berdampingan lewat `e2e/compare.spec.ts` + `scripts/compare-wireframes.py` | unit 2.361, E2E 15/15 + compare 3/3, lint + typecheck OK |
 | 2026-10-30 | M1 | Fix login Google di web: "Terjadi kesalahan" karena database lokal (OPFS) dipegang halaman lain. Login web sekarang lewat popup + `auth-callback.html` statis, DB dilepas saat `pagehide`, buka ulang dicoba sampai 6 detik, pesan khusus jika app terbuka di tab lain | unit 2.361, E2E 10/10, uji popup + callback di Chromium |
-
+| 2026-10-30 | M6 | F-20 Panduan & istilah (layar 4.7, spec PRD/APP-FLOW/UI-UX diperbarui): cara kerja plan, istilah (volume, volume puncak, pace, zona, RPE, fase, taper, cutback), jenis lari termasuk recovery dan progression, istilah penelitian, 20 aturan engine dalam bahasa awam + tingkat bukti + sumber. Tombol (i) di 1.8, 2.1, 2.2, 2.4, 2.6, 3.1, 3.3; baris di Profil | unit 2.364, E2E 11/11 |
 
 ## Catatan tampilan di HP
 

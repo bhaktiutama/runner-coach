@@ -1,4 +1,4 @@
-import type { EngineMessageKey } from '@run-coach/training-engine';
+import type { EngineMessageKey, WorkoutType } from '@run-coach/training-engine';
 import {
   BibTag,
   border,
@@ -20,6 +20,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { RationaleList } from '@/components/RationaleList';
+import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useProfile, useUpdateProfile, useWorkout, useWorkoutActions } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
@@ -109,7 +110,10 @@ export default function WorkoutDetail() {
         <View style={styles.spacer} />
       </View>
       <View style={styles.titleBlock}>
-        <BibTag label={typeName(wk.type)} zone={TYPE_ZONE[wk.type]} />
+        <View style={styles.hintRow}>
+          <BibTag label={typeName(wk.type)} zone={TYPE_ZONE[wk.type]} />
+          <HelpHint topic={TYPE_HELP[wk.type] ?? 'easy'} term={typeName(wk.type)} />
+        </View>
         <Text variant="title">
           {t('detail.title', { type: typeName(wk.type), min: minutesOf(wk.steps) })}
         </Text>
@@ -180,7 +184,20 @@ export default function WorkoutDetail() {
   );
 }
 
+/** Jenis latihan -> topik Panduan (F-20). */
+const TYPE_HELP: Partial<Record<WorkoutType, string>> = {
+  easy: 'easy',
+  recovery: 'recovery',
+  long: 'long',
+  tempo: 'tempo',
+  interval: 'interval',
+  strides: 'strides',
+  run_walk: 'run-walk',
+  rest: 'istirahat',
+};
+
 const styles = StyleSheet.create({
+  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   flex: { flex: 1 },
   pair: { flexDirection: 'row', gap: space[2] },
   top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },

@@ -18,6 +18,7 @@ import { formatDateFull, formatDayMonth, formatNumber } from '@run-coach/ui/form
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useActivePlan, useToday, useWorkouts } from '@/data/hooks';
 import { planParams } from '@/data/rows';
@@ -47,11 +48,14 @@ export default function PlanTab() {
   return (
     <Screen testID="screen-plan" gap="plan">
       <View style={styles.head}>
-        <Text variant="title">
-          {g.distance === 'fitness'
-            ? t('plan.titleFitness')
-            : t('plan.title', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
-        </Text>
+        <View style={styles.hintRow}>
+          <Text variant="title">
+            {g.distance === 'fitness'
+              ? t('plan.titleFitness')
+              : t('plan.title', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
+          </Text>
+          <HelpHint topic="fase" term={t('help.phases')} />
+        </View>
         <Text variant="control" color="textMuted">
           {g.race_date
             ? g.race_date === today
@@ -147,6 +151,7 @@ export default function PlanTab() {
 }
 
 const styles = StyleSheet.create({
+  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   head: { gap: space[1] },
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },

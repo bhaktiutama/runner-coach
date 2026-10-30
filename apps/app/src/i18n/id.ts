@@ -16,6 +16,10 @@ export const id = {
   'common.minutes': 'menit',
   'common.minShort': 'mnt',
   'preview.back': 'Ubah jawaban',
+  'help.phases': 'fase plan',
+  'progress.predictionTerm': 'perkiraan waktu race',
+  'profile.help': 'Panduan & istilah',
+  'profile.helpValue': 'Cara kerja plan',
   'common.error': 'Terjadi kesalahan. Coba lagi.',
   'common.dbLocked': 'Run Coach sedang terbuka di tab lain. Tutup tab itu, lalu coba lagi.',
 

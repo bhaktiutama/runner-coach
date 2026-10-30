@@ -102,3 +102,15 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 - Kontainer layar: padding atas min 56, samping 20, jarak antarblok 20 (24 untuk 1.2 dan 1.5), footer 12/20/32.
 - Cek visual: `SHOTS_DIR=<folder> pnpm test:e2e e2e/compare.spec.ts` lalu `python3 scripts/compare-wireframes.py <folder>` (kiri wireframe, kanan app, @2x).
 - Perbedaan yang disengaja: tautan "Isi otomatis dari Strava / Apple Health" (1.4) disembunyikan sampai fase 2 (PRD 5); lari terjauh punya pilihan "< 3 km" agar kriteria run-walk E-14 bisa terpenuhi.
+
+## 9. Panduan dan hint (F-20, v0.6)
+
+Belum ada wireframe; layar 4.7 memakai komponen yang sudah ada agar konsisten dengan 4.1 dan 4.5.
+
+| Elemen | Aturan |
+|---|---|
+| Layar 4.7 | Header kembali + judul "Panduan & istilah" (pola 4.3). Grup berjudul `section-caps` (CARA KERJA PLAN, JENIS LARI, ISTILAH PENELITIAN, DASAR ILMIAH PLAN) berisi kartu lipat: judul `row`, isi `body-sm`. Topik dari hint terbuka otomatis dan digulir ke atas |
+| Kartu aturan | Isi bahasa awam + pil tingkat bukti (sama dengan "Kenapa plan ini?") + "Lihat sumber" (tautan PubMed/DOI, dibuka di browser luar) |
+| Hint (i) | Ikon `info` 18 px warna `text-muted` di samping label, area sentuh min 44 px, label aksesibilitas "Apa itu {istilah}?". Membuka 4.7 di topiknya. Tidak memakai popover agar sama di iOS, Android, web |
+| Teks | Sapaan "kamu", tanpa singkatan tanpa penjelasan; angka contoh konkret (mis. "20 km -> paling banyak 22 km") |
+

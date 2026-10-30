@@ -2,6 +2,7 @@ import type { WorkoutType } from '@run-coach/training-engine';
 import { InfoBox, RpePicker, space, TagChips, Text } from '@run-coach/ui';
 import { StyleSheet, View } from 'react-native';
 import { TAGS, type Tag } from '@/data/activities';
+import { HelpHint } from '@/components/HelpHint';
 import { t, type MessageKey } from '@/i18n/t';
 import { rpeVerdict } from '@/lib/progress';
 import { typeName } from '@/lib/workoutView';
@@ -34,7 +35,10 @@ export function FeedbackFields({
   return (
     <>
       <View style={styles.block}>
-        <Text variant="subheading">{t('rpe.title')}</Text>
+        <View style={styles.hintRow}>
+          <Text variant="subheading">{t('rpe.title')}</Text>
+          <HelpHint topic="rpe" term="RPE" />
+        </View>
         <RpePicker
           value={rpe}
           onChange={setRpe}
@@ -63,4 +67,7 @@ export function FeedbackFields({
   );
 }
 
-const styles = StyleSheet.create({ block: { gap: space[2] + space[1] / 2 } });
+const styles = StyleSheet.create({
+  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+  block: { gap: space[2] + space[1] / 2 },
+});

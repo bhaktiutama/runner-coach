@@ -29,6 +29,7 @@ import {
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useActivePlan, useActivities, useToday, useWorkoutStatuses } from '@/data/hooks';
 import { planParams } from '@/data/rows';
@@ -84,7 +85,10 @@ export default function ProgressTab() {
       </View>
       <Card style={styles.cardVol}>
         <View style={styles.row}>
-          <Text variant="controlStrong">{t('progress.volume')}</Text>
+          <View style={styles.hintRow}>
+            <Text variant="controlStrong">{t('progress.volume')}</Text>
+            <HelpHint topic="volume" term={t('progress.volume')} />
+          </View>
           <Text variant="bodySm" color="textMuted">
             {t('progress.km')}
           </Text>
@@ -158,7 +162,10 @@ export default function ProgressTab() {
               <Text variant="stat">{adh.ratio == null ? '-' : formatPercent(adh.ratio)}</Text>
             </TrackRing>
           </View>
-          <Text variant="label">{t('progress.adherence')}</Text>
+          <View style={styles.hintRow}>
+            <Text variant="label">{t('progress.adherence')}</Text>
+            <HelpHint topic="kepatuhan" term={t('progress.adherence')} />
+          </View>
           <Text variant="caption" color="textMuted">
             {adh.total
               ? t('progress.adherenceSub', { done: adh.done, total: adh.total })
@@ -168,9 +175,12 @@ export default function ProgressTab() {
         <Card style={[styles.small, styles.pred]}>
           {pred && g.distance !== 'fitness' ? (
             <>
-              <Text variant="label" color="textMuted">
-                {t('progress.prediction', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
-              </Text>
+              <View style={styles.hintRow}>
+                <Text variant="label" color="textMuted" style={styles.shrink}>
+                  {t('progress.prediction', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
+                </Text>
+                <HelpHint topic="prediksi" term={t('progress.predictionTerm')} />
+              </View>
               <Text variant="title" testID="prediction">
                 {formatRaceRange(pred.minS, pred.maxS)}
               </Text>
@@ -228,6 +238,8 @@ export default function ProgressTab() {
 }
 
 const styles = StyleSheet.create({
+  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+  shrink: { flexShrink: 1 },
   flex: { flex: 1 },
   head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   seg: {

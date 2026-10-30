@@ -29,10 +29,11 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
 | 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
-| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3; Data & privasi -> 4.5 |
+| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3; Data & privasi -> 4.5; Panduan & istilah -> 4.7 |
 | 4.2 | Integrasi | Fase 2 |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
 | 4.4 | Premium | Fase 3 |
+| 4.7 | Panduan & istilah (F-20) | Dari 4.1 "Panduan & istilah" atau tombol (i) di layar terkait -> 4.7 terbuka di topik itu. Kembali -> layar asal |
 | 4.5 | Data & privasi | Backup ke file; Pulihkan dari file; sakelar data anonim; Keluar; Hapus akun -> 4.6 |
 | 4.6 | Hapus akun | Backup dulu (opsional) -> ketik "HAPUS" -> 1.1 |
 

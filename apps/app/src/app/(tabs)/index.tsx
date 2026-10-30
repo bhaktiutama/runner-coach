@@ -17,6 +17,7 @@ import {
 import { formatDate, formatNumber } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
+import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { WorkoutCard } from '@/components/WorkoutCard';
 import {
@@ -131,7 +132,10 @@ export default function Today() {
       )}
       <View style={styles.week}>
         <View style={styles.weekHead}>
-          <Text variant="controlStrong">{t('today.thisWeek')}</Text>
+          <View style={styles.hintRow}>
+            <Text variant="controlStrong">{t('today.thisWeek')}</Text>
+            <HelpHint topic="volume" term={t('today.thisWeek')} />
+          </View>
           <Text variant="control" color="textMuted" testID="week-km">
             <Text variant="control" style={styles.weekDone}>
               {formatNumber(Math.round((done.data ?? 0) / 100) / 10, 1)}
@@ -194,6 +198,7 @@ function RestCard({ next }: { next: Workout | null }) {
 }
 
 const styles = StyleSheet.create({
+  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   titleCol: { gap: space[1] },
   week: {

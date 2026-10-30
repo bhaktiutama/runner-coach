@@ -157,6 +157,13 @@ export default function ProfileTab() {
           onPress={() => router.push('/privacy')}
           testID="row-privacy"
         />
+        <SettingsRow
+          icon="info"
+          label={t('profile.help')}
+          value={t('profile.helpValue')}
+          onPress={() => router.push('/help')}
+          testID="row-help"
+        />
         <SettingsRow icon="distance" label={t('profile.unit')} value={t('profile.unitValue')} />
       </SettingsGroup>
       <Text variant="caption" color="textMuted" align="center">
