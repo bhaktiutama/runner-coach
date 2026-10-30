@@ -16,6 +16,7 @@ export const id = {
   'common.minutes': 'menit',
   'common.minShort': 'mnt',
   'common.error': 'Terjadi kesalahan. Coba lagi.',
+  'common.dbLocked': 'Run Coach sedang terbuka di tab lain. Tutup tab itu, lalu coba lagi.',
 
   'tabs.today': 'Hari ini',
   'tabs.plan': 'Plan',

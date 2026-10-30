@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Run Coach</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f4f2;
+        color: #242c32;
+        font:
+          600 16px system-ui,
+          sans-serif;
+        text-align: center;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="m">Login selesai. Kembali ke Run Coach.</p>
+    <script>
+      // Callback login web (F-01): kirim kode ke tab app lewat BroadcastChannel lalu tutup.
+      // Halaman statis ini sengaja tidak memuat app agar database lokal tidak dibuka dua kali.
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var msg = {
+          code: q.get('code') || undefined,
+          error: q.get('error_description') || q.get('error') || undefined,
+        };
+        try {
+          var ch = new BroadcastChannel('runcoach-auth');
+          ch.postMessage(msg);
+          ch.close();
+        } catch (e) {}
+        setTimeout(function () {
+          window.close();
+        }, 300);
+      })();
+    </script>
+  </body>
+</html>

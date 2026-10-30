@@ -68,15 +68,7 @@ export async function signInWithProvider(provider: 'google' | 'apple'): Promise<
       if (error || !data.user) return { ok: false, error: error ? mapError(error) : 'failed' };
       return { ok: true, userId: data.user.id };
     }
-    if (process.env.EXPO_OS === 'web') {
-      const { error } = await supabase().auth.signInWithOAuth({
-        provider,
-        options: { redirectTo: globalThis.location?.href },
-      });
-      if (error) return { ok: false, error: mapError(error) };
-      // Browser pindah halaman; sesi dibaca saat kembali (detectSessionInUrl).
-      return { ok: false, error: 'cancelled' };
-    }
+    if (process.env.EXPO_OS === 'web') return await signInWebPopup(provider);
     const redirectTo = Linking.createURL('/auth-callback');
     const { data, error } = await supabase().auth.signInWithOAuth({
       provider,
@@ -95,6 +87,50 @@ export async function signInWithProvider(provider: 'google' | 'apple'): Promise<
     if (code === 'ERR_REQUEST_CANCELED') return { ok: false, error: 'cancelled' };
     return { ok: false, error: mapError(e) };
   }
+}
+
+/**
+ * Web: login di jendela popup yang berakhir di /auth-callback.html (halaman statis, bukan app).
+ * Halaman app tidak pernah ditinggalkan, jadi database lokal (OPFS) tidak dibuka dua kali.
+ * Popup dibuka sinkron sebelum await pertama agar tidak diblokir browser (Safari).
+ */
+async function signInWebPopup(provider: 'google' | 'apple'): Promise<AuthResult> {
+  const popup = globalThis.open?.('about:blank', 'runcoach-auth', 'width=480,height=640');
+  const redirectTo = `${globalThis.location.origin}/auth-callback.html`;
+  const { data, error } = await supabase().auth.signInWithOAuth({
+    provider,
+    options: { redirectTo, skipBrowserRedirect: true },
+  });
+  if (error || !data.url) {
+    popup?.close();
+    return { ok: false, error: error ? mapError(error) : 'failed' };
+  }
+  if (!popup) {
+    // Popup diblokir: pindah di tab yang sama, sesi dibaca saat kembali (detectSessionInUrl).
+    await supabase().auth.signInWithOAuth({ provider, options: { redirectTo: globalThis.location.href } });
+    return { ok: false, error: 'cancelled' };
+  }
+  popup.location.href = data.url;
+  const msg = await new Promise<{ code?: string; error?: string } | null>((resolve) => {
+    const ch = new BroadcastChannel('runcoach-auth');
+    const done = (v: { code?: string; error?: string } | null) => {
+      clearInterval(timer);
+      ch.close();
+      resolve(v);
+    };
+    ch.onmessage = (e: MessageEvent<{ code?: string; error?: string }>) => done(e.data);
+    // Popup ditutup tanpa hasil = dibatalkan (cek per detik; COOP bisa membuat `closed` selalu true
+    // setelah lintas origin, jadi beri waktu sampai 10 menit sebelum menyerah).
+    const started = Date.now();
+    const timer = setInterval(() => {
+      if (Date.now() - started > 600_000) done(null);
+    }, 1000);
+  });
+  if (!msg) return { ok: false, error: 'cancelled' };
+  if (!msg.code) return { ok: false, error: msg.error ? mapError(msg.error) : 'cancelled' };
+  const ex = await supabase().auth.exchangeCodeForSession(msg.code);
+  if (ex.error || !ex.data.user) return { ok: false, error: ex.error ? mapError(ex.error) : 'failed' };
+  return { ok: true, userId: ex.data.user.id };
 }
 
 export async function signOut(): Promise<void> {
