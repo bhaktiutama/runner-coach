@@ -53,13 +53,23 @@ export function easyPaceTrend(acts: DatedActivity[], from: string): { weekStart:
     .map(([weekStart, v]) => ({ weekStart, pace: Math.round(v.t / (v.d / 1000)) }));
 }
 
-/** Kepatuhan: selesai / (selesai + terlewat + dilewati) untuk latihan yang tanggalnya sudah lewat atau selesai. */
+/**
+ * Kepatuhan: selesai / (selesai + terlewat + dilewati) untuk latihan yang tanggalnya sudah lewat atau
+ * selesai. Default hanya lari; strength/core dihitung terpisah (`kind: 'support'`, F-21).
+ */
 export function adherence(
-  workouts: { date: string; status: WorkoutStatus }[],
+  workouts: { date: string; status: WorkoutStatus; type?: string }[],
   from: string,
   today: string,
+  kind: 'run' | 'support' = 'run',
 ): { done: number; total: number; ratio: number | null } {
-  const due = workouts.filter((w) => w.date >= from && (w.date < today || w.status === 'completed'));
+  const support = (t?: string) => t === 'strength' || t === 'core';
+  const due = workouts.filter(
+    (w) =>
+      (kind === 'support') === support(w.type) &&
+      w.date >= from &&
+      (w.date < today || w.status === 'completed'),
+  );
   const done = due.filter((w) => w.status === 'completed').length;
   return { done, total: due.length, ratio: due.length ? done / due.length : null };
 }
@@ -93,6 +103,8 @@ export function parseKm(text: string): number | null {
 export function rpeTarget(type: string | null): [number, number] {
   if (type === 'tempo') return [6, 7];
   if (type === 'interval') return [7, 8];
+  if (type === 'strength') return [5, 6];
+  if (type === 'core') return [4, 5];
   return [3, 5];
 }
 

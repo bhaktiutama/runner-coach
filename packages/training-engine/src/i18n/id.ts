@@ -23,6 +23,18 @@ export const engineId = {
     'Recovery run {min} menit, sangat pelan, sehari setelah long run atau sesi berat. Membantu tubuh pulih tanpa menambah beban.',
   'rule.E-22':
     'Progression run: mulai santai, lalu {fast_min} menit terakhir naik ke pace maraton. Melatih finish yang kuat dengan beban lebih ringan dari sesi tempo.',
+  'rule.E-23':
+    'Latihan kekuatan {per_week}x seminggu di fase ini. Meta-analisis 25 uji acak menemukan latihan kekuatan menurunkan risiko cedera olahraga, dan review lain menemukan efisiensi lari membaik pada pelari terlatih. Jumlah sesi per fase adalah praktik pelatih, belum diuji langsung.',
+  'rule.E-24':
+    'Sesi ini di hari tanpa lari, dan tidak sehari sebelum long run atau interval, supaya kakimu segar di sesi kunci.',
+  'rule.E-24.after_run':
+    'Kerjakan sesudah lari hari ini. Hari berat dibuat berat, hari ringan tetap ringan, dan tidak ada strength sehari sebelum long run atau interval.',
+  'rule.E-25':
+    'Gerakan level {level}. Level naik tiap {weeks} minggu (mis. squat -> split squat) supaya beban bertambah bertahap. Jika terasa terlalu berat, sesi berikutnya diturunkan.',
+  'rule.E-25.down':
+    'Sesi sebelumnya terasa terlalu berat, jadi sesi ini memakai gerakan level {level} yang lebih ringan.',
+  'rule.E-26':
+    'Minggu taper: hanya core ringan, tanpa latihan kaki, supaya kaki segar di hari race. Minggu race tanpa strength.',
   'rule.E-09':
     'Sekitar {easy_pct}% waktu larimu di pace easy. Porsi easy yang besar membangun daya tahan dengan beban pemulihan rendah.',
   'rule.E-10':
@@ -73,6 +85,8 @@ export const engineId = {
   'workout.recovery': 'Recovery',
   'workout.progression': 'Progression',
   'workout.rest': 'Istirahat',
+  'workout.strength': 'Strength',
+  'workout.core': 'Core',
 
   'workout.why.easy':
     'Lari santai untuk membangun daya tahan. Kamu masih bisa ngobrol dengan kalimat lengkap. Rasa: 3-4 dari 10.',
@@ -89,6 +103,10 @@ export const engineId = {
   'workout.why.progression':
     'Mulai santai lalu makin cepat di akhir. Melatih finish yang kuat. Rasa: 4-6 dari 10, naik ke 6-7 di 10 menit terakhir.',
   'workout.why.recovery': 'Lari sangat pelan untuk membantu pemulihan. Rasa: 2-3 dari 10.',
+  'workout.why.strength':
+    'Latihan kekuatan kaki dan core tanpa alat. Otot yang kuat membantu langkah tetap stabil saat lelah. Rasa: 5-6 dari 10, gerakan tetap rapi.',
+  'workout.why.core':
+    'Core ringan tanpa alat untuk menjaga badan tetap stabil saat berlari. Rasa: 4-5 dari 10.',
   'workout.why.drill': 'Drill ABC sebelumnya membangunkan otot dan merapikan langkah.',
 
   'step.finishFast': 'Akhir lebih cepat',
@@ -99,6 +117,8 @@ export const engineId = {
   'step.walk': 'Jalan',
   'step.drill': 'Drill ABC',
   'step.stride': 'Stride',
+  'step.exercise': 'Gerakan',
+  'step.rest': 'Istirahat',
 
   'zone.recovery': 'Recovery',
   'zone.easy': 'Easy',
@@ -122,6 +142,50 @@ export const engineId = {
   'drill.carioca.name': 'Carioca',
   'drill.carioca.cue':
     'Bergerak ke samping, kaki belakang menyilang depan lalu belakang. Pinggul berputar, bahu tetap menghadap depan.',
+
+  'exercise.squat.name': 'Squat',
+  'exercise.squat.cue':
+    'Kaki selebar bahu, dorong pinggul ke belakang, turun sampai paha sejajar lantai. Lutut searah jari kaki.',
+  'exercise.split_squat.name': 'Split squat',
+  'exercise.split_squat.cue':
+    'Satu kaki di depan, satu di belakang. Turunkan lutut belakang lurus ke bawah, badan tetap tegak.',
+  'exercise.bulgarian_split_squat.name': 'Bulgarian split squat',
+  'exercise.bulgarian_split_squat.cue':
+    'Punggung kaki belakang di kursi atau bangku. Turun pelan sampai paha depan sejajar lantai, dorong lewat tumit depan.',
+  'exercise.glute_bridge.name': 'Glute bridge',
+  'exercise.glute_bridge.cue':
+    'Berbaring, lutut ditekuk. Angkat pinggul sampai badan lurus dari bahu ke lutut, tahan 1 detik.',
+  'exercise.single_leg_glute_bridge.name': 'Glute bridge satu kaki',
+  'exercise.single_leg_glute_bridge.cue':
+    'Seperti glute bridge, satu kaki lurus ke atas. Pinggul tetap rata, tidak miring.',
+  'exercise.single_leg_deadlift.name': 'Single-leg deadlift',
+  'exercise.single_leg_deadlift.cue':
+    'Berdiri satu kaki, badan condong ke depan sambil kaki lain lurus ke belakang. Punggung rata, kembali pelan.',
+  'exercise.reverse_lunge.name': 'Reverse lunge',
+  'exercise.reverse_lunge.cue':
+    'Langkah mundur, turunkan lutut belakang hampir ke lantai. Dorong lewat kaki depan untuk berdiri.',
+  'exercise.step_up.name': 'Step-up',
+  'exercise.step_up.cue':
+    'Naik ke anak tangga atau bangku dengan satu kaki, dorong sampai lurus. Turun pelan dengan kaki yang sama.',
+  'exercise.calf_raise.name': 'Calf raise',
+  'exercise.calf_raise.cue': 'Berdiri di ujung kaki, naik setinggi mungkin, tahan 1 detik, turun pelan.',
+  'exercise.single_leg_calf_raise.name': 'Calf raise satu kaki',
+  'exercise.single_leg_calf_raise.cue':
+    'Seperti calf raise dengan satu kaki. Pegang dinding untuk keseimbangan.',
+  'exercise.plank.name': 'Plank',
+  'exercise.plank.cue':
+    'Bertumpu lengan bawah dan ujung kaki. Badan lurus dari kepala ke tumit, perut dikencangkan.',
+  'exercise.side_plank.name': 'Side plank',
+  'exercise.side_plank.cue': 'Bertumpu satu lengan bawah, badan miring dan lurus. Pinggul jangan turun.',
+  'exercise.dead_bug.name': 'Dead bug',
+  'exercise.dead_bug.cue':
+    'Berbaring, lengan dan lutut ke atas. Turunkan lengan dan kaki yang berlawanan pelan, punggung bawah tetap menempel lantai.',
+  'exercise.bird_dog.name': 'Bird dog',
+  'exercise.bird_dog.cue':
+    'Posisi merangkak. Luruskan lengan dan kaki yang berlawanan, tahan 2 detik, pinggul tetap rata.',
+  'exercise.copenhagen_plank.name': 'Copenhagen plank',
+  'exercise.copenhagen_plank.cue':
+    'Side plank dengan kaki atas di bangku, kaki bawah menggantung. Mulai dari lutut di bangku jika masih berat.',
 } as const;
 
 export type EngineMessageKey = keyof typeof engineId;

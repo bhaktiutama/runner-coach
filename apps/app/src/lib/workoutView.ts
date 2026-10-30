@@ -1,5 +1,6 @@
 import {
   flattenSteps,
+  isRunSegment,
   runningDistance,
   segmentDuration,
   totalDistance,
@@ -14,7 +15,7 @@ import { et } from './rationale';
 
 // Tampilan latihan untuk kartu (2.1), detail (2.2) dan kalender (3.1). Teks dari katalog.
 
-export type ViewZone = 'recovery' | 'easy' | 'long' | 'tempo' | 'interval';
+export type ViewZone = 'recovery' | 'easy' | 'long' | 'tempo' | 'interval' | 'strength';
 
 export const TYPE_ZONE: Record<WorkoutType, ViewZone> = {
   easy: 'easy',
@@ -26,6 +27,8 @@ export const TYPE_ZONE: Record<WorkoutType, ViewZone> = {
   recovery: 'recovery',
   progression: 'easy',
   rest: 'recovery',
+  strength: 'strength',
+  core: 'strength',
 };
 
 export const typeName = (type: WorkoutType) => et(`workout.${type}` as EngineMessageKey);
@@ -62,6 +65,29 @@ export function segmentRows(steps: Step[], type: WorkoutType, unit: Unit = 'km')
   const rows: SegmentRow[] = [];
   for (let i = 0; i < steps.length; i++) {
     const s = steps[i]!;
+    if (s.kind === 'exercise') {
+      // Strength (F-21): 1 baris per gerakan, mis. "Squat  2 x 10" atau "Plank  3 x 40 dtk".
+      const one =
+        s.reps != null ? t('strength.reps', { n: s.reps }) : t('strength.seconds', { n: s.duration_s ?? 0 });
+      const dose = t('segment.drillDose', {
+        sets: s.sets,
+        dose: s.per_side ? t('strength.perSide', { dose: one }) : one,
+      });
+      const name = et(`exercise.${s.exercise_id}.name` as EngineMessageKey);
+      rows.push({
+        key: `e${i}`,
+        label: name,
+        durationLabel: mins(
+          flattenSteps([s]).reduce((a, x) => a + segmentDuration(x), 0) + s.rest_s * (s.sets - 1),
+        ),
+        detail: dose,
+        summary: dose,
+        zone: 'strength',
+        drill: false,
+        emphasis: false,
+      });
+      continue;
+    }
     if (s.kind === 'drill') {
       const group: (Step & { kind: 'drill' })[] = [];
       while (i < steps.length && steps[i]!.kind === 'drill')
@@ -189,7 +215,7 @@ export function intensitySegments(steps: Step[]): { zone: ViewZone; weight: numb
   const flat = flattenSteps(steps);
   const out: { zone: ViewZone; weight: number; drill?: boolean }[] = [];
   for (const f of flat) {
-    const zone: ViewZone = f.kind === 'drill' ? 'easy' : f.zone;
+    const zone: ViewZone = isRunSegment(f) ? f.zone : f.kind === 'drill' ? 'easy' : 'strength';
     const drill = f.kind === 'drill';
     const w = segmentDuration(f);
     const last = out[out.length - 1];

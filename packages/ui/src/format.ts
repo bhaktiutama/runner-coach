@@ -2,6 +2,15 @@
 // Data disimpan dalam meter dan detik; konversi hanya di sini.
 
 export const DEFAULT_LOCALE = 'id-ID';
+
+// Locale aktif untuk semua format (F-22). Diatur app saat bahasa dipilih; default id-ID.
+let activeLocale = DEFAULT_LOCALE;
+export function setFormatLocale(locale: string): void {
+  activeLocale = locale;
+}
+export function formatLocale(): string {
+  return activeLocale;
+}
 export type Unit = 'km' | 'mi';
 
 const METERS_PER_MILE = 1609.344;
@@ -9,7 +18,7 @@ const METERS_PER_MILE = 1609.344;
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
 /** Angka biasa dengan koma desimal sesuai locale. */
-export function formatNumber(value: number, fractionDigits = 0, locale = DEFAULT_LOCALE): string {
+export function formatNumber(value: number, fractionDigits = 0, locale = activeLocale): string {
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: fractionDigits,
@@ -17,13 +26,13 @@ export function formatNumber(value: number, fractionDigits = 0, locale = DEFAULT
 }
 
 /** Jarak dalam unit pengguna, tanpa satuan: 5200 -> "5,2". */
-export function formatDistanceValue(meters: number, unit: Unit = 'km', locale = DEFAULT_LOCALE): string {
+export function formatDistanceValue(meters: number, unit: Unit = 'km', locale = activeLocale): string {
   const v = unit === 'km' ? meters / 1000 : meters / METERS_PER_MILE;
   return formatNumber(Math.round(v * 10) / 10, 1, locale);
 }
 
 /** Jarak dengan satuan: 5200 -> "5,2 km". */
-export function formatDistance(meters: number, unit: Unit = 'km', locale = DEFAULT_LOCALE): string {
+export function formatDistance(meters: number, unit: Unit = 'km', locale = activeLocale): string {
   return `${formatDistanceValue(meters, unit, locale)} ${unit}`;
 }
 
@@ -50,12 +59,13 @@ export function formatRaceRange(minS: number, maxS: number): string {
   return `${formatRaceTime(minS)} - ${formatRaceTime(maxS)}`;
 }
 
-/** Total durasi ringkas: 8460 -> "2j 21m", 2700 -> "45m". */
+/** Total durasi ringkas: 8460 -> "2j 21m" (en: "2h 21m"), 2700 -> "45m". */
 export function formatTotalDuration(seconds: number): string {
   const totalMin = Math.round(Math.max(0, seconds) / 60);
   const h = Math.floor(totalMin / 60);
   const m = totalMin % 60;
-  return h > 0 ? `${h}j ${m}m` : `${m}m`;
+  const hour = activeLocale.startsWith('en') ? 'h' : 'j';
+  return h > 0 ? `${h}${hour} ${m}m` : `${m}m`;
 }
 
 /** Menit bulat: 2520 -> "42". */
@@ -87,7 +97,7 @@ export function parseLocalDate(date: string): Date {
 }
 
 /** "Selasa, 27 Okt" dari `YYYY-MM-DD`. */
-export function formatDate(date: string, locale = DEFAULT_LOCALE): string {
+export function formatDate(date: string, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, {
     weekday: 'long',
     day: 'numeric',
@@ -97,7 +107,7 @@ export function formatDate(date: string, locale = DEFAULT_LOCALE): string {
 }
 
 /** "27 Okt 2026". */
-export function formatDateLong(date: string, locale = DEFAULT_LOCALE): string {
+export function formatDateLong(date: string, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'short',
@@ -107,7 +117,7 @@ export function formatDateLong(date: string, locale = DEFAULT_LOCALE): string {
 }
 
 /** "27 Okt". */
-export function formatDayMonth(date: string, locale = DEFAULT_LOCALE): string {
+export function formatDayMonth(date: string, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
     parseLocalDate(date),
   );
@@ -120,24 +130,24 @@ export function formatDayMonthNumeric(date: string): string {
 }
 
 /** Nama hari singkat: "Sel". */
-export function formatWeekdayShort(date: string, locale = DEFAULT_LOCALE): string {
+export function formatWeekdayShort(date: string, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(parseLocalDate(date));
 }
 
 /** Persen: 0.8 -> "80%". */
-export function formatPercent(ratio: number, locale = DEFAULT_LOCALE): string {
+export function formatPercent(ratio: number, locale = activeLocale): string {
   return new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
 }
 
 /** "Januari 2027". */
-export function formatMonthYear(year: number, month0: number, locale = DEFAULT_LOCALE): string {
+export function formatMonthYear(year: number, month0: number, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
     new Date(Date.UTC(year, month0, 15)),
   );
 }
 
 /** "Minggu, 3 Jan 2027". */
-export function formatDateFull(date: string, locale = DEFAULT_LOCALE): string {
+export function formatDateFull(date: string, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, {
     weekday: 'long',
     day: 'numeric',
@@ -148,7 +158,7 @@ export function formatDateFull(date: string, locale = DEFAULT_LOCALE): string {
 }
 
 /** Nama hari singkat dari indeks 0 = Senin: "Sen". */
-export function weekdayShortName(index: number, locale = DEFAULT_LOCALE): string {
+export function weekdayShortName(index: number, locale = activeLocale): string {
   // 2026-11-02 adalah Senin.
   return new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' }).format(
     new Date(Date.UTC(2026, 10, 2 + index, 12)),
@@ -156,7 +166,7 @@ export function weekdayShortName(index: number, locale = DEFAULT_LOCALE): string
 }
 
 /** Nama hari panjang dari indeks 0 = Senin: "Sabtu". */
-export function weekdayLongName(index: number, locale = DEFAULT_LOCALE): string {
+export function weekdayLongName(index: number, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' }).format(
     new Date(Date.UTC(2026, 10, 2 + index, 12)),
   );
@@ -200,4 +210,9 @@ export function formatClock(seconds: number): string {
   const sec = s % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
   return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+}
+
+/** Harga: 5.99 USD -> "US$5,99" (id) / "$5.99" (en). Harga final kelak dari store (08 bagian 3). */
+export function formatPrice(amount: number, currency: string, locale = activeLocale): string {
+  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
 }

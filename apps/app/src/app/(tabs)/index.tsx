@@ -1,4 +1,4 @@
-import { diffDays } from '@run-coach/training-engine';
+import { diffDays, isSupportType } from '@run-coach/training-engine';
 import {
   border,
   Card,
@@ -19,7 +19,7 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
-import { WorkoutCard } from '@/components/WorkoutCard';
+import { StrengthCard, WorkoutCard } from '@/components/WorkoutCard';
 import {
   useActivePlan,
   useActivityDistance,
@@ -56,9 +56,13 @@ export default function Today() {
   if (!plan.data) return null;
   const params = planParams(plan.data);
   const wIdx = weekIndexOf(params, today);
-  const workouts = week.data ?? [];
+  const all = week.data ?? [];
+  // F-21: strength/core tampil sebagai kartu kedua; lajur minggu dan sisa minggu memakai lari.
+  const workouts = all.filter((w) => !isSupportType(w.type));
+  const support = all.filter((w) => isSupportType(w.type));
   const todays = workouts.filter((w) => w.date === today);
   const current = todays.find((w) => w.status === 'scheduled') ?? todays[0];
+  const strengthToday = support.find((w) => w.date === today);
   const paused = plan.data.status === 'paused';
   const raceDay = plan.data.goal.race_date === today;
   const target = workouts.reduce((a, w) => a + (w.target_distance_m ?? 0), 0);
@@ -130,6 +134,13 @@ export default function Today() {
       ) : (
         <RestCard next={next} />
       )}
+      {strengthToday && !paused && !raceDay ? (
+        <StrengthCard
+          workout={strengthToday}
+          onStart={() => router.push(`/timer/${strengthToday.id}`)}
+          onDetails={() => router.push(`/workout/${strengthToday.id}`)}
+        />
+      ) : null}
       <View style={styles.week}>
         <View style={styles.weekHead}>
           <View style={styles.hintRow}>
@@ -157,7 +168,12 @@ export default function Today() {
                     ? 'missed'
                     : 'scheduled',
               today: d === today,
-              onPress: w ? () => router.push(`/workout/${w.id}`) : undefined,
+              badge: support.some((x) => x.date === d) ? t('strength.badge') : undefined,
+              onPress: w
+                ? () => router.push(`/workout/${w.id}`)
+                : support.find((x) => x.date === d)
+                  ? () => router.push(`/workout/${support.find((x) => x.date === d)!.id}`)
+                  : undefined,
             };
           })}
         />

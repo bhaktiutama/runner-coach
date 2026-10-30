@@ -9,6 +9,7 @@ import {
   SettingsGroup,
   SettingsRow,
   space,
+  Switch,
   Text,
   TextField,
 } from '@run-coach/ui';
@@ -18,9 +19,10 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
-import { useActivePlan, usePlanOps, useProfile, useUpdateProfile } from '@/data/hooks';
+import { useActivePlan, usePlanOps, useProfile, useToday, useUpdateProfile } from '@/data/hooks';
 import { planParams } from '@/data/rows';
-import { t } from '@/i18n/t';
+import { languageLabel, t } from '@/i18n/t';
+import { useEntitlement } from '@/lib/entitlement';
 import {
   getPermission,
   notificationsSupported,
@@ -29,12 +31,17 @@ import {
 } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
 
-/** 4.1 Profil (F-16). Kartu Premium dan Integrasi disembunyikan di MVP (PRD 5). */
+/**
+ * 4.1 Profil (F-16). Fase 2: sakelar strength (F-21), bahasa (F-22). Baris Premium hanya saat paywall
+ * aktif (F-23, flag); Integrasi tetap tersembunyi (PRD 5).
+ */
 export default function ProfileTab() {
   const plan = useActivePlan();
   const profile = useProfile();
   const update = useUpdateProfile();
   const ops = usePlanOps();
+  const today = useToday();
+  const ent = useEntitlement();
   const [perm, setPerm] = useState<PermissionState>('unsupported');
   const [editName, setEditName] = useState(false);
   const [name, setName] = useState('');
@@ -126,6 +133,19 @@ export default function ProfileTab() {
           <SettingsRow label={t('profile.openSettings')} onPress={openSettings} />
         ) : null}
         <SettingsRow
+          label={t('profile.strength')}
+          sub={t('profile.strengthSub')}
+          testID="row-strength"
+          right={
+            <Switch
+              label={t('profile.strength')}
+              value={!!profile.data.strength_opt_in}
+              onChange={(on) => ops.setStrength.mutate({ today, on })}
+              testID="strength-switch"
+            />
+          }
+        />
+        <SettingsRow
           label={t('profile.pause')}
           danger
           value={p.status === 'paused' ? t('profile.paused') : t('profile.pauseValue')}
@@ -148,6 +168,18 @@ export default function ProfileTab() {
           <SecondaryButton label={t('common.cancel')} onPress={() => setConfirmGoal(false)} />
         </View>
       ) : null}
+      {ent.paywall ? (
+        <SettingsGroup>
+          <SettingsRow
+            first
+            icon="premium"
+            label={t('profile.premium')}
+            value={ent.premium ? t('profile.premiumActive') : t('profile.premiumTry')}
+            onPress={() => router.push('/premium')}
+            testID="row-premium"
+          />
+        </SettingsGroup>
+      ) : null}
       <SettingsGroup title={t('profile.sectionData')}>
         <SettingsRow
           first
@@ -163,6 +195,13 @@ export default function ProfileTab() {
           value={t('profile.helpValue')}
           onPress={() => router.push('/help')}
           testID="row-help"
+        />
+        <SettingsRow
+          icon="link"
+          label={t('profile.language')}
+          value={languageLabel(profile.data.locale)}
+          onPress={() => router.push('/language')}
+          testID="row-language"
         />
         <SettingsRow icon="distance" label={t('profile.unit')} value={t('profile.unitValue')} />
       </SettingsGroup>

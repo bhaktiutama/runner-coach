@@ -62,6 +62,7 @@ const PROFILE_KEYS = [
   'intensity_guide',
   'health_flag',
   'disclaimer_accepted_at',
+  'strength_opt_in',
 ] as const;
 
 export async function updateProfile(db: Db, patch: Partial<ProfileRow>): Promise<void> {
@@ -147,8 +148,8 @@ export async function savePlanFromOnboarding(
     );
     await insertWorkouts(db, planId, plan.workouts, ts);
     await db.runAsync(
-      `UPDATE profile SET reminder_time = ?, health_flag = ?, disclaimer_accepted_at = ? WHERE id = 1`,
-      [draft.reminderTime ?? null, draft.healthFlag ? 1 : 0, ts],
+      `UPDATE profile SET reminder_time = ?, health_flag = ?, disclaimer_accepted_at = ?, strength_opt_in = ? WHERE id = 1`,
+      [draft.reminderTime ?? null, draft.healthFlag ? 1 : 0, ts, input.strength ? 1 : 0],
     );
   });
   return planId;

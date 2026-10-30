@@ -14,6 +14,7 @@ import {
   type WeekSummary,
   type WorkoutType,
 } from './types';
+import { planStrength } from './strength';
 import { LEVEL_VDOT, paceZones, raceTimeFromVdot, vdotFromRace, type PaceZones } from './vdot';
 import {
   DRILL_MINUTES,
@@ -32,7 +33,7 @@ import {
   tempoRun,
 } from './workouts';
 
-export const ENGINE_VERSION = '0.1.0';
+export const ENGINE_VERSION = '0.3.0';
 
 // ---- Konstanta aturan (TRD 4.2). Angka heuristik (tingkat D) wajib direview pelatih (D6). ----
 
@@ -387,7 +388,22 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
     history.push(...week.workouts);
   }
 
-  const workouts = history.filter((x) => x.date >= input.startDate && (!raceDate || x.date < raceDate));
+  const runs = history.filter((x) => x.date >= input.startDate && (!raceDate || x.date < raceDate));
+  const strength = input.strength
+    ? planStrength(runs, {
+        level,
+        lightMode: input.lightMode,
+        startDate: input.startDate,
+        raceDate,
+        weeks: summaries,
+      })
+    : [];
+  // Lari dulu, lalu strength di tanggal yang sama (urutan tampil 2.1).
+  const workouts = [...runs, ...strength].sort(
+    (x, y) =>
+      x.date.localeCompare(y.date) ||
+      Number(x.type === 'strength' || x.type === 'core') - Number(y.type === 'strength' || y.type === 'core'),
+  );
   const endDate = raceDate ?? addDays(firstMonday, weeks * 7 - 1);
   const prediction = buildPrediction(input, vdot);
   const rationale = planRationale({
@@ -421,6 +437,7 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
       engine_version: ENGINE_VERSION,
       vdot,
       rationale,
+      strength: !!input.strength,
     },
   };
 }
@@ -812,5 +829,6 @@ function planRationale(a: PlanRationaleArgs): Rationale[] {
   if (!a.input.lightMode && !a.runWalkPlan) {
     out.push({ rule: 'E-10', values: { hard_per_week: a.level === 'beginner' ? 1 : 2 } });
   }
+  if (a.input.strength) out.push({ rule: 'E-23', values: { per_week: 2 } });
   return out;
 }

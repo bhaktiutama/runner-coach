@@ -4,6 +4,7 @@ import type { Rationale, RuleId, WorkoutType } from './types';
 import { easyRun } from './workouts';
 import type { PaceZones } from './vdot';
 import { isHard } from './move';
+import { isSupportType } from './strength';
 
 // Adaptasi akhir minggu (F-11, TRD 4.3, layar 2.5). Engine hanya mengusulkan; plan berubah
 // setelah pengguna menekan "Oke, terapkan".
@@ -56,7 +57,10 @@ export function proposeAdjustments(a: AdaptInput): Proposal[] {
   }
 
   // E-19: >= 2 latihan terlewat -> ulangi minggu.
-  const missed = a.week.filter((w) => w.status === 'missed' || w.status === 'skipped').length;
+  // Strength/core terlewat tidak dihitung: E-19 menjaga progresi lari.
+  const missed = a.week.filter(
+    (w) => !isSupportType(w.type) && (w.status === 'missed' || w.status === 'skipped'),
+  ).length;
   if (missed >= 2) {
     out.push({
       rule: 'E-19',
@@ -102,7 +106,7 @@ export function applyChanges(
     changes.filter((c) => c.kind === 'hard_to_easy').map((c) => (c as { workout_id: string }).workout_id),
   );
   return nextWeek
-    .filter((w) => w.status === 'scheduled')
+    .filter((w) => w.status === 'scheduled' && !isSupportType(w.type))
     .map((w) => {
       let type = w.type;
       let steps = w.steps;

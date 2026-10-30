@@ -1,4 +1,4 @@
-import { parseSteps, type Rationale, type Step } from '@run-coach/training-engine';
+import { parseSteps, type Rationale, type Step, type WorkoutType } from '@run-coach/training-engine';
 
 // Baris tabel lokal (Schema 2) dan konversi JSON.
 
@@ -21,6 +21,8 @@ export type ProfileRow = {
   intensity_guide: 'pace' | 'hr' | 'rpe';
   health_flag: number;
   disclaimer_accepted_at: string | null;
+  /** F-21: 1 = plan memuat strength + core. */
+  strength_opt_in: number;
 };
 
 export type GoalRow = {
@@ -46,6 +48,8 @@ export type PlanParams = {
   engine_version: string;
   vdot: number;
   rationale: Rationale[];
+  /** F-21; plan lama tanpa kolom ini = false. */
+  strength?: boolean;
   weeks?: { weekIndex: number; phase: string; startDate: string; volumeM: number; cutback: boolean }[];
   prediction?: { likelyS: number; minS: number; maxS: number; rough: boolean } | null;
 };
@@ -75,7 +79,7 @@ export type WorkoutRow = {
   date: string;
   week_index: number;
   phase: 'base' | 'build' | 'peak' | 'taper' | 'return';
-  type: 'easy' | 'run_walk' | 'long' | 'tempo' | 'interval' | 'strides' | 'recovery' | 'progression' | 'rest';
+  type: WorkoutType;
   steps: string;
   target_distance_m: number | null;
   target_duration_s: number | null;

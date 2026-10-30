@@ -159,6 +159,35 @@ ALTER TABLE planned_workouts_v5 RENAME TO planned_workouts;
 CREATE INDEX planned_workouts_date ON planned_workouts (date);
 `,
   },
+  {
+    // Fase 2 (F-21, F-22): tipe 'strength'/'core', pilihan strength di profil, rasa beban sesi
+    // strength, bahasa. Install baru (belum ada target) mengikuti bahasa perangkat ('system').
+    version: 6,
+    foreignKeysOff: true,
+    sql: `
+CREATE TABLE planned_workouts_v6 (
+  ${std},
+  plan_id TEXT NOT NULL REFERENCES plans (id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  week_index INTEGER NOT NULL,
+  phase TEXT NOT NULL CHECK (phase IN ('base', 'build', 'peak', 'taper', 'return')),
+  type TEXT NOT NULL CHECK (type IN ('easy', 'run_walk', 'long', 'tempo', 'interval', 'strides', 'recovery', 'progression', 'rest', 'strength', 'core')),
+  steps TEXT NOT NULL,
+  target_distance_m INTEGER NULL,
+  target_duration_s INTEGER NULL,
+  status TEXT NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'skipped', 'missed')),
+  original_date TEXT NULL,
+  rationale TEXT NOT NULL DEFAULT '[]'
+);
+INSERT INTO planned_workouts_v6 SELECT * FROM planned_workouts;
+DROP TABLE planned_workouts;
+ALTER TABLE planned_workouts_v6 RENAME TO planned_workouts;
+CREATE INDEX planned_workouts_date ON planned_workouts (date);
+ALTER TABLE profile ADD COLUMN strength_opt_in INTEGER NOT NULL DEFAULT 0 CHECK (strength_opt_in IN (0, 1));
+ALTER TABLE workout_feedback ADD COLUMN load_feel TEXT NULL CHECK (load_feel IN ('too_hard', 'ok', 'too_easy'));
+UPDATE profile SET locale = 'system' WHERE NOT EXISTS (SELECT 1 FROM goals);
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = migrations[migrations.length - 1]!.version;

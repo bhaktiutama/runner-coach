@@ -1,4 +1,4 @@
-import type { EngineMessageKey } from '@run-coach/training-engine';
+import { isRunSegment, type EngineMessageKey } from '@run-coach/training-engine';
 import {
   BibTag,
   border,
@@ -19,19 +19,20 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ExerciseAnimation } from '@/components/ExerciseAnimation';
 import { useProfile, useWorkout } from '@/data/hooks';
 import { t } from '@/i18n/t';
 import { getPermission, notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
 import { intensitySegments } from '@/lib/workoutView';
 import { requestWakeLock } from '@/timer/cues';
-import { FEEL_KEY, segmentName } from '@/timer/labels';
+import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
 import { plannedS } from '@/timer/machine';
 import { useTimer } from '@/timer/useTimer';
 
 const dark = color.dark;
 
-/** 2.3 Timer (gelap) + 2.3b segmen drill. */
+/** 2.3 Timer (gelap) + 2.3b segmen drill + 2.3s mode gerakan strength. */
 export default function TimerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const w = useWorkout(id);
@@ -156,7 +157,7 @@ export default function TimerScreen() {
   const paused = st!.status === 'paused';
   const running = st!.status === 'running';
   const isDrill = seg?.kind === 'drill';
-  const zone = seg && seg.kind !== 'drill' ? seg.zone : 'easy';
+  const zone = seg && isRunSegment(seg) ? seg.zone : 'easy';
   const ringColor = zone === 'interval' ? dark.zoneInterval : color.zone[zone];
   const ringW = Math.min(width - space.screenX * 2, size.contentMax / 1.6);
   const segs = intensitySegments(w.data.steps);
@@ -221,6 +222,65 @@ export default function TimerScreen() {
     );
   }
 
+  const strengthSeg = seg?.kind === 'exercise' || seg?.kind === 'rest';
+  if (strengthSeg && !(countdown !== null && countdown > 0)) {
+    const manual = seg.kind === 'exercise' && seg.timedS == null;
+    return (
+      <View style={[styles.root, bg]} testID="screen-timer">
+        <View style={styles.inner}>
+          {top}
+          <StrengthView tm={tm} paused={paused} />
+        </View>
+        <View style={styles.drillFooter}>
+          {seg.kind === 'rest' ? (
+            <PrimaryButton
+              label={t('timer.skipRest')}
+              icon="skip"
+              onPress={tm.next}
+              disabled={locked}
+              testID="rest-skip"
+            />
+          ) : (
+            <PrimaryButton
+              label={manual ? t('timer.setDone') : t('timer.next.cta')}
+              icon={manual ? 'check' : 'chevron-right'}
+              onPress={tm.next}
+              disabled={locked}
+              testID="exercise-next"
+            />
+          )}
+          <View style={styles.strengthRow}>
+            <Pressable
+              onPress={paused ? tm.resume : tm.pause}
+              disabled={locked}
+              accessibilityRole="button"
+              style={[styles.textBtn, styles.flex]}
+              testID="timer-toggle"
+            >
+              <Text variant="controlStrong" color="darkTextMuted" align="center">
+                {paused ? t('timer.resume') : t('timer.pause')}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={tm.skipGroup}
+              disabled={locked}
+              accessibilityRole="button"
+              style={[styles.textBtn, styles.flex]}
+              testID="exercise-skip"
+            >
+              <Text variant="controlStrong" color="darkTextMuted" align="center">
+                {t('timer.skipExercise')}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+        {confirm ? (
+          <Confirm onYes={() => (setConfirm(false), tm.end())} onNo={() => setConfirm(false)} />
+        ) : null}
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.root, bg]} testID="screen-timer">
       <View style={styles.inner}>
@@ -269,7 +329,7 @@ export default function TimerScreen() {
             <View style={styles.cards}>
               {profile.data?.intensity_guide !== 'rpe' &&
               seg &&
-              seg.kind !== 'drill' &&
+              isRunSegment(seg) &&
               seg.pace_s_per_km &&
               !seg.walk ? (
                 <View style={styles.card}>
@@ -472,6 +532,85 @@ function DrillView({ tm }: { tm: ReturnType<typeof useTimer> }) {
   );
 }
 
+/** 2.3s mode gerakan (F-21): animasi (placeholder), nama, set, dosis, cue; istirahat = hitung mundur. */
+function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: boolean }) {
+  const pos = tm.position!;
+  const seg = pos.segment;
+  if (!seg || (seg.kind !== 'exercise' && seg.kind !== 'rest')) return null;
+  const groups = [...new Set(tm.segs.filter((s) => s.kind === 'exercise').map((s) => s.group))];
+  const exIdx = groups.indexOf(seg.group) + 1;
+  const nxt = tm.segs.slice(pos.index + 1).find((s) => s.kind === 'exercise');
+  const clock = pos.remainingS != null ? formatClock(pos.remainingS) : null;
+  if (seg.kind === 'rest') {
+    return (
+      <View style={[styles.drill, styles.restCol]} testID="timer-rest">
+        <BibTag label={t('timer.restBib')} zone="recovery" />
+        <Text variant="timer" color="darkText" style={paused && styles.blink} testID="timer-remaining">
+          {clock}
+        </Text>
+        {nxt && nxt.kind === 'exercise' ? (
+          <Text variant="subtitle" color="darkTextMuted" align="center">
+            {t('timer.restNext', { name: exerciseName(nxt.exercise_id), n: nxt.set, total: nxt.sets })}
+          </Text>
+        ) : null}
+      </View>
+    );
+  }
+  const dose =
+    seg.reps != null
+      ? t('strength.reps', { n: seg.reps })
+      : t('strength.seconds', { n: seg.duration_s ?? 0 });
+  const cues = exerciseCue(seg.exercise_id)
+    .split('. ')
+    .map((c) => c.replace(/\.$/, ''))
+    .filter(Boolean);
+  return (
+    <View style={styles.drill} testID="timer-exercise">
+      <ExerciseAnimation exerciseId={seg.exercise_id} dark height={space[10] * 3} />
+      <View style={styles.drillHead}>
+        <BibTag label={t('timer.exerciseBib', { n: exIdx, total: groups.length })} zone="strength" />
+        <Text variant="drillName" color="darkText">
+          {exerciseName(seg.exercise_id)}
+        </Text>
+        <Text variant="set" color="darkText">
+          {t('timer.drillSet', { n: seg.set, total: seg.sets })}
+          <Text variant="set" color="darkTextMuted">
+            {t('timer.drillDoseSpaced', { dose: seg.per_side ? t('strength.perSide', { dose }) : dose })}
+          </Text>
+        </Text>
+        <View style={styles.lanes}>
+          {Array.from({ length: seg.sets }, (_, i) => (
+            <View
+              key={i}
+              style={[styles.lane, { backgroundColor: i < seg.set ? color.primary : dark.surfaceSunken }]}
+            />
+          ))}
+        </View>
+        {clock ? (
+          <Text variant="stat" color="darkText" style={paused && styles.blink} testID="timer-remaining">
+            {clock}
+          </Text>
+        ) : null}
+      </View>
+      <View style={styles.cues}>
+        {cues.map((c) => (
+          <View key={c} style={styles.cueRow}>
+            <Icon name="check" color={dark.successInk} size={space[5]} />
+            <Text variant="bodySm" color="darkText" style={styles.flex}>
+              {c}
+            </Text>
+          </View>
+        ))}
+      </View>
+      {seg.timedS == null ? (
+        <Text variant="controlSm" color="darkTextMuted">
+          {t('timer.exerciseHint')}
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
 function RoundButton(p: {
   icon: IconName;
   label: string;
@@ -624,4 +763,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   textBtn: { minHeight: size.touchMin, justifyContent: 'center' },
+  strengthRow: { flexDirection: 'row', gap: space[2] },
+  restCol: { alignItems: 'center', justifyContent: 'center', gap: space[4] },
 });

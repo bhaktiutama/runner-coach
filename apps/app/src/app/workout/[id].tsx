@@ -1,4 +1,9 @@
-import type { EngineMessageKey, WorkoutType } from '@run-coach/training-engine';
+import {
+  isSupportType,
+  type EngineMessageKey,
+  type Step,
+  type WorkoutType,
+} from '@run-coach/training-engine';
 import {
   BibTag,
   border,
@@ -19,12 +24,15 @@ import { formatDate } from '@run-coach/ui/format';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { ExerciseAnimation } from '@/components/ExerciseAnimation';
 import { RationaleList } from '@/components/RationaleList';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useProfile, useUpdateProfile, useWorkout, useWorkoutActions } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
+import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { et } from '@/lib/rationale';
+import { exerciseCue, exerciseName } from '@/timer/labels';
 import {
   intensityAxis,
   intensitySegments,
@@ -41,6 +49,7 @@ export default function WorkoutDetail() {
   const profile = useProfile();
   const updateProfile = useUpdateProfile();
   const actions = useWorkoutActions();
+  const ent = useEntitlement();
   const [easyDone, setEasyDone] = useState(false);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
@@ -57,7 +66,9 @@ export default function WorkoutDetail() {
   const rows = segmentRows(wk.steps, wk.type);
   const axis = intensityAxis(wk.steps);
   const hard = wk.type === 'tempo' || wk.type === 'interval';
+  const support = isSupportType(wk.type);
   const scheduled = wk.status === 'scheduled';
+  const locked = isLocked(wk, ent);
   const why = [
     et(`workout.why.${wk.type}` as EngineMessageKey),
     rows.some((r) => r.drill) ? et('workout.why.drill') : '',
@@ -71,12 +82,21 @@ export default function WorkoutDetail() {
       footer={
         scheduled ? (
           <>
-            <PrimaryButton
-              label={t('today.start')}
-              icon="play"
-              onPress={() => router.push(`/timer/${wk.id}`)}
-              testID="start"
-            />
+            {locked ? (
+              <PrimaryButton
+                label={t('premium.unlock')}
+                icon="premium"
+                onPress={() => router.push('/premium')}
+                testID="unlock"
+              />
+            ) : (
+              <PrimaryButton
+                label={t('today.start')}
+                icon="play"
+                onPress={() => router.push(`/timer/${wk.id}`)}
+                testID="start"
+              />
+            )}
             <View style={styles.pair}>
               <View style={styles.flex}>
                 <SecondaryButton
@@ -124,40 +144,48 @@ export default function WorkoutDetail() {
         ) : null}
       </View>
       {easyDone ? <InfoBox tone="ok">{t('detail.toEasyDone')}</InfoBox> : null}
-      <View style={styles.chartBlock}>
-        <Text variant="label" color="textMuted">
-          {t('detail.intensity')}
-        </Text>
-        <IntensityChart segments={intensitySegments(wk.steps)} />
-        <View style={styles.axis}>
-          {axis.map((m, i) => (
-            <Text key={i} variant="axis" color="textMuted">
-              {i === axis.length - 1 ? t('detail.axisEnd', { min: m }) : String(m)}
-            </Text>
+      {locked ? (
+        <InfoBox tone="info">{t('premium.lockedBody', { weeks: ent.freeStrengthWeeks })}</InfoBox>
+      ) : null}
+      {support ? <ExerciseList steps={wk.steps} /> : null}
+      {support ? null : (
+        <View style={styles.chartBlock}>
+          <Text variant="label" color="textMuted">
+            {t('detail.intensity')}
+          </Text>
+          <IntensityChart segments={intensitySegments(wk.steps)} />
+          <View style={styles.axis}>
+            {axis.map((m, i) => (
+              <Text key={i} variant="axis" color="textMuted">
+                {i === axis.length - 1 ? t('detail.axisEnd', { min: m }) : String(m)}
+              </Text>
+            ))}
+          </View>
+        </View>
+      )}
+      {support ? null : (
+        <View>
+          {rows.map((r, i) => (
+            <View key={r.key} style={styles.seg}>
+              <LaneMark zone={r.zone} drill={r.drill} stretch />
+              <View style={styles.flex}>
+                <Text variant="row">{t('detail.segment', { n: i + 1, label: r.label })}</Text>
+                {r.sub ? (
+                  <Text variant="captionStrong" color="textMuted" style={styles.sub}>
+                    {r.sub}
+                  </Text>
+                ) : null}
+              </View>
+              <Text variant="numberRow" color="textMuted">
+                {r.durationLabel}
+              </Text>
+              <Text variant="numberRowStrong" align="right" style={styles.detail}>
+                {r.detail}
+              </Text>
+            </View>
           ))}
         </View>
-      </View>
-      <View>
-        {rows.map((r, i) => (
-          <View key={r.key} style={styles.seg}>
-            <LaneMark zone={r.zone} drill={r.drill} stretch />
-            <View style={styles.flex}>
-              <Text variant="row">{t('detail.segment', { n: i + 1, label: r.label })}</Text>
-              {r.sub ? (
-                <Text variant="captionStrong" color="textMuted" style={styles.sub}>
-                  {r.sub}
-                </Text>
-              ) : null}
-            </View>
-            <Text variant="numberRow" color="textMuted">
-              {r.durationLabel}
-            </Text>
-            <Text variant="numberRowStrong" align="right" style={styles.detail}>
-              {r.detail}
-            </Text>
-          </View>
-        ))}
-      </View>
+      )}
       <View style={styles.why}>
         <Text variant="cardTitle">{t('detail.why')}</Text>
         <Text variant="bodySm" color="textMuted">
@@ -165,22 +193,53 @@ export default function WorkoutDetail() {
         </Text>
         <RationaleList items={wk.rationale} />
       </View>
-      <View style={styles.guide}>
-        <Text variant="label" color="textMuted">
-          {t('detail.guide')}
-        </Text>
-        <SegmentedControl
-          compact
-          value={profile.data?.intensity_guide ?? 'pace'}
-          onChange={(v) => updateProfile.mutate({ intensity_guide: v })}
-          items={[
-            { value: 'pace', label: t('detail.guide.pace') },
-            { value: 'hr', label: t('detail.guide.hr'), disabled: true },
-            { value: 'rpe', label: t('detail.guide.rpe') },
-          ]}
-        />
-      </View>
+      {support ? null : (
+        <View style={styles.guide}>
+          <Text variant="label" color="textMuted">
+            {t('detail.guide')}
+          </Text>
+          <SegmentedControl
+            compact
+            value={profile.data?.intensity_guide ?? 'pace'}
+            onChange={(v) => updateProfile.mutate({ intensity_guide: v })}
+            items={[
+              { value: 'pace', label: t('detail.guide.pace') },
+              { value: 'hr', label: t('detail.guide.hr'), disabled: true },
+              { value: 'rpe', label: t('detail.guide.rpe') },
+            ]}
+          />
+        </View>
+      )}
     </Screen>
+  );
+}
+
+/** 2.2s: daftar gerakan strength/core dengan tempat animasi (placeholder), dosis dan cue. */
+function ExerciseList({ steps }: { steps: Step[] }) {
+  const rows = segmentRows(steps, 'strength');
+  const ex = steps.filter((s): s is Extract<Step, { kind: 'exercise' }> => s.kind === 'exercise');
+  return (
+    <View style={styles.exList} testID="exercise-list">
+      {ex.map((s, i) => (
+        <View key={`${s.exercise_id}${i}`} style={styles.exCard}>
+          <ExerciseAnimation exerciseId={s.exercise_id} height={space[10] * 2 + space[4]} />
+          <View style={styles.exHead}>
+            <Text variant="row" style={styles.flex}>
+              {t('detail.segment', { n: i + 1, label: exerciseName(s.exercise_id) })}
+            </Text>
+            <Text variant="numberRowStrong">{rows[i]?.detail}</Text>
+          </View>
+          <Text variant="bodySm" color="textMuted">
+            {exerciseCue(s.exercise_id)}
+          </Text>
+          {s.rest_s > 0 ? (
+            <Text variant="caption" color="textMuted">
+              {t('strength.restBetween', { sec: s.rest_s })}
+            </Text>
+          ) : null}
+        </View>
+      ))}
+    </View>
   );
 }
 
@@ -195,6 +254,8 @@ const TYPE_HELP: Partial<Record<WorkoutType, string>> = {
   strides: 'strides',
   run_walk: 'run-walk',
   rest: 'istirahat',
+  strength: 'strength',
+  core: 'strength',
 };
 
 const styles = StyleSheet.create({
@@ -225,4 +286,13 @@ const styles = StyleSheet.create({
     ...ring(border.hairline, color.line),
   },
   guide: { gap: space[2] + space[1] / 2 },
+  exList: { gap: space[3] },
+  exCard: {
+    gap: space[2],
+    padding: space[4],
+    borderRadius: radius.lg,
+    backgroundColor: color.surface,
+    ...ring(border.hairline, color.line),
+  },
+  exHead: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
 });

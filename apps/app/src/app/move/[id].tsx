@@ -61,10 +61,12 @@ export default function MoveSheet() {
     close();
   };
 
+  // Strength/core (F-21) tidak bisa digabung: hari yang sudah ada strength = tidak bisa dipilih.
+  const blockedStrength = check.verdict === 'occupied' && check.mergeWith == null;
   const tone =
     check.verdict === 'safe' || check.verdict === 'origin'
       ? color.status.onTrack
-      : check.verdict === 'hard_adjacent'
+      : check.verdict === 'hard_adjacent' || check.verdict === 'before_key' || blockedStrength
         ? color.status.behind
         : color.status.attention;
   const dayLabel = t('move.day', { wd: weekdayShortName(weekday(sel)), d: Number(sel.slice(8)) });
@@ -124,7 +126,13 @@ export default function MoveSheet() {
           })}
         </View>
         <View style={[styles.msg, { backgroundColor: tone }]} testID="move-verdict">
-          <Text variant="bodySm">{t(`move.verdict.${check.verdict}` as MessageKey)}</Text>
+          <Text variant="bodySm">
+            {t(
+              blockedStrength
+                ? 'move.verdict.occupiedStrength'
+                : (`move.verdict.${check.verdict}` as MessageKey),
+            )}
+          </Text>
           {merged ? (
             <Text variant="note">
               {t('move.mergeCap', {
@@ -138,11 +146,16 @@ export default function MoveSheet() {
           <PrimaryButton
             testID="move-apply"
             label={
-              check.verdict === 'occupied'
+              check.verdict === 'occupied' && !blockedStrength
                 ? t('move.merge', { day: dayLabel })
                 : t('move.cta', { day: dayLabel })
             }
-            disabled={check.verdict === 'origin' || check.verdict === 'hard_adjacent'}
+            disabled={
+              check.verdict === 'origin' ||
+              check.verdict === 'hard_adjacent' ||
+              check.verdict === 'before_key' ||
+              blockedStrength
+            }
             loading={busy}
             onPress={() => void apply()}
           />

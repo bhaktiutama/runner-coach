@@ -38,6 +38,10 @@ export const RULES: Record<RuleId, RuleEntry> = Object.fromEntries(
     r('E-20', 'C', ['R3']),
     r('E-21', 'D', ['R4']),
     r('E-22', 'D', []),
+    r('E-23', 'A', ['R23', 'R24']),
+    r('E-24', 'D', []),
+    r('E-25', 'D', []),
+    r('E-26', 'D', ['R13']),
   ].map((e) => [e.id, e]),
 ) as Record<RuleId, RuleEntry>;
 

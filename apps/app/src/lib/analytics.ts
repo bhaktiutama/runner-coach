@@ -16,6 +16,7 @@ export const EVENTS = {
   backup_exported: ['platform'],
   backup_restored: ['platform'],
   account_deleted: ['platform'],
+  paywall_viewed: ['platform'],
 } as const;
 
 export type EventName = keyof typeof EVENTS;

@@ -306,6 +306,8 @@ export function useSaveActivity() {
       track('workout_completed', { workout_type: wt, source: a.source });
       track('rpe_submitted', { workout_type: wt });
       if (a.clearTimer) await repo.setActiveTimer(db, null);
+      if (a.plannedWorkoutId && a.loadFeel === 'too_hard')
+        await planOps.easeNextStrength(db, a.plannedWorkoutId);
       let weekDone = false;
       if (a.plannedWorkoutId) {
         const w = await repo.getWorkout(db, a.plannedWorkoutId);
@@ -412,6 +414,11 @@ export function usePlanOps() {
     regenerate: useMutation({
       mutationFn: async (a: { today: string; days: Weekday[]; longRunDay: Weekday }) =>
         planOps.regenerateFromToday(await getDb(), a.today, a.days, a.longRunDay),
+      onSuccess: all,
+    }),
+    setStrength: useMutation({
+      mutationFn: async (a: { today: string; on: boolean }) =>
+        planOps.setStrength(await getDb(), a.today, a.on),
       onSuccess: all,
     }),
     newGoal: useMutation({

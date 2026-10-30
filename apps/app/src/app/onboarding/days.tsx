@@ -109,6 +109,16 @@ export default function DaysStep() {
           ]}
         />
       </Field>
+      <Field label={t('days.strengthLabel')} gap="group" hint={t('days.strengthNote')}>
+        <SegmentedControl
+          value={d.strength ? 'yes' : 'later'}
+          onChange={(v) => o.update({ strength: v === 'yes' })}
+          items={[
+            { value: 'yes', label: t('days.strengthYes') },
+            { value: 'later', label: t('days.strengthLater') },
+          ]}
+        />
+      </Field>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('days.reminder')}
