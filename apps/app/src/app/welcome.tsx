@@ -11,7 +11,7 @@ import {
   Text,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Brand } from '@/components/Brand';
 import { useSaveDraft } from '@/data/hooks';
@@ -31,6 +31,8 @@ const STAIRS = [
 export default function Welcome() {
   const save = useSaveDraft();
   const insets = useSafeAreaInsets();
+  // Layar pendek (mis. iPhone SE 667 pt): tangga zona dipadatkan agar judul + teks tetap terlihat.
+  const short = useWindowDimensions().height < 760;
   return (
     <View
       style={[styles.root, { paddingTop: Math.max(space[10] + space[6], insets.top + space[2]) }]}
@@ -39,17 +41,28 @@ export default function Welcome() {
       <View style={styles.pad}>
         <Brand />
       </View>
-      <View style={[styles.pad, styles.middle]}>
-        <View style={styles.art} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={[styles.pad, styles.middle, short && styles.middleShort]}
+      >
+        <View
+          style={[styles.art, short && styles.artShort]}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        >
           {STAIRS.map((s, i) => (
             <View
               key={i}
-              style={[styles.pill, { backgroundColor: s.zone, width: s.width, marginLeft: s.left }]}
+              style={[
+                styles.pill,
+                short && styles.pillShort,
+                { backgroundColor: s.zone, width: s.width, marginLeft: s.left },
+              ]}
             />
           ))}
         </View>
         <ScreenTitle large title={t('welcome.title')} subtitle={t('welcome.body')} />
-      </View>
+      </ScrollView>
       <View
         style={[
           styles.pad,
@@ -85,7 +98,9 @@ const styles = StyleSheet.create({
     maxWidth: size.contentMax + space.screenX * 2,
     alignSelf: 'center',
   },
-  middle: { flex: 1, justifyContent: 'center', gap: space[8] },
+  flex: { flex: 1 },
+  // Bisa di-scroll: di layar pendek atau Ukuran Teks besar, judul tidak tertutup footer.
+  middle: { flexGrow: 1, justifyContent: 'center', gap: space[8], paddingVertical: space[4] },
   art: {
     gap: space[2] + space[1] / 2,
     paddingVertical: space[4],
@@ -94,6 +109,9 @@ const styles = StyleSheet.create({
     borderColor: color.lineStrong,
   },
   pill: { height: space[8] + space[1], borderRadius: radius.stadium },
+  pillShort: { height: space[5] },
+  artShort: { gap: space[2], paddingVertical: space[3] },
+  middleShort: { gap: space[5] },
   footer: { gap: space[2], paddingTop: space[3] },
   privacy: {
     flexDirection: 'row',

@@ -43,7 +43,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | 2026-10-30 | M1 | Fix login Google di web: "Terjadi kesalahan" karena database lokal (OPFS) dipegang halaman lain. Login web sekarang lewat popup + `auth-callback.html` statis, DB dilepas saat `pagehide`, buka ulang dicoba sampai 6 detik, pesan khusus jika app terbuka di tab lain | unit 2.361, E2E 10/10, uji popup + callback di Chromium |
 
 
-## Catatan tampilan di HP (belum diperbaiki)
+## Catatan tampilan di HP
 
 Laporan pemilik 2026-10-30: di iPhone 13 (Expo Go) font di dalam pil terlihat lebih besar dari web, dan di layar pertama ada teks yang tertutup tombol. Simulasi web iPhone 15 sudah OK.
 
@@ -55,7 +55,7 @@ Laporan pemilik 2026-10-30: di iPhone 13 (Expo Go) font di dalam pil terlihat le
 | Tinggi baris/huruf sedikit beda | Mesin teks iOS dan browser menghitung line-height dan metrik font berbeda; `letterSpacing` em dikonversi ke px | Wajar, kecil | Terima selisih 1-2 px |
 | Tampilan versi lama | Expo Go membuka update tertentu dari "Recently opened" | Bukan bug tampilan | Buka lewat link channel `preview` |
 
-Verifikasi berikutnya: uji di Expo Go dengan Ukuran Teks default dan terbesar, plus iPhone SE.
+Diperbaiki 2026-10-30: `Text` membatasi pembesaran 1,2x untuk teks di pil/chip/tombol/angka besar dan 1,5x untuk teks isi; input 1,2x; layar 1.1 bisa di-scroll dan tangga zona dipadatkan di layar < 760 pt (dicek iPhone SE 375 x 667 di web). Masih perlu dicek di HP dengan Ukuran Teks terbesar.
 
 ## Blocker dan butuh dari pemilik
 

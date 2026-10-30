@@ -302,6 +302,7 @@ export function TextField(props: TextInputProps & { label?: string; numeric?: bo
   const { label, style, numeric, ...rest } = props;
   const input = (
     <TextInput
+      maxFontSizeMultiplier={1.2}
       placeholderTextColor={color.textMuted}
       accessibilityLabel={label}
       {...rest}
@@ -335,6 +336,7 @@ export function TimeField({
   return (
     <Field label={label}>
       <TextInput
+        maxFontSizeMultiplier={1.2}
         testID={testID}
         accessibilityLabel={label}
         keyboardType="number-pad"
