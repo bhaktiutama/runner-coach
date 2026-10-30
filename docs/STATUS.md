@@ -42,6 +42,21 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | 2026-10-29 | UI | Semua 26 layar disamakan ke wireframe PNG (1.x, 2.x, 3.x, 4.x): ukuran font dari token, input waktu satu kotak, chip/pil, jarak antarblok, tinggi baris, sakelar 52x32, ikon tombol 20. Dicek berdampingan lewat `e2e/compare.spec.ts` + `scripts/compare-wireframes.py` | unit 2.361, E2E 15/15 + compare 3/3, lint + typecheck OK |
 | 2026-10-30 | M1 | Fix login Google di web: "Terjadi kesalahan" karena database lokal (OPFS) dipegang halaman lain. Login web sekarang lewat popup + `auth-callback.html` statis, DB dilepas saat `pagehide`, buka ulang dicoba sampai 6 detik, pesan khusus jika app terbuka di tab lain | unit 2.361, E2E 10/10, uji popup + callback di Chromium |
 
+
+## Catatan tampilan di HP (belum diperbaiki)
+
+Laporan pemilik 2026-10-30: di iPhone 13 (Expo Go) font di dalam pil terlihat lebih besar dari web, dan di layar pertama ada teks yang tertutup tombol. Simulasi web iPhone 15 sudah OK.
+
+| Gejala | Kemungkinan penyebab | Jenis | Arah perbaikan |
+|---|---|---|---|
+| Ukuran layar | iPhone 13 = 390 x 844 pt, iPhone 15 = 393 x 852 pt. Hampir sama, jadi ukuran layar bukan penyebab utama | - | - |
+| Font (terutama di pil) lebih besar | Native mengikuti setelan iOS "Ukuran Teks" (Dynamic Type); belum ada batas `maxFontSizeMultiplier` di komponen `Text`. Web tidak terpengaruh setelan ini | Perlu dibuat responsif | Batasi skala di pil/chip/tombol (mis. 1,2x), biarkan teks isi tetap ikut setelan aksesibilitas; pil memakai `minHeight` + padding, bukan tinggi tetap |
+| Teks tertutup tombol (layar pertama) | Footer tombol menempel di bawah dan memakai inset safe area iPhone (34 pt home indicator) yang tidak ada di web, ditambah font yang membesar; konten di atasnya tidak bergeser | Perlu dibuat responsif | Konten di atas footer harus bisa di-scroll dan memberi ruang setinggi footer; cek di layar pendek (iPhone SE 375 x 667) |
+| Tinggi baris/huruf sedikit beda | Mesin teks iOS dan browser menghitung line-height dan metrik font berbeda; `letterSpacing` em dikonversi ke px | Wajar, kecil | Terima selisih 1-2 px |
+| Tampilan versi lama | Expo Go membuka update tertentu dari "Recently opened" | Bukan bug tampilan | Buka lewat link channel `preview` |
+
+Verifikasi berikutnya: uji di Expo Go dengan Ukuran Teks default dan terbesar, plus iPhone SE.
+
 ## Blocker dan butuh dari pemilik
 
 | # | Item | Untuk | Status |
