@@ -16,7 +16,7 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 |----|-------|----|
 | 1.1 | Selamat datang | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> 1.9 |
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
-| 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1 |
+| 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1; tombol kembali "Ubah jawaban" -> 1.7 (jawaban tetap tersimpan, plan dibuat ulang) |
 | 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |
 | 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6 |
 | 2.2 | Detail latihan | Mulai -> 2.3; Pindah hari -> 3.2; Ganti jadi easy |

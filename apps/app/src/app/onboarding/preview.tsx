@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { paceZones, type EngineMessageKey } from '@run-coach/training-engine';
 import {
   BarChart,
@@ -5,6 +6,7 @@ import {
   Card,
   color,
   Icon,
+  IconButton,
   PhaseLegend,
   radius,
   size,
@@ -63,6 +65,12 @@ export default function Preview() {
     <View style={styles.root} testID="screen-preview">
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={[styles.inner, { paddingTop: Math.max(space.screenTop, insets.top + space[2]) }]}>
+          <IconButton
+            icon="back"
+            label={t('preview.back')}
+            testID="preview-back"
+            onPress={() => router.replace('/onboarding/health')}
+          />
           <View style={styles.head}>
             <Text variant="eyebrow" color="success">
               {t('preview.eyebrow')}

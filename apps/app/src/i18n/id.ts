@@ -15,6 +15,7 @@ export const id = {
   'common.km': 'km',
   'common.minutes': 'menit',
   'common.minShort': 'mnt',
+  'preview.back': 'Ubah jawaban',
   'common.error': 'Terjadi kesalahan. Coba lagi.',
   'common.dbLocked': 'Run Coach sedang terbuka di tab lain. Tutup tab itu, lalu coba lagi.',
 
