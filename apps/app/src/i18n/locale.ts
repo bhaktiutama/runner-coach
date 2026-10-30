@@ -8,7 +8,6 @@ export type LocalePref = 'system' | 'id-ID' | 'en-US';
 export const LOCALE_PREFS: LocalePref[] = ['system', 'id-ID', 'en-US'];
 
 let lang: Lang = 'id';
-let listeners: (() => void)[] = [];
 
 /** Locale perangkat dari Intl (Hermes + browser), tanpa library tambahan. */
 export function deviceLocale(): string {
@@ -34,16 +33,6 @@ export function applyLocale(pref: string | null | undefined, device?: string): L
   const loc = resolveLocale(pref, device);
   const next: Lang = loc === 'en-US' ? 'en' : 'id';
   setFormatLocale(loc);
-  if (next !== lang) {
-    lang = next;
-    listeners.forEach((l) => l());
-  }
+  lang = next;
   return lang;
-}
-
-export function onLangChange(fn: () => void): () => void {
-  listeners.push(fn);
-  return () => {
-    listeners = listeners.filter((l) => l !== fn);
-  };
 }

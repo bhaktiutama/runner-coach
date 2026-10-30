@@ -39,20 +39,8 @@ export function SettingsRow({
   sub?: string;
 }) {
   const fg = danger ? color.status.behindInk : color.text;
-  return (
-    <Pressable
-      accessibilityRole={onPress ? 'button' : undefined}
-      accessibilityLabel={label}
-      disabled={!onPress}
-      onPress={onPress}
-      testID={testID}
-      style={({ pressed }) => [
-        styles.row,
-        sub && styles.rowTall,
-        !first && styles.sep,
-        { opacity: pressed ? 0.7 : 1 },
-      ]}
-    >
+  const content = (
+    <>
       {icon ? <Icon name={icon} size={space[5]} color={fg} /> : null}
       <View style={styles.labelCol}>
         <Text variant="rowRegular" style={{ color: fg }} numberOfLines={2}>
@@ -77,6 +65,27 @@ export function SettingsRow({
         </View>
       ) : null}
       {right ?? null}
+    </>
+  );
+  const rowStyle = [styles.row, sub && styles.rowTall, !first && styles.sep];
+  // Tanpa onPress: View biasa. Pressable yang dinonaktifkan ikut menonaktifkan kontrol di dalamnya
+  // (mis. Switch) di web.
+  if (!onPress) {
+    return (
+      <View testID={testID} style={rowStyle}>
+        {content}
+      </View>
+    );
+  }
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      testID={testID}
+      style={({ pressed }) => [...rowStyle, { opacity: pressed ? 0.7 : 1 }]}
+    >
+      {content}
     </Pressable>
   );
 }

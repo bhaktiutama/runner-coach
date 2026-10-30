@@ -111,6 +111,7 @@ export default function DaysStep() {
       </Field>
       <Field label={t('days.strengthLabel')} gap="group" hint={t('days.strengthNote')}>
         <SegmentedControl
+          testID="strength-choice"
           value={d.strength ? 'yes' : 'later'}
           onChange={(v) => o.update({ strength: v === 'yes' })}
           items={[
