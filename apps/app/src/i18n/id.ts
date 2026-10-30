@@ -141,7 +141,7 @@ export const id = {
   'preview.eyebrow': 'PLAN KAMU SIAP',
   'preview.title': '{distance} dalam {weeks} minggu',
   'preview.titleFitness': 'Bugar dalam {weeks} minggu',
-  'preview.target': 'Target',
+  'preview.target': 'Perkiraan finish',
   'preview.perWeek': 'Per minggu',
   'preview.daysValue': '{n} hari',
   'preview.race': 'Race',

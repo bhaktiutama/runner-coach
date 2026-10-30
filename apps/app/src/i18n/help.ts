@@ -68,8 +68,8 @@ export const HELP: HelpGroup[] = [
       },
       {
         id: 'prediksi',
-        title: 'Perkiraan waktu race',
-        body: 'Perkiraan waktu finish di jarak target dari hasil lari kamu. Cukup akurat sampai half marathon. Untuk full marathon rumusnya cenderung terlalu cepat (rata-rata 10 menit), jadi app menampilkan rentang, bukan satu angka.',
+        title: 'Perkiraan waktu finish',
+        body: 'Waktu finish yang paling mungkin di jarak target, dihitung dari waktu lari yang kamu isi dengan rumus Riegel: waktu acuan x (jarak target / jarak acuan)^1,06. Contoh: 5K 40 menit -> half marathon 40 x (21,1 / 5)^1,06 = sekitar 3 jam 4 menit. Untuk 5K sampai half marathon app menampilkan rentang +-3%; untuk full marathon rumus ini rata-rata 10 menit terlalu cepat, jadi rentangnya waktu rumus sampai +20 menit. Kalau kamu memilih "Saya tidak tahu", app memakai perkiraan kasar dari level. Angka ini perkiraan, bukan target wajib, dan diperbarui saat ada hasil tes lari. Bandingkan dengan batas waktu (COT) race-mu: kalau perkiraan mendekati atau melewati COT, pilih race dengan COT lebih longgar atau target jarak lebih pendek.',
       },
       {
         id: 'rpe',

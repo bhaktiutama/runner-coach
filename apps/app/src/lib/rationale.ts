@@ -27,7 +27,12 @@ function formatValue(key: string, v: number | string, unit: Unit): string {
 }
 
 export function rationaleText(r: Rationale, unit: Unit = 'km'): string {
-  const tpl = engineId[`rule.${r.rule}` as EngineMessageKey] ?? r.rule;
+  // Varian level plan (mis. `rule.E-06.plan`) dipakai jika engine menandai scope 'plan'.
+  const planKey = `rule.${r.rule}.plan` as EngineMessageKey;
+  const tpl =
+    (r.values.scope === 'plan' ? engineId[planKey] : undefined) ??
+    engineId[`rule.${r.rule}` as EngineMessageKey] ??
+    r.rule;
   return tpl.replace(/\{(\w+)\}/g, (m, k: string) =>
     k in r.values ? formatValue(k, r.values[k]!, unit) : m,
   );

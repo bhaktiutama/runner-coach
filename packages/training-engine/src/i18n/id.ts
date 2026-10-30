@@ -3,7 +3,7 @@
 // menentukan format di UI: `_m` jarak, `_s` waktu, `_pace` pace, lainnya angka/teks apa adanya.
 export const engineId = {
   'rule.E-01':
-    'Perkiraan waktumu {range_min_s} - {range_max_s}, paling mungkin {likely_s}, dihitung dari waktu {baseline_s} kamu dengan rumus Riegel. Untuk maraton rumus ini rata-rata 10 menit terlalu cepat pada pelari rekreasional, jadi batas cepatnya adalah skenario terbaik.',
+    'Perkiraan waktumu {range_min_s} - {range_max_s}, paling mungkin {likely_s}. Rumus Riegel: waktu {baseline_code} kamu ({baseline_s}) x (jarak target / jarak acuan)^1,06. Untuk maraton rumus ini rata-rata 10 menit terlalu cepat pada pelari rekreasional, jadi batas cepatnya adalah skenario terbaik.',
   'rule.E-02':
     'Pace latihan dihitung dengan kerangka Daniels (VDOT {vdot}). Easy run di {easy_min_pace} - {easy_max_pace}, cukup pelan untuk tetap bisa ngobrol.',
   'rule.E-03': 'Plan {distance_code} ini {weeks} minggu, durasi umum yang dipakai pelatih untuk target ini.',
@@ -12,7 +12,9 @@ export const engineId = {
   'rule.E-05':
     'Volume minggu ini {week_m}, naik {pct}% dari minggu lalu. Kami menaikkan bertahap (maks 10%) sebagai batas aman; penelitian belum membuktikan angka 10% itu sendiri mencegah cedera.',
   'rule.E-06':
-    'Lari ini {distance_m}, maks 10% di atas lari terjauhmu 30 hari terakhir ({longest_30d_m}). Studi pada 5.205 pelari menemukan risiko cedera naik saat satu lari melewati batas ini.',
+    'Lari ini {distance_m}. Batas aman satu sesi {cap_m}: lari terjauhmu 30 hari terakhir ({longest_30d_m}) ditambah 10%. Studi pada 5.205 pelari menemukan risiko cedera naik saat satu lari melewati batas ini.',
+  'rule.E-06.plan':
+    'Long run minggu pertama {distance_m}. Ada dua batas, dipakai yang lebih kecil: maks {cap_m} (lari terjauhmu 30 hari terakhir {longest_30d_m} ditambah 10%) dan maks {limit_pct}% dari volume minggu itu ({week_volume_m}). Long run naik tiap minggu mengikuti volume.',
   'rule.E-07':
     'Minggu {week} adalah minggu ringan: volume turun {pct}% supaya tubuhmu menyerap latihan minggu-minggu sebelumnya.',
   'rule.E-08':

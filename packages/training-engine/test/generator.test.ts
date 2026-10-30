@@ -254,7 +254,11 @@ describe.each(combos)('%s / %o / %i hari / ringan=%s', (target, profile, nDays, 
     const all = [...plan.rationale, ...plan.workouts.flatMap((w) => w.rationale)];
     for (const r of all) {
       expect(RULES[r.rule]).toBeDefined();
-      const tpl = engineId[`rule.${r.rule}` as keyof typeof engineId];
+      const key =
+        r.values.scope === 'plan' && `rule.${r.rule}.plan` in engineId
+          ? `rule.${r.rule}.plan`
+          : `rule.${r.rule}`;
+      const tpl = engineId[key as keyof typeof engineId];
       const holes = [...tpl.matchAll(/\{(\w+)\}/g)].map((m) => m[1]!);
       for (const h of holes) expect(r.values, `${r.rule} butuh ${h}`).toHaveProperty(h);
     }

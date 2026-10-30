@@ -83,6 +83,7 @@ export default function Preview() {
               label={t('preview.target')}
               value={pred ? formatDuration(pred.likelyS) : '-'}
               note={pred?.rough ? t('preview.rough') : undefined}
+              hint="prediksi"
             />
             <Stat
               label={t('preview.perWeek')}
@@ -161,12 +162,15 @@ export default function Preview() {
   );
 }
 
-function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
+function Stat({ label, value, note, hint }: { label: string; value: string; note?: string; hint?: string }) {
   return (
     <View style={styles.stat}>
-      <Text variant="captionStrong" color="textMuted">
-        {label}
-      </Text>
+      <View style={styles.hintRow}>
+        <Text variant="captionStrong" color="textMuted" style={styles.shrink}>
+          {label}
+        </Text>
+        {hint ? <HelpHint topic={hint} term={label} /> : null}
+      </View>
       <Text variant="stat" numberOfLines={1}>
         {value}
       </Text>
@@ -197,6 +201,7 @@ function PaceRow({
 }
 
 const styles = StyleSheet.create({
+  shrink: { flexShrink: 1 },
   hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   root: { flex: 1, backgroundColor: color.bg },
   flex: { flex: 1 },

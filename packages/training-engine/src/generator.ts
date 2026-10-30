@@ -753,7 +753,20 @@ function planRationale(a: PlanRationaleArgs): Rationale[] {
     const rw = a.workouts.find((w) => w.type === 'run_walk')?.rationale.find((r) => r.rule === 'E-14');
     if (rw) out.push(rw);
   }
-  if (e06) out.push(e06);
+  if (e06 && firstLong) {
+    // Versi plan (layar 1.8): sebut minggu pertama dan kedua batasnya (E-06 dan E-08), supaya
+    // angka long run tidak terlihat muncul entah dari mana.
+    const e08 = firstLong.rationale.find((r) => r.rule === 'E-08');
+    out.push({
+      rule: 'E-06',
+      values: {
+        ...e06.values,
+        scope: 'plan',
+        limit_pct: e08?.values.limit_pct ?? Math.round(LONG_RUN_SHARE[a.input.goal.distance] * 100),
+        week_volume_m: e08?.values.week_volume_m ?? a.summaries[0]!.volumeM,
+      },
+    });
+  }
   const w2 = a.summaries[1];
   const w1 = a.summaries[0]!;
   out.push({
@@ -783,6 +796,7 @@ function planRationale(a: PlanRationaleArgs): Rationale[] {
         range_max_s: a.prediction.maxS,
         likely_s: a.prediction.likelyS,
         baseline_s: a.input.goal.baselineTimeS,
+        baseline_code: a.input.goal.baselineDistance,
       },
     });
   }
