@@ -58,7 +58,7 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 
 | Cara | Link |
 |---|---|
-| Web (preview) | https://run-coach--pit42nxhdz.expo.app (tiap deploy dapat URL baru; yang terbaru selalu di sini) |
+| Web (preview) | https://run-coach--vbvbs77gcl.expo.app (tiap deploy dapat URL baru; yang terbaru selalu di sini) |
 | APK Android (preview) | expo.dev > project run-coach > Builds (profil `preview`), unduh dan pasang di HP |
 | Update tanpa build ulang | `eas update --branch preview` (APK preview mengambil update saat dibuka) |
 
