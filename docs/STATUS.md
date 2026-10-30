@@ -57,6 +57,20 @@ Laporan pemilik 2026-10-30: di iPhone 13 (Expo Go) font di dalam pil terlihat le
 
 Diperbaiki 2026-10-30: `Text` membatasi pembesaran 1,2x untuk teks di pil/chip/tombol/angka besar dan 1,5x untuk teks isi; input 1,2x; layar 1.1 bisa di-scroll dan tangga zona dipadatkan di layar < 760 pt (dicek iPhone SE 375 x 667 di web). Masih perlu dicek di HP dengan Ukuran Teks terbesar.
 
+
+## Berikutnya (untuk sesi baru)
+
+Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Urutan yang disarankan:
+
+| # | Pekerjaan | Branch usulan | Butuh dari pemilik |
+|---|---|---|---|
+| 1 | Uji login end-to-end di HP (Google web popup, Expo Go, APK) dan perbaiki yang gagal | `feat/m1-auth-device` | `exp://**` di Redirect URLs Supabase (B2), template email `{{ .Token }}` (B5) |
+| 2 | Uji device M0/M4 (B3): cue timer saat layar terkunci, lanjut posisi setelah app ditutup, notifikasi; tampilan dengan Ukuran Teks terbesar dan iPhone SE | `feat/m4-device-fixes` | Uji di HP fisik |
+| 3 | Mode uji di channel terpisah (`test`) dengan "Lewati login" + reset data, agar Expo Go bisa dipakai uji dari nol | `feat/m7-test-channel` | - |
+| 4 | M7 persiapan rilis: halaman kebijakan privasi (model "data di HP"), isian App Privacy / Data safety, profil EAS production, Sentry + PostHog aktif | `release/beta` | Kunci PostHog/Sentry (B7), akun Apple Developer + Google Play, keputusan rilis |
+| 5 | Review aturan engine oleh pelatih (B4/D6) dengan `07-ENGINE-EVIDENCE.md` sebagai checklist | - | Pelatih bersertifikat |
+| 6 | Fase 2 (setelah beta): strength + core bodyweight, Strava/HealthKit, layar 4.2 | ubah spec dulu | Keputusan prioritas |
+
 ## Blocker dan butuh dari pemilik
 
 | # | Item | Untuk | Status |
