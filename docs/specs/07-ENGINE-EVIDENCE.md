@@ -5,7 +5,7 @@ Status: Draft v0.1 (2026-10-29) | Dipakai oleh: TRD 4, PRD F-03/F-04/F-08/F-11, 
 ## Ringkasan
 
 - Setiap keputusan engine punya **ID aturan** (`E-xx`), **tingkat bukti** (A-D) dan **referensi**. Engine wajib mengeluarkan daftar `rationale` untuk setiap plan, latihan dan usulan adaptasi, sehingga pengguna bisa melihat "kenapa" di layar 1.8, 2.2, 2.5 dan 3.2.
-- Hasil validasi 19 aturan lama + 1 aturan baru: 4 Didukung, 8 Sebagian, 2 Diubah, 6 Heuristik (tanpa bukti langsung). Tidak ditemukan bukti bahwa aturan yang ada membahayakan.
+- Hasil validasi 19 aturan lama + 3 aturan baru (E-06, E-21, E-22): 4 Didukung, 8 Sebagian, 2 Diubah, 8 Heuristik (tanpa bukti langsung). Tidak ditemukan bukti bahwa aturan yang ada membahayakan.
 - 3 perubahan aturan dari bukti: **aturan baru E-06** (satu sesi lari maks 110% lari terjauh 30 hari, Frandsen dkk. 2025), **taper diberi besaran** (volume turun 40-60%, intensitas tetap; Bosquet dkk. 2007), dan **aturan 10% tidak boleh diklaim mencegah cedera** (Buist dkk. 2008).
 
 Cara verifikasi: setiap referensi dicek ke abstrak di PubMed, penerbit atau indeks perpustakaan pada 2026-10-29. Full text belum dibaca; angka di dokumen ini hanya yang tertulis di abstrak. Review pelatih bersertifikat (D6) tetap wajib dan memakai dokumen ini sebagai checklist.
@@ -42,7 +42,7 @@ Kolom "Putusan": **Didukung** = bukti sejalan dengan aturan; **Sebagian** = arah
 | E-05 | Kenaikan volume mingguan maks 10%, dibanding minggu non-cutback terakhir (4.2) | B | RCT 13 minggu (aturan 10%) vs 8 minggu pada pelari pemula: cedera 20,8% vs 20,3%, tidak beda [R5]. Kohort 874 pemula: kenaikan > 30% dalam 2 minggu, HR 1,59 (95% CI 0,96-2,66; p = 0,07) untuk cedera terkait jarak [R6]. Kohort 5.205 pelari: perubahan minggu ke minggu hampir tidak berhubungan dengan cedera [R7] | Sebagian. Dipertahankan sebagai batas konservatif; **teks app tidak boleh mengklaim 10% mencegah cedera** |
 | E-06 | **Baru.** Jarak satu sesi maks 110% dari lari terjauh 30 hari terakhir | B | Kohort 5.205 pelari, 588.071 sesi: risiko cedera overuse naik bila satu sesi > 10% di atas lari terjauh 30 hari terakhir (naik 64% untuk +10-30%, 52% untuk +30-100%, 128% untuk > +100%) [R7]. Observasional; jendela 30 hari dipilih peneliti, hasil serupa untuk 14 hari | Diubah (aturan ditambah). Nilai awal = `goals.longest_run_m` (layar 1.5, "lari terjauh 4 minggu") |
 | E-07 | Cutback week tiap minggu ke-3/4, volume turun 20-30% (4.2) | D | Tidak ditemukan review sistematis tentang frekuensi atau besaran cutback pada pelari. Prinsip keseimbangan beban-pemulihan dari [R4] | Heuristik |
-| E-08 | Long run maks 30% volume mingguan (4.2) | D | Tidak ditemukan studi langsung. Kerangka beban-kapasitas: cedera terjadi bila beban per sesi melebihi kapasitas jaringan [R8]; E-06 adalah versi berbukti dari batas per sesi | Heuristik. Berlaku bersama E-06; yang lebih ketat menang |
+| E-08 | Long run maks porsi volume mingguan (5K/10K 30%, HM 35%, FM 45%) dan maks durasi (2 / 2,5 / 3 jam) (4.2) | D | Tidak ditemukan studi langsung. Kerangka beban-kapasitas: cedera terjadi bila beban per sesi melebihi kapasitas jaringan [R8]; E-06 adalah versi berbukti dari batas per sesi. v0.2 (2026-10-30): porsi HM/FM dinaikkan karena dengan 30% long run FM puncak hanya ~18 km pada volume 60 km; batas durasi mencegah sesi sangat panjang untuk pelari lambat | Heuristik. Berlaku bersama E-06; yang lebih ketat menang |
 | E-09 | ~80% waktu lari di intensitas easy (4.2) | A | Meta-analisis 17 studi (n = 437): polarized lebih baik untuk VO2peak (SMD 0,24; 95% CI 0,01-0,48), tetapi **tidak beda** untuk time trial (SMD -0,01; 95% CI -0,28-0,25); keunggulan terutama pada atlet terlatih tinggi [R9]. RCT 30 pelari rekreasional 10 minggu: 10K membaik 5,0% (77% easy) vs 3,6% (46% easy), beda tidak signifikan [R10] | Sebagian. Porsi easy besar didukung sebagai praktik aman; keunggulan atas distribusi lain untuk pelari rekreasional belum terbukti |
 | E-10 | Sesi berat maks 2/minggu, pemula 0-1, tidak di 2 hari berurutan (4.2) | C | Pemulihan saraf otonom setelah sesi di atas ambang ventilasi 1 lebih lama dari sesi easy; pada atlet kurang terlatih >= 90 menit vs ~30 menit pada atlet terlatih tinggi (n = 17) [R11]. Pelari pemula: 17,8 cedera per 1.000 jam vs 7,7 pada rekreasional [R12] | Sebagian. Arah (jeda antar sesi berat, pemula lebih konservatif) didukung; angka 2 dan 0-1 heuristik |
 | E-11 | Taper 5K/10K 1 mgg, HM 1-2, FM 2-3 (4.2) | A | Meta-analisis 27 studi: taper 2 minggu, volume turun 41-60% secara eksponensial, intensitas dan frekuensi dipertahankan memberi efek terbesar [R13] | Diubah. Durasi tetap; **ditambah: volume turun 40-60% dari minggu puncak, intensitas dan frekuensi sesi dipertahankan** |
@@ -64,6 +64,8 @@ Kolom "Putusan": **Didukung** = bukti sejalan dengan aturan; **Sebagian** = arah
 | E-17 | RPE >= 8 pada easy run 2x berturut-turut -> volume minggu depan -10%, 1 sesi berat diganti easy | D | Ketidakseimbangan beban-pemulihan bisa menyebabkan non-functional overreaching [R4]. Ambang 8 dan "2x" tidak diuji | Heuristik (arah konservatif) |
 | E-18 | RPE <= 4 pada sesi kualitas 3x berturut-turut -> pace sesi kualitas naik 1 tingkat | D | Tidak ditemukan studi. Lebih kuat jika dikonfirmasi time trial (E-20) | Heuristik. Usulan teks 2.5 menawarkan time trial sebagai alternatif |
 | E-19 | 1 latihan terlewat: lanjut; >= 2 terlewat seminggu: ulangi minggu | D | Tidak ditemukan studi | Heuristik |
+| E-21 | Recovery run maks 30 mnt sehari setelah long run / sesi berat (rekreasional, >= 5 hari) | D | Tidak ditemukan studi khusus recovery run. Prinsip keseimbangan beban-pemulihan [R4] | Heuristik |
+| E-22 | Progression run (easy + 10 mnt pace maraton) di fase Build, selang seminggu | D | Tidak ditemukan studi | Heuristik |
 
 ### 2.5 Sengaja tidak dipakai
 
@@ -204,15 +206,18 @@ Angka di bawah adalah pilihan implementasi (tingkat D, konservatif) untuk hal ya
 | Level jika pengguna memberi waktu acuan | Volume < 10 km/minggu = pemula, selain itu rekreasional (PRD 2) |
 | Zona (E-02) | %VO2max: easy 59-74%, threshold 86-88%, interval 97,5-100%, repetisi 105-110%; marathon = pace prediksi maraton VDOT +-5 dtk. VDOT 50 menghasilkan T 4:15 /km dan I 3:55 /km (dicek terhadap tabel Daniels yang beredar; E-O4 tetap terbuka) |
 | Volume awal | Minggu 1 = max(volume sekarang, lari terjauh, 4 km). Volume puncak target per level/jarak (pemula 5K 20 km ... rekreasional FM 60 km), dicapai hanya lewat E-05 |
-| E-05 | Dihitung terhadap volume aktual minggu non-cutback terakhir, dibulatkan ke bawah per 1 km (per 0,5 km di bawah 10 km) |
+| E-05 | Dihitung terhadap volume aktual minggu non-cutback terakhir, dibulatkan ke bawah per 100 m (lihat baris Volume dan pembulatan) |
 | E-07 | Cutback tiap minggu ke-4 (bukan di taper), target 80% lalu dibulatkan, dijaga di rentang 20-30% |
 | E-06 | Berlaku untuk **jarak lari** sesi (segmen jalan run-walk dan drill tidak dihitung). Lari terjauh awal (`longest_run_m`) dianggap berlaku 30 hari pertama |
-| E-08 | Long run = min(30% volume, batas E-06), dicek ulang terhadap volume aktual setelah pembulatan |
+| E-08 | Long run = min(porsi volume per jarak, batas durasi, batas E-06), dicek ulang terhadap volume aktual setelah pembulatan |
 | E-10 | Base: 0 sesi berat; Build: 1; Peak/Taper: 2 jika rekreasional dan >= 4 hari lari, selain itu 1; cutback maks 1. Sesi berat tidak bersebelahan dengan sesi berat lain maupun long run |
 | E-11 | Fraksi volume puncak per minggu taper: 1 mgg [50%], 2 mgg [70%, 50%], 3 mgg [80%, 65%, 50%]. HM taper 2 mgg jika plan >= 12 mgg; FM 3 mgg jika >= 18 mgg |
 | Minggu race | Tidak ada latihan pada/sesudah hari race; long run dan sesi berat paling lambat 3 hari sebelum race. Race Senin/Selasa: minggu race tidak dihitung sebagai minggu latihan, taper = minggu sebelumnya |
-| Jumlah sesi | Maks hari tersedia, tetapi tidak lebih dari volume/2,5 km; easy run min 2 km. Hari tersedia = boleh dipakai, bukan wajib |
+| Jumlah sesi | Maks hari tersedia, tetapi tidak lebih dari volume/2,5 km (dibulatkan ke terdekat); easy run min 2 km. Hari tersedia = boleh dipakai, bukan wajib |
 | E-14 run-walk | Mulai 1 mnt lari / 2 mnt jalan; grid 15 detik; menit lari aktual per sesi naik maks 10%/minggu; sesi easy 30 mnt, long 40 mnt (termasuk 5+5 mnt jalan). Minggu run-walk tanpa cutback (kenaikan sudah kecil); taper memotong ulangan 50% |
 | E-15 | 5 gerakan x 2 set x 20 m (A-skip, B-skip, C-skip, high knees, carioca), estimasi 1 mnt per set = 10 mnt |
 | E-13 | Minggu Return to run: easy saja, tiap sesi 50% lari terjauh 30 hari (min 2 km), maks 4 sesi; sisa plan digeser per minggu penuh |
 | Pindah (3.2) | Sesi berat tidak boleh ke sebelah sesi berat lain; sehari setelah sesi berat/long = "bisa, pelan"; gabung = sesi berat dipertahankan + tambahan easy dibatasi E-06 |
+| Volume dan pembulatan (v0.2, 2026-10-30) | Target volume dibulatkan ke bawah per 100 m (sebelumnya per 0,5-1 km, yang bersama pembulatan durasi per menit membuat volume pemula macet di ~10 km/minggu), dikurangi margin 100 m agar E-05 tetap terpenuhi. Jumlah sesi = volume/2,5 km dibulatkan ke terdekat. Volume kecil: long run dikurangi dulu supaya hari easy dapat min 2 km; jika hari easy tetap tidak muat, sisanya ke long run dalam batas E-06/E-08. Jarak easy yang terpotong E-06 dipindah ke pendinginan jogging sesi berat (intensitas tetap). Minggu race tanpa long run: 1 easy run pendek (min 2 km) |
+| Pace easy | Durasi dari jarak memakai pace tengah tanpa pembulatan (sama dengan perhitungan jarak) |
+

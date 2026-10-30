@@ -75,7 +75,7 @@ export type WorkoutRow = {
   date: string;
   week_index: number;
   phase: 'base' | 'build' | 'peak' | 'taper' | 'return';
-  type: 'easy' | 'run_walk' | 'long' | 'tempo' | 'interval' | 'strides' | 'recovery' | 'rest';
+  type: 'easy' | 'run_walk' | 'long' | 'tempo' | 'interval' | 'strides' | 'recovery' | 'progression' | 'rest';
   steps: string;
   target_distance_m: number | null;
   target_duration_s: number | null;

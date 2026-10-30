@@ -11,11 +11,21 @@ export async function migrate(db: Db): Promise<number> {
   }
   for (const m of migrations) {
     if (m.version <= current) continue;
-    await db.withTransactionAsync(async () => {
-      await db.execAsync(m.sql);
-      await db.runAsync('UPDATE app_meta SET schema_version = ? WHERE id = 1', [m.version]);
-      await db.execAsync(`PRAGMA user_version = ${m.version}`);
-    });
+    // PRAGMA foreign_keys tidak bisa diubah di dalam transaksi.
+    if (m.foreignKeysOff) await db.execAsync('PRAGMA foreign_keys = OFF;');
+    try {
+      await db.withTransactionAsync(async () => {
+        await db.execAsync(m.sql);
+        if (m.foreignKeysOff) {
+          const broken = await db.getAllAsync('PRAGMA foreign_key_check');
+          if (broken.length > 0) throw new Error(`Migrasi ${m.version}: relasi rusak`);
+        }
+        await db.runAsync('UPDATE app_meta SET schema_version = ? WHERE id = 1', [m.version]);
+        await db.execAsync(`PRAGMA user_version = ${m.version}`);
+      });
+    } finally {
+      if (m.foreignKeysOff) await db.execAsync('PRAGMA foreign_keys = ON;');
+    }
     current = m.version;
   }
   return current;

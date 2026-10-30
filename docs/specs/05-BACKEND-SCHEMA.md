@@ -99,7 +99,7 @@ Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1
 | date | date | |
 | week_index | int | Mulai dari 1 |
 | phase | text | check in ('base','build','peak','taper','return') |
-| type | text | check in ('easy','run_walk','long','tempo','interval','strides','recovery','rest') |
+| type | text | check in ('easy','run_walk','long','tempo','interval','strides','recovery','progression','rest'). `progression` sejak migrasi v5 (tabel dibangun ulang dengan foreign key dimatikan sementara agar relasi activities tidak hilang) |
 | steps | json | Format bagian 3 |
 | target_distance_m | int null | |
 | target_duration_s | int null | |

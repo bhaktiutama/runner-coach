@@ -2,7 +2,9 @@
 // Jangan ubah migrasi yang sudah dirilis; tambah versi baru.
 // Skema: docs/specs/05-BACKEND-SCHEMA.md bagian 2.
 
-export type Migration = { version: number; sql: string };
+/** `foreignKeysOff`: untuk membangun ulang tabel (SQLite tidak bisa mengubah CHECK). Tanpa ini,
+ * DROP TABLE memicu ON DELETE SET NULL di tabel anak dan relasinya hilang. */
+export type Migration = { version: number; sql: string; foreignKeysOff?: boolean };
 
 const std = `id TEXT PRIMARY KEY NOT NULL,
   created_at TEXT NOT NULL,
@@ -130,6 +132,31 @@ CREATE TABLE plan_adjustments (
   status TEXT NOT NULL CHECK (status IN ('proposed', 'accepted', 'rejected')),
   UNIQUE (plan_id, week_index, rule)
 );
+`,
+  },
+  {
+    // Tipe latihan 'progression' (E-22). Tabel dibangun ulang mengikuti prosedur resmi SQLite.
+    version: 5,
+    foreignKeysOff: true,
+    sql: `
+CREATE TABLE planned_workouts_v5 (
+  ${std},
+  plan_id TEXT NOT NULL REFERENCES plans (id) ON DELETE CASCADE,
+  date TEXT NOT NULL,
+  week_index INTEGER NOT NULL,
+  phase TEXT NOT NULL CHECK (phase IN ('base', 'build', 'peak', 'taper', 'return')),
+  type TEXT NOT NULL CHECK (type IN ('easy', 'run_walk', 'long', 'tempo', 'interval', 'strides', 'recovery', 'progression', 'rest')),
+  steps TEXT NOT NULL,
+  target_distance_m INTEGER NULL,
+  target_duration_s INTEGER NULL,
+  status TEXT NOT NULL DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'completed', 'skipped', 'missed')),
+  original_date TEXT NULL,
+  rationale TEXT NOT NULL DEFAULT '[]'
+);
+INSERT INTO planned_workouts_v5 SELECT * FROM planned_workouts;
+DROP TABLE planned_workouts;
+ALTER TABLE planned_workouts_v5 RENAME TO planned_workouts;
+CREATE INDEX planned_workouts_date ON planned_workouts (date);
 `,
   },
 ];

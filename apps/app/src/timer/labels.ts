@@ -12,6 +12,7 @@ export function segmentName(seg: TimerSegment, workoutType?: string): string {
   if (seg.kind === 'cooldown') return et('step.cooldown');
   if (seg.kind === 'recovery') return et('step.recovery');
   if (workoutType === 'strides' && seg.zone === 'interval') return et('step.stride');
+  if (workoutType === 'progression' && seg.zone === 'tempo') return et('step.finishFast');
   return et(`zone.${seg.zone}` as EngineMessageKey);
 }
 

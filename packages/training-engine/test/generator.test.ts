@@ -15,6 +15,8 @@ import {
   type GoalDistance,
   type PlanInput,
   type Weekday,
+  LONG_RUN_SHARE,
+  totalDuration,
 } from '../src';
 
 const START = '2026-11-02'; // Senin
@@ -95,6 +97,37 @@ describe.each(combos)('%s / %o / %i hari / ringan=%s', (target, profile, nDays, 
     expect(phases.includes('taper')).toBe(target !== 'fitness');
   });
 
+  it('E-21 recovery run hanya sehari setelah long run / sesi berat, rekreasional >= 5 hari', () => {
+    const rec = plan.workouts.filter((w) => w.type === 'recovery');
+    if (profile.goal.level === 'beginner' || nDays < 5 || light) expect(rec).toHaveLength(0);
+    for (const r of rec) {
+      const prev = plan.workouts.find((w) => diffDays(w.date, r.date) === 1);
+      expect(prev && (prev.type === 'long' || HARD.has(prev.type))).toBe(true);
+      expect(totalDuration(r.steps)).toBeLessThanOrEqual(30 * 60);
+      expect(r.rationale.map((x) => x.rule)).toContain('E-21');
+    }
+  });
+
+  it('E-22 progression run hanya di Build, rekreasional, tidak bersebelahan dengan sesi berat/long', () => {
+    for (const p of plan.workouts.filter((w) => w.type === 'progression')) {
+      expect(p.phase).toBe('build');
+      expect(profile.goal.level === 'beginner' || light || target === 'fitness').toBe(false);
+      const near = plan.workouts.filter((w) => Math.abs(diffDays(w.date, p.date)) === 1);
+      expect(near.some((w) => w.type === 'long' || HARD.has(w.type))).toBe(false);
+      expect(p.rationale.map((x) => x.rule)).toContain('E-22');
+    }
+  });
+
+  it('volume tidak macet: minggu non-cutback fase Base/Build/Peak tidak turun > 10%', () => {
+    let ref = 0;
+    for (const w of plan.weeks.filter((x) => x.phase !== 'taper' && x.phase !== 'return')) {
+      if (w.cutback) continue;
+      if (ref > 0 && !(profile.goal.level === 'beginner' && profile.goal.weeklyVolumeM === 0))
+        expect(w.volumeM).toBeGreaterThanOrEqual(ref * 0.9);
+      ref = w.volumeM;
+    }
+  });
+
   it('E-05 volume naik maks 10% dari minggu non-cutback terakhir', () => {
     let ref = plan.weeks[0]!.volumeM;
     for (const w of plan.weeks.slice(1)) {
@@ -127,10 +160,12 @@ describe.each(combos)('%s / %o / %i hari / ringan=%s', (target, profile, nDays, 
     }
   });
 
-  it('E-08 long run maks 30% volume minggu (atau batas E-06/minimum)', () => {
+  it('E-08 long run maks porsi volume per jarak (30%, HM 35%, FM 45%) atau batas E-06/minimum', () => {
     for (const w of plan.workouts.filter((x) => x.type === 'long')) {
       const week = plan.weeks[w.weekIndex - 1]!;
-      expect(runningDistance(w.steps)).toBeLessThanOrEqual(Math.max(week.volumeM * 0.3, 2000) + 200);
+      expect(runningDistance(w.steps)).toBeLessThanOrEqual(
+        Math.max(week.volumeM * LONG_RUN_SHARE[inp.goal.distance], 2000) + 200,
+      );
     }
   });
 
@@ -223,6 +258,22 @@ describe.each(combos)('%s / %o / %i hari / ringan=%s', (target, profile, nDays, 
       const holes = [...tpl.matchAll(/\{(\w+)\}/g)].map((m) => m[1]!);
       for (const h of holes) expect(r.values, `${r.rule} butuh ${h}`).toHaveProperty(h);
     }
+  });
+});
+
+describe('E-08 long run HM/FM', () => {
+  it('FM rekreasional dengan waktu 10K: long run puncak >= 20 km dan <= 3 jam', () => {
+    const plan = generatePlan(input('fm', PROFILES[3]!, 5));
+    const longs = plan.workouts.filter((w) => w.type === 'long');
+    expect(Math.max(...longs.map((w) => runningDistance(w.steps)))).toBeGreaterThanOrEqual(20_000);
+    for (const w of longs) expect(totalDuration(w.steps)).toBeLessThanOrEqual(180 * 60);
+  });
+
+  it('HM rekreasional dengan waktu 10K: long run puncak >= 14 km dan <= 2,5 jam', () => {
+    const plan = generatePlan(input('hm', PROFILES[3]!, 4));
+    const longs = plan.workouts.filter((w) => w.type === 'long');
+    expect(Math.max(...longs.map((w) => runningDistance(w.steps)))).toBeGreaterThanOrEqual(14_000);
+    for (const w of longs) expect(totalDuration(w.steps)).toBeLessThanOrEqual(150 * 60);
   });
 });
 

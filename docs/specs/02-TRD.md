@@ -122,12 +122,14 @@ Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom
 | E-14 | Run-walk | Level `beginner` + lari terjauh 4 minggu < 3 km. Blok lari naik tiap minggu; jadi lari kontinu setelah blok lari 20 mnt (07 E-O2) |
 | E-06 | Jarak satu sesi | Maks 110% dari lari terjauh 30 hari terakhir (awal: `goals.longest_run_m`) |
 | E-07 | Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
-| E-08 | Long run | Maks 30% volume mingguan, di hari long run pilihan pengguna. Berlaku bersama E-06; yang lebih ketat menang |
+| E-08 | Long run | Maks porsi volume mingguan: 5K/10K/Bugar 30%, HM 35%, FM 45%; maks durasi 2 jam (5K/10K/Bugar), 2,5 jam (HM), 3 jam (FM). Di hari long run pilihan pengguna. Berlaku bersama E-06; yang lebih ketat menang |
 | E-09 | Intensitas | ~80% easy |
 | E-10 | Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
 | E-11 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg. Volume turun 40-60% dari minggu puncak; intensitas dan jumlah sesi kualitas dipertahankan |
 | E-12 | Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
 | E-13 | Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
+| E-21 | Recovery run | Rekreasional, >= 5 hari lari, bukan mode ringan: hari easy tepat sesudah long run / sesi berat (minggu yang sama) jadi recovery run maks 30 mnt di pace easy paling lambat + 0-30 dtk/km. Sisa jarak dipindah ke hari easy lain |
+| E-22 | Progression run | Fase Build, rekreasional, bukan cutback/mode ringan/Bugar, minggu fase ganjil: 1 easy run jadi easy + 10 mnt terakhir di pace maraton. Tidak bersebelahan dengan long run / sesi berat; jarak total tetap dalam E-06 |
 | E-15 | ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
 
 ### 4.3 Adaptasi (F-11, layar 2.5)

@@ -105,12 +105,12 @@ export const HELP: HelpGroup[] = [
       {
         id: 'recovery',
         title: 'Recovery run',
-        body: 'Lari sangat pelan dan pendek (sekitar 20-30 menit), lebih santai dari easy run, biasanya sehari setelah latihan berat atau long run. Tujuannya membantu pulih, bukan menambah kebugaran. Saat ini app menjadwalkan easy run atau istirahat setelah sesi berat; recovery run terjadwal sedang direview bersama pelatih.',
+        body: 'Lari sangat pelan dan pendek (sekitar 20-30 menit), lebih santai dari easy run, biasanya sehari setelah latihan berat atau long run. Tujuannya membantu pulih, bukan menambah kebugaran. App menjadwalkannya untuk pelari rekreasional yang berlatih 5 hari atau lebih, di hari setelah long run atau sesi berat.',
       },
       {
         id: 'long',
         title: 'Long run',
-        body: 'Lari terjauh dalam seminggu, di pace santai. Melatih daya tahan untuk jarak race. Long run dibatasi paling banyak 10% di atas lari terjauhmu 30 hari terakhir dan 30% dari volume minggu itu, supaya naiknya aman.',
+        body: 'Lari terjauh dalam seminggu, di pace santai. Melatih daya tahan untuk jarak race. Long run dibatasi paling banyak 10% di atas lari terjauhmu 30 hari terakhir. Porsinya maks 30% volume minggu (half marathon 35%, full marathon 45%), dan durasinya maks 2,5 jam untuk half marathon atau 3 jam untuk full marathon.',
       },
       {
         id: 'tempo',
@@ -125,7 +125,7 @@ export const HELP: HelpGroup[] = [
       {
         id: 'progression',
         title: 'Progression run',
-        body: 'Lari yang dimulai pelan lalu makin cepat, biasanya diakhiri di pace tempo. Variasi yang sering dipakai pelatih untuk melatih finish yang kuat. Belum dijadwalkan otomatis oleh app; kamu bisa mencobanya di easy run dengan mempercepat 5-10 menit terakhir.',
+        body: 'Lari yang dimulai pelan lalu makin cepat, biasanya diakhiri di pace tempo. Di app: lari santai, lalu 10 menit terakhir naik ke pace maraton. Melatih finish yang kuat dengan beban lebih ringan dari tempo. Muncul di fase Build untuk pelari rekreasional, selang seminggu, dan tidak bersebelahan dengan long run atau sesi berat.',
       },
       {
         id: 'strides',
@@ -240,8 +240,8 @@ export const HELP: HelpGroup[] = [
       {
         id: 'E-08',
         rule: 'E-08',
-        title: 'Long run maks 30% volume mingguan',
-        body: 'Contoh: total 40 km, long run paling jauh 12 km. Dipakai bersama aturan +10% di atas; yang lebih ketat yang berlaku.',
+        title: 'Batas porsi dan durasi long run',
+        body: 'Long run maks 30% volume mingguan untuk 5K/10K, 35% untuk half marathon dan 45% untuk full marathon, serta maks 2,5 jam (HM) atau 3 jam (FM). Porsi lebih besar untuk HM/FM karena pelari rekreasional jarang bervolume tinggi, padahal butuh long run yang cukup jauh. Contoh FM: total 50 km, long run paling jauh 22,5 km. Batas +10% di atas tetap berlaku; yang lebih ketat yang dipakai.',
       },
       {
         id: 'E-09',
@@ -302,6 +302,18 @@ export const HELP: HelpGroup[] = [
         rule: 'E-18',
         title: 'Latihan berat terasa ringan: pace dinaikkan',
         body: 'Kalau latihan berat terasa 4 dari 10 atau kurang tiga kali berturut-turut, app menawarkan pace sedikit lebih cepat atau tes lari dulu. Belum ada penelitian khusus.',
+      },
+      {
+        id: 'E-21',
+        rule: 'E-21',
+        title: 'Recovery run setelah hari berat',
+        body: 'Untuk pelari rekreasional yang berlatih 5 hari atau lebih, hari setelah long run atau sesi berat diisi lari sangat pelan maks 30 menit. Jarak yang tidak terpakai dipindah ke hari easy lain. Kebiasaan pelatih; belum ada penelitian khusus tentang recovery run.',
+      },
+      {
+        id: 'E-22',
+        rule: 'E-22',
+        title: 'Progression run di fase Build',
+        body: 'Selang seminggu di fase Build, satu easy run diganti progression run: santai lalu 10 menit terakhir di pace maraton. Tidak bersebelahan dengan long run atau sesi berat. Kebiasaan pelatih; belum ada penelitiannya.',
       },
       {
         id: 'E-19',

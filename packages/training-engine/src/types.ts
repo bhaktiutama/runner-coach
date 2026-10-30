@@ -7,7 +7,7 @@ export type RaceDistance = Exclude<GoalDistance, 'fitness'>;
 export type Level = 'beginner' | 'recreational';
 export type Phase = 'base' | 'build' | 'peak' | 'taper' | 'return';
 export type WorkoutType =
-  'easy' | 'run_walk' | 'long' | 'tempo' | 'interval' | 'strides' | 'recovery' | 'rest';
+  'easy' | 'run_walk' | 'long' | 'tempo' | 'interval' | 'strides' | 'recovery' | 'progression' | 'rest';
 
 export const DISTANCE_M: Record<RaceDistance, number> = { '5k': 5000, '10k': 10000, hm: 21097, fm: 42195 };
 

@@ -17,10 +17,15 @@ import {
 import { LEVEL_VDOT, paceZones, raceTimeFromVdot, vdotFromRace, type PaceZones } from './vdot';
 import {
   DRILL_MINUTES,
+  easyPaceMid,
   easyRun,
   intervalRun,
   longRun,
   MIN_EASY_M,
+  progressionRun,
+  PROGRESSION_FAST_S,
+  recoveryRun,
+  RECOVERY_MAX_S,
   runWalk,
   stepsSummary,
   stridesRun,
@@ -47,7 +52,23 @@ const PEAK_VOLUME_M: Record<Level, Record<GoalDistance, number>> = {
 const MAX_WEEKLY_INCREASE = 0.1; // E-05
 const CUTBACK_EVERY = 4; // E-07
 const CUTBACK_FACTOR = 0.8; // E-07: turun 20-30% setelah pembulatan
-const LONG_RUN_SHARE = 0.3; // E-08
+// E-08: porsi long run dari volume minggu dan batas waktunya. HM/FM butuh long run yang lebih
+// jauh relatif terhadap volume (pelari rekreasional jarang bervolume tinggi); batas waktu
+// mencegah sesi > 2,5 jam (HM) / 3 jam (FM) untuk pelari lambat.
+export const LONG_RUN_SHARE: Record<GoalDistance, number> = {
+  '5k': 0.3,
+  '10k': 0.3,
+  hm: 0.35,
+  fm: 0.45,
+  fitness: 0.3,
+};
+export const LONG_RUN_MAX_S: Record<GoalDistance, number> = {
+  '5k': 120 * 60,
+  '10k': 120 * 60,
+  hm: 150 * 60,
+  fm: 180 * 60,
+  fitness: 120 * 60,
+};
 const SESSION_CAP = 1.1; // E-06
 const LONGEST_WINDOW_DAYS = 30; // E-06
 const RUN_WALK_LONGEST_M = 3000; // E-14 / E-O2
@@ -130,10 +151,9 @@ export function phaseLayout(distance: GoalDistance, weeks: number): Phase[] {
   ];
 }
 
-const roundDown = (m: number) => {
-  const step = m >= 10_000 ? 1000 : 500;
-  return Math.floor(m / step) * step;
-};
+// Dibulatkan ke bawah per 100 m. Pembulatan per 0,5-1 km (versi lama) ditambah pembulatan
+// durasi per menit membuat kenaikan 10% habis dan volume macet di sekitar 10 km/minggu.
+const roundDown = (m: number) => Math.floor(m / 100) * 100;
 
 /** Pilih k hari dari hari tersedia, wajib memuat long run, dengan jarak antar hari sebesar mungkin. */
 export function chooseRunDays(available: Weekday[], k: number, longDay: Weekday): Weekday[] {
@@ -335,7 +355,8 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
       target = roundDown(lastFullVolume * CUTBACK_FACTOR);
       if (target < lastFullVolume * 0.7) target = Math.ceil((lastFullVolume * 0.7) / 500) * 500;
     } else {
-      target = Math.min(roundDown(lastFullVolume * (1 + MAX_WEEKLY_INCREASE)), roundDown(peakTarget));
+      // Margin 100 m: jarak aktual per sesi dibulatkan sendiri-sendiri dan bisa sedikit melebihi target.
+      target = Math.min(roundDown(lastFullVolume * (1 + MAX_WEEKLY_INCREASE) - 100), roundDown(peakTarget));
       target = Math.max(target, Math.min(lastFullVolume, roundDown(peakTarget)));
     }
 
@@ -474,7 +495,9 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
   const hasLong = pool.includes(longDay) && daysToRace(longDay) >= 3;
 
   // Jumlah hari lari: volume kecil tidak dipecah ke terlalu banyak sesi.
-  const sessions = Math.min(pool.length, Math.max(2, Math.floor(target / 2500)));
+  // Dibulatkan ke terdekat: dengan pembulatan ke bawah, minggu 7,3 km hanya dapat 2 sesi dan
+  // sesi kedua terpotong E-06, sehingga cutback/taper turun lebih dari yang direncanakan.
+  const sessions = Math.min(pool.length, Math.max(2, Math.round(target / 2500)));
   const usable = hasLong ? chooseRunDays(pool, sessions, longDay) : chooseRunDays(pool, sessions, pool[0]!);
 
   let h = hardCount(phase, a.level, usable.length, input, cutback);
@@ -487,13 +510,15 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
   const workouts: GeneratedWorkout[] = [];
   const histAll = () => [...a.history, ...workouts];
 
-  // Long run: min(30% volume, 110% lari terjauh 30 hari).
+  // Long run: min(porsi volume E-08, batas waktu E-08, 110% lari terjauh 30 hari E-06).
+  const share = LONG_RUN_SHARE[input.goal.distance];
+  const timeCapM = Math.floor((LONG_RUN_MAX_S[input.goal.distance] / easyPaceMid(zones)) * 1000);
   let longM = 0;
   if (hasLong) {
     const date = dateOf(monday, longDay);
     const l30 = longest30(date, input, histAll());
     const cap = Math.floor(l30 * SESSION_CAP);
-    longM = Math.min(Math.round(target * LONG_RUN_SHARE), cap);
+    longM = Math.min(Math.round(target * share), timeCapM, cap);
     longM = Math.max(longM, Math.min(MIN_EASY_M, cap));
   }
 
@@ -511,10 +536,30 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
   hardDays.splice(0, hardDays.length, ...hard.map((x) => x.d));
   const hardM = hard.reduce((x, s) => x + runningDistance(s.steps), 0);
 
-  // Sisa volume dibagi ke hari easy.
+  // Sisa volume dibagi ke hari easy. Volume kecil: long run dikurangi dulu supaya hari easy tetap
+  // dapat minimal MIN_EASY_M; kalau hari easy tetap tidak cukup, sisanya dikembalikan ke long run
+  // (tetap dalam batas E-06/E-08). Tanpa ini volume pemula turun di fase Build.
   const easyDays = usable.filter((d) => d !== longDay && !hardDays.includes(d));
-  const remaining = target - longM - hardM;
+  if (hasLong && easyDays.length > 0) {
+    const need = MIN_EASY_M * easyDays.length;
+    if (target - longM - hardM < need) longM = Math.max(Math.min(MIN_EASY_M, longM), target - hardM - need);
+  }
+  let remaining = target - longM - hardM;
   while (easyDays.length > 0 && remaining / easyDays.length < MIN_EASY_M) easyDays.pop();
+  // Minggu race tanpa long run: sisa volume jadi 1 easy run pendek (shakeout, min 2 km),
+  // supaya taper tidak turun lebih dari 60% (E-11).
+  const easyCandidates = usable.filter((d) => d !== longDay && !hardDays.includes(d));
+  if (easyDays.length === 0 && !hasLong && inRaceWeek && remaining > 0 && easyCandidates.length > 0) {
+    easyDays.push(easyCandidates[0]!);
+    remaining = Math.max(remaining, MIN_EASY_M);
+  }
+  if (easyDays.length === 0 && hasLong && remaining > 0) {
+    const l30 = longest30(dateOf(monday, longDay), input, histAll());
+    const room = Math.min(Math.floor(l30 * SESSION_CAP), timeCapM) - longM;
+    const add = Math.max(0, Math.min(remaining, room));
+    longM += add;
+    remaining -= add;
+  }
   const perEasy = easyDays.length > 0 ? remaining / easyDays.length : 0;
   const stridesDay =
     phase === 'base' &&
@@ -524,6 +569,54 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
     easyDays.length > 1
       ? easyDays[0]
       : null;
+
+  // Recovery run (E-21): hari easy tepat sesudah long run / sesi berat di minggu yang sama,
+  // untuk pelari rekreasional dengan >= 5 hari lari. Sisa jaraknya dipindah ke hari easy lain.
+  const heavy = new Set<Weekday>([...(hasLong ? [longDay] : []), ...hardDays]);
+  const recoveryDays =
+    a.level === 'recreational' && !input.lightMode && phase !== 'return' && usable.length >= 5
+      ? easyDays.filter((d) => d > 0 && heavy.has((d - 1) as Weekday) && d !== stridesDay)
+      : [];
+  const recoveryM = Math.min(perEasy, Math.floor((RECOVERY_MAX_S / (zones.easy.max + 15)) * 1000));
+  // Progression run (E-22): fase Build, minggu ganjil, bukan cutback; tidak bersebelahan dengan
+  // long run atau sesi berat supaya tetap ada hari pulih di antaranya.
+  const progressionDay =
+    phase === 'build' &&
+    a.level === 'recreational' &&
+    !input.lightMode &&
+    !cutback &&
+    input.goal.distance !== 'fitness' &&
+    a.phaseWeek % 2 === 1
+      ? (easyDays.find(
+          (d) =>
+            d !== stridesDay && !recoveryDays.includes(d) && ![...heavy].some((h) => adjacentWeekdays(h, d)),
+        ) ?? null)
+      : null;
+  const normalEasy = easyDays.filter((d) => !recoveryDays.includes(d));
+  const perNormal =
+    normalEasy.length > 0
+      ? perEasy + (recoveryDays.length * Math.max(0, perEasy - recoveryM)) / normalEasy.length
+      : 0;
+
+  // Jarak easy yang tidak muat di batas E-06 dipindah ke pendinginan jogging santai sesi berat
+  // (intensitas tidak bertambah). Tanpa ini plan 3 hari turun 15-20% saat masuk fase Build.
+  // Batas E-06 hari easy dihitung sebelum sesi berat diperpanjang, supaya jarak yang dipindah
+  // tidak terhitung dua kali.
+  const easyCap = new Map<Weekday, number>(
+    normalEasy.map((d) => [d, Math.floor(longest30(dateOf(monday, d), input, histAll()) * SESSION_CAP)]),
+  );
+  let overflow = normalEasy.reduce<number>((x, d) => x + Math.max(0, perNormal - easyCap.get(d)!), 0);
+  const easyMid = (zones.easy.min + zones.easy.max) / 2;
+  for (const hs of hard) {
+    if (overflow < 500) break;
+    const cap = Math.floor(longest30(dateOf(monday, hs.d), input, histAll()) * SESSION_CAP);
+    const room = cap - runningDistance(hs.steps) - 50;
+    const extraS = Math.floor(((Math.min(overflow, room) / 1000) * easyMid) / 60) * 60;
+    const cool = hs.steps.find((x) => x.kind === 'cooldown');
+    if (extraS < 60 || !cool || !('duration_s' in cool) || cool.duration_s == null) continue;
+    cool.duration_s += extraS;
+    overflow -= (extraS / easyMid) * 1000;
+  }
 
   const ordered = [...usable].sort((x, y) => x - y);
   for (const d of ordered) {
@@ -542,6 +635,7 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
               distance_m: dist,
               week_volume_m: target,
               share_pct: Math.round((dist / Math.max(1, target)) * 100),
+              limit_pct: Math.round(share * 100),
             },
           },
         ]),
@@ -557,10 +651,31 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
       continue;
     }
     if (!easyDays.includes(d)) continue;
-    const dist = Math.min(perEasy, cap);
-    const steps = d === stridesDay ? stridesRun(dist, zones) : easyRun(dist, zones);
+    if (recoveryDays.includes(d)) {
+      const steps = recoveryRun(Math.min(recoveryM, cap), zones);
+      workouts.push(
+        mk(d, 'recovery', steps, [
+          { rule: 'E-21', values: { min: Math.round(stepsSummary(steps).durationS / 60) } },
+          { rule: 'E-06', values: { distance_m: runningDistance(steps), longest_30d_m: l30, cap_m: cap } },
+        ]),
+      );
+      continue;
+    }
+    const dist = Math.min(perNormal, cap, easyCap.get(d) ?? cap);
+    let type: WorkoutType = d === stridesDay ? 'strides' : d === progressionDay ? 'progression' : 'easy';
+    const steps =
+      type === 'strides'
+        ? stridesRun(dist, zones)
+        : type === 'progression'
+          ? progressionRun(dist, zones)
+          : easyRun(dist, zones);
+    // Sesi terlalu pendek untuk segmen cepat: progressionRun mengembalikan easy biasa.
+    if (type === 'progression' && steps.length === 1) type = 'easy';
+    const extra: Rationale[] =
+      type === 'progression' ? [{ rule: 'E-22', values: { fast_min: PROGRESSION_FAST_S / 60 } }] : [];
     workouts.push(
-      mk(d, d === stridesDay ? 'strides' : 'easy', steps, [
+      mk(d, type, steps, [
+        ...extra,
         { rule: 'E-06', values: { distance_m: runningDistance(steps), longest_30d_m: l30, cap_m: cap } },
       ]),
     );
@@ -576,19 +691,16 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
   );
   const easyPct = Math.round((split.e / Math.max(1, split.e + split.h)) * 100);
   for (const w of workouts) {
-    if (w.type === 'easy' || w.type === 'strides')
+    if (w.type === 'easy' || w.type === 'strides' || w.type === 'progression')
       w.rationale.unshift({ rule: 'E-09', values: { easy_pct: easyPct } });
   }
 
-  // E-08 setelah pembulatan: long run maks 30% volume aktual.
+  // E-08 setelah pembulatan: long run maks porsi volume aktual.
   let volume = workouts.reduce((x, w) => x + w.targetDistanceM, 0);
   const long = workouts.find((w) => w.type === 'long');
-  if (long && long.targetDistanceM > volume * LONG_RUN_SHARE && long.targetDistanceM > MIN_EASY_M) {
+  if (long && long.targetDistanceM > volume * share && long.targetDistanceM > MIN_EASY_M) {
     const others = volume - long.targetDistanceM;
-    const steps = longRun(
-      Math.max(MIN_EASY_M, Math.floor((others * LONG_RUN_SHARE) / (1 - LONG_RUN_SHARE))),
-      zones,
-    );
+    const steps = longRun(Math.max(MIN_EASY_M, Math.floor((others * share) / (1 - share))), zones);
     const dist = runningDistance(steps);
     long.steps = steps;
     long.targetDistanceM = dist;

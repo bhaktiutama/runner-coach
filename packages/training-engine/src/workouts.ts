@@ -18,7 +18,9 @@ export function easyPaceMid(z: PaceZones): number {
 
 /** Durasi (detik, dibulatkan ke bawah per menit) untuk menempuh jarak pada pace easy. */
 export function easySecondsFor(distanceM: number, z: PaceZones): number {
-  return minutes((distanceM / 1000) * easyPaceMid(z));
+  // Pace tengah tanpa pembulatan, sama dengan runningDistance; versi dibulatkan bisa membuat
+  // jarak aktual beberapa meter di atas batas E-06.
+  return minutes((distanceM / 1000) * ((z.easy.min + z.easy.max) / 2));
 }
 
 export function easyRun(distanceM: number, z: PaceZones): Step[] {
@@ -27,6 +29,28 @@ export function easyRun(distanceM: number, z: PaceZones): Step[] {
 
 export function longRun(distanceM: number, z: PaceZones): Step[] {
   return [{ kind: 'work', duration_s: easySecondsFor(distanceM, z), zone: 'long', pace_s_per_km: z.easy }];
+}
+
+/** Recovery run (E-21): sangat santai di batas lambat zona easy + 30 dtk/km, maks 30 menit. */
+export const RECOVERY_MAX_S = 30 * 60;
+export function recoveryRun(distanceM: number, z: PaceZones): Step[] {
+  const pace = { min: z.easy.max, max: z.easy.max + 30 };
+  const s = Math.min(RECOVERY_MAX_S, minutes((distanceM / 1000) * (pace.min + 15)));
+  return [{ kind: 'work', duration_s: s, zone: 'recovery', pace_s_per_km: pace }];
+}
+
+/** Progression run (E-22): easy, lalu 10 menit terakhir naik ke pace maraton. */
+export const PROGRESSION_FAST_S = 10 * 60;
+export function progressionRun(distanceM: number, z: PaceZones): Step[] {
+  // Jarak total tidak melebihi `distanceM` (batas E-06): segmen cepat diambil dari jatah jarak.
+  const fastM = (PROGRESSION_FAST_S / ((z.marathon.min + z.marathon.max) / 2)) * 1000;
+  // Margin 50 m: jarak per segmen dibulatkan sendiri-sendiri.
+  const easyM = distanceM - fastM - 50;
+  if (easyM < (600 / easyPaceMid(z)) * 1000) return easyRun(distanceM, z);
+  return [
+    { kind: 'work', duration_s: easySecondsFor(easyM, z), zone: 'easy', pace_s_per_km: z.easy },
+    { kind: 'work', duration_s: PROGRESSION_FAST_S, zone: 'tempo', pace_s_per_km: z.marathon },
+  ];
 }
 
 /** Easy run + 4 x 20 detik strides (pace repetisi) dengan jog 60 detik. */

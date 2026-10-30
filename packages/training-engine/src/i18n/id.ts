@@ -16,7 +16,11 @@ export const engineId = {
   'rule.E-07':
     'Minggu {week} adalah minggu ringan: volume turun {pct}% supaya tubuhmu menyerap latihan minggu-minggu sebelumnya.',
   'rule.E-08':
-    'Long run {distance_m} adalah {share_pct}% dari volume minggu ini ({week_volume_m}), di bawah batas 30% supaya beban tidak menumpuk di satu sesi.',
+    'Long run {distance_m} adalah {share_pct}% dari volume minggu ini ({week_volume_m}), di bawah batas {limit_pct}% supaya beban tidak menumpuk di satu sesi.',
+  'rule.E-21':
+    'Recovery run {min} menit, sangat pelan, sehari setelah long run atau sesi berat. Membantu tubuh pulih tanpa menambah beban.',
+  'rule.E-22':
+    'Progression run: mulai santai, lalu {fast_min} menit terakhir naik ke pace maraton. Melatih finish yang kuat dengan beban lebih ringan dari sesi tempo.',
   'rule.E-09':
     'Sekitar {easy_pct}% waktu larimu di pace easy. Porsi easy yang besar membangun daya tahan dengan beban pemulihan rendah.',
   'rule.E-10':
@@ -65,6 +69,7 @@ export const engineId = {
   'workout.interval': 'Interval',
   'workout.strides': 'Easy + strides',
   'workout.recovery': 'Recovery',
+  'workout.progression': 'Progression',
   'workout.rest': 'Istirahat',
 
   'workout.why.easy':
@@ -79,9 +84,12 @@ export const engineId = {
     'Bagian cepat pendek dengan jeda jog untuk menaikkan kapasitas aerobik maksimal. Rasa: 8 dari 10 di bagian cepat.',
   'workout.why.strides':
     'Easy run ditutup lari cepat-santai 20 detik untuk melatih langkah tanpa menambah lelah. Rasa: 3-4 dari 10.',
+  'workout.why.progression':
+    'Mulai santai lalu makin cepat di akhir. Melatih finish yang kuat. Rasa: 4-6 dari 10, naik ke 6-7 di 10 menit terakhir.',
   'workout.why.recovery': 'Lari sangat pelan untuk membantu pemulihan. Rasa: 2-3 dari 10.',
   'workout.why.drill': 'Drill ABC sebelumnya membangunkan otot dan merapikan langkah.',
 
+  'step.finishFast': 'Akhir lebih cepat',
   'step.warmup': 'Pemanasan',
   'step.work': 'Lari',
   'step.recovery': 'Jog pelan',

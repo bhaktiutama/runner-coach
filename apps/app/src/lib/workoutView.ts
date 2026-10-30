@@ -24,6 +24,7 @@ export const TYPE_ZONE: Record<WorkoutType, ViewZone> = {
   interval: 'interval',
   strides: 'easy',
   recovery: 'recovery',
+  progression: 'easy',
   rest: 'recovery',
 };
 
@@ -143,9 +144,13 @@ export function segmentRows(steps: Step[], type: WorkoutType, unit: Unit = 'km')
           ? et('step.cooldown')
           : s.kind === 'recovery'
             ? et('step.recovery')
-            : type === 'easy' || type === 'strides'
-              ? typeName('easy')
-              : typeName(type);
+            : type === 'progression'
+              ? s.zone === 'tempo'
+                ? et('step.finishFast')
+                : typeName('easy')
+              : type === 'easy' || type === 'strides'
+                ? typeName('easy')
+                : typeName(type);
     const dur = s.duration_s ?? 0;
     const hard = s.zone === 'tempo' || s.zone === 'interval';
     const min = Math.round(dur / 60);

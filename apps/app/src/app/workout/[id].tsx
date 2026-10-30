@@ -188,6 +188,7 @@ export default function WorkoutDetail() {
 const TYPE_HELP: Partial<Record<WorkoutType, string>> = {
   easy: 'easy',
   recovery: 'recovery',
+  progression: 'progression',
   long: 'long',
   tempo: 'tempo',
   interval: 'interval',
