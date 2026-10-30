@@ -1,13 +1,13 @@
 # 03. App Flow Document
 
-Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
+Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wireframe di `docs/wireframes/`
 
 ## Ringkasan
 
 - 4 tab: **Hari ini | Plan | Progres | Profil**. Pengguna baru: Selamat datang -> 6 pertanyaan -> preview plan -> login -> Hari ini.
 - Loop inti: Hari ini -> Mulai -> Timer -> Selesai + RPE -> Simpan. Setelah latihan terakhir minggu itu: Ringkasan minggu.
 - Status latihan dan timer punya state yang jelas (bagian 3); agent wajib mengikuti transisi di sini.
-- Semua teks dari katalog bahasa Indonesia (TRD 8). Notifikasi hanya lokal (TRD 9).
+- Semua teks dari katalog bahasa aktif, Indonesia atau English (TRD 8, F-22). Notifikasi hanya lokal (TRD 9).
 - Semua flow membaca/menulis SQLite di perangkat. Hanya login (1.8, 1.9) dan hapus akun (4.6) yang butuh internet.
 
 ## 1. Peta layar
@@ -18,8 +18,10 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
 | 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1; tombol kembali "Ubah jawaban" -> 1.7 (jawaban tetap tersimpan, plan dibuat ulang) |
 | 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |
-| 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6 |
+| 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6. Kartu kedua strength (F-21): "Mulai strength" -> 2.3s, "Lihat detail" -> 2.2s, terkunci -> 4.4 |
 | 2.2 | Detail latihan | Mulai -> 2.3; Pindah hari -> 3.2; Ganti jadi easy |
+| 2.2s | Detail strength (F-21) | Daftar gerakan (tempat animasi kosong, dosis, cue, istirahat), "Kenapa latihan ini?". Mulai -> 2.3s; Pindah hari -> 3.2. Terkunci (paywall aktif): "Buka dengan Premium" -> 4.4 |
+| 2.3s | Timer: mode gerakan (F-21) | Gerakan repetisi: "Selesai set"; gerakan berwaktu: hitung mundur; istirahat: hitung mundur + "Lewati istirahat". Akhiri / selesai -> 2.4 |
 | 2.3 | Timer (gelap) | Selesai / Akhiri -> 2.4 |
 | 2.3b | Timer: segmen drill | "Lanjut" per set; set terakhir -> segmen berikut |
 | 2.4 | Selesai + RPE | Simpan -> 2.5 (jika latihan terakhir minggu itu) atau 2.1 |
@@ -29,10 +31,11 @@ Status: Draft v0.3 (2026-10-29) | Nomor layar = wireframe di `docs/wireframes/`
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
 | 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
-| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; Jeda plan -> 4.3; Data & privasi -> 4.5; Panduan & istilah -> 4.7 |
-| 4.2 | Integrasi | Fase 2 |
+| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
+| 4.2 | Integrasi | Fase 2 (ditunda: butuh kredensial Strava + HP fisik) |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
-| 4.4 | Premium | Fase 3 |
+| 4.4 | Premium (F-23) | Fase 2: layar tanpa pembelian (tombol nonaktif). Kembali -> layar asal. Pembelian Fase 3 (`08-MONETIZATION.md`) |
+| 4.8 | Bahasa (F-22) | Ikuti perangkat / Bahasa Indonesia / English; pilihan langsung berlaku (FL-13). Kembali -> 4.1 |
 | 4.7 | Panduan & istilah (F-20) | Dari 4.1 "Panduan & istilah" atau tombol (i) di layar terkait -> 4.7 terbuka di topik itu. Kembali -> layar asal |
 | 4.5 | Data & privasi | Backup ke file; Pulihkan dari file; sakelar data anonim; Keluar; Hapus akun -> 4.6 |
 | 4.6 | Hapus akun | Backup dulu (opsional) -> ketik "HAPUS" -> 1.1 |
@@ -122,6 +125,29 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 "Keluar" -> pilihan: "Keluar, data tetap di HP ini" atau "Keluar dan hapus data di HP ini" (tawarkan backup dulu). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
 
+### FL-12 Strength + core (F-21)
+
+| Langkah / kasus | Perilaku |
+|---|---|
+| 1.6 "Mau latihan kekuatan?" | Ya / Nanti saja (default Nanti). Ya: plan memuat sesi strength (E-23..E-26), `profile.strength_opt_in = 1` |
+| 4.1 sakelar nyala | Sesi strength/core ditambahkan mulai hari ini ke lari yang sudah ada (lari tidak berubah) |
+| 4.1 sakelar mati | Sesi strength terjadwal mulai hari ini dihapus; riwayat tetap |
+| 2.1 hari dengan strength | Kartu kedua di bawah kartu lari (atau di bawah kartu Istirahat). Lajur minggu: tanda "S" |
+| 3.1 | Hari dengan lari + strength: baris "+ Strength N mnt" di bawah lari, tap -> 2.2s. Hari strength saja: baris Strength |
+| 3.2 pindah strength | Boleh ke hari yang ada lari. Ditolak: hari long run, sehari sebelum long run / interval (E-24), hari yang sudah ada strength. Strength tidak bisa digabung |
+| 2.3s -> 2.4 | Tanpa jarak dan pace. RPE wajib + "Bebannya terasa: terlalu berat / pas / terlalu ringan" (opsional). Terlalu berat: sesi strength terjadwal berikutnya turun 1 level (E-25) |
+| Log manual (2.6) | Hanya dicocokkan ke latihan lari, bukan strength |
+| Progres (3.3) | Kepatuhan menghitung lari saja; baris tambahan "Strength: x dari y sesi" |
+| Adaptasi (2.5) | Strength terlewat tidak dihitung E-19; aktivitas strength bukan "lari terakhir" (E-13) |
+
+### FL-13 Bahasa (F-22)
+
+4.1 "Bahasa" -> 4.8 -> pilih -> `profile.locale` disimpan -> seluruh layar di-mount ulang dalam bahasa baru (tetap di 4.8). Install baru mengikuti bahasa perangkat. Hapus data di HP (FL-7/FL-10) mengembalikan profil ke default.
+
+### FL-14 Gerbang Premium (F-23)
+
+Paywall mati (default fase 2): tidak ada yang terkunci, baris Premium di 4.1 tersembunyi, 4.4 hanya bisa dibuka langsung. Paywall aktif (`EXPO_PUBLIC_PAYWALL=1`): sesi strength/core minggu ke-3 dst. menampilkan "Buka dengan Premium" di 2.1 dan 2.2s -> 4.4; event `paywall_viewed`. Lari tidak pernah terkunci.
+
 ### FL-11 Pengingat dan izin notifikasi (F-12, F-05)
 
 | Kasus | Perilaku |
@@ -158,6 +184,8 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 | finished | Otomatis | 2.4 |
 
 Saat `paused`: notifikasi terjadwal dibatalkan, dijadwalkan ulang saat `running`.
+
+Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen di "Segmen x dari y". Set berbasis repetisi tidak memakai countdown ("Selesai set"); set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
 
 Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS, jadi segmen ini tidak memakai countdown. Layar menampilkan nama gerakan, set ke-berapa, dan cue; pengguna menekan "Lanjut" setiap set selesai. Dosis berbasis waktu tetap memakai countdown.
 

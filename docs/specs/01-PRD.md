@@ -1,13 +1,13 @@
 # 01. Product Requirements Document (PRD)
 
-Status: Draft v0.3 (2026-10-29) | Latar belakang: `docs/PLANNING.md` bagian 1, 2, 8, 9 | Layar: wireframe (lihat `README.md`)
+Status: Draft v0.4 (2026-10-30, fase 2: F-21, F-22, F-23) | Latar belakang: `docs/PLANNING.md` bagian 1, 2, 8, 9 | Layar: wireframe (lihat `README.md`)
 
 ## Ringkasan
 
 - Run Coach memberi tahu pelari **apa yang harus dilari hari ini**, memandu lewat **timer interval**, dan menunjukkan **progres**.
 - Target MVP: pelari Pemula dan Rekreasional dengan target 5K, 10K, HM, FM, atau sekadar bugar. Web, iOS, Android.
-- Bahasa Indonesia di MVP; multibahasa untuk pasar global menyusul (D9).
-- MVP 100% gratis. Sukses diukur dari aktivasi dan retensi, bukan pendapatan.
+- Bahasa Indonesia di MVP; fase 2 menambah bahasa Inggris (F-22, D9).
+- MVP 100% gratis. Sukses diukur dari aktivasi dan retensi, bukan pendapatan. Konsep paywall (lari gratis, strength berbayar) di `08-MONETIZATION.md`; gerbang ada di kode tetapi mati sampai Fase 3.
 - **Privasi dulu:** semua data pribadi (target, plan, latihan, RPE, kesehatan) hanya tersimpan di HP pengguna. Server hanya menyimpan akun login. Ini juga jadi pembeda produk.
 
 ## 1. Problem
@@ -66,6 +66,9 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | F-17 | ABC drill sebagai pemanasan | 2.2, 2.3b | Should | Tempo dan Interval diawali segmen drill 8-12 mnt. Timer menampilkan nama gerakan, dosis (mis. 2 x 20 m) dan cue teknik; "Lanjut" per set |
 | F-18 | Pulihkan dari file | 4.5, 1.9 | Must | Pilih file backup, lihat ringkasan isi, konfirmasi, data lokal diganti. File dari versi app lebih baru ditolak dengan pesan jelas |
 | F-20 | Panduan & istilah | 4.7, hint (i) di 1.8, 2.1, 2.2, 2.4, 2.6, 3.1, 3.3 | Should | Penjelasan bahasa awam: cara kerja plan, istilah (volume, volume puncak, pace, zona, RPE, fase, taper, cutback), jenis lari (easy, recovery, long, tempo, interval, progression, strides, run-walk, drill) dan dasar ilmiah tiap aturan engine (tingkat bukti + sumber dari registri 07). Offline, teks dari katalog i18n. Tombol (i) di samping istilah membuka 4.7 langsung ke topiknya |
+| F-21 | Strength + core bodyweight (fase 2) | 1.6, 2.1, 2.2s, 2.3s, 2.4, 3.1, 3.2, 4.1 | Should | Opsional ("Mau latihan kekuatan?" di 1.6, sakelar di 4.1). Sesi kaki + core tanpa alat masuk plan yang sama: kartu kedua di 2.1, baris "+ Strength" di 3.1. Jadwal dan dosis mengikuti E-23..E-26 (TRD 4.2). Timer mode gerakan (2.3s): nama, set, repetisi ("Selesai set") atau hitung mundur, istirahat otomatis. **Animasi gerakan = placeholder kosong** sampai D8. 2.4: RPE + "terlalu berat / pas / terlalu ringan"; "terlalu berat" menurunkan level sesi berikutnya. Lari tidak berubah saat strength dinyalakan |
+| F-22 | Bahasa (fase 2) | 4.1, 4.8 | Should | Bahasa Indonesia / English / Ikuti perangkat. Semua teks UI, engine (rationale, nama + cue gerakan), Panduan, notifikasi dan cue timer ikut bahasa. Angka/tanggal lewat `Intl` sesuai locale. Install baru: ikut bahasa perangkat (Indonesia -> ID, lainnya -> EN). Satuan tidak ikut berubah |
+| F-23 | Gerbang Premium (konsep, fase 2 nonaktif) | 4.4, 4.1, 2.1, 2.2s | Should | Detail `08-MONETIZATION.md`. Flag mati = tidak ada fitur terkunci. Flag nyala: strength/core setelah minggu ke-2 terkunci, lari tidak pernah. 4.4 tanpa pembelian sampai Fase 3 |
 | F-19 | Data & privasi | 4.5 | Must | Satu layar: data tersimpan di HP ini, backup, pulihkan, sakelar data pemakaian anonim, keluar (+ opsi hapus data di HP), hapus akun |
 
 ## 5. Di luar MVP
@@ -74,11 +77,11 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 |------|-------|-------------------|
 | Ambil data dari Strava, Apple Health, Health Connect (hasilnya tetap disimpan di HP) | Fase 2 | Layar 4.2; tautan "Isi otomatis dari Strava" di 1.4 dan status sinkron di 2.1 disembunyikan di MVP |
 | Panduan intensitas detak jantung | Fase 2 | Pilihan "Detak jantung" di 2.2 nonaktif sampai ada data HR |
-| Paywall Premium | Fase 3 | Layar 4.4; kartu "Coba Premium" di 4.1 disembunyikan di MVP |
+| Paywall Premium (pembelian) | Fase 3 | Konsep + gerbang nonaktif sudah ada (F-23, `08-MONETIZATION.md`). Pembelian lewat RevenueCat di Fase 3 |
 | Bagikan kartu ringkasan | Fase 4 | Tombol di 2.5 disembunyikan di MVP |
-| Strength kaki + core bodyweight 2x/minggu | Fase 2 (gratis, uji minat) | PLANNING 4.7; butuh wireframe kartu strength + mode gerakan di timer |
+| Strength kaki + core bodyweight 2x/minggu | Fase 2: selesai (F-21) | Wireframe 2.1, 2.2s, 2.3s. Animasi masih placeholder |
 | Strength lanjutan (beban, plyometrik), mobility, library gerakan + animasi Rive | Fase 3 (Premium) | PLANNING 4.7, 8.2; format animasi = D8 |
-| Multibahasa (mulai bahasa Inggris) untuk pasar global | Fase lanjut (D9) | Pemilih bahasa di 4.1. Kode MVP sudah disiapkan (TRD 8) |
+| Multibahasa: bahasa Inggris | Fase 2: selesai (F-22) | Layar 4.8. Bahasa ketiga dst. menyusul |
 | GPS sendiri, sosial, AI coach, app jam native | Fase 4 / backlog | |
 
 ## 6. Metrik sukses
@@ -104,7 +107,7 @@ Exit criteria beta: 50-100 beta tester aktif (PLANNING bagian 7).
 | D3 | Pace atau HR sebagai default? | Pace (pengguna bisa pilih RPE di 2.2) |
 | D5 | Nama dan brand | "Run Coach" (nama kerja, dipakai di 1.1). Cek merek dagang dan ketersediaan nama di App Store, Play Store dan domain belum dilakukan |
 | D6 | Pelatih bersertifikat untuk review aturan plan | Wajib sebelum beta publik |
-| D9 | Multibahasa untuk pasar global: bahasa kedua, library i18n, kapan rilis | MVP bahasa Indonesia saja; teks lewat katalog dan format lewat `Intl` sejak M1 (TRD 8) |
+| D9 | Multibahasa untuk pasar global: bahasa kedua, library i18n, kapan rilis | **Diputuskan 2026-10-30:** bahasa kedua = English, tanpa library i18n (katalog TypeScript per bahasa, tipe memaksa kunci lengkap), rilis bersama fase 2. Terjemahan perlu dibaca penutur asli sebelum rilis |
 | P1 | Login wajib di 1.8 atau boleh "Nanti saja"? Tanpa sinkron, login di MVP belum memberi manfaat langsung ke pengguna (dipakai untuk Premium di fase 3) | Wajib, sesuai keputusan pemilik produk. Pantau drop-off di 1.8; jika tinggi, jadikan opsional |
 | P2 | File backup berpassword (terenkripsi) | Tidak di MVP |
 | P3 | Backup cloud terenkripsi end-to-end (server tidak bisa membaca) sebagai opt-in, untuk pindah HP tanpa file | Tidak di MVP; dievaluasi setelah beta |

@@ -67,12 +67,20 @@ Kolom "Putusan": **Didukung** = bukti sejalan dengan aturan; **Sebagian** = arah
 | E-21 | Recovery run maks 30 mnt sehari setelah long run / sesi berat (rekreasional, >= 5 hari) | D | Tidak ditemukan studi khusus recovery run. Prinsip keseimbangan beban-pemulihan [R4] | Heuristik |
 | E-22 | Progression run (easy + 10 mnt pace maraton) di fase Build, selang seminggu | D | Tidak ditemukan studi | Heuristik |
 
+### 2.4b Strength + core (F-21, fase 2)
+
+| ID | Aturan (TRD 4.2) | Tingkat | Temuan kunci | Putusan |
+|----|------------------|---------|--------------|---------|
+| E-23 | Strength + core bodyweight 2x/mgg (Base, Build), 1x (Peak) | A | Latihan kekuatan menurunkan cedera olahraga (RR 0,315; 95% CI 0,207-0,480; 25 RCT) [R23]; running economy pelari terlatih membaik (SMD -1,42) [R24]. R24 pada pelari terlatih, R23 lintas olahraga; frekuensi per fase tidak diuji | Sebagian (manfaat didukung; dosis dan frekuensi heuristik). Teks app menyebut keterbatasan ini |
+| E-24 | Tidak di hari long run / sehari sebelum long run atau interval; jeda >= 1 hari antar sesi | D | Tidak ditemukan studi. Prinsip "hari berat berat, hari ringan ringan" (PLANNING 4.7.3) | Heuristik |
+| E-25 | Progresi level tiap 3 minggu, pemula maks level 2; "terlalu berat" turun 1 level | D | Prinsip overload bertahap; angka 3 minggu tidak diuji | Heuristik (arah konservatif) |
+| E-26 | Taper: core ringan saja; minggu race tanpa strength | D | Prinsip taper (beban turun) [R13] diterapkan ke strength; tidak ada studi khusus strength saat taper | Heuristik |
+
 ### 2.5 Sengaja tidak dipakai
 
 | Metode | Alasan |
 |--------|--------|
 | Acute:Chronic Workload Ratio (ACWR) | Kritik metodologis: hubungan kausal belum diuji, masalah data rasio [R22]. Pada 5.205 pelari, ACWR tidak berhubungan dengan cedera [R7] |
-| Strength training di MVP | Di luar scope MVP (PRD 5). Dicatat untuk fase 2: latihan kekuatan menurunkan cedera olahraga (RR 0,315; 95% CI 0,207-0,480; 25 RCT) [R23] dan memperbaiki running economy pelari terlatih (SMD -1,42) [R24] |
 
 ## 3. Reasoning yang dilihat pengguna
 
@@ -194,6 +202,7 @@ Semua dicek 2026-10-29 dari abstrak atau metadata. "PMID" = PubMed ID.
 - Hanya abstrak yang dibaca (kecuali R2); angka efek dan populasi bisa punya nuansa di full text. Sebelum beta publik, pelatih/peneliti membaca full text R5, R7, R9, R13 (yang mengubah aturan).
 - Sebagian besar bukti dari pelari terlatih atau populasi Eropa/AS. Konteks lokal (panas, lembab; PLANNING 1.4) belum ada buktinya di dokumen ini.
 - R7 observasional: menunjukkan hubungan, bukan sebab-akibat.
+- Library gerakan strength (fase 2) dan dosisnya belum direview fisioterapis/pelatih (PLANNING 4.7.5); wajib sebelum beta publik.
 - Menambah aturan baru ke engine wajib menambah entri registri (bagian 2) di PR yang sama; tanpa entri, test 3.5 gagal.
 
 ## 7. Keputusan implementasi M2 (2026-10-29)
