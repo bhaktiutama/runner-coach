@@ -54,7 +54,8 @@ window.addEventListener('DOMContentLoaded', () => {
 (async () => {
   const [projectDir, outDir, ...pairs] = process.argv.slice(2);
   fs.mkdirSync(outDir, { recursive: true });
-  const browser = await chromium.launch();
+  // Container cloud: Chromium bawaan lewat PW_CHROMIUM_PATH (sama dengan playwright.config.ts).
+  const browser = await chromium.launch(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {});
   for (const pair of pairs) {
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
     page.on('pageerror', (e) => console.error('pageerror', e.message));

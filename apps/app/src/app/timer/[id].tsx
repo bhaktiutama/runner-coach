@@ -544,7 +544,9 @@ function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused:
   if (seg.kind === 'rest') {
     return (
       <View style={[styles.drill, styles.restCol]} testID="timer-rest">
-        <BibTag label={t('timer.restBib')} zone="recovery" />
+        <View style={styles.center}>
+          <BibTag label={t('timer.restBib')} zone="recovery" />
+        </View>
         <Text variant="timer" color="darkText" style={paused && styles.blink} testID="timer-remaining">
           {clock}
         </Text>
@@ -765,4 +767,5 @@ const styles = StyleSheet.create({
   textBtn: { minHeight: size.touchMin, justifyContent: 'center' },
   strengthRow: { flexDirection: 'row', gap: space[2] },
   restCol: { alignItems: 'center', justifyContent: 'center', gap: space[4] },
+  center: { alignItems: 'center', alignSelf: 'stretch' },
 });

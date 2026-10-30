@@ -2,11 +2,11 @@
 
 Diperbarui otomatis oleh agent setiap langkah selesai. Branch kerja: `claude/relaxed-galileo-lknyhx`, di-merge langsung ke `development`.
 
-Terakhir diperbarui: 2026-10-29 (setelah penyamaan UI ke wireframe)
+Terakhir diperbarui: 2026-10-30 (fase 2: strength, English, gerbang Premium). Branch fase 2: `claude/festive-hopper-ml7tp7` (dari `development`)
 
 ## Ringkasan
 
-Posisi sekarang: M0-M6 selesai dan diuji di web (unit 2.358, E2E 10, privasi 15). Yang tersisa butuh kamu: uji di HP (B3), login Google/Apple (B2), kode email (B5), deploy `delete-account` (B6), kunci analitik/Sentry (B7), dan M7 rilis beta.
+Posisi sekarang: M0-M6 selesai; fase 2 (P2-0 s.d. P2-6) selesai dan diuji di web: strength + core dengan animasi placeholder, bahasa English, konsep paywall + gerbang nonaktif (unit 3.718, E2E 15 lulus + 6 dilewati, privasi 16). Integrasi Strava/Health (P2-7) ditunda. Yang tersisa butuh kamu: uji di HP (B3), login Google/Apple (B2), kode email (B5), kunci analitik/Sentry (B7), review pelatih/fisioterapis untuk aturan + gerakan strength (B9), terjemahan EN dibaca penutur asli (B8), dan M7 rilis beta.
 
 
 | Milestone | Status | Catatan |
@@ -19,6 +19,10 @@ Posisi sekarang: M0-M6 selesai dan diuji di web (unit 2.358, E2E 10, privasi 15)
 | M5 Feedback, Progres | Selesai (web) | 2.4, 2.6, 3.3, 3.4. E2E 2.1 -> 2.3 -> 2.4 -> 3.3 -> 3.4 lulus. Split per km dan detak jantung hanya tampil jika ada data (fase 2), tidak dikarang |
 | M6 Privasi, Akun | Selesai (web), menunggu B6/B7 | 4.1, 4.3, 4.5, 4.6, 2.5, pengingat lokal, kartu pengingat backup, event anonim. Edge Function `delete-account` siap tapi belum ter-deploy (B6). Sentry/PostHog aktif setelah kunci ada (B7) |
 | M7 Rilis beta | Di luar jangkauan agent | Butuh akun Apple/Google + keputusan pemilik |
+| P2 Strength (F-21) | Selesai (web, perlu device) | Engine E-23..E-26, migrasi v6, 2.1 kartu kedua, 2.2s, 2.3s mode gerakan, 2.4 rasa beban, sakelar 4.1. Animasi = placeholder kosong (D8). Cue saat layar terkunci perlu dicek di HP |
+| P2 Bahasa English (F-22) | Selesai (web) | Katalog app/engine/Panduan EN, layar 4.8, format `Intl` per locale. Perlu dibaca penutur asli (B8) |
+| P2 Gerbang Premium (F-23) | Selesai, nonaktif | `08-MONETIZATION.md`; flag `EXPO_PUBLIC_PAYWALL` mati; 4.4 tanpa pembelian. RevenueCat = Fase 3 |
+| P2 Integrasi Strava/Health | Ditunda | Butuh kredensial Strava + HP fisik (HealthKit/Health Connect) |
 
 Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 
@@ -43,6 +47,8 @@ Legenda: Belum mulai / Berjalan / Selesai / Selesai (perlu device) / Terblokir
 | 2026-10-30 | M1 | Fix login Google di web: "Terjadi kesalahan" karena database lokal (OPFS) dipegang halaman lain. Login web sekarang lewat popup + `auth-callback.html` statis, DB dilepas saat `pagehide`, buka ulang dicoba sampai 6 detik, pesan khusus jika app terbuka di tab lain | unit 2.361, E2E 10/10, uji popup + callback di Chromium |
 | 2026-10-30 | M6 | F-20 Panduan & istilah (layar 4.7, spec PRD/APP-FLOW/UI-UX diperbarui): cara kerja plan, istilah (volume, volume puncak, pace, zona, RPE, fase, taper, cutback), jenis lari termasuk recovery dan progression, istilah penelitian, 20 aturan engine dalam bahasa awam + tingkat bukti + sumber. Tombol (i) di 1.8, 2.1, 2.2, 2.4, 2.6, 3.1, 3.3; baris di Profil | unit 2.364, E2E 11/11 |
 | 2026-10-30 | M2 | Engine v0.2: long run HM 35% / FM 45% volume + batas 2,5 / 3 jam (E-08), recovery run (E-21), progression run (E-22, tipe baru + migrasi DB v5 yang menjaga relasi aktivitas). Bug lama diperbaiki: volume pemula macet ~10 km/minggu (pembulatan), turun di awal Build (hari easy terhapus), cutback/taper terlalu dalam. Spec TRD 4.2, 07, Schema, halaman review diperbarui | unit 2.847, E2E 11/11 |
+
+| 2026-10-30 | P2 | Fase 2. Engine: step `exercise`, 15 gerakan bodyweight (`animation: null`), `planStrength` (E-23..E-26), `easierStrength`; lari tidak berubah saat strength nyala (diuji semua kombinasi). App: migrasi v6, onboarding "Mau latihan kekuatan?", kartu strength 2.1, 2.2s, timer 2.3s (repetisi = Selesai set, plank + istirahat = hitung mundur), 2.4 "Bebannya terasa" (terlalu berat -> sesi berikutnya turun level), sakelar 4.1, log manual/kepatuhan/adaptasi tidak mencampur strength dengan lari. English: `en.ts`, `help.en.ts`, engine `en.ts`, 4.8, `LocaleGate`. Premium: `entitlement.ts`, 4.4, `paywall_viewed`. Bug lama diperbaiki di `SettingsRow`: baris tanpa aksi menonaktifkan sakelar di dalamnya di web (ditemukan E2E pada sakelar strength; pola yang sama dipakai sakelar 4.5). Spec PRD/TRD/Flow/UI/Schema/07 + `08-MONETIZATION.md`, wireframe 16 PNG (ID+EN) | unit 3.718, E2E 15/15 (+6 dilewati), privasi 16, coverage engine 99,5% baris |
 
 ## Catatan tampilan di HP
 
@@ -70,7 +76,10 @@ Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Ur
 | 3 | Mode uji di channel terpisah (`test`) dengan "Lewati login" + reset data, agar Expo Go bisa dipakai uji dari nol | `feat/m7-test-channel` | - |
 | 4 | M7 persiapan rilis: halaman kebijakan privasi (model "data di HP"), isian App Privacy / Data safety, profil EAS production, Sentry + PostHog aktif | `release/beta` | Kunci PostHog/Sentry (B7), akun Apple Developer + Google Play, keputusan rilis |
 | 5 | Review aturan engine oleh pelatih (B4/D6) dengan `07-ENGINE-EVIDENCE.md` sebagai checklist | - | Pelatih bersertifikat |
-| 6 | Fase 2 (setelah beta): strength + core bodyweight, Strava/HealthKit, layar 4.2 | ubah spec dulu | Keputusan prioritas |
+| 6 | ~~Fase 2: strength + core, English, konsep paywall~~ Selesai 2026-10-30 (lihat log) | `claude/festive-hopper-ml7tp7` | Review B8, B9 |
+| 7 | Animasi gerakan strength (D8): pilih format (SVG pose / Rive / video), isi `ExerciseAnimation` | ubah spec dulu | Video gerakan pelatih atau aset ilustrator (`docs/ANIMATION_PIPELINE.md`) |
+| 8 | Integrasi Strava, HealthKit, Health Connect + layar 4.2 + panduan HR di 2.2 | `feat/p2-integrations` | Client ID/secret Strava, HP fisik, dev build |
+| 9 | Fase 3: pembelian Premium lewat RevenueCat, trial, restore, `subscription_started` | `feat/p3-premium` | Akun App Store / Play, keputusan harga (08 bagian 6) |
 
 ## Blocker dan butuh dari pemilik
 
@@ -82,6 +91,8 @@ Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Ur
 | B4 | Review aturan engine oleh pelatih (D6) | Sebelum beta publik | Menunggu |
 | B6 | Deploy Edge Function `delete-account` | Hapus akun (F-10) | Selesai: ter-deploy, dicek tanpa JWT = 401, OPTIONS = 204 |
 | B7 | Kunci PostHog (`EXPO_PUBLIC_POSTHOG_KEY`) dan DSN Sentry (`EXPO_PUBLIC_SENTRY_DSN`) di environment/EAS | Analitik anonim + error monitoring (TRD 6) | Menunggu (app jalan normal tanpa ini) |
+| B8 | Terjemahan English (app, engine, Panduan) dibaca penutur asli | Sebelum rilis EN | Menunggu |
+| B9 | Review fisioterapis/pelatih untuk library gerakan strength, dosis, dan aturan E-23..E-26 (PLANNING 4.7.5) | Sebelum beta publik dengan strength | Menunggu |
 | B5 | Template email Supabase Auth belum memuat kode masuk. Di dashboard Supabase > Authentication > Email Templates, tambahkan `{{ .Token }}` ke template "Magic Link" dan "Confirm signup" (agent ditolak saat mencoba mengubahnya lewat API). Catatan: OTP 8 digit; SMTP bawaan dibatasi 2 email/jam, perlu SMTP sendiri sebelum beta | Login email (F-01) di HP | Menunggu |
 
 ## Cara test

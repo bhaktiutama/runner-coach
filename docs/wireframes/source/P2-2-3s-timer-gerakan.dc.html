@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>2.3s Timer: mode gerakan</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/lintas/tokens.css">
+<link rel="stylesheet" href="ds/lintas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:var(--primary-ink)}
+button{font-family:inherit}
+</style>
+</helmet>
+<div data-theme="dark" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font-family: var(--font-ui); font-feature-settings: 'tnum' 1; overflow: hidden">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 56px 20px 16px; min-height: 0">
+  <div style="display: flex; align-items: center; justify-content: space-between"><a style="display: flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: var(--radius-stadium); background: var(--surface); color: var(--text); font-size: 14px; font-weight: 700">Akhiri</a><span style="font-size: 14px; font-weight: 700; color: var(--text-muted)">Segmen 1 dari 6</span><span style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--surface)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 8.5a5 5 0 0 1 0 7M19.5 6a8.5 8.5 0 0 1 0 12"/></svg></span></div>
+  <div role="img" aria-label="Animasi gerakan menyusul" style="display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; height: 120px; border-radius: var(--radius-md); background: var(--surface-sunken); border: 2.5px dashed var(--line-strong); color: var(--text-muted); font-size: 12px; font-weight: 600"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/></svg>Animasi gerakan menyusul</div>
+  <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
+    <span class="ln-bib ln-bib--strength"><span class="ln-bib-inner">GERAKAN 1/6</span></span>
+    <h1 style="margin: 0; font-family: var(--font-display); font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Squat</h1>
+    <span style="font-family: var(--font-display); font-size: 20px; font-weight: 700">Set 1 dari 2<span style="color: var(--text-muted)"> · 10x</span></span>
+    <div style="display: flex; gap: 6px"><span style="width: 40px; height: 8px; border-radius: var(--radius-stadium); background: var(--primary)"></span><span style="width: 40px; height: 8px; border-radius: var(--radius-stadium); background: var(--surface-sunken)"></span></div>
+  </div>
+  <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px"><li style="display: flex; gap: 10px; font-size: 14px; line-height: 1.4"><span style="color: var(--success-ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Kaki selebar bahu, dorong pinggul ke belakang</li><li style="display: flex; gap: 10px; font-size: 14px; line-height: 1.4"><span style="color: var(--success-ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Turun sampai paha sejajar lantai</li><li style="display: flex; gap: 10px; font-size: 14px; line-height: 1.4"><span style="color: var(--success-ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>Lutut searah jari kaki</li></ul>
+  <span style="font-size: 13px; font-weight: 600; color: var(--text-muted)">Tekan Selesai set setiap selesai 1 set. Istirahat dihitung otomatis.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 20px 32px">
+  <a style="display: flex; align-items: center; justify-content: center; gap: 10px; border-radius: var(--radius-stadium); text-decoration: none; font-weight: 700; box-sizing: border-box; height: 60px; background: var(--primary); color: var(--on-primary); font-size: 17px; box-shadow: var(--shadow-raised); height: 64px; font-size: 18px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Selesai set</a>
+  <div style="display: flex"><a style="flex: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--text-muted)">Jeda</a><a style="flex: 1; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--text-muted)">Lewati gerakan</a></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
