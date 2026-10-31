@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.4 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
+Status: Draft v0.5 (2026-10-31) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
@@ -93,7 +93,7 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 
 - Mode gelap untuk seluruh app (token `color.dark` sudah ada, dipakai Timer).
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
-- Kartu share, konfeti.
+- Kartu share. (Konfeti sudah masuk bagian 11.)
 
 ## 8. Kesetiaan ke wireframe (v0.5, 2026-10-29)
 
@@ -130,3 +130,22 @@ Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, m
 | 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
 | 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
 | Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |
+
+## 11. Gerak (v0.8, 2026-10-31)
+
+Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua gerak memakai token `motion` (`fast` 120, `base` 200, `slow` 320 ms; easing `standard` dan `stride`), tanpa library baru (API `Animated` bawaan React Native + `react-native-svg`). Kode: `packages/ui/src/motion.tsx`.
+
+| # | Gerak | Di mana | Aturan | Komponen |
+|---|---|---|---|---|
+| G1 | Busur TrackRing tumbuh ke nilai baru | Kepatuhan (3.3), minggu tuntas (2.5) | `base` + easing `stride` (sedikit memantul; busur dibatasi 0..100%). 2.5 mulai dari 0 saat layar tampil. **Timer 2.3 tidak dianimasikan** (progres berubah tiap detik; posisi tetap dari timestamp) | `TrackRing` (`animate`, `animateIn`) |
+| G2 | Konfeti kecil, 16 potongan, warna palet | 2.5 hanya jika semua latihan minggu itu tuntas | Sekali putar saat layar tampil, `slow` 320 ms, memudar di akhir. Tata letak deterministik (tanpa acak) | `Confetti`, `confettiPieces` |
+| G3 | Centang "Selesai" muncul dengan membesar + fade in | Kartu latihan dan kartu strength (2.1) saat status jadi selesai | `base` + `stride`, skala awal 0.4. Bib tidak berubah warna | `PopIn` |
+| G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
+| G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
+| G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |
+
+Aturan umum:
+- **Kurangi gerakan**: semua G1, G2, G3, G6 berhenti (nilai langsung ke akhir; konfeti tidak dirender). Dibaca dari setelan OS (web: `prefers-reduced-motion`) lewat `useReducedMotion`.
+- Animasi tidak boleh menahan input dan tidak boleh mengubah posisi timer (posisi tetap dihitung dari timestamp, TRD 5).
+- Durasi dan easing hanya dari token; tidak ada angka milidetik di komponen layar.
+- Efek visual tren (kaca, kabut, aurora, grain, border bercahaya, clay) **belum** dipakai di app dan belum ada keputusan. Butuh `expo-blur` / `expo-glass-effect` untuk efek kaca (di luar TRD 1) dan cek kontras `check_contrast.py`. Eksplorasi hanya ada di prototipe.

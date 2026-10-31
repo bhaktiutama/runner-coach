@@ -3,6 +3,7 @@ import {
   BibTag,
   border,
   color,
+  FadeIn,
   fontFiles,
   Icon,
   type IconName,
@@ -302,11 +303,16 @@ export default function TimerScreen() {
                 height={ringW * (300 / 350)}
                 stroke={space[3] + border.selected - border.hairline / 2}
                 progress={seg?.timedS ? pos.elapsedInSegS / seg.timedS : 0}
+                animate={false}
                 color={ringColor}
                 trackColor={dark.surfaceSunken}
               >
                 <View style={styles.ringCol}>
-                  {seg ? <BibTag label={segmentName(seg, w.data.type)} zone={zone} /> : null}
+                  {seg ? (
+                    <FadeIn k={pos.index}>
+                      <BibTag label={segmentName(seg, w.data.type)} zone={zone} />
+                    </FadeIn>
+                  ) : null}
                   {paused ? (
                     <Text variant="statusCaps" style={{ color: color.status.attention }}>
                       {t('timer.paused')}
@@ -326,39 +332,41 @@ export default function TimerScreen() {
                 </View>
               </TrackRing>
             </View>
-            <View style={styles.cards}>
-              {profile.data?.intensity_guide !== 'rpe' &&
-              seg &&
-              isRunSegment(seg) &&
-              seg.pace_s_per_km &&
-              !seg.walk ? (
+            <FadeIn k={pos.index}>
+              <View style={styles.cards}>
+                {profile.data?.intensity_guide !== 'rpe' &&
+                seg &&
+                isRunSegment(seg) &&
+                seg.pace_s_per_km &&
+                !seg.walk ? (
+                  <View style={styles.card}>
+                    <Text variant="captionStrong" color="darkTextMuted">
+                      {t('timer.targetPace')}
+                    </Text>
+                    <Text
+                      variant={zone === 'easy' || zone === 'long' || zone === 'recovery' ? 'stat' : 'title'}
+                      color="darkText"
+                      numberOfLines={1}
+                    >
+                      {zone === 'easy' || zone === 'long' || zone === 'recovery'
+                        ? `${formatPaceValue(seg.pace_s_per_km.min)}-${formatPaceValue(seg.pace_s_per_km.max)}`
+                        : formatPaceValue(seg.pace_s_per_km.min)}
+                      <Text variant="numberRowStrong" color="darkTextMuted">
+                        {t('timer.perKm')}
+                      </Text>
+                    </Text>
+                  </View>
+                ) : null}
                 <View style={styles.card}>
                   <Text variant="captionStrong" color="darkTextMuted">
-                    {t('timer.targetPace')}
+                    {t('timer.feel')}
                   </Text>
-                  <Text
-                    variant={zone === 'easy' || zone === 'long' || zone === 'recovery' ? 'stat' : 'title'}
-                    color="darkText"
-                    numberOfLines={1}
-                  >
-                    {zone === 'easy' || zone === 'long' || zone === 'recovery'
-                      ? `${formatPaceValue(seg.pace_s_per_km.min)}-${formatPaceValue(seg.pace_s_per_km.max)}`
-                      : formatPaceValue(seg.pace_s_per_km.min)}
-                    <Text variant="numberRowStrong" color="darkTextMuted">
-                      {t('timer.perKm')}
-                    </Text>
+                  <Text variant="row" color="darkText">
+                    {t(FEEL_KEY[zone])}
                   </Text>
                 </View>
-              ) : null}
-              <View style={styles.card}>
-                <Text variant="captionStrong" color="darkTextMuted">
-                  {t('timer.feel')}
-                </Text>
-                <Text variant="row" color="darkText">
-                  {t(FEEL_KEY[zone])}
-                </Text>
               </View>
-            </View>
+            </FadeIn>
             <View style={styles.progress}>
               <View style={styles.segRow}>
                 {segs.map((s2, i) => {

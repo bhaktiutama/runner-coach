@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
+import { useAnimatedNumber } from '../motion';
 import { size as sizes } from '../theme';
 
 type Props = {
@@ -11,6 +12,10 @@ type Props = {
   color: string;
   trackColor: string;
   stroke?: number;
+  /** Animasi stride saat progres berubah. Matikan untuk progres yang berubah tiap detik (timer). Default true. */
+  animate?: boolean;
+  /** Mulai dari 0 saat pertama tampil (perayaan minggu tuntas). */
+  animateIn?: boolean;
   children?: ReactNode;
 };
 
@@ -22,18 +27,24 @@ export function TrackRing({
   color,
   trackColor,
   stroke = sizes.trackStroke,
+  animate = true,
+  animateIn = false,
   children,
 }: Props) {
   const w = width - stroke;
   const h = height - stroke;
   const r = Math.min(w, h) / 2;
   const perimeter = 2 * (w - 2 * r) + 2 * (h - 2 * r) + 2 * Math.PI * r;
-  const p = Math.max(0, Math.min(1, progress));
+  const target = Math.max(0, Math.min(1, progress));
+  const shown = useAnimatedNumber(target, animate, animateIn ? 0 : undefined);
+  // Easing stride boleh melewati 1 sebentar; busur dibatasi ke 0..1.
+  const p = Math.max(0, Math.min(1, shown));
+  const p100 = Math.round(target * 100);
   return (
     <View
       style={{ width, height }}
       accessibilityRole="progressbar"
-      accessibilityValue={{ min: 0, max: 100, now: Math.round(p * 100) }}
+      accessibilityValue={{ min: 0, max: 100, now: p100 }}
     >
       <Svg width={width} height={height}>
         <Rect

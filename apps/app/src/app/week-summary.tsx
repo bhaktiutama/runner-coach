@@ -1,6 +1,7 @@
 import { addDays, diffDays, mondayOf, type Change, type EngineMessageKey } from '@run-coach/training-engine';
 import {
   color,
+  Confetti,
   Icon,
   IconButton,
   InfoBox,
@@ -80,19 +81,23 @@ export default function WeekSummary() {
     <Screen testID="screen-week">
       <IconButton icon="close" label={t('week.close')} onPress={() => goHome()} />
       <View style={styles.center}>
-        <TrackRing
-          width={space[10] * 5 + space[5]}
-          height={space[10] * 3 + space[2]}
-          stroke={space[3] + space[1] / 2}
-          progress={ws.length ? done / ws.length : 0}
-          color={color.success}
-          trackColor={color.surfaceSunken}
-        >
-          <Text variant="display">{t('week.done', { done, total: ws.length })}</Text>
-          <Text variant="controlSm" color="textMuted">
-            {t('week.doneLabel')}
-          </Text>
-        </TrackRing>
+        <View>
+          <TrackRing
+            width={space[10] * 5 + space[5]}
+            height={space[10] * 3 + space[2]}
+            stroke={space[3] + space[1] / 2}
+            progress={ws.length ? done / ws.length : 0}
+            animateIn
+            color={color.success}
+            trackColor={color.surfaceSunken}
+          >
+            <Text variant="display">{t('week.done', { done, total: ws.length })}</Text>
+            <Text variant="controlSm" color="textMuted">
+              {t('week.doneLabel')}
+            </Text>
+          </TrackRing>
+          {ws.length > 0 && done === ws.length ? <Confetti /> : null}
+        </View>
         <Text variant="title" align="center">
           {done === ws.length ? t('week.title', { n: idx }) : t('week.titlePartial', { n: idx })}
         </Text>

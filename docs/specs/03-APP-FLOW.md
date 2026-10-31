@@ -79,7 +79,7 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 ### FL-4 Ringkasan minggu + adaptasi (F-11)
 
-2.5 menampilkan latihan tuntas x/y, jarak vs minggu lalu, waktu lari vs target. Jika aturan adaptasi (TRD 4.3) terpicu: kartu "Plan minggu depan disesuaikan" + alasan + perubahan. "Oke, terapkan" -> plan versi baru. "Tetap plan awal" -> tidak berubah, usulan tidak ditampilkan lagi untuk minggu itu.
+2.5 menampilkan latihan tuntas x/y, jarak vs minggu lalu, waktu lari vs target. Cincin terisi dari 0 saat layar tampil; jika semua latihan minggu itu tuntas, konfeti kecil diputar sekali (UI/UX 11). Reduce-motion: tanpa gerak. Jika aturan adaptasi (TRD 4.3) terpicu: kartu "Plan minggu depan disesuaikan" + alasan + perubahan. "Oke, terapkan" -> plan versi baru. "Tetap plan awal" -> tidak berubah, usulan tidak ditampilkan lagi untuk minggu itu.
 
 ### FL-5 Pindah latihan (F-08)
 

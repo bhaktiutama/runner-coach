@@ -5,6 +5,7 @@ import {
   Icon,
   LaneMark,
   LinkButton,
+  PopIn,
   PrimaryButton,
   SegmentBar,
   space,
@@ -29,12 +30,14 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
       <View style={styles.head}>
         <BibTag label={typeName(workout.type)} zone={zone} />
         {done ? (
-          <View style={styles.done}>
-            <Icon name="check" size={space[4]} color={color.success} />
-            <Text variant="controlStrong" color="success">
-              {t('today.done')}
-            </Text>
-          </View>
+          <PopIn>
+            <View style={styles.done}>
+              <Icon name="check" size={space[4]} color={color.success} />
+              <Text variant="controlStrong" color="success">
+                {t('today.done')}
+              </Text>
+            </View>
+          </PopIn>
         ) : (
           <Text variant="controlStrong" color="textMuted">
             {t('today.approxKm', { km: approxKm(workout.steps) })}
@@ -93,12 +96,14 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
       <View style={styles.head}>
         <BibTag label={typeName(workout.type)} zone="strength" />
         {done ? (
-          <View style={styles.done}>
-            <Icon name="check" size={space[4]} color={color.success} />
-            <Text variant="controlStrong" color="success">
-              {t('today.done')}
-            </Text>
-          </View>
+          <PopIn>
+            <View style={styles.done}>
+              <Icon name="check" size={space[4]} color={color.success} />
+              <Text variant="controlStrong" color="success">
+                {t('today.done')}
+              </Text>
+            </View>
+          </PopIn>
         ) : (
           <Text variant="controlStrong" color="textMuted">
             {t('strength.exercises', { n })}
