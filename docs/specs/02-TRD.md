@@ -23,6 +23,7 @@ Agent tidak boleh mengganti atau menambah library di luar tabel ini tanpa update
 | Grafik | Berbasis react-native-svg (kandidat: Victory Native; final setelah spike M0) |
 | Backend | Supabase **cloud**: Auth + Edge Functions (Deno). Tanpa tabel data pengguna |
 | Notifikasi | Expo Notifications |
+| Tema gelap (F-24) | `useColorScheme` RN + expo-system-ui (Android mengikuti tema perangkat; `userInterfaceStyle: automatic`) |
 | Analitik | PostHog (lewat HTTP capture API, tanpa SDK; aktif hanya jika `EXPO_PUBLIC_POSTHOG_KEY` diisi; daftar properti di `apps/app/src/lib/analytics.ts`) |
 | Error monitoring | Sentry (SDK dipasang saat DSN tersedia; `sendDefaultPii: false`) |
 | Monorepo | pnpm workspaces |
