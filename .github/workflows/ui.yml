@@ -1,0 +1,92 @@
+name: UI
+
+# Pipeline uji UI/UX otomatis:
+#  - ui-checks : overflow, target sentuh, nama aksesibel, error konsol, lintas ukuran layar dan tema
+#  - visual    : regresi visual (screenshot vs baseline di e2e/ui-visual.spec.ts-snapshots/)
+# Perbarui baseline: Actions > UI > Run workflow > update_snapshots = true (di-commit ke branch itu).
+
+on:
+  pull_request:
+    paths:
+      - 'apps/app/**'
+      - 'packages/ui/**'
+      - 'docs/design-system/**'
+      - 'e2e/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/ui.yml'
+  workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: 'Perbarui baseline screenshot dan commit'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ui-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ui-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter app export:web
+        env:
+          EXPO_PUBLIC_E2E: '1'
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:ui
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: ui-checks-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter app export:web
+        env:
+          EXPO_PUBLIC_E2E: '1'
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Perbarui baseline
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_snapshots }}
+        run: pnpm test:visual --update-snapshots
+      - name: Bandingkan dengan baseline
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.update_snapshots) }}
+        run: pnpm test:visual
+      - name: Commit baseline
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_snapshots }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add e2e/ui-visual.spec.ts-snapshots
+          git diff --cached --quiet || git commit -m "Perbarui baseline regresi visual UI"
+          git push
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: visual-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

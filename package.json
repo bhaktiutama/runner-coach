@@ -9,7 +9,9 @@
     "format": "prettier --write .",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=functional",
+    "test:ui": "playwright test --project=ui e2e/ui-quality.spec.ts",
+    "test:visual": "VISUAL=1 playwright test --project=ui e2e/ui-visual.spec.ts",
     "test:privacy": "vitest run --config vitest.privacy.config.mts",
     "tokens": "node scripts/build-tokens.mjs",
     "test:coverage": "vitest run packages/training-engine --coverage"

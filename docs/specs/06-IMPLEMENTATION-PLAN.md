@@ -74,7 +74,9 @@ Keputusan pemilik produk 2026-10-30: integrasi Strava/Health ditunda (butuh kred
 | `pnpm lint` | ESLint + Prettier check |
 | `pnpm typecheck` | `tsc --noEmit` semua paket |
 | `pnpm test` | Vitest + test komponen |
-| `pnpm test:e2e` | Playwright (web) |
+| `pnpm test:e2e` | Playwright (web), alur fungsional |
+| `pnpm test:ui` | Cek UI/UX otomatis: overflow, target sentuh, nama aksesibel, error konsol; 3 ukuran layar x terang/gelap |
+| `pnpm test:visual` | Regresi visual (screenshot vs baseline); baseline diperbarui lewat workflow `UI` (`update_snapshots`) |
 | `pnpm test:privacy` | Cek schema `public` di project cloud kosong + daftar properti event analitik |
 | `supabase functions deploy delete-account` | Deploy Edge Function ke project cloud (butuh `SUPABASE_ACCESS_TOKEN`) |
 
