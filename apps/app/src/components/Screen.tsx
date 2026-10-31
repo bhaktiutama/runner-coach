@@ -1,4 +1,4 @@
-import { color, size, space } from '@run-coach/ui';
+import { color, size, space, themed } from '@run-coach/ui';
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -54,11 +54,13 @@ export function Screen({ children, footer, scroll = true, dark = false, testID, 
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  fill: { flex: 1 },
-  scroll: { paddingHorizontal: space.screenX, paddingBottom: space[4] },
-  inner: { width: '100%', maxWidth: size.contentMax, alignSelf: 'center' },
-  footerInner: { gap: space[2] },
-  footer: { paddingHorizontal: space.screenX, paddingTop: space[3] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    root: { flex: 1 },
+    fill: { flex: 1 },
+    scroll: { paddingHorizontal: space.screenX, paddingBottom: space[4] },
+    inner: { width: '100%', maxWidth: size.contentMax, alignSelf: 'center' },
+    footerInner: { gap: space[2] },
+    footer: { paddingHorizontal: space.screenX, paddingTop: space[3] },
+  }),
+);

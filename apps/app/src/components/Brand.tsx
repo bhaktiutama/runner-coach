@@ -1,4 +1,4 @@
-import { Logo, space, Text } from '@run-coach/ui';
+import { Logo, space, Text, themed } from '@run-coach/ui';
 import { StyleSheet, View } from 'react-native';
 import { t } from '@/i18n/t';
 
@@ -12,6 +12,8 @@ export function Brand() {
   );
 }
 
-const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    row: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+  }),
+);

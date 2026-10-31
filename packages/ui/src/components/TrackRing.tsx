@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
-import { size as sizes } from '../theme';
+import { size as sizes, themed } from '../theme';
 
 type Props = {
   width: number;
@@ -68,4 +68,6 @@ export function TrackRing({
   );
 }
 
-const styles = StyleSheet.create({ center: { alignItems: 'center', justifyContent: 'center' } });
+const styles = themed(() =>
+  StyleSheet.create({ center: { alignItems: 'center', justifyContent: 'center' } }),
+);

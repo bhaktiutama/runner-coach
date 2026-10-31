@@ -1,9 +1,10 @@
 import { SvgXml } from 'react-native-svg';
 import { logos } from '../logos';
+import { isDark } from '../theme';
 
 export type LogoProps = { variant?: 'mark' | 'horizontal'; dark?: boolean; height?: number };
 
-export function Logo({ variant = 'horizontal', dark = false, height = 40 }: LogoProps) {
+export function Logo({ variant = 'horizontal', dark = isDark(), height = 40 }: LogoProps) {
   const key = variant === 'mark' ? (dark ? 'markDark' : 'mark') : dark ? 'horizontalDark' : 'horizontal';
   const xml = logos[key];
   const vb = xml.match(/viewBox="0 0 ([\d.]+) ([\d.]+)"/);

@@ -1,5 +1,5 @@
 import { EngineError } from '@run-coach/training-engine';
-import { border, Checkbox, color, InfoBox, radius, shadow, space, Text } from '@run-coach/ui';
+import { border, Checkbox, color, InfoBox, radius, shadow, space, Text, themed } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -89,31 +89,33 @@ export default function HealthStep() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  card: { backgroundColor: color.surface, borderRadius: radius.lg, overflow: 'hidden', ...shadow.card },
-  q: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    paddingVertical: space[3],
-    paddingHorizontal: space[4],
-  },
-  sep: { borderBottomWidth: border.hairline, borderBottomColor: color.line },
-  toggle: {
-    flexDirection: 'row',
-    gap: space[1],
-    padding: border.selected + border.hairline / 2,
-    borderRadius: radius.stadium,
-    backgroundColor: color.surfaceSunken,
-  },
-  opt: {
-    minHeight: space[10] - space[1] / 2,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  optYes: { minWidth: space[10] + space[2] },
-  optNo: { minWidth: space[10] + space[4] },
-  optOn: { backgroundColor: color.surface, ...shadow.card },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    card: { backgroundColor: color.surface, borderRadius: radius.lg, overflow: 'hidden', ...shadow.card },
+    q: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingVertical: space[3],
+      paddingHorizontal: space[4],
+    },
+    sep: { borderBottomWidth: border.hairline, borderBottomColor: color.line },
+    toggle: {
+      flexDirection: 'row',
+      gap: space[1],
+      padding: border.selected + border.hairline / 2,
+      borderRadius: radius.stadium,
+      backgroundColor: color.surfaceSunken,
+    },
+    opt: {
+      minHeight: space[10] - space[1] / 2,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    optYes: { minWidth: space[10] + space[2] },
+    optNo: { minWidth: space[10] + space[4] },
+    optOn: { backgroundColor: color.surface, ...shadow.card },
+  }),
+);

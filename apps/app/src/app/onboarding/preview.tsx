@@ -13,6 +13,7 @@ import {
   space,
   Text,
   type PhaseKey,
+  themed,
 } from '@run-coach/ui';
 import {
   formatDayMonth,
@@ -200,42 +201,49 @@ function PaceRow({
   );
 }
 
-const styles = StyleSheet.create({
-  shrink: { flexShrink: 1 },
-  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  root: { flex: 1, backgroundColor: color.bg },
-  flex: { flex: 1 },
-  scroll: { flexGrow: 1 },
-  inner: {
-    width: '100%',
-    maxWidth: size.contentMax + space.screenX * 2,
-    alignSelf: 'center',
-    gap: space[5],
-    paddingHorizontal: space.screenX,
-    paddingBottom: space[4],
-    flex: 1,
-  },
-  head: { gap: space[2] },
-  stats: { flexDirection: 'row', gap: space[2] },
-  stat: {
-    flex: 1,
-    backgroundColor: color.surfaceSunken,
-    borderRadius: radius.md,
-    padding: space[3],
-    gap: space[1],
-  },
-  card: { gap: space[3] },
-  paceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  why: { gap: space[3] + space[1] / 2 },
-  whyHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sheet: {
-    backgroundColor: color.surface,
-    borderTopLeftRadius: radius.sheet,
-    borderTopRightRadius: radius.sheet,
-    paddingTop: space[5],
-    paddingHorizontal: space.screenX,
-    boxShadow: `0px -2px 0px 0px ${color.line}`,
-  },
-  sheetInner: { width: '100%', maxWidth: size.contentMax, alignSelf: 'center', gap: space[2] + space[1] / 2 },
-  note: { flexDirection: 'row', gap: space[2], alignItems: 'flex-start' },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    shrink: { flexShrink: 1 },
+    hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    root: { flex: 1, backgroundColor: color.bg },
+    flex: { flex: 1 },
+    scroll: { flexGrow: 1 },
+    inner: {
+      width: '100%',
+      maxWidth: size.contentMax + space.screenX * 2,
+      alignSelf: 'center',
+      gap: space[5],
+      paddingHorizontal: space.screenX,
+      paddingBottom: space[4],
+      flex: 1,
+    },
+    head: { gap: space[2] },
+    stats: { flexDirection: 'row', gap: space[2] },
+    stat: {
+      flex: 1,
+      backgroundColor: color.surfaceSunken,
+      borderRadius: radius.md,
+      padding: space[3],
+      gap: space[1],
+    },
+    card: { gap: space[3] },
+    paceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    why: { gap: space[3] + space[1] / 2 },
+    whyHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    sheet: {
+      backgroundColor: color.surface,
+      borderTopLeftRadius: radius.sheet,
+      borderTopRightRadius: radius.sheet,
+      paddingTop: space[5],
+      paddingHorizontal: space.screenX,
+      boxShadow: `0px -2px 0px 0px ${color.line}`,
+    },
+    sheetInner: {
+      width: '100%',
+      maxWidth: size.contentMax,
+      alignSelf: 'center',
+      gap: space[2] + space[1] / 2,
+    },
+    note: { flexDirection: 'row', gap: space[2], alignItems: 'flex-start' },
+  }),
+);

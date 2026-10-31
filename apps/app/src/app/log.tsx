@@ -16,6 +16,7 @@ import {
   space,
   Text,
   TextField,
+  themed,
 } from '@run-coach/ui';
 import { formatDayMonth, formatPace } from '@run-coach/ui/format';
 import { router } from 'expo-router';
@@ -199,23 +200,25 @@ export default function LogRun() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  spacer: { width: size.touchMin },
-  block: { gap: space[2] + space[1] / 2 },
-  row: { flexDirection: 'row', gap: space[2] },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    minHeight: size.input,
-    paddingHorizontal: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: color.surface,
-  },
-  optionTall: { minHeight: size.buttonPrimary },
-  optionOn: ring(border.selected, color.text),
-  optionOff: ring(border.control, color.line),
-  paceValue: { fontFamily: fontFiles.display700, color: color.text },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    spacer: { width: size.touchMin },
+    block: { gap: space[2] + space[1] / 2 },
+    row: { flexDirection: 'row', gap: space[2] },
+    option: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      minHeight: size.input,
+      paddingHorizontal: space[4],
+      borderRadius: radius.lg,
+      backgroundColor: color.surface,
+    },
+    optionTall: { minHeight: size.buttonPrimary },
+    optionOn: ring(border.selected, color.text),
+    optionOff: ring(border.control, color.line),
+    paceValue: { fontFamily: fontFiles.display700, color: color.text },
+  }),
+);

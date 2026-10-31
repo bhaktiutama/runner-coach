@@ -78,7 +78,10 @@ export const tokens = {
       "lineStrong": "#737B83",
       "primaryInk": "#F58A5F",
       "successInk": "#6FB394",
-      "zoneStrength": "#3A444C"
+      "zoneStrength": "#3A444C",
+      "overlay": "#00000099",
+      "shadowCard": "#00000066",
+      "shadowRaised": "#00000080"
     }
   },
   "font": {

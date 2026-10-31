@@ -1,4 +1,4 @@
-import { border, color, Icon, radius, space, Text } from '@run-coach/ui';
+import { border, color, Icon, radius, space, Text, themed } from '@run-coach/ui';
 import { StyleSheet, View } from 'react-native';
 import { t } from '@/i18n/t';
 
@@ -29,14 +29,16 @@ export function ExerciseAnimation({ exerciseId, dark, height = space[10] * 4 }: 
   );
 }
 
-const styles = StyleSheet.create({
-  box: {
-    width: '100%',
-    borderRadius: radius.md,
-    borderWidth: border.selected,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space[2],
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    box: {
+      width: '100%',
+      borderRadius: radius.md,
+      borderWidth: border.selected,
+      borderStyle: 'dashed',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[2],
+    },
+  }),
+);

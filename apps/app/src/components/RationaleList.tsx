@@ -1,16 +1,16 @@
 import type { Rationale } from '@run-coach/training-engine';
-import { border, color, LinkButton, radius, space, Text } from '@run-coach/ui';
+import { border, color, LinkButton, radius, space, Text, themed } from '@run-coach/ui';
 import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { t } from '@/i18n/t';
 import { rationaleView } from '@/lib/rationale';
 
-const GRADE_DOT = {
+const GRADE_DOT = themed(() => ({
   A: color.success,
   B: color.success,
   C: color.status.attentionInk,
   D: color.textMuted,
-} as const;
+}));
 
 /** Daftar alasan engine + pil tingkat bukti + "Lihat sumber" (07 bagian 3.3, wireframe OB8). */
 export function RationaleList({ items, limit }: { items: Rationale[]; limit?: number }) {
@@ -66,24 +66,26 @@ export function RationaleList({ items, limit }: { items: Rationale[]; limit?: nu
   );
 }
 
-const styles = StyleSheet.create({
-  item: {
-    gap: space[1] + space[1] / 2,
-    paddingBottom: space[3],
-    borderBottomWidth: border.hairline,
-    borderBottomColor: color.line,
-  },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2, flexWrap: 'wrap' },
-  grade: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[1] + space[1] / 2,
-    backgroundColor: color.surfaceSunken,
-    borderRadius: radius.stadium,
-    paddingHorizontal: space[2] + space[1] / 2,
-    paddingVertical: border.selected,
-  },
-  dot: { width: space[2], height: space[2], borderRadius: radius.stadium },
-  underline: { textDecorationLine: 'underline' },
-  more: { alignItems: 'flex-start' },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    item: {
+      gap: space[1] + space[1] / 2,
+      paddingBottom: space[3],
+      borderBottomWidth: border.hairline,
+      borderBottomColor: color.line,
+    },
+    meta: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2, flexWrap: 'wrap' },
+    grade: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[1] + space[1] / 2,
+      backgroundColor: color.surfaceSunken,
+      borderRadius: radius.stadium,
+      paddingHorizontal: space[2] + space[1] / 2,
+      paddingVertical: border.selected,
+    },
+    dot: { width: space[2], height: space[2], borderRadius: radius.stadium },
+    underline: { textDecorationLine: 'underline' },
+    more: { alignItems: 'flex-start' },
+  }),
+);

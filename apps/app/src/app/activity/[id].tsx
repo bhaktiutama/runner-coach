@@ -12,6 +12,7 @@ import {
   size,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { formatDate, formatDistance, formatDuration, formatPace } from '@run-coach/ui/format';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -171,45 +172,47 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  flexShrink: { flexShrink: 1 },
-  top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  head: { gap: space[1] + space[1] / 2, alignItems: 'flex-start' },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[2] + border.selected - border.hairline / 2,
-  },
-  grid: { gap: space[2] },
-  gridRow: { flexDirection: 'row', gap: space[2] },
-  stat: {
-    flex: 1,
-    backgroundColor: color.surfaceSunken,
-    borderRadius: radius.md,
-    paddingVertical: space[3],
-    paddingHorizontal: space[3] + border.selected - border.hairline / 2,
-    gap: border.selected - border.hairline / 2,
-  },
-  section: { gap: space[2] },
-  table: { backgroundColor: color.surface, borderRadius: radius.md, ...shadow.card },
-  segRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    minHeight: size.buttonSecondary,
-    paddingHorizontal: space[3] + border.selected - border.hairline / 2,
-  },
-  sep: { borderBottomWidth: border.hairline, borderBottomColor: color.line },
-  status: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
-  rpe: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: space[3] + border.selected - border.hairline / 2,
-    paddingHorizontal: space[4],
-    borderRadius: radius.md,
-    backgroundColor: color.surface,
-    ...ring(border.hairline, color.line),
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    flexShrink: { flexShrink: 1 },
+    top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    head: { gap: space[1] + space[1] / 2, alignItems: 'flex-start' },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[2] + border.selected - border.hairline / 2,
+    },
+    grid: { gap: space[2] },
+    gridRow: { flexDirection: 'row', gap: space[2] },
+    stat: {
+      flex: 1,
+      backgroundColor: color.surfaceSunken,
+      borderRadius: radius.md,
+      paddingVertical: space[3],
+      paddingHorizontal: space[3] + border.selected - border.hairline / 2,
+      gap: border.selected - border.hairline / 2,
+    },
+    section: { gap: space[2] },
+    table: { backgroundColor: color.surface, borderRadius: radius.md, ...shadow.card },
+    segRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      minHeight: size.buttonSecondary,
+      paddingHorizontal: space[3] + border.selected - border.hairline / 2,
+    },
+    sep: { borderBottomWidth: border.hairline, borderBottomColor: color.line },
+    status: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
+    rpe: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: space[3] + border.selected - border.hairline / 2,
+      paddingHorizontal: space[4],
+      borderRadius: radius.md,
+      backgroundColor: color.surface,
+      ...ring(border.hairline, color.line),
+    },
+  }),
+);
