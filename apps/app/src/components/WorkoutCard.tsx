@@ -9,6 +9,7 @@ import {
   SegmentBar,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
@@ -135,15 +136,17 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  strength: { borderLeftWidth: space[2], borderLeftColor: color.zone.strength },
-  card: { gap: space[4] },
-  head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  done: { flexDirection: 'row', gap: space[1], alignItems: 'center' },
-  big: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
-  rows: { gap: space[2] + space[1] / 2 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space[3] },
-  label: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
-  value: { flexShrink: 1, textAlign: 'right' },
-  detail: { marginTop: -space[2] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    strength: { borderLeftWidth: space[2], borderLeftColor: color.zone.strength },
+    card: { gap: space[4] },
+    head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    done: { flexDirection: 'row', gap: space[1], alignItems: 'center' },
+    big: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
+    rows: { gap: space[2] + space[1] / 2 },
+    row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space[3] },
+    label: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+    value: { flexShrink: 1, textAlign: 'right' },
+    detail: { marginTop: -space[2] },
+  }),
+);

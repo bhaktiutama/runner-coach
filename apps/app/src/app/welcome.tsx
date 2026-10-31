@@ -9,6 +9,7 @@ import {
   size,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -90,33 +91,35 @@ export default function Welcome() {
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: color.bg },
-  pad: {
-    paddingHorizontal: space.screenX,
-    width: '100%',
-    maxWidth: size.contentMax + space.screenX * 2,
-    alignSelf: 'center',
-  },
-  flex: { flex: 1 },
-  // Bisa di-scroll: di layar pendek atau Ukuran Teks besar, judul tidak tertutup footer.
-  middle: { flexGrow: 1, justifyContent: 'center', gap: space[8], paddingVertical: space[4] },
-  art: {
-    gap: space[2] + space[1] / 2,
-    paddingVertical: space[4],
-    borderTopWidth: border.hairline,
-    borderBottomWidth: border.hairline,
-    borderColor: color.lineStrong,
-  },
-  pill: { height: space[8] + space[1], borderRadius: radius.stadium },
-  pillShort: { height: space[5] },
-  artShort: { gap: space[2], paddingVertical: space[3] },
-  middleShort: { gap: space[5] },
-  footer: { gap: space[2], paddingTop: space[3] },
-  privacy: {
-    flexDirection: 'row',
-    gap: space[1] + space[1] / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    root: { flex: 1, backgroundColor: color.bg },
+    pad: {
+      paddingHorizontal: space.screenX,
+      width: '100%',
+      maxWidth: size.contentMax + space.screenX * 2,
+      alignSelf: 'center',
+    },
+    flex: { flex: 1 },
+    // Bisa di-scroll: di layar pendek atau Ukuran Teks besar, judul tidak tertutup footer.
+    middle: { flexGrow: 1, justifyContent: 'center', gap: space[8], paddingVertical: space[4] },
+    art: {
+      gap: space[2] + space[1] / 2,
+      paddingVertical: space[4],
+      borderTopWidth: border.hairline,
+      borderBottomWidth: border.hairline,
+      borderColor: color.lineStrong,
+    },
+    pill: { height: space[8] + space[1], borderRadius: radius.stadium },
+    pillShort: { height: space[5] },
+    artShort: { gap: space[2], paddingVertical: space[3] },
+    middleShort: { gap: space[5] },
+    footer: { gap: space[2], paddingTop: space[3] },
+    privacy: {
+      flexDirection: 'row',
+      gap: space[1] + space[1] / 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }),
+);

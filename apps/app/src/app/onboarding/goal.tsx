@@ -1,4 +1,4 @@
-import { ChoiceCard, space } from '@run-coach/ui';
+import { ChoiceCard, space, themed } from '@run-coach/ui';
 import type { GoalDistance } from '@run-coach/training-engine';
 import { StyleSheet, View } from 'react-native';
 import { OnboardingStep } from '@/components/OnboardingStep';
@@ -51,4 +51,6 @@ export default function GoalStep() {
   );
 }
 
-const styles = StyleSheet.create({ grid: { gap: space[3] }, row: { flexDirection: 'row', gap: space[3] } });
+const styles = themed(() =>
+  StyleSheet.create({ grid: { gap: space[3] }, row: { flexDirection: 'row', gap: space[3] } }),
+);

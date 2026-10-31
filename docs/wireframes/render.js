@@ -1,6 +1,7 @@
 // Render Design-canvas .dc.html artboards to PNG with a minimal stand-in for the
 // canvas runtime: supports {{path}} holes, <sc-for>, <sc-if>, initial state, and
 // stylesheets under ds/ (inlined from disk; fonts must be installed locally).
+// Dark mode: WF_THEME=dark node ... (lihat dark.sh).
 // Usage: node docs/wireframes/render.js <sourceDir> <outDir> <name.dc.html=out.png> ...
 const fs = require('fs');
 const path = require('path');
@@ -47,6 +48,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const screen = document.body.firstElementChild;
   screen.style.height = 'auto'; screen.style.minHeight = '844px'; screen.style.overflow = 'visible';
   [...screen.children].forEach((c) => { c.style.flexShrink = '0'; });
+  // WF_THEME=dark: mode gelap memakai token [data-theme="dark"] yang sama dengan app.
+  if (window.__WF_THEME) screen.setAttribute('data-theme', window.__WF_THEME);
   document.body.dataset.rendered = '1';
 });
 </script>`;
@@ -62,7 +65,7 @@ window.addEventListener('DOMContentLoaded', () => {
     await page.route('**/*', (r) => (r.request().url().startsWith('data:') || r.request().url().startsWith('about:') ? r.continue() : r.abort()));
     const [name, png] = pair.split('=');
     let html = fs.readFileSync(path.join(projectDir, name), 'utf8');
-    html = html.replace('<script src="./support.js"></script>', SHIM);
+    html = html.replace('<script src="./support.js"></script>', (process.env.WF_THEME ? `<script>window.__WF_THEME=${JSON.stringify(process.env.WF_THEME)}</script>` : '') + SHIM);
     // Inline the design-system stylesheets copied into the canvas (ds/<folder>/...).
     html = html.replace(/<link rel="stylesheet" href="(ds\/[^"]+)">/g, (_, href) => `<style>${fs.readFileSync(path.join(projectDir, href), 'utf8')}</style>`);
     await page.setContent(html, { waitUntil: 'domcontentloaded' });

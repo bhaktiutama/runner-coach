@@ -13,6 +13,7 @@ import {
   Text,
   TextField,
   typography,
+  themed,
 } from '@run-coach/ui';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -211,20 +212,22 @@ export function OrDivider() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  col: { gap: space[2] + space[1] / 2 },
-  pair: { flexDirection: 'row', gap: space[2] },
-  row: { flexDirection: 'row', gap: space[3], justifyContent: 'center' },
-  tall: {
-    height: size.buttonPrimary - space[1],
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dark: { backgroundColor: color.text },
-  darkText: { ...typography.body, fontFamily: fontFiles.ui700, color: color.bg },
-  outline: { backgroundColor: color.surface, ...ring(border.control, color.lineStrong) },
-  or: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  line: { flex: 1, height: border.hairline, backgroundColor: color.line },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    col: { gap: space[2] + space[1] / 2 },
+    pair: { flexDirection: 'row', gap: space[2] },
+    row: { flexDirection: 'row', gap: space[3], justifyContent: 'center' },
+    tall: {
+      height: size.buttonPrimary - space[1],
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dark: { backgroundColor: color.text },
+    darkText: { ...typography.body, fontFamily: fontFiles.ui700, color: color.bg },
+    outline: { backgroundColor: color.surface, ...ring(border.control, color.lineStrong) },
+    or: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    line: { flex: 1, height: border.hairline, backgroundColor: color.line },
+  }),
+);

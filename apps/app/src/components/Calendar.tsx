@@ -1,5 +1,15 @@
 import { addDays, mondayOf } from '@run-coach/training-engine';
-import { color, fontFiles, IconButton, radius, shadow, space, Text, weekdayShortName } from '@run-coach/ui';
+import {
+  color,
+  fontFiles,
+  IconButton,
+  radius,
+  shadow,
+  space,
+  Text,
+  weekdayShortName,
+  themed,
+} from '@run-coach/ui';
 import { formatMonthYear } from '@run-coach/ui/format';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { t } from '@/i18n/t';
@@ -85,20 +95,22 @@ export function Calendar({ year, month0, selected, minDate, onSelect, onMonth }:
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: color.surface,
-    borderRadius: radius.lg,
-    padding: space[4],
-    gap: space[3],
-    ...shadow.card,
-  },
-  head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  grid: { gap: space[1] },
-  row: { flexDirection: 'row' },
-  cell: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  day: { height: space[10], borderRadius: radius.stadium },
-  dayOn: { backgroundColor: color.primary },
-  dayOnText: { fontFamily: fontFiles.display800, color: color.onPrimary },
-  off: { color: color.textMuted, opacity: 0.5 },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: color.surface,
+      borderRadius: radius.lg,
+      padding: space[4],
+      gap: space[3],
+      ...shadow.card,
+    },
+    head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    grid: { gap: space[1] },
+    row: { flexDirection: 'row' },
+    cell: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    day: { height: space[10], borderRadius: radius.stadium },
+    dayOn: { backgroundColor: color.primary },
+    dayOnText: { fontFamily: fontFiles.display800, color: color.onPrimary },
+    off: { color: color.textMuted, opacity: 0.5 },
+  }),
+);

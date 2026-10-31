@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import { border, color, radius, ring, size, space } from '../theme';
+import { border, color, radius, ring, size, space, themed } from '../theme';
 import { Chip } from './Controls';
 import { Text } from './Text';
 
@@ -80,17 +80,19 @@ export function TagChips<T extends string>({
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: space[2] + space[1] / 2 },
-  row: { flexDirection: 'row', gap: space[1] },
-  btn: {
-    flex: 1,
-    height: size.touchMin + space[1],
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceSunken,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scale: { flexDirection: 'row', justifyContent: 'space-between' },
-  tags: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    wrap: { gap: space[2] + space[1] / 2 },
+    row: { flexDirection: 'row', gap: space[1] },
+    btn: {
+      flex: 1,
+      height: size.touchMin + space[1],
+      borderRadius: radius.md,
+      backgroundColor: color.surfaceSunken,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    scale: { flexDirection: 'row', justifyContent: 'space-between' },
+    tags: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+  }),
+);

@@ -13,6 +13,7 @@ import {
   space,
   Text,
   TextField,
+  themed,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -108,20 +109,22 @@ export default function DeleteAccount() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  list: { gap: space[3] },
-  item: {
-    flexDirection: 'row',
-    gap: space[2] + border.selected - border.hairline / 2,
-    alignItems: 'flex-start',
-  },
-  itemIcon: { paddingTop: border.selected - border.hairline / 2 },
-  card: {
-    ...ring(border.hairline, color.line),
-    borderRadius: radius.lg,
-    padding: space[4],
-    gap: space[2] + border.selected - border.hairline / 2,
-    backgroundColor: color.surface,
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    list: { gap: space[3] },
+    item: {
+      flexDirection: 'row',
+      gap: space[2] + border.selected - border.hairline / 2,
+      alignItems: 'flex-start',
+    },
+    itemIcon: { paddingTop: border.selected - border.hairline / 2 },
+    card: {
+      ...ring(border.hairline, color.line),
+      borderRadius: radius.lg,
+      padding: space[4],
+      gap: space[2] + border.selected - border.hairline / 2,
+      backgroundColor: color.surface,
+    },
+  }),
+);

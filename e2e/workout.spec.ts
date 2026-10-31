@@ -3,7 +3,8 @@ import { onboard } from './helpers';
 
 // M5 verifikasi: alur 2.1 -> 2.3 -> 2.4 -> 3.3 end-to-end di web.
 test('latihan hari ini: timer, selesai + RPE, progres, detail aktivitas', async ({ page }) => {
-  await page.clock.install();
+  // Hari Selasa tetap: hasil tidak bergantung tanggal (Minggu = minggu pertama plan hanya 1 hari).
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   // 6 hari tersedia -> latihan hampir setiap hari; jika hari ini istirahat, test memakai log manual.

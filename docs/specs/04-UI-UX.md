@@ -32,6 +32,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Fase | base peach, build peach tua, peak oranye, taper lavender |
 | RPE | 1-3 easy, 4-6 long, 7-8 tempo, 9-10 interval |
 | Timer (gelap) | bg #161B1F, teks krem, interval memakai #E0522E |
+| Mode gelap (F-24) | Ikut tema perangkat. Semantik sama, nilai dari `color.dark` + palet: bg #161B1F, surface #242C32, teks krem, `-ink` dicerahkan (primary #F58A5F, status = warna dasarnya), strength #3A444C, bayangan hitam. Isian zona/fase/RPE tidak berubah. Acuan `docs/wireframes/png/dark/`. Kode: `color` dan `themed()` di `packages/ui/src/theme.ts`; jangan simpan warna di konstanta modul |
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
 | Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
@@ -91,7 +92,6 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 
 ## 7. Ditunda
 
-- Mode gelap untuk seluruh app (token `color.dark` sudah ada, dipakai Timer).
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
 - Kartu share, konfeti.
 

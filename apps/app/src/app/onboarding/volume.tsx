@@ -1,5 +1,5 @@
 import { assessGoal, MIN_LONGEST_M, type EngineMessageKey } from '@run-coach/training-engine';
-import { Chip, Field, InfoBox, SecondaryButton, space, Stepper } from '@run-coach/ui';
+import { Chip, Field, InfoBox, SecondaryButton, space, Stepper, themed } from '@run-coach/ui';
 import { StyleSheet, View } from 'react-native';
 import { OnboardingStep } from '@/components/OnboardingStep';
 import { useToday } from '@/data/hooks';
@@ -103,7 +103,9 @@ export default function VolumeStep() {
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-  row: { flexDirection: 'row', gap: space[2] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+    row: { flexDirection: 'row', gap: space[2] },
+  }),
+);

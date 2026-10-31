@@ -1,5 +1,17 @@
 import { REFERENCES, RULES, type EngineMessageKey } from '@run-coach/training-engine';
-import { border, color, Icon, IconButton, radius, ring, shadow, size, space, Text } from '@run-coach/ui';
+import {
+  border,
+  color,
+  Icon,
+  IconButton,
+  radius,
+  ring,
+  shadow,
+  size,
+  space,
+  Text,
+  themed,
+} from '@run-coach/ui';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
@@ -8,12 +20,12 @@ import { helpCatalog, type HelpTopic } from '@/i18n/help';
 import { t } from '@/i18n/t';
 import { et, refShort } from '@/lib/rationale';
 
-const GRADE_DOT = {
+const GRADE_DOT = themed(() => ({
   A: color.success,
   B: color.success,
   C: color.status.attentionInk,
   D: color.textMuted,
-} as const;
+}));
 
 /** 4.7 Panduan & istilah (F-20). Dibuka dari Profil atau tombol (i) dengan `?topic=`. */
 export default function Help() {
@@ -125,25 +137,27 @@ function TopicCard({
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  top: { flexDirection: 'row', alignItems: 'center' },
-  spacer: { width: space[10] + space[1] },
-  group: { gap: space[2] },
-  groupTitle: { paddingLeft: space[1] },
-  card: { backgroundColor: color.surface, borderRadius: radius.md, overflow: 'hidden', ...shadow.card },
-  sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
-  row: { paddingHorizontal: space[4] },
-  focus: {
-    paddingHorizontal: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: color.surface,
-    ...ring(border.selected, color.text),
-  },
-  head: { flexDirection: 'row', alignItems: 'center', gap: space[3], minHeight: size.input },
-  body: { gap: space[2], paddingBottom: space[4] },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2, flexWrap: 'wrap' },
-  grade: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  dot: { width: space[2], height: space[2], borderRadius: radius.stadium },
-  underline: { textDecorationLine: 'underline' },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    top: { flexDirection: 'row', alignItems: 'center' },
+    spacer: { width: space[10] + space[1] },
+    group: { gap: space[2] },
+    groupTitle: { paddingLeft: space[1] },
+    card: { backgroundColor: color.surface, borderRadius: radius.md, overflow: 'hidden', ...shadow.card },
+    sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
+    row: { paddingHorizontal: space[4] },
+    focus: {
+      paddingHorizontal: space[4],
+      borderRadius: radius.lg,
+      backgroundColor: color.surface,
+      ...ring(border.selected, color.text),
+    },
+    head: { flexDirection: 'row', alignItems: 'center', gap: space[3], minHeight: size.input },
+    body: { gap: space[2], paddingBottom: space[4] },
+    meta: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2, flexWrap: 'wrap' },
+    grade: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    dot: { width: space[2], height: space[2], borderRadius: radius.stadium },
+    underline: { textDecorationLine: 'underline' },
+  }),
+);
