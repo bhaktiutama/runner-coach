@@ -53,6 +53,7 @@ export default function ProgressTab() {
   const weeks = weeklyVolume(acts, from, today);
   const trend = easyPaceTrend(acts, from);
   const adh = adherence(statuses.data ?? [], from, today);
+  const adhS = adherence(statuses.data ?? [], from, today, 'support');
   const params = planParams(plan.data);
   const pred = params.prediction;
   const g = plan.data.goal;
@@ -171,6 +172,11 @@ export default function ProgressTab() {
               ? t('progress.adherenceSub', { done: adh.done, total: adh.total })
               : t('progress.adherenceEmpty')}
           </Text>
+          {adhS.total ? (
+            <Text variant="caption" color="textMuted" testID="strength-adherence">
+              {t('progress.strengthAdherence', { done: adhS.done, total: adhS.total })}
+            </Text>
+          ) : null}
         </Card>
         <Card style={[styles.small, styles.pred]}>
           {pred && g.distance !== 'fitness' ? (

@@ -4,7 +4,7 @@ import { border, color, fontFiles, radius, ring, size, space } from '../theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
 
-export type LaneZone = 'recovery' | 'easy' | 'long' | 'tempo' | 'interval';
+export type LaneZone = 'recovery' | 'easy' | 'long' | 'tempo' | 'interval' | 'strength';
 
 /** Arsir drill: garis peach 5 px, celah putih 3 px, miring 135 derajat (wireframe 2.1/2.2). */
 const HATCH = space[2];
@@ -79,7 +79,14 @@ export function IntensityChart({
 }: {
   segments: { zone: LaneZone; weight: number; drill?: boolean }[];
 }) {
-  const pct: Record<LaneZone, number> = { recovery: 0.2, easy: 0.3, long: 0.4, tempo: 1, interval: 1 };
+  const pct: Record<LaneZone, number> = {
+    recovery: 0.2,
+    easy: 0.3,
+    long: 0.4,
+    tempo: 1,
+    interval: 1,
+    strength: 0.6,
+  };
   const h = space[10] + space[6];
   return (
     <View style={[styles.intensity, { height: h }]}>
@@ -104,6 +111,8 @@ export type LaneDay = {
   state: 'rest' | 'scheduled' | 'completed' | 'missed';
   today: boolean;
   onPress?: () => void;
+  /** Penanda kecil di sudut lajur, mis. "S" untuk hari dengan strength (F-21). */
+  badge?: string;
 };
 
 /** 7 lajur minggu (2.1): tinggi 44, cincin 2.5 warna zona, hari ini garis luar 2 px. */
@@ -137,6 +146,7 @@ export function LaneWeek({ days }: { days: LaneDay[] }) {
               {d.state === 'completed' ? (
                 <Icon name="check" size={space[4]} color={color.text} strokeWidth={3} />
               ) : null}
+              {d.badge ? <LaneBadge label={d.badge} /> : null}
             </View>
             <Text
               variant="caption"
@@ -148,6 +158,17 @@ export function LaneWeek({ days }: { days: LaneDay[] }) {
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+/** Penanda bulat charcoal (strength) di sudut kanan atas lajur atau baris kalender. */
+export function LaneBadge({ label }: { label: string }) {
+  return (
+    <View style={styles.laneBadge}>
+      <Text variant="captionStrong" style={styles.laneBadgeText}>
+        {label}
+      </Text>
     </View>
   );
 }
@@ -275,6 +296,19 @@ export function StatusChip({
 }
 
 const styles = StyleSheet.create({
+  laneBadge: {
+    position: 'absolute',
+    top: -space[1] - border.hairline,
+    right: -space[1] - border.hairline,
+    minWidth: space[4] + space[1],
+    height: space[4] + space[1],
+    paddingHorizontal: space[1],
+    borderRadius: radius.stadium,
+    backgroundColor: color.zone.strength,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  laneBadgeText: { color: color.zone.onStrength },
   segBar: { flexDirection: 'row', gap: border.selected + border.hairline / 2 },
   segPart: { borderRadius: radius.stadium, overflow: 'hidden' },
   mark: { width: space[1] + space[1] / 2, borderRadius: radius.stadium, overflow: 'hidden' },

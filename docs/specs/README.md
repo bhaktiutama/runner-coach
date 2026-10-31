@@ -1,10 +1,10 @@
 # Spec-Driven Development: Run Coach
 
-Status: Draft v0.3 (2026-10-29), model privasi "data di HP"
+Status: Draft v0.4 (2026-10-30, fase 2), model privasi "data di HP"
 
 Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang (riset, alasan, monetisasi). Jika ada konflik, dokumen di folder ini yang dipakai.
 
-**Acuan visual:** [`docs/wireframes/`](../wireframes/README.md), 26 layar HP dalam 4 journey, sudah memakai design system Lintas, diekspor dari artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka). Nomor layar (1.1 sampai 4.6) dipakai di semua spec.
+**Acuan visual:** [`docs/wireframes/`](../wireframes/README.md), 26 layar HP dalam 4 journey, sudah memakai design system Lintas, diekspor dari artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka). Nomor layar (1.1 sampai 4.8) dipakai di semua spec. Fase 2 menambah wireframe 2.1s, 2.2s, 2.3s, 2.4s, 4.1 (fase 2), 4.4, 4.8 dalam versi ID dan EN.
 
 ## Urutan baca (total ~26 menit)
 
@@ -17,6 +17,7 @@ Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang 
 | 5 | [05-BACKEND-SCHEMA.md](05-BACKEND-SCHEMA.md) | Tabel, kolom, RLS, API | 4 menit |
 | 6 | [06-IMPLEMENTATION-PLAN.md](06-IMPLEMENTATION-PLAN.md) | Urutan build, test, cek selesai | 3 menit |
 | 7 | [07-ENGINE-EVIDENCE.md](07-ENGINE-EVIDENCE.md) | Dasar ilmiah tiap aturan engine, reasoning yang dilihat pengguna | 6 menit |
+| 8 | [08-MONETIZATION.md](08-MONETIZATION.md) | Konsep paywall, harga usulan, gerbang Premium | 3 menit |
 
 Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 
@@ -41,7 +42,8 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | R8 | MVP hanya memuat ABC drill sebagai segmen pemanasan (F-17, Should). Strength + core bodyweight di fase 2, strength lanjutan + mobility di fase 3 | Mengikuti PLANNING 2.1, 4.7 dan 7 (update 2026-10-29) |
 | R9 | ~~Sinkron offline last-write-wins~~ Diganti PV: tidak ada sinkron; pindah HP lewat file backup | |
 | R10 | Setiap aturan engine diberi ID `E-xx`, tingkat bukti dan referensi; engine menyimpan `rationale` per plan/latihan. Aturan baru E-06 (sesi maks 110% lari terjauh 30 hari), taper diberi besaran volume | Validasi ilmiah, `07-ENGINE-EVIDENCE.md` |
-| R11 | MVP bahasa Indonesia saja, tetapi teks lewat katalog `id.ts`, format lewat `Intl` `id-ID`, engine dan DB menyimpan kode bukan teks. Multibahasa untuk pasar global = D9 | TRD 8; disiapkan sejak M1 supaya tidak bongkar ulang |
+| R11 | MVP bahasa Indonesia saja, tetapi teks lewat katalog `id.ts`, format lewat `Intl` `id-ID`, engine dan DB menyimpan kode bukan teks. Fase 2: English ditambahkan (F-22, D9 diputuskan) | TRD 8 |
+| R13 | Fase 2 (2026-10-30): strength + core bodyweight (F-21) dengan animasi placeholder, bahasa Inggris (F-22), konsep paywall + gerbang nonaktif (F-23). Integrasi Strava/Health ditunda | PRD 4, `08-MONETIZATION.md`, Plan 3.1 |
 | R12 | Aturan notifikasi: lokal saja, hanya hari latihan, isi tanpa data kesehatan, izin diminta saat dibutuhkan, web tidak didukung di MVP | TRD 9, App Flow FL-11 |
 
 ## Revisi dari wireframe (v0.2)
@@ -88,4 +90,5 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | O2 | Isi plan "Bugar" (W2) | Blok 8 minggu easy + 1 sesi kualitas, tanpa taper, bisa diulang. Perlu review pelatih |
 | O3 | Screening "Ya" = "plan lebih ringan" (layar 1.7) | Tanpa sesi berat sampai pengguna mengubahnya. Perlu review pelatih |
 | O4 | ~~Segmen drill belum ada di wireframe~~ Selesai: 2.2 (baris drill) dan 2.3b (timer drill). Animasi SVG dari prototipe jika siap, jika belum cukup teks cue | |
-| D7, D8 | Strength jadi pembeda utama atau Premium; format animasi gerakan | Lihat PLANNING 11. Tidak memengaruhi MVP |
+| D7 | Strength jadi pembeda utama atau Premium | Fase 2: Premium setelah 2 minggu gratis (`08-MONETIZATION.md`); minat diukur dari pemakaian 2 minggu gratis |
+| D8 | Format animasi gerakan | Terbuka. Fase 2 memakai placeholder kosong (`ExerciseAnimation`), pipeline di `docs/ANIMATION_PIPELINE.md` |

@@ -4,7 +4,7 @@ export const next = (page: Page, step: string) =>
   page.getByTestId(`screen-${step}`).getByTestId('next').click();
 
 /** Onboarding lengkap (10K, 4 hari, tahu waktu 5K) sampai Hari ini, login dilewati (mode uji). */
-export async function onboard(page: Page, opts: { days?: number[] } = {}) {
+export async function onboard(page: Page, opts: { days?: number[]; strength?: boolean } = {}) {
   await page.goto('/');
   await page.getByTestId('welcome-start').click();
   await page.getByTestId('goal-10k').click();
@@ -19,6 +19,7 @@ export async function onboard(page: Page, opts: { days?: number[] } = {}) {
   await next(page, 'volume');
   // Senin-Jumat + Minggu (long) = 6 hari, supaya hampir selalu ada latihan hari ini
   for (const d of opts.days ?? [0, 1, 2, 3, 4]) await page.getByTestId(`wd-${d}`).click();
+  if (opts.strength) await page.getByTestId('strength-choice').getByRole('tab', { name: 'Ya' }).click();
   await next(page, 'days');
   await page.getByTestId('disclaimer').click();
   await next(page, 'health');

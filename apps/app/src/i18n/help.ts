@@ -1,4 +1,6 @@
 import type { RuleId } from '@run-coach/training-engine';
+import { HELP_EN, helpTextEn } from './help.en';
+import { currentLang } from './locale';
 
 // Katalog teks Panduan & istilah (F-20, layar 4.7). Bahasa awam, sapaan "kamu".
 // Isi aturan mengikuti docs/specs/07-ENGINE-EVIDENCE.md; tingkat bukti dan sumber diambil
@@ -15,6 +17,8 @@ export const helpText = {
   rulePrefix: 'Aturan {id}',
   noSource: 'Belum ada penelitian langsung. Ini praktik umum pelatih.',
 } as const;
+
+export type HelpTextShape = Record<keyof typeof helpText, string>;
 
 export const HELP: HelpGroup[] = [
   {
@@ -79,7 +83,7 @@ export const HELP: HelpGroup[] = [
       {
         id: 'kepatuhan',
         title: 'Kepatuhan',
-        body: 'Persentase latihan terjadwal yang kamu selesaikan. Contoh: 11 dari 13 latihan = 85%. Latihan yang dipindah lalu diselesaikan tetap dihitung.',
+        body: 'Persentase latihan terjadwal yang kamu selesaikan. Contoh: 11 dari 13 latihan = 85%. Latihan yang dipindah lalu diselesaikan tetap dihitung. Sesi strength dihitung terpisah.',
       },
       {
         id: 'adaptasi',
@@ -95,7 +99,7 @@ export const HELP: HelpGroup[] = [
   },
   {
     id: 'jenis',
-    title: 'JENIS LARI',
+    title: 'JENIS LATIHAN',
     topics: [
       {
         id: 'easy',
@@ -141,6 +145,11 @@ export const HELP: HelpGroup[] = [
         id: 'drill',
         title: 'ABC drill',
         body: 'Gerakan teknik lari (A-skip, B-skip, C-skip, high knees, carioca) sekitar 10 menit setelah pemanasan, sebelum tempo atau interval. Membantu pemanasan dan pola gerak lari.',
+      },
+      {
+        id: 'strength',
+        title: 'Strength + core',
+        body: 'Latihan kekuatan kaki (squat, lunge, glute bridge, calf raise) dan core (plank, dead bug) tanpa alat, 15-30 menit. Opsional: dinyalakan di onboarding atau Profil. Muncul sebagai kartu kedua di Hari ini dan tanda S di kalender, 2 kali seminggu di fase Base dan Build, 1 kali di Peak, core ringan saja saat taper, dan tidak ada di minggu race. Gerakan naik level tiap 3 minggu; kalau terasa terlalu berat, sesi berikutnya diringankan. Animasi gerakan menyusul.',
       },
       {
         id: 'time-trial',
@@ -316,6 +325,30 @@ export const HELP: HelpGroup[] = [
         body: 'Selang seminggu di fase Build, satu easy run diganti progression run: santai lalu 10 menit terakhir di pace maraton. Tidak bersebelahan dengan long run atau sesi berat. Kebiasaan pelatih; belum ada penelitiannya.',
       },
       {
+        id: 'E-23',
+        rule: 'E-23',
+        title: 'Latihan kekuatan 1-2 kali seminggu',
+        body: 'Gabungan 25 uji acak menemukan latihan kekuatan menurunkan risiko cedera olahraga, dan review lain menemukan efisiensi lari membaik pada pelari terlatih. Jumlah sesi per fase (2 di Base dan Build, 1 di Peak) adalah kebiasaan pelatih, belum diuji langsung.',
+      },
+      {
+        id: 'E-24',
+        rule: 'E-24',
+        title: 'Kapan strength dijadwalkan',
+        body: 'Strength ditaruh di hari easy (sesudah lari) atau hari tanpa lari, tidak di hari long run dan tidak sehari sebelum long run atau interval, dengan jeda minimal 1 hari antar sesi strength. Supaya kaki segar di sesi kunci. Kebiasaan pelatih, belum ada penelitiannya.',
+      },
+      {
+        id: 'E-25',
+        rule: 'E-25',
+        title: 'Gerakan naik level bertahap',
+        body: 'Gerakan naik 1 level tiap 3 minggu, misalnya squat ke split squat ke Bulgarian split squat. Pemula berhenti di level 2. Kalau sesi terasa terlalu berat, sesi berikutnya turun 1 level. Kebiasaan pelatih, belum ada penelitiannya.',
+      },
+      {
+        id: 'E-26',
+        rule: 'E-26',
+        title: 'Strength saat taper',
+        body: 'Minggu taper hanya core ringan, tanpa latihan kaki, dan minggu race tanpa strength sama sekali, supaya kaki segar di hari race. Sejalan dengan prinsip taper (beban dikurangi), tapi khusus untuk strength belum ada penelitiannya.',
+      },
+      {
         id: 'E-19',
         rule: 'E-19',
         title: 'Latihan terlewat',
@@ -326,3 +359,8 @@ export const HELP: HelpGroup[] = [
 ];
 
 export const HELP_TOPIC_IDS = HELP.flatMap((g) => g.topics.map((x) => x.id));
+
+/** Panduan dalam bahasa aktif (F-22). */
+export function helpCatalog(): { text: HelpTextShape; groups: HelpGroup[] } {
+  return currentLang() === 'en' ? { text: helpTextEn, groups: HELP_EN } : { text: helpText, groups: HELP };
+}

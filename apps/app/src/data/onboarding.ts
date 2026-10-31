@@ -22,6 +22,8 @@ export const draftSchema = z.object({
   longRunDay: z.union([z.literal(5), z.literal(6)]).optional(),
   reminderTime: z.string().nullable().optional(),
   healthFlag: z.boolean().optional(),
+  /** F-21: tambah strength + core (layar 1.6). */
+  strength: z.boolean().optional(),
 });
 
 export type Draft = z.infer<typeof draftSchema>;
@@ -69,5 +71,6 @@ export function draftToPlanInput(d: Draft, startDate: string): PlanInput {
     longRunDay: (d.longRunDay ?? 6) as Weekday,
     lightMode: !!d.healthFlag,
     startDate,
+    strength: !!d.strength,
   };
 }

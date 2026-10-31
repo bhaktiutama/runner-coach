@@ -3,6 +3,14 @@ import {
   applyChanges,
   buildReturnWeek,
   diffDays,
+  easierStrength,
+  isSupportType,
+  planStrength,
+  type GeneratedWorkout,
+  type Level,
+  type Phase,
+  type StrengthLevel,
+  type StrengthType,
   generatePlan,
   mondayOf,
   paceZones,
@@ -18,7 +26,7 @@ import {
 import type { Db } from '@/db/types';
 import { newId, nowIso } from '@/lib/id';
 import { listActivities } from './activities';
-import { getActivePlan, getWorkouts, longestRun30, updateWorkout } from './repo';
+import { getActivePlan, getWorkout, getWorkouts, longestRun30, updateWorkout } from './repo';
 import { planParams, type PlanParams } from './rows';
 
 // Operasi plan M6: jeda/lanjut (F-09, E-13), adaptasi (F-11), atur ulang hari (4.1).
@@ -75,7 +83,7 @@ export async function resumePlan(db: Db, today: string): Promise<void> {
     }
     for (const w of ret) {
       const existing = await db.getFirstAsync<{ id: string }>(
-        "SELECT id FROM planned_workouts WHERE plan_id = ? AND date = ? AND status = 'scheduled'",
+        "SELECT id FROM planned_workouts WHERE plan_id = ? AND date = ? AND status = 'scheduled' AND type NOT IN ('strength', 'core')",
         [p.id, w.date],
       );
       if (existing) await db.runAsync('DELETE FROM planned_workouts WHERE id = ?', [existing.id]);
@@ -110,7 +118,8 @@ export async function weeklyProposals(db: Db, today: string, weekStart: string):
   if (!p) return [];
   const week = await getWorkouts(db, p.id, weekStart, addDays(weekStart, 6));
   const nextWeek = await getWorkouts(db, p.id, addDays(weekStart, 7), addDays(weekStart, 13));
-  const acts = await listActivities(db);
+  // Sesi strength/core bukan lari: tidak dipakai untuk E-13/E-17/E-18.
+  const acts = (await listActivities(db)).filter((a) => !a.workout_type || !isSupportType(a.workout_type));
   const feedback: FeedbackPoint[] = acts
     .filter((a) => a.rpe != null && a.workout_type)
     .map((a) => ({ date: a.started_at, type: a.workout_type!, rpe: a.rpe! }))
@@ -277,6 +286,7 @@ export async function regenerateFromToday(db: Db, today: string, days: Weekday[]
     lightMode: params.light_mode,
     startDate: today,
     vdot: params.vdot,
+    strength: !!params.strength,
   });
   const ts = nowIso();
   await db.withTransactionAsync(async () => {
@@ -315,4 +325,103 @@ export async function regenerateFromToday(db: Db, today: string, days: Weekday[]
       [JSON.stringify(newParams), plan.startDate, plan.endDate, ts, p.id],
     );
   });
+}
+
+// ---- Strength + core (F-21) ----
+
+function goalLevel(g: { level: Level | null; weekly_volume_m: number }): Level {
+  // Sama dengan effectiveLevel engine: tanpa level (punya waktu acuan) -> dari volume.
+  return g.level ?? (g.weekly_volume_m < 10_000 ? 'beginner' : 'recreational');
+}
+
+async function insertGenerated(db: Db, planId: string, ws: GeneratedWorkout[]) {
+  const ts = nowIso();
+  for (const w of ws) {
+    await db.runAsync(
+      `INSERT INTO planned_workouts (id, created_at, updated_at, plan_id, date, week_index, phase, type, steps,
+        target_distance_m, target_duration_s, status, rationale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'scheduled', ?)`,
+      [
+        newId(),
+        ts,
+        ts,
+        planId,
+        w.date,
+        w.weekIndex,
+        w.phase,
+        w.type,
+        JSON.stringify(w.steps),
+        w.targetDistanceM,
+        w.targetDurationS,
+        JSON.stringify(w.rationale),
+      ],
+    );
+  }
+}
+
+/**
+ * Sakelar strength di Profil (4.1): nyala = sesi strength/core ditambahkan mulai hari ini ke lari
+ * yang sudah ada (lari tidak berubah); mati = sesi strength terjadwal mulai hari ini dihapus.
+ */
+export async function setStrength(db: Db, today: string, on: boolean): Promise<void> {
+  const p = await getActivePlan(db);
+  await db.withTransactionAsync(async () => {
+    await db.runAsync('UPDATE profile SET strength_opt_in = ? WHERE id = 1', [on ? 1 : 0]);
+    if (!p) return;
+    const params = planParams(p);
+    await db.runAsync(
+      "DELETE FROM planned_workouts WHERE plan_id = ? AND date >= ? AND status = 'scheduled' AND type IN ('strength', 'core')",
+      [p.id, today],
+    );
+    if (on) {
+      const runs = (await getWorkouts(db, p.id, today)).filter((w) => !isSupportType(w.type));
+      const strength = planStrength(
+        runs.map((w) => ({
+          date: w.date,
+          weekIndex: w.week_index,
+          phase: w.phase,
+          type: w.type,
+          steps: w.steps,
+          targetDistanceM: w.target_distance_m ?? 0,
+          targetDurationS: w.target_duration_s ?? 0,
+          rationale: [],
+        })),
+        {
+          level: goalLevel(p.goal),
+          lightMode: params.light_mode,
+          startDate: today,
+          raceDate: p.goal.distance === 'fitness' ? null : p.goal.race_date,
+          weeks: (params.weeks ?? []).map((w) => ({ ...w, phase: w.phase as Phase })),
+        },
+      );
+      await insertGenerated(db, p.id, strength);
+    }
+    await db.runAsync(
+      "UPDATE plans SET params = json_set(params, '$.strength', json(?)), updated_at = ? WHERE id = ?",
+      [on ? 'true' : 'false', nowIso(), p.id],
+    );
+  });
+}
+
+/**
+ * E-25: sesi strength terasa terlalu berat -> sesi strength/core terjadwal berikutnya turun 1 level.
+ * Mengembalikan id sesi yang diubah (null jika tidak ada).
+ */
+export async function easeNextStrength(db: Db, afterWorkoutId: string): Promise<string | null> {
+  const done = await getWorkout(db, afterWorkoutId);
+  if (!done || !isSupportType(done.type)) return null;
+  const next = await db.getFirstAsync<{ id: string }>(
+    `SELECT id FROM planned_workouts WHERE plan_id = ? AND date > ? AND status = 'scheduled'
+       AND type IN ('strength', 'core') ORDER BY date LIMIT 1`,
+    [done.plan_id, done.date],
+  );
+  if (!next) return null;
+  const w = (await getWorkout(db, next.id))!;
+  const cur = (w.rationale.find((r) => r.rule === 'E-25')?.values.level as number | undefined) ?? 1;
+  const e = easierStrength(w.type as StrengthType, cur as StrengthLevel);
+  await updateWorkout(db, w.id, {
+    steps: e.steps,
+    target_duration_s: totalDuration(e.steps),
+    rationale: [...w.rationale.filter((r) => r.rule !== 'E-25'), e.rationale],
+  });
+  return w.id;
 }

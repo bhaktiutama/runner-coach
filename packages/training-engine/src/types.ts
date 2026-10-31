@@ -7,7 +7,17 @@ export type RaceDistance = Exclude<GoalDistance, 'fitness'>;
 export type Level = 'beginner' | 'recreational';
 export type Phase = 'base' | 'build' | 'peak' | 'taper' | 'return';
 export type WorkoutType =
-  'easy' | 'run_walk' | 'long' | 'tempo' | 'interval' | 'strides' | 'recovery' | 'progression' | 'rest';
+  | 'easy'
+  | 'run_walk'
+  | 'long'
+  | 'tempo'
+  | 'interval'
+  | 'strides'
+  | 'recovery'
+  | 'progression'
+  | 'rest'
+  | 'strength'
+  | 'core';
 
 export const DISTANCE_M: Record<RaceDistance, number> = { '5k': 5000, '10k': 10000, hm: 21097, fm: 42195 };
 
@@ -37,6 +47,8 @@ export type PlanInput = {
   startDate: string;
   /** Override VDOT, mis. setelah time trial (E-20). */
   vdot?: number;
+  /** F-21: tambah strength + core bodyweight (E-23..E-26). Default false. */
+  strength?: boolean;
 };
 
 export type GeneratedWorkout = {
@@ -85,5 +97,6 @@ export type GeneratedPlan = {
     engine_version: string;
     vdot: number;
     rationale: Rationale[];
+    strength: boolean;
   };
 };

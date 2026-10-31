@@ -14,6 +14,7 @@ import {
   tempoRun,
   totalDuration,
   weeksToShift,
+  strengthSteps,
   type MovableWorkout,
 } from '../src';
 
@@ -150,5 +151,45 @@ describe('jeda + Return to run (F-09, E-13)', () => {
     expect(s[0]!.date).toBe('2026-11-02');
     expect(s[1]!.date).toBe('2026-11-24');
     expect(weeksToShift('2026-11-04', '2026-11-12')).toBe(2);
+  });
+});
+
+describe('strength (F-21): pindah dan adaptasi', () => {
+  const st = W('s', '2026-11-03', 'strength', strengthSteps('strength', 1));
+  const wk = [...week, st];
+
+  it('strength boleh ke hari yang ada lari (bukan bentrok)', () => {
+    expect(checkMove(st, '2026-11-02', wk, 10000).verdict).toBe('safe');
+  });
+  it('E-24: strength tidak ke hari long run atau sehari sebelumnya', () => {
+    expect(checkMove(st, '2026-11-07', wk, 10000).verdict).toBe('before_key');
+    expect(checkMove(st, '2026-11-06', wk, 10000).verdict).toBe('before_key');
+  });
+  it('strength bentrok dengan strength lain di hari yang sama', () => {
+    const other = W('t', '2026-11-05', 'core', strengthSteps('core', 1));
+    expect(checkMove(st, '2026-11-05', [...wk, other], 10000).verdict).toBe('occupied');
+  });
+  it('lari tidak melihat strength sebagai bentrok', () => {
+    expect(checkMove(week[0]!, '2026-11-03', wk, 10000).verdict).toBe('safe');
+  });
+  it('E-19: strength terlewat tidak dihitung', () => {
+    const missedWeek = [
+      { ...week[0]!, status: 'missed' as const },
+      { ...st, status: 'missed' as const },
+      week[1]!,
+      week[2]!,
+    ];
+    const p = proposeAdjustments({
+      week: missedWeek,
+      nextWeek: [],
+      feedback: [],
+      lastRunDate: '2026-11-07',
+      today: '2026-11-09',
+    });
+    expect(p.find((x) => x.rule === 'E-19')).toBeUndefined();
+  });
+  it('perubahan volume tidak menyentuh strength', () => {
+    const res = applyChanges([st, week[0]!], [{ kind: 'volume', pct: -10 }], z);
+    expect(res.map((r) => r.id)).toEqual(['a']);
   });
 });

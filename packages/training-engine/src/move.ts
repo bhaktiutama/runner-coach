@@ -3,6 +3,7 @@ import { runningDistance, totalDuration, type Step } from './steps';
 import type { Rationale, WorkoutType } from './types';
 import { easyRun } from './workouts';
 import type { PaceZones } from './vdot';
+import { isSupportType } from './strength';
 
 // Pindah dan gabung latihan (F-08, FL-5, layar 3.2). Pesan memakai template E-06, E-08, E-10.
 
@@ -14,7 +15,7 @@ export type MovableWorkout = {
   status: 'scheduled' | 'completed' | 'skipped' | 'missed';
 };
 
-export type MoveVerdict = 'origin' | 'safe' | 'after_hard' | 'occupied' | 'hard_adjacent';
+export type MoveVerdict = 'origin' | 'safe' | 'after_hard' | 'occupied' | 'hard_adjacent' | 'before_key';
 
 export type MoveCheck = { verdict: MoveVerdict; rationale: Rationale[]; mergeWith: string | null };
 
@@ -33,7 +34,22 @@ export function checkMove(
 ): MoveCheck {
   const originDate = moving.date;
   if (toDate === originDate) return { verdict: 'origin', rationale: [], mergeWith: null };
-  const others = week.filter((w) => w.id !== moving.id && w.status !== 'skipped');
+  const all = week.filter((w) => w.id !== moving.id && w.status !== 'skipped');
+  // Strength boleh di hari yang sama dengan lari (F-21); bentrok hanya dengan jenis yang sama.
+  const support = isSupportType(moving.type);
+  const others = all.filter((w) => isSupportType(w.type) === support);
+  if (support) {
+    if (others.some((w) => w.date === toDate)) return { verdict: 'occupied', rationale: [], mergeWith: null };
+    const runs = all.filter((w) => !isSupportType(w.type));
+    // E-24: tidak di hari long run atau sehari sebelum long run / interval.
+    const bad = runs.some(
+      (w) =>
+        (w.date === toDate && w.type === 'long') ||
+        ((w.type === 'long' || w.type === 'interval') && diffDays(toDate, w.date) === 1),
+    );
+    if (bad) return { verdict: 'before_key', mergeWith: null, rationale: [{ rule: 'E-24', values: {} }] };
+    return { verdict: 'safe', mergeWith: null, rationale: [] };
+  }
   const target = others.find((w) => w.date === toDate);
   if (target) {
     const merged = runningDistance(target.steps) + runningDistance(moving.steps);

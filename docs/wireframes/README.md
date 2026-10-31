@@ -35,9 +35,24 @@ Status: v0.4 (2026-10-29), memakai design system Lintas (latar abu-abu hangat). 
 | 4.1 | Profil | [png](png/4-1-profil.png) | F-16 |
 | 4.2 | Integrasi data | [png](png/4-2-integrasi.png) | Fase 2 |
 | 4.3 | Jeda plan | [png](png/4-3-jeda-plan.png) | F-09 |
-| 4.4 | Premium | [png](png/4-4-premium.png) | Fase 3 |
+| 4.4 | Premium | [png](png/4-4-premium.png) | F-23 (fase 2, lihat di bawah) |
 | 4.5 | Data & privasi | [png](png/4-5-data-privasi.png) | F-13, F-18, F-19 |
 | 4.6 | Hapus akun | [png](png/4-6-hapus-akun.png) | F-10 |
+
+## Fase 2 (v0.5, 2026-10-30)
+
+Dibuat dengan `phase2.py` (satu sumber, keluaran Bahasa Indonesia dan English), sumber `source/P2-*.dc.html` dan `source/P2-*.en.dc.html`, dirender dengan `render.js` (perintah di kepala `phase2.py`). Animasi gerakan sengaja **kosong** (kotak putus-putus "Animasi gerakan menyusul", D8).
+
+| No | Layar | ID | EN | Fitur |
+|----|-------|----|----|-------|
+| 2.1s | Hari ini + kartu strength, tanda S di lajur minggu | [png](png/2-1s-hari-ini-strength.png) | [png](png/2-1s-hari-ini-strength-en.png) | F-21 |
+| 2.2s | Detail strength (daftar gerakan + tempat animasi) | [png](png/2-2s-detail-strength.png) | [png](png/2-2s-detail-strength-en.png) | F-21 |
+| 2.3s | Timer mode gerakan | [png](png/2-3s-timer-gerakan.png) | [png](png/2-3s-timer-gerakan-en.png) | F-21 |
+| 2.3s | Timer istirahat antar set | [png](png/2-3s-timer-istirahat.png) | [png](png/2-3s-timer-istirahat-en.png) | F-21 |
+| 2.4s | Selesai strength + "Bebannya terasa" | [png](png/2-4s-selesai-strength.png) | [png](png/2-4s-selesai-strength-en.png) | F-21 |
+| 4.1 | Profil fase 2 (sakelar strength, Bahasa, baris Premium saat paywall aktif) | [png](png/4-1-profil-fase2.png) | [png](png/4-1-profil-fase2-en.png) | F-21, F-22, F-23 |
+| 4.4 | Premium (menggantikan 4.4 lama; pembelian nonaktif di fase 2) | [png](png/4-4-premium.png) | [png](png/4-4-premium-en.png) | F-23 |
+| 4.8 | Bahasa | [png](png/4-8-bahasa.png) | [png](png/4-8-bahasa-en.png) | F-22 |
 
 ## Yang berubah di v0.4
 

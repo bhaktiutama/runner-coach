@@ -131,6 +131,10 @@ Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom
 | E-21 | Recovery run | Rekreasional, >= 5 hari lari, bukan mode ringan: hari easy tepat sesudah long run / sesi berat (minggu yang sama) jadi recovery run maks 30 mnt di pace easy paling lambat + 0-30 dtk/km. Sisa jarak dipindah ke hari easy lain |
 | E-22 | Progression run | Fase Build, rekreasional, bukan cutback/mode ringan/Bugar, minggu fase ganjil: 1 easy run jadi easy + 10 mnt terakhir di pace maraton. Tidak bersebelahan dengan long run / sesi berat; jarak total tetap dalam E-06 |
 | E-15 | ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
+| E-23 | Strength + core (F-21, opsional) | Base/Build 2 sesi per minggu, Peak 1 (maks 2 set per gerakan), cutback = maks 2 set. Mode ringan (E-12): sesi `core` saja. Ditambahkan sesudah plan lari dibuat; lari tidak berubah |
+| E-24 | Penempatan strength | Tidak di hari long run, tidak sehari sebelum long run / interval (dihindari juga 2 hari sebelumnya), tidak 2 hari sebelum race, jeda >= 1 hari antar sesi strength. Urutan pilihan: hari easy (sesudah lari) -> hari kualitas / hari tanpa lari -> hari recovery |
+| E-25 | Progresi gerakan | Level 1 -> 2 -> 3 tiap 3 minggu plan (mis. squat -> split squat -> Bulgarian split squat); pemula maks level 2. Feedback "terlalu berat" di 2.4: sesi strength terjadwal berikutnya turun 1 level |
+| E-26 | Strength saat taper | Minggu taper (bukan minggu race): 1 sesi `core` ringan. Minggu race dan minggu Return to run: tanpa strength |
 
 ### 4.3 Adaptasi (F-11, layar 2.5)
 
@@ -146,6 +150,8 @@ Dihitung engine di akhir minggu, ditampilkan sebagai **usulan**; plan baru berub
 | E-20 | Waktu race / time trial baru | Hitung ulang zona pace dan prediksi |
 
 Sumber: PLANNING 4.5; bukti per aturan di `07-ENGINE-EVIDENCE.md` 2.4. `plan_adjustments.rule` berisi ID di kolom pertama.
+
+Strength/core (F-21) tidak ikut aturan lari: sesi strength terlewat tidak dihitung untuk E-19, aktivitas strength tidak dihitung sebagai "lari terakhir" untuk E-13, dan perubahan volume (E-17) tidak menyentuh sesi strength.
 
 ### 4.4 Reasoning (rationale)
 
@@ -167,7 +173,7 @@ Setiap keputusan engine (plan, latihan, usulan adaptasi) mengembalikan daftar `r
 2. Jika kelak ada tabel di schema `public` (mis. data referensi gerakan), RLS wajib aktif dan tabel itu tidak boleh berisi data pribadi.
 3. Service role key hanya di Edge Function (disediakan otomatis oleh Supabase), tidak pernah di app atau repo.
 4. Token Strava (fase 2) disimpan di `expo-secure-store` perangkat. Edge Function `strava-token` hanya menukar/memperbarui token memakai client secret dan **tidak menyimpan apa pun**.
-5. Analitik (PostHog) dan error (Sentry) tanpa data pribadi: tanpa email/nama, tanpa nilai kesehatan (RPE, tag, alasan jeda, jawaban screening), IP tidak disimpan, Sentry `sendDefaultPii: false`. Event hanya nama + properti teknis (mis. `target_type`, `platform`). Ada sakelar "Kirim data pemakaian anonim" di 4.5 (default aktif, perlu dicek ulang terhadap UU PDP sebelum rilis).
+5. Analitik (PostHog) dan error (Sentry) tanpa data pribadi: tanpa email/nama, tanpa nilai kesehatan (RPE, tag, alasan jeda, jawaban screening), IP tidak disimpan, Sentry `sendDefaultPii: false`. Event hanya nama + properti teknis (mis. `target_type`, `platform`). Fase 2 menambah `paywall_viewed` (hanya `platform`). Ada sakelar "Kirim data pemakaian anonim" di 4.5 (default aktif, perlu dicek ulang terhadap UU PDP sebelum rilis).
 6. Izin data kesehatan (HealthKit, Health Connect) diminta seminimal mungkin dan hanya saat fitur dipakai; datanya tetap di perangkat.
 7. Data tidak dipakai untuk iklan dan tidak dijual.
 8. Wajib: hapus akun (F-10) menghapus akun Auth di server **dan** semua data lokal; backup/export (F-13). Pemetaan ke UU PDP (UU No. 27/2022) dicek sebelum rilis publik.
@@ -196,20 +202,22 @@ Service role key **tidak** perlu diberikan ke repo, CI, atau session; Edge Funct
 
 ## 8. Bahasa dan format
 
-MVP hanya bahasa Indonesia, tetapi kode disiapkan untuk multibahasa (pasar global, D9) supaya menambah bahasa tidak perlu membongkar komponen.
+MVP bahasa Indonesia; fase 2 menambah bahasa Inggris (F-22, D9 diputuskan 2026-10-30).
 
 | Aturan | Nilai |
 |--------|-------|
-| Bahasa MVP | Indonesia saja (`id`), sapaan "kamu". Tidak ada pemilih bahasa di UI |
+| Bahasa | Indonesia (`id`, sapaan "kamu") dan English (`en`, "you"). Pemilih di 4.8 (dari 4.1): Ikuti perangkat / Bahasa Indonesia / English, disimpan di `profile.locale` (`system`, `id-ID`, `en-US`). `system`: locale perangkat dari `Intl` diawali `id` -> `id-ID`, selain itu `en-US`. Install baru = `system` (migrasi v6) |
+| Katalog EN | `apps/app/src/i18n/en.ts`, `help.en.ts`, `packages/training-engine/src/i18n/en.ts`. Bertipe `Record<Key, string>` sehingga kunci yang hilang = typecheck gagal; test memeriksa placeholder EN = ID. Terjemahan dibaca penutur asli sebelum rilis |
+| Ganti bahasa | Tanpa restart: `LocaleGate` menerapkan locale lalu me-mount ulang pohon layar. Katalog app, engine, Panduan dan locale `format.ts` berganti bersama |
 | Katalog teks | Semua teks yang tampil ke pengguna (UI, pesan error, notifikasi, cue timer, template rationale 07 bagian 3.2, nama + cue gerakan drill) diambil dari katalog: `apps/app/src/i18n/id.ts` dan `packages/training-engine/src/i18n/id.ts`. Kunci stabil (mis. `today.start`), nilainya teks. Tidak ada teks UI tertulis langsung di komponen |
 | Placeholder | `{nama}` di dalam teks katalog. Angka diformat dulu (baris Format) sebelum dimasukkan |
-| Format | Satu modul `format.ts` di `packages/ui`: angka dan tanggal lewat `Intl.NumberFormat` / `Intl.DateTimeFormat` dengan locale dari `profile.locale` (MVP selalu `id-ID`). Pace dan durasi (`6:45 /km`, `38:45`) diformat manual. Tampilan: 04-UI-UX bagian 6 |
+| Format | Satu modul `format.ts` di `packages/ui`: angka dan tanggal lewat `Intl.NumberFormat` / `Intl.DateTimeFormat` dengan locale aktif (`setFormatLocale`, dari `profile.locale`). Pace dan durasi (`6:45 /km`, `38:45`) diformat manual. Tampilan: 04-UI-UX bagian 6 |
 | Engine | `training-engine` mengembalikan kode + nilai (enum tipe latihan, rationale `{rule, values}`), bukan teks jadi. Teks dibentuk di UI dari katalog |
 | Data tersimpan | Database menyimpan kode, bukan teks (mis. `type = 'tempo'`, bukan "Tempo"). File backup ikut aturan ini |
-| Library | Tanpa library i18n di MVP (1 bahasa cukup dengan katalog TypeScript). Library dipilih saat D9 diputuskan, lewat perubahan stack bagian 1 |
+| Library | Tanpa library i18n: katalog TypeScript per bahasa cukup untuk 2 bahasa (D9). Ditinjau ulang jika bahasa ketiga atau bentuk jamak yang rumit dibutuhkan |
 | Test | CI memeriksa: tidak ada teks literal di JSX `apps/app/src` dan `packages/ui` (kecuali angka/simbol); setiap kunci yang dipakai ada di `id.ts`; snapshot format `5,2 km`, `6:45 /km`, `Selasa, 27 Okt`, `2j 21m` |
 
-Saat multibahasa (D9): tambah katalog per bahasa (mis. `en.ts`), pemilih bahasa di 4.1 + bahasa awal dari perangkat, `profile.locale` diisi, satuan awal mengikuti negara (mi untuk US/UK), notifikasi dan cue ikut bahasa, dan konten yang khas Indonesia ditinjau ulang (zona waktu default, konteks panas, race lokal, kebijakan privasi per negara).
+Belum di fase 2: satuan awal mengikuti negara (mi untuk US/UK) karena satuan mi belum bisa dipilih di 4.1; bahasa ketiga; peninjauan konten yang khas Indonesia (zona waktu default, konteks panas, race lokal, kebijakan privasi per negara). Sitasi singkat sumber ("dkk.") ditampilkan "et al." di EN.
 
 ## 9. Notifikasi
 

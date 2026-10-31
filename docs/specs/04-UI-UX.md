@@ -114,3 +114,19 @@ Belum ada wireframe; layar 4.7 memakai komponen yang sudah ada agar konsisten de
 | Hint (i) | Ikon `info` 18 px warna `text-muted` di samping label, area sentuh min 44 px, label aksesibilitas "Apa itu {istilah}?". Membuka 4.7 di topiknya. Tidak memakai popover agar sama di iOS, Android, web |
 | Teks | Sapaan "kamu", tanpa singkatan tanpa penjelasan; angka contoh konkret (mis. "20 km -> paling banyak 22 km") |
 
+
+## 10. Fase 2: strength, bahasa, Premium (v0.7, 2026-10-30)
+
+Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, masing-masing versi ID dan EN (`-en`).
+
+| Elemen | Aturan |
+|---|---|
+| Warna strength | `zone.strength` charcoal (DS3) + `on-strength`. Bib "STRENGTH"/"CORE", garis kiri kartu 8 px, penanda lajur "S" bulat charcoal di 2.1, `LaneMark` charcoal di 3.1 |
+| Kartu strength 2.1 | Di bawah kartu lari (atau kartu Istirahat). Lebih ringkas: bib + jumlah gerakan, menit besar, 1 kalimat, "Mulai strength", "Lihat detail". Terkunci: tombol "Buka dengan Premium" |
+| Tempat animasi | `ExerciseAnimation`: kotak `surface-sunken` (gelap: `dark.surface-sunken`) dengan garis putus-putus 2.5 px `line-strong`, ikon `strength` + "Animasi gerakan menyusul". Tinggi 120 (timer) / 88 (daftar 2.2s). Diganti animasi Rive tanpa mengubah layar (D8) |
+| 2.2s | Kartu per gerakan: tempat animasi, "n. Nama" + dosis (`3 x 8x / sisi`, `2 x 30 dtk`), cue `body-sm`, istirahat `caption`. Tanpa grafik intensitas dan tanpa pilihan panduan intensitas |
+| 2.3s | Gelap seperti 2.3b: tempat animasi, bib "Gerakan n/N", nama `drill-name`, "Set x dari y · dosis" `set`, lajur set, angka hitung mundur `stat` untuk gerakan berwaktu, cue. Istirahat: bib recovery + angka `timer` di tengah + "Berikutnya: ...". Footer: tombol utama (Selesai set / Lanjut / Lewati istirahat) + Jeda dan Lewati gerakan sebagai teks |
+| 2.4 untuk strength | Tanpa kolom jarak dan pace. SegmentedControl "Bebannya terasa" (Terlalu berat / Pas / Terlalu ringan) di atas RPE |
+| 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
+| 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
+| Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |

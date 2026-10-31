@@ -1,6 +1,6 @@
 # 05. Data Schema (lokal) + Backend
 
-Status: Draft v0.3 (2026-10-29) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
+Status: Draft v0.4 (2026-10-30, migrasi v6 fase 2) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
 
 ## Ringkasan
 
@@ -55,11 +55,12 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | display_name | text null | Diisi pengguna, tidak diambil dari provider login |
 | unit | text default 'km' | check in ('km','mi') |
 | timezone | text default 'Asia/Jakarta' | IANA |
-| locale | text default 'id-ID' | Locale format angka/tanggal (TRD 8). MVP selalu `id-ID`; dipakai pemilih bahasa saat multibahasa (D9) |
+| locale | text default 'id-ID' | Pilihan bahasa (F-22, TRD 8): `system` (ikut perangkat), `id-ID`, `en-US`. Migrasi v6 mengisi `system` jika belum ada target (install baru); pengguna lama tetap `id-ID` |
 | reminder_time | text null | `HH:MM`, layar 1.6; null = mati |
 | intensity_guide | text default 'pace' | check in ('pace','hr','rpe'); 'hr' aktif di fase 2 |
 | health_flag | boolean default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |
 | disclaimer_accepted_at | timestamptz | Dari centang di 1.7 |
+| strength_opt_in | boolean default false | F-21: plan memuat strength + core (1.6, 4.1). Sejak v6 |
 
 ### goals
 
@@ -99,7 +100,7 @@ Check: `baseline_time_s is not null or level is not null`. Index unik parsial: 1
 | date | date | |
 | week_index | int | Mulai dari 1 |
 | phase | text | check in ('base','build','peak','taper','return') |
-| type | text | check in ('easy','run_walk','long','tempo','interval','strides','recovery','progression','rest'). `progression` sejak migrasi v5 (tabel dibangun ulang dengan foreign key dimatikan sementara agar relasi activities tidak hilang) |
+| type | text | check in ('easy','run_walk','long','tempo','interval','strides','recovery','progression','rest','strength','core'). `progression` sejak v5, `strength`/`core` sejak v6 (tabel dibangun ulang dengan foreign key dimatikan sementara agar relasi activities tidak hilang). Satu tanggal boleh punya 1 lari + 1 strength/core |
 | steps | json | Format bagian 3 |
 | target_distance_m | int null | |
 | target_duration_s | int null | |
@@ -133,6 +134,7 @@ Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is no
 | rpe | int | check 1-10 |
 | tags | text[] default '[]' | Subset dari ('hot','poor_sleep','sore_legs','pain'); layar 2.4 |
 | notes | text null | |
+| load_feel | text null | check in ('too_hard','ok','too_easy'). Sesi strength/core (2.4, F-21). Sejak v6 |
 
 ### plan_adjustments (F-11, layar 2.5)
 
@@ -174,7 +176,19 @@ Satu struktur untuk timer, kalender, dan export ke jam (fase lanjut).
 
 Segmen drill (F-17): `exercise_id` merujuk daftar gerakan statis di `training-engine` (id sama dengan prototipe, mis. `askip`, `bskip`, `cskip`).
 
-Aturan: `kind` in (warmup, work, recovery, cooldown, repeat, drill). Step drill wajib punya `exercise_id` dan `sets`, plus `distance_m`, `duration_s` atau `reps`. Step lain (non-repeat) wajib punya `duration_s` atau `distance_m`. Tipe TypeScript + validator zod di `training-engine` jadi satu-satunya sumber kebenaran. Contoh angka di atas hanya ilustrasi format.
+Strength/core (F-21, sejak v6):
+
+```json
+[
+  { "kind": "exercise", "exercise_id": "squat", "sets": 2, "reps": 10, "rest_s": 45 },
+  { "kind": "exercise", "exercise_id": "plank", "sets": 2, "duration_s": 30, "rest_s": 30 },
+  { "kind": "exercise", "exercise_id": "dead_bug", "sets": 2, "reps": 8, "per_side": true, "rest_s": 30 }
+]
+```
+
+Step `exercise` wajib `exercise_id`, `sets`, `rest_s` dan **tepat satu** dari `reps` atau `duration_s`; `per_side` = dosis untuk tiap sisi. `exercise_id` merujuk library statis `EXERCISES` di `training-engine` (15 gerakan, `animation: null` = placeholder sampai D8). Estimasi waktu: 3 detik per repetisi (x2 jika per sisi) + istirahat antar set; tanpa istirahat sesudah set terakhir gerakan terakhir. Jarak lari sesi strength = 0.
+
+Aturan: `kind` in (warmup, work, recovery, cooldown, repeat, drill, exercise). Step drill wajib punya `exercise_id` dan `sets`, plus `distance_m`, `duration_s` atau `reps`. Step lain (non-repeat) wajib punya `duration_s` atau `distance_m`. Tipe TypeScript + validator zod di `training-engine` jadi satu-satunya sumber kebenaran. Contoh angka di atas hanya ilustrasi format.
 
 ## 4. File backup (F-13, F-18)
 
@@ -235,5 +249,5 @@ Dihapus dibanding v0.2: `export-data` (sekarang lokal), `strava-oauth` + `strava
 | Data | Fase | Di mana | Catatan |
 |------|------|---------|---------|
 | integrations | 2 | Tabel lokal: provider, athlete_id, connected_at, last_synced_at | Token di `expo-secure-store`, tidak di SQLite dan tidak di server |
-| exercises | 2 | Data statis di app (`training-engine`) | Bukan data pribadi. Jika kelak dipindah ke server agar bisa diperbarui tanpa rilis app: tabel `public.exercises` read-only, RLS select untuk semua, tanpa data pribadi |
-| Langganan Premium | 3 | RevenueCat (entitlement per `auth.uid()`) | Tidak ada tabel `subscriptions` di server kita. Dukungan web (Stripe lewat RevenueCat) dicek di fase 3 |
+| exercises | 2 (selesai) | Data statis di app (`training-engine/src/strength.ts`) | Bukan data pribadi. Jika kelak dipindah ke server agar bisa diperbarui tanpa rilis app: tabel `public.exercises` read-only, RLS select untuk semua, tanpa data pribadi |
+| Langganan Premium | 3 | RevenueCat (entitlement per `auth.uid()`) | Tidak ada tabel `subscriptions` di server kita. Dukungan web (Stripe lewat RevenueCat) dicek di fase 3. Fase 2: gerbang di kode, flag mati (`08-MONETIZATION.md`) |

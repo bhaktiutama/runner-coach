@@ -22,8 +22,12 @@ export type ActivityRow = {
   splits: string | null;
 };
 
+export const LOAD_FEELS = ['too_hard', 'ok', 'too_easy'] as const;
+export type LoadFeel = (typeof LOAD_FEELS)[number];
+
 export type ActivityView = ActivityRow & {
   rpe: number | null;
+  load_feel: LoadFeel | null;
   tags: Tag[];
   notes: string | null;
   workout_type: WorkoutRow['type'] | null;
@@ -41,6 +45,8 @@ export type NewActivity = {
   rpe: number;
   tags: Tag[];
   notes?: string | null;
+  /** Sesi strength/core (F-21): terlalu berat / pas / terlalu ringan. */
+  loadFeel?: LoadFeel | null;
 };
 
 /** Simpan aktivitas + feedback dalam 1 transaksi; latihan yang dicocokkan jadi `completed` (3.1). */
@@ -66,8 +72,18 @@ export async function saveActivity(db: Db, a: NewActivity): Promise<string> {
       ],
     );
     await db.runAsync(
-      `INSERT INTO workout_feedback (id, created_at, updated_at, activity_id, rpe, tags, notes) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [newId(), ts, ts, id, a.rpe, JSON.stringify(a.tags.filter((t) => TAGS.includes(t))), a.notes ?? null],
+      `INSERT INTO workout_feedback (id, created_at, updated_at, activity_id, rpe, tags, notes, load_feel)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        newId(),
+        ts,
+        ts,
+        id,
+        a.rpe,
+        JSON.stringify(a.tags.filter((t) => TAGS.includes(t))),
+        a.notes ?? null,
+        a.loadFeel && LOAD_FEELS.includes(a.loadFeel) ? a.loadFeel : null,
+      ],
     );
     if (a.plannedWorkoutId) {
       await db.runAsync("UPDATE planned_workouts SET status = 'completed', updated_at = ? WHERE id = ?", [
@@ -80,19 +96,20 @@ export async function saveActivity(db: Db, a: NewActivity): Promise<string> {
 }
 
 /**
- * FL-3: latihan terjadwal di tanggal itu yang belum selesai (scheduled, missed atau skipped).
+ * FL-3: latihan lari terjadwal (strength/core tidak dicocokkan ke log lari) di tanggal itu yang belum selesai (scheduled, missed atau skipped).
  * Tidak ada -> lari tambahan.
  */
 export async function matchWorkout(db: Db, date: string): Promise<WorkoutRow | null> {
   return db.getFirstAsync<WorkoutRow>(
     `SELECT w.* FROM planned_workouts w JOIN plans p ON p.id = w.plan_id
      WHERE p.status != 'archived' AND w.date = ? AND w.status IN ('scheduled', 'missed', 'skipped')
+       AND w.type NOT IN ('strength', 'core')
      ORDER BY CASE w.status WHEN 'scheduled' THEN 0 WHEN 'missed' THEN 1 ELSE 2 END LIMIT 1`,
     [date],
   );
 }
 
-const VIEW_SQL = `SELECT a.*, f.rpe, f.tags, f.notes, w.type AS workout_type, w.steps AS workout_steps, w.date AS workout_date
+const VIEW_SQL = `SELECT a.*, f.rpe, f.tags, f.notes, f.load_feel, w.type AS workout_type, w.steps AS workout_steps, w.date AS workout_date
   FROM activities a LEFT JOIN workout_feedback f ON f.activity_id = a.id
   LEFT JOIN planned_workouts w ON w.id = a.planned_workout_id`;
 

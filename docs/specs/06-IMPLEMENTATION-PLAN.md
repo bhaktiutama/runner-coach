@@ -52,6 +52,20 @@ Prasyarat di luar kode:
 
 Setiap fase lanjut dipecah jadi milestone dengan format tabel yang sama sebelum dikerjakan.
 
+### 3.1 Fase 2 (dikerjakan 2026-10-30)
+
+Keputusan pemilik produk 2026-10-30: integrasi Strava/Health ditunda (butuh kredensial Strava + HP fisik); animasi strength = placeholder kosong; bahasa Inggris ikut fase 2; konsep paywall hybrid (`08-MONETIZATION.md`) dengan gerbang nonaktif, tanpa RevenueCat.
+
+| # | Lingkup | Test | Verifikasi | Status |
+|---|---------|------|-----------|--------|
+| P2-0 | Spec (PRD F-21..F-23, TRD E-23..E-26 + bahasa, App Flow FL-12..FL-14, UI/UX 10, Schema v6, 07 2.4b, 08) + wireframe ID/EN | `check_contrast.py` (tidak ada warna baru) | Wireframe dirender ke PNG | Selesai |
+| P2-1 | Engine: step `exercise`, library 15 gerakan, `planStrength`, `easierStrength`, katalog EN | Semua kombinasi target x profil x hari x mode ringan dengan strength: lari identik tanpa strength, E-23..E-26, placeholder rationale | `pnpm test` | Selesai |
+| P2-2 | Migrasi v6 + backup | Naik v5 -> v6 tanpa kehilangan relasi; install baru `locale = system` | `pnpm test` | Selesai |
+| P2-3/4 | 1.6, 2.1, 2.2s, 2.3s, 2.4, 3.1, 3.2, 3.3, 4.1 | Timer mode gerakan, setStrength, easeNextStrength, log manual tidak cocok ke strength, kepatuhan terpisah | E2E `phase2.spec.ts` | Selesai (perlu device untuk cue saat layar terkunci) |
+| P2-5 | English: katalog app/engine/Panduan, 4.8, locale format | Kunci + placeholder EN = ID, resolve locale perangkat, ganti bahasa | E2E ganti bahasa | Selesai; terjemahan perlu dibaca penutur asli |
+| P2-6 | Gerbang Premium (flag mati), 4.4 tanpa pembelian, `paywall_viewed` | `isLocked` flag mati/nyala | E2E 4.4 | Selesai; pembelian = Fase 3 |
+| P2-7 | Integrasi Strava, HealthKit, Health Connect, layar 4.2, panduan HR di 2.2 | - | - | Ditunda |
+
 ## 4. Perintah standar
 
 | Perintah | Fungsi |

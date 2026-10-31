@@ -1,4 +1,10 @@
-import { addDays, diffDays, mondayOf, type EngineMessageKey } from '@run-coach/training-engine';
+import {
+  addDays,
+  diffDays,
+  isSupportType,
+  mondayOf,
+  type EngineMessageKey,
+} from '@run-coach/training-engine';
 import {
   border,
   color,
@@ -105,7 +111,10 @@ export default function PlanTab() {
       <View style={styles.days}>
         {Array.from({ length: 7 }, (_, i) => {
           const date = addDays(from, i);
-          const w = workouts.find((x) => x.date === date);
+          // F-21: lari jadi baris utama; strength/core di tanggal yang sama jadi baris tambahan.
+          const run = workouts.find((x) => x.date === date && !isSupportType(x.type));
+          const sup = workouts.find((x) => x.date === date && isSupportType(x.type));
+          const w = run ?? sup;
           const isToday = date === today;
           const struck = w && (w.status === 'skipped' || w.status === 'missed');
           return (
@@ -127,10 +136,28 @@ export default function PlanTab() {
                 <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
                   {w ? typeName(w.type) : t('plan.rest')}
                 </Text>
+                {run && sup ? (
+                  <Pressable
+                    onPress={() => router.push(`/workout/${sup.id}`)}
+                    accessibilityRole="button"
+                    testID={`plan-strength-${date}`}
+                    style={styles.supRow}
+                  >
+                    <LaneMark zone="strength" />
+                    <Text variant="caption" color="text">
+                      {t('plan.strengthLine', { type: typeName(sup.type), min: minutesOf(sup.steps) })}
+                    </Text>
+                  </Pressable>
+                ) : null}
                 {w || i === 0 ? (
                   <Text variant="caption" color="textMuted">
                     {w
-                      ? `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
+                      ? isSupportType(w.type)
+                        ? t('plan.strengthSub', {
+                            min: minutesOf(w.steps),
+                            n: w.steps.filter((x) => x.kind === 'exercise').length,
+                          })
+                        : `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
                       : t('plan.restSub')}
                   </Text>
                 ) : null}
@@ -151,6 +178,7 @@ export default function PlanTab() {
 }
 
 const styles = StyleSheet.create({
+  supRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
   hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
   head: { gap: space[1] },
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

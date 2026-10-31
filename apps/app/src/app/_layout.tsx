@@ -18,6 +18,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DbGate } from '@/components/DbGate';
+import { LocaleGate } from '@/components/LocaleGate';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -47,16 +48,18 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <StatusBar style="dark" />
         <DbGate>
-          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
-            <Stack.Screen
-              name="move/[id]"
-              options={{
-                presentation: 'transparentModal',
-                animation: 'fade',
-                contentStyle: { backgroundColor: 'transparent' },
-              }}
-            />
-          </Stack>
+          <LocaleGate>
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg } }}>
+              <Stack.Screen
+                name="move/[id]"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'fade',
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              />
+            </Stack>
+          </LocaleGate>
         </DbGate>
       </QueryClientProvider>
     </SafeAreaProvider>

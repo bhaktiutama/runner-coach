@@ -1,11 +1,12 @@
-import { engineId, REFERENCES, RULES, type EngineMessageKey } from '@run-coach/training-engine';
+import { REFERENCES, RULES, type EngineMessageKey } from '@run-coach/training-engine';
 import { border, color, Icon, IconButton, radius, ring, shadow, size, space, Text } from '@run-coach/ui';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
-import { HELP, helpText, type HelpTopic } from '@/i18n/help';
+import { helpCatalog, type HelpTopic } from '@/i18n/help';
 import { t } from '@/i18n/t';
+import { et, refShort } from '@/lib/rationale';
 
 const GRADE_DOT = {
   A: color.success,
@@ -17,6 +18,7 @@ const GRADE_DOT = {
 /** 4.7 Panduan & istilah (F-20). Dibuka dari Profil atau tombol (i) dengan `?topic=`. */
 export default function Help() {
   const { topic } = useLocalSearchParams<{ topic?: string }>();
+  const { text: helpText, groups: HELP } = helpCatalog();
   const focused = HELP.flatMap((g) => g.topics).find((x) => x.id === topic);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/profile'));
   return (
@@ -66,6 +68,7 @@ function TopicCard({
 }) {
   const [open, setOpen] = useState(!!initiallyOpen);
   const [sources, setSources] = useState(false);
+  const { text: helpText } = helpCatalog();
   const rule = topic.rule ? RULES[topic.rule] : undefined;
   const refs = rule ? rule.refs.map((id) => REFERENCES[id]).filter((r) => !!r) : [];
   return (
@@ -89,7 +92,7 @@ function TopicCard({
             <View style={styles.meta}>
               <View style={styles.grade}>
                 <View style={[styles.dot, { backgroundColor: GRADE_DOT[rule.grade] }]} />
-                <Text variant="captionStrong">{engineId[`grade.${rule.grade}` as EngineMessageKey]}</Text>
+                <Text variant="captionStrong">{et(`grade.${rule.grade}` as EngineMessageKey)}</Text>
               </View>
               {refs.length ? (
                 <Pressable onPress={() => setSources(!sources)} accessibilityRole="button">
@@ -112,7 +115,7 @@ function TopicCard({
                   color={r.url ? 'primaryInk' : 'textMuted'}
                   onPress={r.url ? () => void Linking.openURL(r.url!) : undefined}
                 >
-                  {r.short}
+                  {refShort(r)}
                 </Text>
               ))
             : null}

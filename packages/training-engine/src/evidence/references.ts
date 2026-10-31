@@ -83,4 +83,14 @@ export const REFERENCES: Record<string, Reference> = {
     short: 'Haddad dkk. 2017, Front Neurosci',
     url: 'https://doi.org/10.3389/fnins.2017.00612',
   },
+  R23: {
+    id: 'R23',
+    short: 'Lauersen dkk. 2014, Br J Sports Med',
+    url: 'https://doi.org/10.1136/bjsports-2013-092538',
+  },
+  R24: {
+    id: 'R24',
+    short: 'Balsalobre-Fernandez dkk. 2016, J Strength Cond Res',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/26694507/',
+  },
 };

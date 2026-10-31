@@ -1,4 +1,10 @@
-import { DRILL_SET_S, flattenSteps, type FlatSegment, type Step } from '@run-coach/training-engine';
+import {
+  DRILL_SET_S,
+  flattenSteps,
+  isRunSegment,
+  type FlatSegment,
+  type Step,
+} from '@run-coach/training-engine';
 
 // State machine timer (App Flow 3.2). Murni (tanpa React/Expo) supaya bisa diuji.
 // Posisi selalu dihitung dari timestamp absolut, jadi tetap benar setelah app ditutup sistem (TRD 5).
@@ -6,7 +12,7 @@ import { DRILL_SET_S, flattenSteps, type FlatSegment, type Step } from '@run-coa
 export type TimerSegment = FlatSegment & {
   /** Nomor grup tampilan (1-based): step tingkat atas, drill berurutan = 1 grup. */
   group: number;
-  /** Detik untuk countdown; null = manual (drill berbasis jarak/repetisi, tekan Lanjut). */
+  /** Detik untuk countdown; null = manual (drill/gerakan berbasis jarak/repetisi, tekan Lanjut). */
   timedS: number | null;
 };
 
@@ -35,16 +41,24 @@ export function buildSegments(steps: Step[]): TimerSegment[] {
   const out: TimerSegment[] = [];
   let group = 0;
   let prevDrill = false;
-  for (const top of steps) {
+  const lastExercise = steps.reduce((a, s, i) => (s.kind === 'exercise' ? i : a), -1);
+  steps.forEach((top, i) => {
     const isDrill = top.kind === 'drill';
     if (!(isDrill && prevDrill)) group++;
     prevDrill = isDrill;
-    for (const seg of flattenSteps([top])) {
-      const timedS = seg.kind === 'drill' ? (seg.duration_s ?? null) : seg.duration_s;
-      out.push({ ...seg, group, timedS });
-    }
-  }
+    const flat = flattenSteps([top]);
+    // Strength (F-21): 1 gerakan = 1 grup; istirahat sesudah set terakhir jika masih ada gerakan berikutnya.
+    if (top.kind === 'exercise' && top.rest_s > 0 && i < lastExercise)
+      flat.push({ kind: 'rest', duration_s: top.rest_s });
+    for (const seg of flat) out.push({ ...seg, group, timedS: timedOf(seg) });
+  });
   return out;
+}
+
+function timedOf(seg: FlatSegment): number | null {
+  if (seg.kind === 'drill') return seg.duration_s ?? null;
+  if (seg.kind === 'exercise') return seg.duration_s != null ? seg.estimate_s : null;
+  return seg.duration_s;
 }
 
 export function initialState(workoutId: string): TimerState {
@@ -157,7 +171,11 @@ export type Position = {
 };
 
 export function plannedS(seg: TimerSegment): number {
-  return seg.timedS ?? (seg.kind === 'drill' ? seg.estimate_s : seg.duration_s) ?? DRILL_SET_S;
+  return (
+    seg.timedS ??
+    (seg.kind === 'drill' || seg.kind === 'exercise' ? seg.estimate_s : seg.duration_s) ??
+    DRILL_SET_S
+  );
 }
 
 export function position(s: TimerState, segs: TimerSegment[], now: number): Position {
@@ -190,7 +208,7 @@ export function upcomingBoundaries(
   let t = st.segStartActiveMs;
   for (let i = st.index; i < segs.length; i++) {
     const seg = segs[i]!;
-    if (seg.timedS == null) break; // berhenti di drill manual
+    if (seg.timedS == null) break; // berhenti di drill/gerakan manual
     t += seg.timedS * 1000;
     out.push({ at: st.startedAt + st.pausedMs + t, nextIndex: i + 1 });
   }
@@ -211,13 +229,13 @@ export function summary(s: TimerState, segs: TimerSegment[], now: number): Timer
   let dist = 0;
   for (const r of st.results) {
     const seg = segs[r.index];
-    if (!seg || seg.kind === 'drill' || seg.walk || r.skipped) continue;
+    if (!seg || !isRunSegment(seg) || seg.walk || r.skipped) continue;
     const full = seg.timedS ?? 0;
     const frac = full > 0 ? Math.min(1, r.activeS / full) : 1;
     dist += (seg.distance_m ?? 0) * frac;
   }
   const cur = segs[st.index];
-  if (cur && cur.kind !== 'drill' && !cur.walk && cur.timedS) {
+  if (cur && isRunSegment(cur) && !cur.walk && cur.timedS) {
     const partial = Math.max(0, (activeMs(st, now) - st.segStartActiveMs) / 1000);
     dist += (cur.distance_m ?? 0) * Math.min(1, partial / cur.timedS);
   }
