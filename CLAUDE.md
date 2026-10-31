@@ -13,7 +13,7 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 | Paywall, harga, gerbang Premium | `docs/specs/08-MONETIZATION.md` |
 | Stack, aturan engine, sinkron | `docs/specs/02-TRD.md` |
 | Langkah per layar, state machine | `docs/specs/03-APP-FLOW.md` |
-| Tata letak layar | `docs/wireframes/png/` (26 layar MVP 1.1 sampai 4.6 + fase 2: 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8 versi ID dan EN, memakai Lintas) |
+| Tata letak layar | `docs/wireframes/png/` (26 layar MVP 1.1 sampai 4.6 + fase 2: 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8 versi ID dan EN, memakai Lintas); mode gelap di `docs/wireframes/png/dark/` |
 | Warna, tipe, bentuk, komponen | `docs/design-system/tokens.json` + `README.md`; ringkasan di `docs/specs/04-UI-UX.md` |
 | Logo, ikon app, ikon UI | `docs/design-system/assets/` |
 | Tabel lokal (SQLite), file backup, Auth, Edge Functions | `docs/specs/05-BACKEND-SCHEMA.md` |

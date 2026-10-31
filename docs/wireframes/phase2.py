@@ -404,7 +404,7 @@ def premium(t):
   <div style="{CARD}; gap: 12px"><span style="font-family: var(--font-display); font-size: 17px; font-weight: 800">{t["free"]}</span><ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">{li(t["freeItems"], "check", "--success")}</ul></div>
   <div style="{CARD}; gap: 12px; border-left: 8px solid var(--primary)"><span style="font-family: var(--font-display); font-size: 17px; font-weight: 800">{t["paid"]}</span><ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">{li(t["paidItems"], "premium", "--primary-ink")}</ul></div>
   <div style="display: flex; gap: 8px">{price(t["yearly"], t["yPrice"], t["ySub"], True)}{price(t["monthly"], t["mPrice"], t["mSub"], False)}</div>
-  <div style="display: flex; gap: 10px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--status-recovery); font-size: 13px; line-height: 1.4">{icon("info", 18)}<span>{t["pPrivacy"]}</span></div>
+  <div style="display: flex; gap: 10px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--status-recovery); color: var(--on-status); font-size: 13px; line-height: 1.4">{icon("info", 18)}<span>{t["pPrivacy"]}</span></div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 32px">
   <a style="{PRIMARY}; opacity: .5">{icon("premium")}{t["cta"]}</a>
