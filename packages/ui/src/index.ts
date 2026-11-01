@@ -12,3 +12,6 @@ export * from './components/TrackRing';
 export * from './components/Feedback';
 export * from './components/LineTrend';
 export * from './components/Settings';
+export * from './motion';
+export * from './confetti-layout';
+export * from './components/Dialog';

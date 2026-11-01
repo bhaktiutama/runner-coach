@@ -38,7 +38,7 @@ test('latihan hari ini: timer, selesai + RPE, progres, detail aktivitas', async 
   await page.getByTestId('tag-hot').click();
   await page.getByTestId('finish-save').click();
   await expect(page.getByTestId('screen-today')).toBeVisible();
-  await expect(page.getByTestId('workout-card')).toContainText('Selesai');
+  await expect(page.getByTestId('workout-card')).toContainText('Selesai', { ignoreCase: true });
   await expect(page.getByTestId('week-km')).toContainText('1,2');
   // 3.3 Progres -> 3.4
   await page.getByRole('tab', { name: 'Progres' }).click();

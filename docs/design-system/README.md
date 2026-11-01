@@ -27,7 +27,7 @@ Tipografi juga jadi pembeda: **Bricolage Grotesque** (judul, angka) dan **Plus J
 2. Warna selalu disertai teks: bib menulis "TEMPO", status menulis "Tertinggal".
 3. Warna pastel (status, zona terang) hanya untuk isian dengan teks charcoal. Untuk teks/ikon berwarna pakai varian `-ink`.
 4. Angka (pace, jarak, waktu) selalu `font.family.display` + `tnum`.
-5. Animasi maksimal 320 ms dan dimatikan saat setting "kurangi gerakan" aktif. Easing `stride` hanya untuk progres bertambah.
+5. Animasi maksimal 320 ms (kecuali pengisian cincin `ring` 1000 ms) dan dimatikan saat setting "kurangi gerakan" aktif. Easing `stride` hanya untuk progres bertambah.
 6. Setiap perubahan token warna wajib lolos `check_contrast.py`.
 
 ## 3. Arti warna
@@ -54,7 +54,7 @@ Tipografi juga jadi pembeda: **Bricolage Grotesque** (judul, angka) dan **Plus J
 | SecondaryButton | Stadium, tinggi 48, border `control` | outline, ghost | sama |
 | BibTag | Kotak radius 6, isi warna zona, teks `bib` kapital, 4 titik peniti 3 px | per zona | statis |
 | WorkoutCard | Kartu radius 24 + bayangan `card`; bib, angka besar (durasi/jarak), daftar segmen dengan garis lajur warna zona, tombol primary | hari ini, istirahat, selesai (bib + centang `success`) | default, ditekan |
-| TrackRing | Oval lintasan, stroke 10, track `surface-sunken`, progres warna zona/primary, ujung bulat | kepatuhan, timer, minggu tuntas | animasi `stride` saat bertambah |
+| TrackRing | Oval lintasan, stroke 10, track `surface-sunken`, progres warna zona/primary, ujung bulat | kepatuhan, timer, minggu tuntas | animasi `stride` (`base`) saat nilai berubah; mulai dari 0 di 2.5; timer tanpa animasi (berubah tiap detik); statis saat reduce-motion |
 | LaneWeek | 7 lajur vertikal, isi warna zona, hari ini diberi garis start (charcoal) | | selesai (isi penuh), terjadwal (outline), terlewat (garis putus `status.behind-ink`) |
 | StatusChip | Stadium tinggi 28, isi status, teks charcoal + ikon | 4 status | statis |
 | RpePicker | 10 tombol 44 x 48 dalam 1 baris; terpilih memakai warna `rpe.*` | | default, terpilih |

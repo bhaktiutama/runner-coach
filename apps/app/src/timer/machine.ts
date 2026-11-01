@@ -166,6 +166,8 @@ export type Position = {
   remainingS: number | null;
   elapsedInSegS: number;
   totalElapsedS: number;
+  /** Posisi di rencana (detik): durasi rencana segmen yang sudah lewat + waktu di segmen ini. Dipakai bar segmen; tidak ikut geser saat segmen dilewati atau berjalan lebih cepat/lambat dari rencana. */
+  plannedElapsedS: number;
   totalPlannedS: number;
   next: TimerSegment | null;
 };
@@ -191,6 +193,9 @@ export function position(s: TimerState, segs: TimerSegment[], now: number): Posi
     remainingS: seg?.timedS != null ? Math.max(0, Math.ceil(seg.timedS - elapsedInSeg)) : null,
     elapsedInSegS: Math.floor(elapsedInSeg),
     totalElapsedS: Math.floor(act / 1000),
+    plannedElapsedS:
+      segs.slice(0, st.index).reduce((a, x) => a + plannedS(x), 0) +
+      (seg ? Math.min(elapsedInSeg, plannedS(seg)) : 0),
     totalPlannedS: segs.reduce((a, x) => a + plannedS(x), 0),
     next: segs[st.index + 1] ?? null,
   };

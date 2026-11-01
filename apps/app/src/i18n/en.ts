@@ -490,9 +490,9 @@ export const en: Record<MessageKey, string> = {
   'privacy.restoreNewer':
     'This file is from a newer app version. Update the app first. Your existing data is unchanged.',
   'privacy.restoreFailed': 'Restore failed. Your existing data is unchanged.',
-  'privacy.signOutTitle': 'Sign out',
-  'privacy.signOutKeep': 'Sign out, keep data on this phone',
-  'privacy.signOutWipe': 'Sign out and delete data on this phone',
+  'privacy.signOutTitle': 'Sign out?',
+  'privacy.signOutBody': 'Your training data stays on this phone. You can sign in again anytime.',
+  'privacy.signOutYes': 'Sign out',
   'privacy.wipeTitle': 'Delete all data on this phone?',
   'privacy.wipeBody':
     'Your plan, runs, RPE and notes are deleted from this phone. Back up first if you want to keep them.',
