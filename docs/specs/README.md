@@ -91,4 +91,4 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | O3 | Screening "Ya" = "plan lebih ringan" (layar 1.7) | Tanpa sesi berat sampai pengguna mengubahnya. Perlu review pelatih |
 | O4 | ~~Segmen drill belum ada di wireframe~~ Selesai: 2.2 (baris drill) dan 2.3b (timer drill). Animasi SVG dari prototipe jika siap, jika belum cukup teks cue | |
 | D7 | Strength jadi pembeda utama atau Premium | Fase 2: Premium setelah 2 minggu gratis (`08-MONETIZATION.md`); minat diukur dari pemakaian 2 minggu gratis |
-| D8 | Format animasi gerakan | Terbuka. Fase 2 memakai placeholder kosong (`ExerciseAnimation`), pipeline di `docs/ANIMATION_PIPELINE.md` |
+| D8 | Format animasi gerakan | Percobaan 2026-11-01: video MP4 per gerakan (dibuat dengan Seedance, latar hijau diganti warna token terang/gelap), baru di web dan baru `squat`. Native tetap placeholder sampai library `expo-video` disetujui (library baru) dan ada development build. Gerakan lain masih placeholder. Lisensi dan izin pemakaian video belum dikonfirmasi pemilik |
