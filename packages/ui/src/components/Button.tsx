@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, View, type PressableProps } from 'react-native';
-import { border, color, radius, ring, shadow, size, space } from '../theme';
+import { border, color, radius, ring, shadow, size, space, themed, isDark } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
@@ -19,7 +19,7 @@ export function PrimaryButton({
   ...rest
 }: Base & { variant?: 'primary' | 'dark' }) {
   const bg = variant === 'primary' ? color.primary : color.text;
-  const fg = variant === 'primary' ? color.onPrimary : color.palette.cream;
+  const fg = variant === 'primary' ? color.onPrimary : isDark() ? color.bg : color.palette.cream;
   const off = disabled || loading;
   return (
     <Pressable
@@ -110,32 +110,38 @@ export function LinkButton({
   );
 }
 
-const styles = StyleSheet.create({
-  primary: {
-    height: size.buttonPrimary,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: space[6],
-  },
-  raised: shadow.raised,
-  pressed: { transform: [{ translateY: 2 }] },
-  secondary: {
-    minHeight: size.buttonSecondary,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: space[5],
-  },
-  tall: { minHeight: size.input },
-  outline: { ...ring(border.control, color.lineStrong), backgroundColor: color.surface },
-  link: {
-    minHeight: size.touchMin,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: space[2],
-  },
-  row: { flexDirection: 'row', alignItems: 'center', gap: space[2] + border.selected - border.hairline / 2 },
-  rowLink: { gap: space[2] },
-  linkSm: { minHeight: space[8] + space[1] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    primary: {
+      height: size.buttonPrimary,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: space[6],
+    },
+    raised: shadow.raised,
+    pressed: { transform: [{ translateY: 2 }] },
+    secondary: {
+      minHeight: size.buttonSecondary,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: space[5],
+    },
+    tall: { minHeight: size.input },
+    outline: { ...ring(border.control, color.lineStrong), backgroundColor: color.surface },
+    link: {
+      minHeight: size.touchMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: space[2],
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[2] + border.selected - border.hairline / 2,
+    },
+    rowLink: { gap: space[2] },
+    linkSm: { minHeight: space[8] + space[1] },
+  }),
+);

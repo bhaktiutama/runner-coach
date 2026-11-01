@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.4 (2026-10-29) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
+Status: Draft v0.5 (2026-10-31) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
@@ -32,10 +32,11 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Fase | base peach, build peach tua, peak oranye, taper lavender |
 | RPE | 1-3 easy, 4-6 long, 7-8 tempo, 9-10 interval |
 | Timer (gelap) | bg #161B1F, teks krem, interval memakai #E0522E |
+| Mode gelap (F-24) | Ikut tema perangkat. Semantik sama, nilai dari `color.dark` + palet: bg #161B1F, surface #242C32, teks krem, `-ink` dicerahkan (primary #F58A5F, status = warna dasarnya), strength #3A444C, bayangan hitam. Isian zona/fase/RPE tidak berubah. Acuan `docs/wireframes/png/dark/`. Kode: `color` dan `themed()` di `packages/ui/src/theme.ts`; jangan simpan warna di konstanta modul |
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
 | Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
-| Gerak | 120 / 200 / 320 ms; easing `stride` hanya untuk progres |
+| Gerak | 120 / 200 / 320 ms (cincin, garis tren, angka naik 1000 ms); easing `stride` hanya untuk progres; detail di bagian 11 |
 
 ## 3. Komponen inti (`packages/ui`)
 
@@ -91,9 +92,8 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 
 ## 7. Ditunda
 
-- Mode gelap untuk seluruh app (token `color.dark` sudah ada, dipakai Timer).
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
-- Kartu share, konfeti.
+- Kartu share. (Konfeti sudah masuk bagian 11.)
 
 ## 8. Kesetiaan ke wireframe (v0.5, 2026-10-29)
 
@@ -130,3 +130,31 @@ Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, m
 | 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
 | 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
 | Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |
+
+## 11. Gerak (v0.8, 2026-10-31)
+
+Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua gerak memakai token `motion` (`fast` 120, `base` 200, `slow` 320 ms; easing `standard` dan `stride`), tanpa library baru (API `Animated` bawaan React Native + `react-native-svg`). Kode: `packages/ui/src/motion.tsx`.
+
+| # | Gerak | Di mana | Aturan | Komponen |
+|---|---|---|---|---|
+| G1 | Busur TrackRing tumbuh ke nilai baru | Kepatuhan (3.3), minggu tuntas (2.5), timer (2.3) | Kepatuhan dan 2.5: `ring` 1000 ms + easing `stride` (sedikit memantul; busur dibatasi 0..100%), mulai dari 0 setelah jeda 200 ms setiap layar/tab terlihat. Timer 2.3: bergerak linear 1 detik per tick agar halus; pindah segmen (progres turun) langsung reset tanpa memutar balik. Posisi timer tetap dihitung dari timestamp | `TrackRing` (`motion`, `animateIn`) |
+| G2 | Konfeti kecil, 16 potongan, warna palet | 2.5 hanya jika semua latihan minggu itu tuntas | Sekali putar saat layar tampil, `slow` 320 ms, memudar di akhir. Tata letak deterministik (tanpa acak) | `Confetti`, `confettiPieces` |
+| G3 | (dibatalkan) Animasi centang "Selesai" di kartu latihan | | Kartu Selesai kembali statis seperti semula (keputusan pemilik produk 2026-11-01) | |
+| G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
+| G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
+| G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |
+| G7 | Batang volume tumbuh dari dasar bergantian (jeda 70 ms, `slow` + `stride`), angkanya naik dari 0; garis tren tergambar kiri ke kanan (`ring`, setelah jeda 320 ms) | Progres 3.3 (juga dipakai grafik 1.8 jika `animate`) | Diputar setiap tab Progres terlihat. Angka naik tanpa melewati nilai akhir (easing `standard`) | `BarChart` dan `LineTrend` (`animate`) |
+| G8 | Tujuh lajur "Minggu ini" muncul membesar + fade in bergantian (jeda 80 ms, `base` + `stride`); angka km minggu ini naik dari 0 (`ring`) | Hari ini 2.1 | **Sekali per sesi app** (saat Today pertama terlihat), bukan setiap membuka tab | `LaneWeek` (`animate`), `useAnimatedNumber` |
+| G9 | Tombol RPE terpilih membesar 0.9 ke 1.12 lalu 1 | 2.4, 2.6 | `base` + `fast`, `stride`. Tidak ada saat pilihan awal | `RpePicker` |
+| G10 | Knob sakelar bergeser halus, bukan loncat | Semua `Switch` (mis. 4.1, 4.5) | `base` + `standard` | `Switch` |
+| G11 | Angka hitung mundur 3-2-1 mengecil dari 1.5x sambil fade in; getar ringan per angka | Timer 2.3 | `slow` + `standard`. Getar hanya di iOS/Android (`countdownTick`) | `ZoomIn`, `cues.ts` |
+
+Aturan umum:
+- **Kurangi gerakan**: semua G1, G2, G6 sampai G11 berhenti (nilai langsung ke akhir; konfeti tidak dirender). Dibaca dari setelan OS (web: `prefers-reduced-motion`) lewat `useReducedMotion`.
+- Animasi tidak boleh menahan input dan tidak boleh mengubah posisi timer (posisi tetap dihitung dari timestamp, TRD 5).
+- Durasi dan easing hanya dari token; tidak ada angka milidetik di komponen layar.
+- Efek visual tren (kaca, kabut, aurora, grain, border bercahaya, clay) **belum** dipakai di app dan belum ada keputusan. Butuh `expo-blur` / `expo-glass-effect` untuk efek kaca (di luar TRD 1) dan cek kontras `check_contrast.py`. Eksplorasi hanya ada di prototipe.
+
+### Dialog konfirmasi (v0.8)
+
+Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).

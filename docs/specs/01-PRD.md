@@ -1,6 +1,6 @@
 # 01. Product Requirements Document (PRD)
 
-Status: Draft v0.4 (2026-10-30, fase 2: F-21, F-22, F-23) | Latar belakang: `docs/PLANNING.md` bagian 1, 2, 8, 9 | Layar: wireframe (lihat `README.md`)
+Status: Draft v0.4 (2026-10-30, fase 2: F-21, F-22, F-23; F-24 mode gelap 2026-10-31) | Latar belakang: `docs/PLANNING.md` bagian 1, 2, 8, 9 | Layar: wireframe (lihat `README.md`)
 
 ## Ringkasan
 
@@ -69,6 +69,7 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | F-21 | Strength + core bodyweight (fase 2) | 1.6, 2.1, 2.2s, 2.3s, 2.4, 3.1, 3.2, 4.1 | Should | Opsional ("Mau latihan kekuatan?" di 1.6, sakelar di 4.1). Sesi kaki + core tanpa alat masuk plan yang sama: kartu kedua di 2.1, baris "+ Strength" di 3.1. Jadwal dan dosis mengikuti E-23..E-26 (TRD 4.2). Timer mode gerakan (2.3s): nama, set, repetisi ("Selesai set") atau hitung mundur, istirahat otomatis. **Animasi gerakan = placeholder kosong** sampai D8. 2.4: RPE + "terlalu berat / pas / terlalu ringan"; "terlalu berat" menurunkan level sesi berikutnya. Lari tidak berubah saat strength dinyalakan |
 | F-22 | Bahasa (fase 2) | 4.1, 4.8 | Should | Bahasa Indonesia / English / Ikuti perangkat. Semua teks UI, engine (rationale, nama + cue gerakan), Panduan, notifikasi dan cue timer ikut bahasa. Angka/tanggal lewat `Intl` sesuai locale. Install baru: ikut bahasa perangkat (Indonesia -> ID, lainnya -> EN). Satuan tidak ikut berubah |
 | F-23 | Gerbang Premium (konsep, fase 2 nonaktif) | 4.4, 4.1, 2.1, 2.2s | Should | Detail `08-MONETIZATION.md`. Flag mati = tidak ada fitur terkunci. Flag nyala: strength/core setelah minggu ke-2 terkunci, lari tidak pernah. 4.4 tanpa pembelian sampai Fase 3 |
+| F-24 | Mode gelap | Semua layar | Should | Ikut tema perangkat (iOS/Android/web), berganti langsung saat tema perangkat berubah. Tidak ada pilihan manual di app. Warna sesuai wireframe `png/dark/` dan UI/UX 2 |
 | F-19 | Data & privasi | 4.5 | Must | Satu layar: data tersimpan di HP ini, backup, pulihkan, sakelar data pemakaian anonim, keluar (+ opsi hapus data di HP), hapus akun |
 
 ## 5. Di luar MVP

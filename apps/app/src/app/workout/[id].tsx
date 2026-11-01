@@ -19,6 +19,7 @@ import {
   SegmentedControl,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { formatDate } from '@run-coach/ui/format';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -258,41 +259,43 @@ const TYPE_HELP: Partial<Record<WorkoutType, string>> = {
   core: 'strength',
 };
 
-const styles = StyleSheet.create({
-  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  flex: { flex: 1 },
-  pair: { flexDirection: 'row', gap: space[2] },
-  top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-  spacer: { width: space[10] + space[1] },
-  titleBlock: { gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
-  chartBlock: { gap: space[2] },
-  axis: { flexDirection: 'row', justifyContent: 'space-between' },
-  seg: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    minHeight: space[10] + space[2],
-    paddingVertical: space[1] + space[1] / 2,
-    borderBottomWidth: border.hairline,
-    borderBottomColor: color.line,
-  },
-  sub: { marginTop: border.selected - border.hairline / 2 },
-  detail: { minWidth: space[10] * 2 - space[2] },
-  why: {
-    gap: space[2],
-    padding: space[5],
-    borderRadius: radius.lg,
-    backgroundColor: color.surface,
-    ...ring(border.hairline, color.line),
-  },
-  guide: { gap: space[2] + space[1] / 2 },
-  exList: { gap: space[3] },
-  exCard: {
-    gap: space[2],
-    padding: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: color.surface,
-    ...ring(border.hairline, color.line),
-  },
-  exHead: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    flex: { flex: 1 },
+    pair: { flexDirection: 'row', gap: space[2] },
+    top: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    spacer: { width: space[10] + space[1] },
+    titleBlock: { gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
+    chartBlock: { gap: space[2] },
+    axis: { flexDirection: 'row', justifyContent: 'space-between' },
+    seg: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      minHeight: space[10] + space[2],
+      paddingVertical: space[1] + space[1] / 2,
+      borderBottomWidth: border.hairline,
+      borderBottomColor: color.line,
+    },
+    sub: { marginTop: border.selected - border.hairline / 2 },
+    detail: { minWidth: space[10] * 2 - space[2] },
+    why: {
+      gap: space[2],
+      padding: space[5],
+      borderRadius: radius.lg,
+      backgroundColor: color.surface,
+      ...ring(border.hairline, color.line),
+    },
+    guide: { gap: space[2] + space[1] / 2 },
+    exList: { gap: space[3] },
+    exCard: {
+      gap: space[2],
+      padding: space[4],
+      borderRadius: radius.lg,
+      backgroundColor: color.surface,
+      ...ring(border.hairline, color.line),
+    },
+    exHead: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+  }),
+);

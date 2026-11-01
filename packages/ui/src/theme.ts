@@ -3,7 +3,81 @@ import { tokens } from './tokens';
 
 export { tokens };
 /** Warna dasar + overlay sheet (charcoal 40%, diturunkan dari token text). */
-export const color = { ...tokens.color, overlay: `${tokens.color.text}66` } as const;
+type Widen<T> = { [K in keyof T]: T[K] extends string ? string : Widen<T[K]> };
+export type ColorPalette = Widen<typeof tokens.color> & { overlay: string };
+
+const lightColor: ColorPalette = { ...tokens.color, overlay: `${tokens.color.text}66` };
+export type ColorScheme = 'light' | 'dark';
+
+/**
+ * Mode gelap (F-24, UI/UX 2.3): semantik sama, nilai dari `tokens.color.dark` + palet. Sama dengan
+ * `[data-theme="dark"]` di docs/wireframes/source/ds/lintas/tokens.css (wireframe png/dark/).
+ * Warna isian zona/fase/RPE dan status tetap (sudah terang); hanya teks "ink" yang dicerahkan.
+ */
+const d = tokens.color.dark;
+const p = tokens.color.palette;
+const darkColor: ColorPalette = {
+  ...lightColor,
+  bg: d.bg,
+  surface: d.surface,
+  surfaceSunken: d.surfaceSunken,
+  text: d.text,
+  textMuted: d.textMuted,
+  line: d.line,
+  lineStrong: d.lineStrong,
+  primaryInk: d.primaryInk,
+  accentInk: p.peach,
+  success: p.forest,
+  focusRing: p.cream,
+  status: {
+    ...lightColor.status,
+    onTrackInk: p.mint,
+    attentionInk: p.sand,
+    behindInk: p.coral,
+    recoveryInk: p.lavender,
+  },
+  zone: { ...lightColor.zone, strength: d.zoneStrength },
+  overlay: d.overlay,
+};
+
+let scheme: ColorScheme = 'light';
+const palettes: Record<ColorScheme, ColorPalette> = { light: lightColor, dark: darkColor };
+
+/** Dipanggil root layout sebelum render (dan saat sistem berganti tema, lalu pohon di-remount). */
+export function setColorScheme(s: ColorScheme) {
+  scheme = s;
+}
+export const getColorScheme = (): ColorScheme => scheme;
+export const isDark = () => scheme === 'dark';
+export const paletteFor = (s: ColorScheme) => palettes[s];
+
+/**
+ * `color.x` membaca palet tema aktif saat diakses (saat render). Jangan simpan nilainya di
+ * konstanta modul; gaya statis lewat `themed()`.
+ */
+export const color: ColorPalette = new Proxy({} as ColorPalette, {
+  get: (_t, k) => (palettes[scheme] as Record<string | symbol, unknown>)[k],
+  has: (_t, k) => k in palettes[scheme],
+  ownKeys: () => Reflect.ownKeys(palettes[scheme]),
+  getOwnPropertyDescriptor: (_t, k) => ({
+    ...Reflect.getOwnPropertyDescriptor(palettes[scheme], k),
+    configurable: true,
+  }),
+});
+
+/**
+ * Pembungkus StyleSheet per tema: `const styles = themed(() => StyleSheet.create({...}))`.
+ * Dibuat malas sekali per tema, dibaca saat render.
+ */
+export function themed<T extends object>(make: () => T): T {
+  const cache: Partial<Record<ColorScheme, T>> = {};
+  return new Proxy({} as T, {
+    get: (_t, k) => {
+      const c = (cache[scheme] ??= make());
+      return (c as Record<string | symbol, unknown>)[k];
+    },
+  });
+}
 export const space = tokens.space;
 export const radius = tokens.radius;
 export const size = tokens.size;
@@ -65,14 +139,21 @@ export function ring(width: number, c: string) {
   return { boxShadow: `inset 0px 0px 0px ${width}px ${c}` };
 }
 
-/** Bayangan keras 2/4 px (token shadow.card / shadow.raised). */
-export const shadow = {
+/** Bayangan keras 2/4 px (token shadow.card / shadow.raised); di mode gelap hitam pekat (wireframe). */
+const shadowFor = (c: (k: 'card' | 'raised') => string) => ({
   card: {
-    boxShadow: `${tokens.shadow.card.offsetX}px ${tokens.shadow.card.offsetY}px ${tokens.shadow.card.blur}px ${tokens.shadow.card.spread}px ${tokens.shadow.card.color}`,
+    boxShadow: `${tokens.shadow.card.offsetX}px ${tokens.shadow.card.offsetY}px ${tokens.shadow.card.blur}px ${tokens.shadow.card.spread}px ${c('card')}`,
   },
   raised: {
-    boxShadow: `${tokens.shadow.raised.offsetX}px ${tokens.shadow.raised.offsetY}px ${tokens.shadow.raised.blur}px ${tokens.shadow.raised.spread}px ${tokens.shadow.raised.color}`,
+    boxShadow: `${tokens.shadow.raised.offsetX}px ${tokens.shadow.raised.offsetY}px ${tokens.shadow.raised.blur}px ${tokens.shadow.raised.spread}px ${c('raised')}`,
   },
-} as const;
+});
+const shadows = {
+  light: shadowFor((k) => tokens.shadow[k].color),
+  dark: shadowFor((k) => (k === 'card' ? d.shadowCard : d.shadowRaised)),
+};
+export const shadow = new Proxy({} as (typeof shadows)['light'], {
+  get: (_t, k) => (shadows[scheme] as Record<string | symbol, unknown>)[k],
+});
 
 export type ZoneKey = keyof typeof tokens.color.zone;

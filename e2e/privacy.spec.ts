@@ -88,3 +88,23 @@ test('hapus akun butuh login dan ketik HAPUS', async ({ page }) => {
   await expect(page.getByTestId('delete-confirm')).toBeDisabled();
   await expect(page.getByText('Kamu belum masuk')).toBeVisible();
 });
+
+// UI/UX bagian 11 (dialog): konfirmasi muncul di tengah layar tanpa perlu menggulir, dan bisa dibatalkan.
+test('dialog hapus data langsung terlihat di layar, batal tidak menghapus', async ({ page }) => {
+  await onboard(page);
+  await page.getByRole('tab', { name: 'Profil' }).click();
+  await page.getByTestId('row-privacy').click();
+  await expect(page.getByTestId('screen-privacy')).toBeVisible();
+  await page.getByTestId('wipe').click();
+  const dialog = page.getByTestId('wipe-confirm');
+  await expect(dialog).toBeVisible();
+  const box = await dialog.boundingBox();
+  const vp = page.viewportSize()!;
+  expect(box!.y).toBeGreaterThanOrEqual(0);
+  expect(box!.y + box!.height).toBeLessThanOrEqual(vp.height);
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: 'test-results/wipe-dialog.png' });
+  await page.getByRole('button', { name: 'Batal' }).last().click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByTestId('screen-privacy')).toBeVisible();
+});

@@ -14,6 +14,7 @@ import {
   Text,
   weekdayLongName,
   weekdayShortName,
+  themed,
 } from '@run-coach/ui';
 import { formatDate, formatDistance } from '@run-coach/ui/format';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -173,52 +174,54 @@ export default function MoveSheet() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  backdrop: { flex: 1, backgroundColor: color.overlay },
-  sheet: {
-    backgroundColor: color.bg,
-    borderTopLeftRadius: radius.sheet,
-    borderTopRightRadius: radius.sheet,
-    paddingTop: space[3],
-    paddingHorizontal: space.screenX,
-    gap: space[4] + space[1] / 2,
-    width: '100%',
-    maxWidth: size.contentMax + space.screenX * 2,
-    alignSelf: 'center',
-    ...shadow.raised,
-  },
-  handle: {
-    alignSelf: 'center',
-    width: space[10],
-    height: space[1] + border.hairline,
-    borderRadius: radius.stadium,
-    backgroundColor: color.lineStrong,
-  },
-  head: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: space[3] },
-  headText: { flex: 1, gap: space[1] },
-  row: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-  days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
-  day: {
-    flex: 1,
-    height: space[10] * 2 + space[1],
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space[1],
-    borderRadius: radius.stadium,
-  },
-  dayOn: { backgroundColor: color.text },
-  dayOff: { backgroundColor: color.surface, ...ring(border.control, color.line) },
-  dot: {
-    width: space[2] + border.selected - border.hairline / 2,
-    height: space[2] + border.selected - border.hairline / 2,
-    borderRadius: radius.stadium,
-  },
-  msg: {
-    paddingVertical: space[3] + space[1] / 2,
-    paddingHorizontal: space[4],
-    borderRadius: radius.md,
-    gap: space[1],
-  },
-  actions: { gap: space[1] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    backdrop: { flex: 1, backgroundColor: color.overlay },
+    sheet: {
+      backgroundColor: color.bg,
+      borderTopLeftRadius: radius.sheet,
+      borderTopRightRadius: radius.sheet,
+      paddingTop: space[3],
+      paddingHorizontal: space.screenX,
+      gap: space[4] + space[1] / 2,
+      width: '100%',
+      maxWidth: size.contentMax + space.screenX * 2,
+      alignSelf: 'center',
+      ...shadow.raised,
+    },
+    handle: {
+      alignSelf: 'center',
+      width: space[10],
+      height: space[1] + border.hairline,
+      borderRadius: radius.stadium,
+      backgroundColor: color.lineStrong,
+    },
+    head: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: space[3] },
+    headText: { flex: 1, gap: space[1] },
+    row: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
+    day: {
+      flex: 1,
+      height: space[10] * 2 + space[1],
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[1],
+      borderRadius: radius.stadium,
+    },
+    dayOn: { backgroundColor: color.text },
+    dayOff: { backgroundColor: color.surface, ...ring(border.control, color.line) },
+    dot: {
+      width: space[2] + border.selected - border.hairline / 2,
+      height: space[2] + border.selected - border.hairline / 2,
+      borderRadius: radius.stadium,
+    },
+    msg: {
+      paddingVertical: space[3] + space[1] / 2,
+      paddingHorizontal: space[4],
+      borderRadius: radius.md,
+      gap: space[1],
+    },
+    actions: { gap: space[1] },
+  }),
+);

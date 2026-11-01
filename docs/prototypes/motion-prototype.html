@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipe gerak dan efek UI - Run Coach (Lintas)</title>
+<style>
+/* Nilai diambil dari docs/design-system/tokens.json. Prototipe ini hanya untuk melihat wujud, bukan kode produksi. */
+:root{
+  --bg:#F5F4F2; --surface:#FFFFFF; --sunken:#EAE8E5; --text:#242C32; --muted:#5E6670; --line:#DDDAD6;
+  --primary:#F26B38; --on-primary:#242C32; --primary-ink:#C63F0D; --success:#467861; --on-success:#FFFFFF;
+  --peach:#E9B79D; --lavender:#A6B8FF; --mint:#70D6B3; --sand:#F2C66D; --coral:#FF806E; --cream:#FFF9F2;
+  --zone-easy:#E9B79D; --zone-tempo:#F26B38; --zone-interval:#B4361A; --zone-recovery:#A6B8FF;
+  --d-fast:120ms; --d-base:200ms; --d-slow:320ms;
+  --ease-standard:cubic-bezier(.2,0,0,1); --ease-stride:cubic-bezier(.34,1.4,.64,1);
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-bib:6px;
+  --shadow-card:0 2px 0 #242C321A; --shadow-raised:0 4px 0 #242C3226;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Plus Jakarta Sans",system-ui,sans-serif;line-height:1.45}
+.num{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-feature-settings:"tnum" 1;font-variant-numeric:tabular-nums}
+header{padding:24px 20px 8px;max-width:960px;margin:0 auto}
+h1{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:28px;margin:0 0 6px}
+h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:20px;margin:0 0 4px}
+p.note{color:var(--muted);margin:0 0 12px;font-size:14px}
+main{max-width:960px;margin:0 auto;padding:8px 20px 60px;display:grid;gap:20px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--sunken);color:var(--muted);margin-bottom:8px}
+.tag.spec{background:#E3F3EC;color:#247F60}
+.tag.out{background:#FBE9E0;color:var(--primary-ink)}
+section.card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-card);padding:20px}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:12px 20px;min-height:44px;cursor:pointer;background:var(--primary);color:var(--on-primary);box-shadow:var(--shadow-raised)}
+button.ghost{background:var(--sunken);box-shadow:none}
+button:focus-visible,label:focus-within{outline:3px solid var(--text);outline-offset:2px}
+.toolbar{position:sticky;top:0;z-index:10;background:var(--bg);padding:10px 20px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:14px}
+.toolbar label{display:flex;gap:8px;align-items:center;cursor:pointer}
+
+/* Reduce motion: dipaksa lewat tombol, atau otomatis dari setelan OS */
+body.reduce *, body.reduce *::before, body.reduce *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
+
+/* 1. TrackRing */
+.ring{position:relative;width:220px;height:130px}
+.ring svg{width:100%;height:100%}
+.ring .track{fill:none;stroke:var(--sunken);stroke-width:10}
+.ring .prog{fill:none;stroke:var(--primary);stroke-width:10;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset var(--d-base) var(--ease-stride)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;font-weight:700}
+
+/* 2. Konfeti */
+.confetti-box{position:relative;width:220px;height:150px;display:grid;place-items:center;overflow:hidden;background:var(--sunken);border-radius:var(--r-md)}
+.confetti-box .big{font-size:20px;font-weight:700;text-align:center}
+.piece{position:absolute;left:50%;top:55%;width:8px;height:12px;border-radius:2px;opacity:0}
+.piece.go{animation:burst var(--d-slow) var(--ease-standard) forwards}
+@keyframes burst{
+  0%{opacity:1;transform:translate(0,0) rotate(0)}
+  60%{opacity:1}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}
+}
+
+/* 3. Bib + centang */
+.workout{width:260px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-card);padding:16px;display:grid;gap:10px;transition:transform var(--d-fast) var(--ease-standard)}
+.bib{display:inline-flex;align-items:center;gap:6px;border-radius:var(--r-bib);background:var(--zone-tempo);color:var(--on-primary);font-weight:800;padding:4px 10px;width:max-content}
+.bib .tick{width:0;overflow:hidden;opacity:0;transform:scale(.4);transition:all var(--d-base) var(--ease-stride);display:inline-block}
+.workout.done .bib{background:var(--success);color:var(--on-success)}
+.workout.done .bib .tick{width:16px;opacity:1;transform:scale(1)}
+.workout .big{font-size:34px;font-weight:700;line-height:1}
+
+/* 4. Tekan */
+.press{transition:transform var(--d-fast) var(--ease-standard)}
+.press:active{transform:scale(.97)}
+
+/* 6. Timer: fade segmen */
+.timer{width:280px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-card);padding:16px;display:grid;gap:8px;justify-items:center}
+.seg-name{font-weight:800;font-size:18px;transition:opacity var(--d-base) var(--ease-standard)}
+.seg-pace{color:var(--muted);transition:opacity var(--d-base) var(--ease-standard)}
+.fading{opacity:0}
+.clock{font-size:44px;font-weight:700}
+
+/* ===== EFEK TREN (eksplorasi) ===== */
+.stage{position:relative;border-radius:var(--r-lg);overflow:hidden;padding:24px;min-height:230px;display:grid;gap:12px;align-content:center;justify-items:center}
+.blobs{background:linear-gradient(135deg,#F26B38 0%,#E9B79D 45%,#A6B8FF 100%)}
+.blobs::before,.blobs::after{content:"";position:absolute;border-radius:50%;filter:blur(2px)}
+.blobs::before{width:140px;height:140px;background:#70D6B3;left:8%;top:10%}
+.blobs::after{width:110px;height:110px;background:#242C32;right:10%;bottom:8%}
+.blobs>*{position:relative;z-index:1}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+
+/* A. Liquid glass (gaya iOS 26): blur + saturasi + tepi terang + sorot */
+.glass{position:relative;width:100%;max-width:240px;padding:16px;border-radius:var(--r-lg);color:var(--text);
+  background:linear-gradient(135deg,rgba(255,255,255,.55),rgba(255,255,255,.18));
+  backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.2),0 8px 24px rgba(36,44,50,.18)}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(120% 60% at 20% 0%,rgba(255,255,255,.55),transparent 55%);pointer-events:none}
+.glass .big{font-size:30px;font-weight:700}
+
+/* B. Frosted fog / kabut: blur besar, tint hangat, tanpa tepi tegas */
+.fog{width:100%;max-width:240px;padding:16px;border-radius:var(--r-lg);color:var(--text);
+  background:rgba(255,249,242,.38);backdrop-filter:blur(34px);-webkit-backdrop-filter:blur(34px);
+  box-shadow:0 0 60px 10px rgba(255,249,242,.35)}
+.fog .big{font-size:30px;font-weight:700}
+
+/* C. Aurora / mesh gradient bergerak pelan */
+.aurora{background:#161B1F;color:var(--cream)}
+.aurora::before{content:"";position:absolute;inset:-40%;background:
+  radial-gradient(40% 40% at 25% 30%,rgba(242,107,56,.75),transparent 70%),
+  radial-gradient(35% 35% at 75% 25%,rgba(166,184,255,.7),transparent 70%),
+  radial-gradient(40% 40% at 55% 80%,rgba(112,214,179,.6),transparent 70%);
+  filter:blur(30px);animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(8%,-6%) rotate(25deg) scale(1.1)}}
+.aurora>*{position:relative}
+
+/* D. Grain / noise film (SVG turbulence) di atas gradien hangat */
+.grain{background:linear-gradient(160deg,#F2C66D,#F26B38 60%,#B4361A);color:var(--on-primary)}
+.grain::after{content:"";position:absolute;inset:0;opacity:.28;mix-blend-mode:overlay;pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.grain>*{position:relative;z-index:1}
+
+/* E. Border bercahaya (conic gradient berputar) untuk kartu sorotan */
+.glow{--a:0deg;width:100%;max-width:240px;padding:2px;border-radius:var(--r-lg);
+  background:conic-gradient(from var(--a),#F26B38,#A6B8FF,#70D6B3,#F2C66D,#F26B38);animation:spin 5s linear infinite}
+@property --a{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes spin{to{--a:360deg}}
+.glow .inner{background:var(--surface);border-radius:calc(var(--r-lg) - 2px);padding:16px}
+.glow .big{font-size:30px;font-weight:700}
+
+/* F. Soft / clay: bayangan lembut dua sisi, bentuk gemuk */
+.clay{width:100%;max-width:240px;padding:18px;border-radius:32px;background:#F5F4F2;color:var(--text);
+  box-shadow:10px 10px 22px rgba(36,44,50,.16),-10px -10px 22px rgba(255,255,255,.95),inset 2px 2px 4px rgba(255,255,255,.8)}
+.clay .big{font-size:30px;font-weight:700}
+.stage.plain{background:#F5F4F2}
+.small{font-size:13px;color:var(--muted)}
+.stage.aurora .small,.stage.aurora p{color:#A9B0B7}
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <label><input type="checkbox" id="rm"> Simulasikan "kurangi gerakan" (reduce-motion)</label>
+  <span class="small">Nilai gerak dari tokens.json: 120 / 200 / 320 ms, easing standard dan stride</span>
+</div>
+<header>
+  <h1>Prototipe gerak dan efek UI</h1>
+  <p class="note">Bagian 1-6 memakai alat yang sudah diizinkan spec. Bagian "Efek tren" adalah eksplorasi di luar spec (lihat catatan di bawahnya). Haptic (animasi 5) tidak bisa diperagakan di browser.</p>
+</header>
+<main>
+
+<section class="card">
+  <span class="tag spec">Dalam spec</span>
+  <h2>1. TrackRing terisi (easing stride)</h2>
+  <p class="note">Klik tombol: busur tumbuh ke angka baru dan sedikit melewati lalu kembali (efek memantul).</p>
+  <div class="row">
+    <div class="ring"><svg viewBox="0 0 220 130"><rect class="track" x="10" y="10" width="200" height="110" rx="55" pathLength="100"/><rect class="prog" id="ringProg" x="10" y="10" width="200" height="110" rx="55" pathLength="100"/></svg><div class="val num" id="ringVal">0%</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="press" data-ring="35">35%</button>
+      <button class="press" data-ring="70">70%</button>
+      <button class="press" data-ring="100">100%</button>
+      <button class="press ghost" data-ring="0">Reset</button>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <span class="tag spec">Dalam spec</span>
+  <h2>2. Konfeti kecil saat minggu tuntas (320 ms)</h2>
+  <p class="note">Satu kali, saat minggu ditandai tuntas. Jumlah dan arah potongan adalah usulan.</p>
+  <div class="row">
+    <div class="confetti-box" id="cbox"><div class="big">Minggu 3 tuntas</div></div>
+    <button class="press" id="cgo">Putar konfeti</button>
+  </div>
+</section>
+
+<section class="card">
+  <span class="tag spec">Dalam spec</span>
+  <h2>3. Bib dan centang saat latihan selesai + 4. Feedback tekan</h2>
+  <p class="note">Tekan dan tahan kartu atau tombol untuk melihat efek tekan (skala 97%, 120 ms). Klik "Tandai selesai" untuk bib berubah hijau dengan centang.</p>
+  <div class="row">
+    <div class="workout press" id="wk">
+      <span class="bib"><span class="tick">&#10003;</span><span id="bibText">TEMPO</span></span>
+      <div class="big num">5,0 km</div>
+      <div class="small num">32 menit | pace 6:24 /km</div>
+      <button class="press" id="wkBtn">Tandai selesai</button>
+    </div>
+    <button class="press ghost" id="wkReset">Ulangi</button>
+  </div>
+</section>
+
+<section class="card">
+  <span class="tag spec">Dalam spec (fade = usulan)</span>
+  <h2>6. Timer: fade pergantian segmen, angka tidak berkedip</h2>
+  <p class="note">Posisi dihitung dari timestamp (bukan dari frame), sama seperti aturan timer M4. Demo dipercepat: 1 segmen = 4 detik.</p>
+  <div class="row">
+    <div class="timer">
+      <div class="seg-name" id="segName">Pemanasan</div>
+      <div class="seg-pace" id="segPace">Easy 7:10 /km</div>
+      <div class="clock num" id="clock">00:04</div>
+      <div class="ring" style="width:160px;height:94px"><svg viewBox="0 0 220 130"><rect class="track" x="10" y="10" width="200" height="110" rx="55" pathLength="100"/><rect class="prog" id="tProg" x="10" y="10" width="200" height="110" rx="55" pathLength="100" style="transition:none"/></svg></div>
+    </div>
+    <button class="press" id="tGo">Mulai demo</button>
+  </div>
+</section>
+
+<section class="card">
+  <span class="tag out">Di luar spec (eksplorasi)</span>
+  <h2>Efek UI yang sedang tren</h2>
+  <p class="note">Semua di atas latar warna-warni karena efek kaca baru terlihat jika ada sesuatu di belakangnya. Warna tetap dari palet Lintas.</p>
+  <div class="gallery">
+    <div>
+      <div class="stage blobs"><div class="glass"><div class="small">Hari ini</div><div class="big num">5,0 km</div><div class="small">Tempo 32 menit</div></div></div>
+      <h2 style="margin-top:10px;font-size:16px">A. Liquid glass (gaya iOS 26)</h2>
+      <p class="small">Kaca bening: blur + warna latar makin pekat + tepi terang + sorot di sudut. Cocok untuk tab bar melayang, tombol Mulai, sheet.</p>
+    </div>
+    <div>
+      <div class="stage blobs"><div class="fog"><div class="small">Hari ini</div><div class="big num">5,0 km</div><div class="small">Tempo 32 menit</div></div></div>
+      <h2 style="margin-top:10px;font-size:16px">B. Frosted fog (kabut)</h2>
+      <p class="small">Blur sangat besar, tint krem, tanpa garis tepi. Lebih lembut dan tenang dari A. Cocok untuk overlay jeda atau layar istirahat.</p>
+    </div>
+    <div>
+      <div class="stage aurora"><div><div class="small">Timer</div><div class="big num" style="font-size:44px;font-weight:700">12:40</div><div class="small">Interval 3 dari 6</div></div></div>
+      <h2 style="margin-top:10px;font-size:16px">C. Aurora (mesh gradient bergerak)</h2>
+      <p class="small">Latar gelap dengan gumpalan warna yang bergeser sangat pelan. Cocok untuk layar timer tema gelap atau kartu perayaan.</p>
+    </div>
+    <div>
+      <div class="stage grain"><div><div class="small" style="color:var(--on-primary)">Minggu 3</div><div class="big num" style="font-size:34px;font-weight:700">82% tuntas</div></div></div>
+      <h2 style="margin-top:10px;font-size:16px">D. Grain (tekstur film)</h2>
+      <p class="small">Gradien hangat dengan butiran halus. Terasa seperti cetakan, tidak "plastik". Cocok untuk kartu bagikan hasil lari.</p>
+    </div>
+    <div>
+      <div class="stage plain"><div class="glow"><div class="inner"><div class="small">Rekor baru</div><div class="big num">10 km</div><div class="small">Lari terjauhmu</div></div></div></div>
+      <h2 style="margin-top:10px;font-size:16px">E. Border bercahaya</h2>
+      <p class="small">Tepi berwarna berputar pelan. Pakai hemat, hanya untuk satu kartu sorotan seperti pencapaian atau Premium.</p>
+    </div>
+    <div>
+      <div class="stage plain"><div class="clay"><div class="small">Hari ini</div><div class="big num">5,0 km</div><div class="small">Tempo 32 menit</div></div></div>
+      <h2 style="margin-top:10px;font-size:16px">F. Soft / clay</h2>
+      <p class="small">Bayangan lembut dua arah, sudut sangat bulat, terlihat menggembung. Cocok untuk tombol besar dan stepper.</p>
+    </div>
+  </div>
+  <p class="note" style="margin-top:16px"><b>Catatan teknis:</b> A dan B memerlukan blur native. Di app: <code>expo-blur</code> (semua platform) dan <code>expo-glass-effect</code> (liquid glass asli, hanya iOS 26+). Keduanya tidak ada di TRD bagian 1, jadi butuh update spec. Efek kaca juga menurunkan kontras teks: setiap teks di atasnya harus dicek ulang dengan <code>check_contrast.py</code>. Gradien dan grain (C, D) bisa dibuat dengan <code>react-native-svg</code> yang sudah ada. Border berputar (E) butuh animasi sudut yang di React Native paling mudah dengan Reanimated (juga belum di spec).</p>
+</section>
+
+</main>
+<script>
+const $=s=>document.querySelector(s);
+$('#rm').addEventListener('change',e=>document.body.classList.toggle('reduce',e.target.checked));
+const reduced=()=>document.body.classList.contains('reduce')||matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+// 1
+document.querySelectorAll('[data-ring]').forEach(b=>b.addEventListener('click',()=>{
+  const v=+b.dataset.ring; $('#ringProg').style.strokeDashoffset=100-v; $('#ringVal').textContent=v+'%';
+}));
+
+// 2
+const cb=$('#cbox'),colors=['#F26B38','#A6B8FF','#70D6B3','#F2C66D','#FF806E','#E9B79D'];
+for(let i=0;i<16;i++){const p=document.createElement('i');p.className='piece';p.style.background=colors[i%colors.length];cb.appendChild(p)}
+$('#cgo').addEventListener('click',()=>{
+  if(reduced()){return}
+  cb.querySelectorAll('.piece').forEach((p,i)=>{
+    p.classList.remove('go');void p.offsetWidth;
+    const ang=(i/16)*Math.PI*2, r=50+Math.random()*40;
+    p.style.setProperty('--dx',Math.cos(ang)*r+'px');
+    p.style.setProperty('--dy',(Math.sin(ang)*r-30)+'px');
+    p.style.setProperty('--rot',(Math.random()*360)+'deg');
+    p.classList.add('go');
+  });
+});
+
+// 3
+$('#wkBtn').addEventListener('click',e=>{e.stopPropagation();$('#wk').classList.add('done');$('#bibText').textContent='SELESAI'});
+$('#wkReset').addEventListener('click',()=>{$('#wk').classList.remove('done');$('#bibText').textContent='TEMPO'});
+
+// 6: posisi dari timestamp, bukan dari frame
+const segs=[{n:'Pemanasan',p:'Easy 7:10 /km',d:4},{n:'Lari tempo',p:'Tempo 6:00 /km',d:4},{n:'Pendinginan',p:'Easy 7:30 /km',d:4}];
+const total=segs.reduce((a,s)=>a+s.d,0);let t0=null,raf=null,cur=-1;
+const mmss=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0');
+function show(i){
+  const n=$('#segName'),p=$('#segPace');
+  if(reduced()){n.textContent=segs[i].n;p.textContent=segs[i].p;return}
+  n.classList.add('fading');p.classList.add('fading');
+  setTimeout(()=>{n.textContent=segs[i].n;p.textContent=segs[i].p;n.classList.remove('fading');p.classList.remove('fading')},200);
+}
+function tick(now){
+  const el=(now-t0)/1000;
+  if(el>=total){$('#tProg').style.strokeDashoffset=0;$('#clock').textContent='00:00';return}
+  let acc=0,i=0;while(i<segs.length-1&&el>=acc+segs[i].d){acc+=segs[i].d;i++}
+  if(i!==cur){cur=i;show(i)}
+  $('#clock').textContent=mmss(Math.ceil(segs[i].d-(el-acc)));
+  $('#tProg').style.strokeDashoffset=100-(el/total)*100;
+  raf=requestAnimationFrame(tick);
+}
+$('#tGo').addEventListener('click',()=>{cancelAnimationFrame(raf);cur=-1;t0=performance.now();raf=requestAnimationFrame(tick)});
+</script>
+</body>
+</html>

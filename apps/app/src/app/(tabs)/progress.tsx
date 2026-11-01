@@ -13,6 +13,7 @@ import {
   space,
   Text,
   TrackRing,
+  themed,
 } from '@run-coach/ui';
 import {
   formatDayMonth,
@@ -26,7 +27,7 @@ import {
   formatRaceRange,
   formatWeekdayShort,
 } from '@run-coach/ui/format';
-import { router } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
@@ -40,6 +41,7 @@ import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 
 /** 3.3 Progres (F-07). Tata letak = wireframe Progress. */
 export default function ProgressTab() {
+  const focused = useIsFocused();
   const today = useToday();
   const plan = useActivePlan();
   const all = useActivities();
@@ -101,6 +103,8 @@ export default function ProgressTab() {
         ) : (
           <>
             <BarChart
+              key={`bars-${focused ? 'on' : 'off'}`}
+              animate
               height={space[10] * 2 + space[4]}
               bars={shown.map((w, i) => ({
                 value: w.distanceM,
@@ -134,6 +138,8 @@ export default function ProgressTab() {
         {trend.length >= 2 ? (
           <>
             <LineTrend
+              key={`trend-${focused ? 'on' : 'off'}`}
+              animate
               values={trend.map((x) => x.pace)}
               width={chartW}
               height={space[10] + space[4]}
@@ -153,6 +159,8 @@ export default function ProgressTab() {
         <Card style={styles.small}>
           <View style={styles.ringBox}>
             <TrackRing
+              key={focused ? 'on' : 'off'}
+              animateIn
               width={space[10] * 3 + space[3]}
               height={space[10] + space[8] + space[1]}
               stroke={space[2] + space[1] / 2}
@@ -243,43 +251,45 @@ export default function ProgressTab() {
   );
 }
 
-const styles = StyleSheet.create({
-  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  shrink: { flexShrink: 1 },
-  flex: { flex: 1 },
-  head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  seg: {
-    flexDirection: 'row',
-    padding: space[1],
-    borderRadius: radius.stadium,
-    backgroundColor: color.surfaceSunken,
-  },
-  segItem: {
-    minHeight: space[8] + space[1],
-    paddingHorizontal: space[3],
-    borderRadius: radius.stadium,
-    justifyContent: 'center',
-  },
-  segOn: { backgroundColor: color.surface, ...shadow.card },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardVol: { padding: space[4], gap: space[2] + space[1] / 2 },
-  cardPace: { padding: space[4], gap: space[2] },
-  xAxis: { flexDirection: 'row', gap: space[2] },
-  paceDelta: { fontFamily: fontFiles.display700, color: color.success },
-  pair: { flexDirection: 'row', gap: space[2] },
-  small: { flex: 1, padding: space[3] + space[1] / 2, gap: space[1] },
-  pred: { gap: space[1] + space[1] / 2 },
-  ringBox: { alignItems: 'center', height: space[10] + space[8] + space[1], justifyContent: 'center' },
-  recent: { gap: space[2] },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    minHeight: size.dayRow,
-    paddingVertical: space[2],
-    paddingHorizontal: space[3] + space[1] / 2,
-    borderRadius: radius.md,
-    backgroundColor: color.surface,
-    ...shadow.card,
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    shrink: { flexShrink: 1 },
+    flex: { flex: 1 },
+    head: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    seg: {
+      flexDirection: 'row',
+      padding: space[1],
+      borderRadius: radius.stadium,
+      backgroundColor: color.surfaceSunken,
+    },
+    segItem: {
+      minHeight: space[8] + space[1],
+      paddingHorizontal: space[3],
+      borderRadius: radius.stadium,
+      justifyContent: 'center',
+    },
+    segOn: { backgroundColor: color.surface, ...shadow.card },
+    row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    cardVol: { padding: space[4], gap: space[2] + space[1] / 2 },
+    cardPace: { padding: space[4], gap: space[2] },
+    xAxis: { flexDirection: 'row', gap: space[2] },
+    paceDelta: { fontFamily: fontFiles.display700, color: color.success },
+    pair: { flexDirection: 'row', gap: space[2] },
+    small: { flex: 1, padding: space[3] + space[1] / 2, gap: space[1] },
+    pred: { gap: space[1] + space[1] / 2 },
+    ringBox: { alignItems: 'center', height: space[10] + space[8] + space[1], justifyContent: 'center' },
+    recent: { gap: space[2] },
+    item: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      minHeight: size.dayRow,
+      paddingVertical: space[2],
+      paddingHorizontal: space[3] + space[1] / 2,
+      borderRadius: radius.md,
+      backgroundColor: color.surface,
+      ...shadow.card,
+    },
+  }),
+);

@@ -1,4 +1,4 @@
-import { color, PrimaryButton, space, Text } from '@run-coach/ui';
+import { color, PrimaryButton, space, Text, themed } from '@run-coach/ui';
 import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
@@ -28,13 +28,15 @@ export function DbGate({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space[4],
-    backgroundColor: color.bg,
-    padding: space[5],
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    center: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[4],
+      backgroundColor: color.bg,
+      padding: space[5],
+    },
+  }),
+);

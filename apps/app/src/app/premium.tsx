@@ -9,6 +9,7 @@ import {
   radius,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { formatPrice } from '@run-coach/ui/format';
 import { router } from 'expo-router';
@@ -129,21 +130,23 @@ function Row({ text, premium }: { text: string; premium?: boolean }) {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  head: { gap: space[2] },
-  list: { gap: space[3] },
-  paid: { borderLeftWidth: space[2], borderLeftColor: color.primary },
-  row: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
-  prices: { flexDirection: 'row', gap: space[2] },
-  price: {
-    flex: 1,
-    gap: space[1],
-    padding: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: color.surface,
-    borderWidth: border.selected,
-    borderColor: color.line,
-  },
-  priceOn: { borderColor: color.text },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    head: { gap: space[2] },
+    list: { gap: space[3] },
+    paid: { borderLeftWidth: space[2], borderLeftColor: color.primary },
+    row: { flexDirection: 'row', gap: space[3], alignItems: 'flex-start' },
+    prices: { flexDirection: 'row', gap: space[2] },
+    price: {
+      flex: 1,
+      gap: space[1],
+      padding: space[4],
+      borderRadius: radius.lg,
+      backgroundColor: color.surface,
+      borderWidth: border.selected,
+      borderColor: color.line,
+    },
+    priceOn: { borderColor: color.text },
+  }),
+);

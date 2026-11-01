@@ -1,6 +1,8 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { formatNumber } from '../format';
+import { duration, easing, ScaleIn, STAGGER_BAR, useAnimatedNumber, useEntrance } from '../motion';
 import Svg, { Defs, Pattern, Rect } from 'react-native-svg';
-import { border, color, fontFiles, radius, ring, size, space } from '../theme';
+import { border, color, fontFiles, radius, ring, size, space, themed } from '../theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
 
@@ -116,7 +118,8 @@ export type LaneDay = {
 };
 
 /** 7 lajur minggu (2.1): tinggi 44, cincin 2.5 warna zona, hari ini garis luar 2 px. */
-export function LaneWeek({ days }: { days: LaneDay[] }) {
+/** `animate`: lajur muncul membesar bergantian saat tampil (UI/UX bagian 11, G8). */
+export function LaneWeek({ days, animate = false }: { days: LaneDay[]; animate?: boolean }) {
   return (
     <View style={styles.week}>
       {days.map((d, i) => {
@@ -142,12 +145,14 @@ export function LaneWeek({ days }: { days: LaneDay[] }) {
             style={styles.dayCol}
             disabled={!d.onPress}
           >
-            <View style={[styles.dayLane, lane, d.today && styles.todayOutline]}>
-              {d.state === 'completed' ? (
-                <Icon name="check" size={space[4]} color={color.text} strokeWidth={3} />
-              ) : null}
-              {d.badge ? <LaneBadge label={d.badge} /> : null}
-            </View>
+            <ScaleIn index={i} enabled={animate} style={styles.stretch}>
+              <View style={[styles.dayLane, lane, d.today && styles.todayOutline]}>
+                {d.state === 'completed' ? (
+                  <Icon name="check" size={space[4]} color={color.text} strokeWidth={3} />
+                ) : null}
+                {d.badge ? <LaneBadge label={d.badge} /> : null}
+              </View>
+            </ScaleIn>
             <Text
               variant="caption"
               color={d.today ? 'text' : 'textMuted'}
@@ -219,11 +224,14 @@ export function BarChart({
   bars,
   highlightIndex,
   height,
+  animate = false,
 }: {
   bars: { value: number; label: string; phase: PhaseKey; outline?: boolean }[];
   highlightIndex?: number;
   /** Tinggi area grafik; default 124 (1.8), 96 untuk 3.3. */
   height?: number;
+  /** Batang tumbuh dari dasar bergantian + angka naik dari 0 saat tampil (UI/UX bagian 11, G7). */
+  animate?: boolean;
 }) {
   const max = Math.max(1, ...bars.map((b) => b.value));
   const area = height ?? space[10] * 3 + space[1];
@@ -233,26 +241,61 @@ export function BarChart({
       style={[styles.bars, { height: area, gap: height ? space[2] : space[1] + space[1] / 2 }]}
       accessibilityRole="image"
     >
-      {bars.map((b, i) => {
-        const fill = i === highlightIndex ? color.primary : phaseColor(b.phase);
-        return (
-          <View key={i} style={styles.barCol}>
-            <Text variant="chartLabel" color="textMuted">
-              {b.label}
-            </Text>
-            <View
-              style={[
-                styles.bar,
-                {
-                  height: Math.max(space[2], (b.value / max) * (area - labelH - space[1])),
-                  backgroundColor: b.outline ? color.surface : fill,
-                },
-                b.outline && { borderWidth: border.selected, borderColor: fill },
-              ]}
-            />
-          </View>
-        );
-      })}
+      {bars.map((b, i) => (
+        <Bar
+          key={i}
+          bar={b}
+          index={i}
+          animate={animate}
+          fill={i === highlightIndex ? color.primary : phaseColor(b.phase)}
+          barHeight={Math.max(space[2], (b.value / max) * (area - labelH - space[1]))}
+        />
+      ))}
+    </View>
+  );
+}
+
+const NUMERIC = /^(-?\d+)(?:[.,](\d+))?$/;
+
+function Bar({
+  bar,
+  index,
+  animate,
+  fill,
+  barHeight,
+}: {
+  bar: { value: number; label: string; outline?: boolean };
+  index: number;
+  animate: boolean;
+  fill: string;
+  barHeight: number;
+}) {
+  const delay = index * STAGGER_BAR;
+  const grow = useEntrance({ delay, durationMs: duration.slow, ease: easing.stride, enabled: animate });
+  const m = NUMERIC.exec(bar.label);
+  const target = m ? parseFloat(`${m[1]}.${m[2] ?? '0'}`) : 0;
+  const counted = useAnimatedNumber(target, animate && m ? 'count' : 'none', {
+    from: animate && m ? 0 : undefined,
+    delay,
+    durationMs: duration.slow,
+  });
+  return (
+    <View style={styles.barCol}>
+      <Text variant="chartLabel" color="textMuted">
+        {animate && m ? formatNumber(counted, m[2]?.length ?? 0) : bar.label}
+      </Text>
+      <Animated.View
+        style={[
+          styles.bar,
+          {
+            height: barHeight,
+            backgroundColor: bar.outline ? color.surface : fill,
+            transformOrigin: 'bottom',
+            transform: [{ scaleY: grow }],
+          },
+          bar.outline && { borderWidth: border.selected, borderColor: fill },
+        ]}
+      />
     </View>
   );
 }
@@ -295,88 +338,91 @@ export function StatusChip({
   );
 }
 
-const styles = StyleSheet.create({
-  laneBadge: {
-    position: 'absolute',
-    top: -space[1] - border.hairline,
-    right: -space[1] - border.hairline,
-    minWidth: space[4] + space[1],
-    height: space[4] + space[1],
-    paddingHorizontal: space[1],
-    borderRadius: radius.stadium,
-    backgroundColor: color.zone.strength,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  laneBadgeText: { color: color.zone.onStrength },
-  segBar: { flexDirection: 'row', gap: border.selected + border.hairline / 2 },
-  segPart: { borderRadius: radius.stadium, overflow: 'hidden' },
-  mark: { width: space[1] + space[1] / 2, borderRadius: radius.stadium, overflow: 'hidden' },
-  markShort: { height: space[5] },
-  markTall: { height: space[6] },
-  markStretch: { alignSelf: 'stretch' },
-  intensity: { flexDirection: 'row', alignItems: 'flex-end', gap: border.selected + border.hairline / 2 },
-  intBar: {
-    overflow: 'hidden',
-    borderTopLeftRadius: space[2],
-    borderTopRightRadius: space[2],
-    borderBottomLeftRadius: space[1],
-    borderBottomRightRadius: space[1],
-  },
-  week: { flexDirection: 'row', gap: space[2] },
-  dayCol: { alignItems: 'center', gap: space[1] + space[1] / 2, flex: 1 },
-  todayOutline: {
-    outlineWidth: border.selected - border.hairline / 2,
-    outlineColor: color.text,
-    outlineStyle: 'solid',
-    outlineOffset: border.selected - border.hairline / 2,
-  },
-  dayLane: {
-    width: '100%',
-    height: size.touchMin,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bold: { fontFamily: fontFiles.ui800 },
-  phaseWrap: { gap: space[2] },
-  phaseRow: { flexDirection: 'row', gap: space[1] },
-  phasePill: {
-    flex: 1,
-    height: space[3] + border.selected - border.hairline / 2,
-    borderRadius: radius.stadium,
-  },
-  legendDotSm: {
-    width: space[2] + border.selected - border.hairline / 2,
-    height: space[2] + border.selected - border.hairline / 2,
-    borderRadius: border.selected + border.hairline / 2,
-  },
-  legend: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[2] },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  legendDot: { width: space[3], height: space[3], borderRadius: space[1] },
-  bars: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1] + space[1] / 2 },
-  barCol: { flex: 1, alignItems: 'center', gap: space[1], justifyContent: 'flex-end' },
-  bar: {
-    width: '100%',
-    borderTopLeftRadius: radius.sm,
-    borderTopRightRadius: radius.sm,
-    borderBottomLeftRadius: radius.bib,
-    borderBottomRightRadius: radius.bib,
-  },
-  status: {
-    minHeight: size.touchMin - space[4],
-    paddingHorizontal: space[4],
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-  },
-  statusNeutral: { ...ring(border.hairline, color.line) },
-  badge: {
-    paddingVertical: space[1] + space[1] / 2,
-    paddingHorizontal: space[3],
-    borderRadius: radius.stadium,
-    backgroundColor: color.surface,
-    alignSelf: 'flex-start',
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    laneBadge: {
+      position: 'absolute',
+      top: -space[1] - border.hairline,
+      right: -space[1] - border.hairline,
+      minWidth: space[4] + space[1],
+      height: space[4] + space[1],
+      paddingHorizontal: space[1],
+      borderRadius: radius.stadium,
+      backgroundColor: color.zone.strength,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    laneBadgeText: { color: color.zone.onStrength },
+    segBar: { flexDirection: 'row', gap: border.selected + border.hairline / 2 },
+    segPart: { borderRadius: radius.stadium, overflow: 'hidden' },
+    mark: { width: space[1] + space[1] / 2, borderRadius: radius.stadium, overflow: 'hidden' },
+    markShort: { height: space[5] },
+    markTall: { height: space[6] },
+    markStretch: { alignSelf: 'stretch' },
+    intensity: { flexDirection: 'row', alignItems: 'flex-end', gap: border.selected + border.hairline / 2 },
+    intBar: {
+      overflow: 'hidden',
+      borderTopLeftRadius: space[2],
+      borderTopRightRadius: space[2],
+      borderBottomLeftRadius: space[1],
+      borderBottomRightRadius: space[1],
+    },
+    week: { flexDirection: 'row', gap: space[2] },
+    stretch: { alignSelf: 'stretch' },
+    dayCol: { alignItems: 'center', gap: space[1] + space[1] / 2, flex: 1 },
+    todayOutline: {
+      outlineWidth: border.selected - border.hairline / 2,
+      outlineColor: color.text,
+      outlineStyle: 'solid',
+      outlineOffset: border.selected - border.hairline / 2,
+    },
+    dayLane: {
+      width: '100%',
+      height: size.touchMin,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bold: { fontFamily: fontFiles.ui800 },
+    phaseWrap: { gap: space[2] },
+    phaseRow: { flexDirection: 'row', gap: space[1] },
+    phasePill: {
+      flex: 1,
+      height: space[3] + border.selected - border.hairline / 2,
+      borderRadius: radius.stadium,
+    },
+    legendDotSm: {
+      width: space[2] + border.selected - border.hairline / 2,
+      height: space[2] + border.selected - border.hairline / 2,
+      borderRadius: border.selected + border.hairline / 2,
+    },
+    legend: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[2] },
+    legendItem: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    legendDot: { width: space[3], height: space[3], borderRadius: space[1] },
+    bars: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1] + space[1] / 2 },
+    barCol: { flex: 1, alignItems: 'center', gap: space[1], justifyContent: 'flex-end' },
+    bar: {
+      width: '100%',
+      borderTopLeftRadius: radius.sm,
+      borderTopRightRadius: radius.sm,
+      borderBottomLeftRadius: radius.bib,
+      borderBottomRightRadius: radius.bib,
+    },
+    status: {
+      minHeight: size.touchMin - space[4],
+      paddingHorizontal: space[4],
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+      alignSelf: 'flex-start',
+    },
+    statusNeutral: { ...ring(border.hairline, color.line) },
+    badge: {
+      paddingVertical: space[1] + space[1] / 2,
+      paddingHorizontal: space[3],
+      borderRadius: radius.stadium,
+      backgroundColor: color.surface,
+      alignSelf: 'flex-start',
+    },
+  }),
+);

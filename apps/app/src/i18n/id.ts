@@ -485,9 +485,9 @@ export const id = {
   'privacy.restoreNotBackup': 'File ini bukan backup Run Coach. Data lama tetap utuh.',
   'privacy.restoreNewer': 'File dari versi app lebih baru. Perbarui app dulu. Data lama tetap utuh.',
   'privacy.restoreFailed': 'Gagal memulihkan. Data lama tetap utuh.',
-  'privacy.signOutTitle': 'Keluar',
-  'privacy.signOutKeep': 'Keluar, data tetap di HP ini',
-  'privacy.signOutWipe': 'Keluar dan hapus data di HP ini',
+  'privacy.signOutTitle': 'Keluar dari akun?',
+  'privacy.signOutBody': 'Data latihanmu tetap ada di HP ini. Kamu bisa masuk lagi kapan saja.',
+  'privacy.signOutYes': 'Keluar',
   'privacy.wipeTitle': 'Hapus semua data di HP ini?',
   'privacy.wipeBody':
     'Plan, latihan, RPE dan catatan dihapus dari HP ini. Backup dulu jika ingin menyimpannya.',

@@ -12,6 +12,7 @@ import {
   Switch,
   Text,
   TextField,
+  themed,
 } from '@run-coach/ui';
 import { formatDateLong, formatPaceRange } from '@run-coach/ui/format';
 import Constants from 'expo-constants';
@@ -212,18 +213,20 @@ export default function ProfileTab() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  head: { flexDirection: 'row', alignItems: 'center', gap: space[3] + space[1] / 2 },
-  nameCol: { flex: 1, gap: border.selected - border.hairline / 2 },
-  avatar: {
-    width: space[10] + space[4],
-    height: space[10] + space[4],
-    borderRadius: radius.stadium,
-    backgroundColor: color.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: { color: color.zone.onEasy },
-  confirm: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    head: { flexDirection: 'row', alignItems: 'center', gap: space[3] + space[1] / 2 },
+    nameCol: { flex: 1, gap: border.selected - border.hairline / 2 },
+    avatar: {
+      width: space[10] + space[4],
+      height: space[10] + space[4],
+      borderRadius: radius.stadium,
+      backgroundColor: color.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarText: { color: color.zone.onEasy },
+    confirm: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
+  }),
+);

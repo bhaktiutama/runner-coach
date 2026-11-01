@@ -7,6 +7,7 @@ import {
   SecondaryButton,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -113,6 +114,8 @@ export default function SignIn() {
   );
 }
 
-const styles = StyleSheet.create({
-  brand: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    brand: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+  }),
+);

@@ -35,6 +35,11 @@ export function playCue(kind: 'segment' | 'finish') {
   }
 }
 
+/** Getar ringan tiap angka hitung mundur 3-2-1 (UI/UX bagian 11, G10). Tidak ada di web. */
+export function countdownTick() {
+  if (process.env.EXPO_OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+}
+
 export function releaseCues() {
   cue?.release();
   done?.release();

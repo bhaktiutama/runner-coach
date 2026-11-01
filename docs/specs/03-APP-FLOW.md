@@ -79,7 +79,7 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 ### FL-4 Ringkasan minggu + adaptasi (F-11)
 
-2.5 menampilkan latihan tuntas x/y, jarak vs minggu lalu, waktu lari vs target. Jika aturan adaptasi (TRD 4.3) terpicu: kartu "Plan minggu depan disesuaikan" + alasan + perubahan. "Oke, terapkan" -> plan versi baru. "Tetap plan awal" -> tidak berubah, usulan tidak ditampilkan lagi untuk minggu itu.
+2.5 menampilkan latihan tuntas x/y, jarak vs minggu lalu, waktu lari vs target. Cincin terisi dari 0 saat layar tampil; jika semua latihan minggu itu tuntas, konfeti kecil diputar sekali (UI/UX 11). Reduce-motion: tanpa gerak. Jika aturan adaptasi (TRD 4.3) terpicu: kartu "Plan minggu depan disesuaikan" + alasan + perubahan. "Oke, terapkan" -> plan versi baru. "Tetap plan awal" -> tidak berubah, usulan tidak ditampilkan lagi untuk minggu itu.
 
 ### FL-5 Pindah latihan (F-08)
 
@@ -123,7 +123,7 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 ### FL-10 Keluar (4.5)
 
-"Keluar" -> pilihan: "Keluar, data tetap di HP ini" atau "Keluar dan hapus data di HP ini" (tawarkan backup dulu). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
+"Keluar" -> dialog konfirmasi di tengah layar ("Keluar dari akun?", "Data latihanmu tetap ada di HP ini"): Keluar / Batal. Data lokal tidak dihapus; menghapus data punya menu sendiri ("Hapus data di HP ini", dialog konfirmasi + tawaran backup). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
 
 ### FL-12 Strength + core (F-21)
 
@@ -176,7 +176,7 @@ Paywall mati (default fase 2): tidak ada yang terkunci, baris Premium di 4.1 ter
 
 | State | Aksi / sistem | State berikut |
 |-------|---------------|---------------|
-| idle | Mulai (hitung mundur 3 detik) | running |
+| idle | Mulai (hitung mundur 3 detik, angka zoom + getar ringan, UI/UX 11) | running |
 | running | Jeda | paused (label "DIJEDA") |
 | paused | Lanjutkan | running |
 | running | Segmen habis | running (segmen berikut) atau finished |

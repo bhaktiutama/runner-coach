@@ -13,7 +13,7 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 | Paywall, harga, gerbang Premium | `docs/specs/08-MONETIZATION.md` |
 | Stack, aturan engine, sinkron | `docs/specs/02-TRD.md` |
 | Langkah per layar, state machine | `docs/specs/03-APP-FLOW.md` |
-| Tata letak layar | `docs/wireframes/png/` (26 layar MVP 1.1 sampai 4.6 + fase 2: 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8 versi ID dan EN, memakai Lintas) |
+| Tata letak layar | `docs/wireframes/png/` (26 layar MVP 1.1 sampai 4.6 + fase 2: 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8 versi ID dan EN, memakai Lintas); mode gelap di `docs/wireframes/png/dark/` |
 | Warna, tipe, bentuk, komponen | `docs/design-system/tokens.json` + `README.md`; ringkasan di `docs/specs/04-UI-UX.md` |
 | Logo, ikon app, ikon UI | `docs/design-system/assets/` |
 | Tabel lokal (SQLite), file backup, Auth, Edge Functions | `docs/specs/05-BACKEND-SCHEMA.md` |
@@ -28,3 +28,16 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 - Branch `feat/<milestone>-<nama>` dari `development`, PR kecil ke `development`.
 - Credential Supabase dibaca dari environment (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`). Jangan menulis credential ke repo.
 - Supabase MCP (`.mcp.json`, token dari env `SUPABASE_ACCESS_TOKEN`) dan skill `.claude/skills/supabase*` boleh dipakai untuk Auth, Edge Function, log dan dokumentasi. **Jangan** memakai tool database/migration untuk membuat tabel data pengguna; schema `public` harus tetap kosong (Schema bagian 5). Skill `supabase-postgres-best-practices` hanya relevan jika kelak ada tabel non-pribadi yang disetujui spec.
+
+## Preview dan deploy (EAS)
+
+- **Default: hanya web.** Jangan menjalankan build iOS/Android (`eas build`, `eas submit`) sampai pemilik produk memberi perintah eksplisit. Review dilakukan di web dulu.
+- Cara deploy preview web (dari `apps/app`, akun EAS sudah login lewat `EXPO_TOKEN` di environment session):
+  1. `pnpm --filter ./apps/app export:web` (hasil di `apps/app/dist`).
+  2. `npx eas-cli@latest deploy --non-interactive` (tanpa `--prod`). Hasilnya URL deployment `https://run-coach--<id>.expo.app`.
+  3. Arahkan alias: `npx eas-cli@latest deploy:alias --alias preview --id <id> --non-interactive`. URL tetap untuk review: **https://run-coach--preview.expo.app**. Alias harus selalu di-update setelah deploy baru.
+  4. Cek `curl -sS -o /dev/null -w "%{http_code}\n" https://run-coach--preview.expo.app/` dan laporkan URL ke pemilik.
+- Jangan memakai `--prod` atau `eas deploy:promote` tanpa perintah pemilik produk.
+- Merge ke `development` hanya setelah pemilik produk selesai review di preview web.
+- Header COOP/COEP untuk `expo-sqlite` di web diatur di `apps/app/app.json`; periksa jika preview tidak mau memuat database.
+- Menjalankan E2E lokal/di container: ekspor web **dengan** `EXPO_PUBLIC_E2E=1` (seperti CI), jalankan dengan `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium pnpm test:e2e`. Tanpa flag itu hampir semua test gagal (timeout 60 detik). Jangan men-deploy build berflag E2E ke preview: ekspor ulang tanpa flag dulu.

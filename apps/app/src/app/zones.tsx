@@ -1,5 +1,5 @@
 import { paceZones, type EngineMessageKey } from '@run-coach/training-engine';
-import { BibTag, Card, IconButton, space, Text } from '@run-coach/ui';
+import { BibTag, Card, IconButton, space, Text, themed } from '@run-coach/ui';
 import { formatNumber, formatPaceRange } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
@@ -44,11 +44,13 @@ export default function Zones() {
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: space[2],
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: space[2],
+    },
+  }),
+);

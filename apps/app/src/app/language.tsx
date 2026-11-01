@@ -1,4 +1,4 @@
-import { ChoiceCard, IconButton, space, Text } from '@run-coach/ui';
+import { ChoiceCard, IconButton, space, Text, themed } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
@@ -43,7 +43,9 @@ export default function Language() {
   );
 }
 
-const styles = StyleSheet.create({
-  head: { gap: space[2] },
-  list: { gap: space[2] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    head: { gap: space[2] },
+    list: { gap: space[2] },
+  }),
+);

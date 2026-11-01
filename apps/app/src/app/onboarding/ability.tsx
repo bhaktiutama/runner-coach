@@ -1,5 +1,15 @@
 import { predictRange, type EngineMessageKey, type RaceDistance } from '@run-coach/training-engine';
-import { Card, ChoiceCard, Chip, Field, SegmentedControl, space, Text, TimeField } from '@run-coach/ui';
+import {
+  Card,
+  ChoiceCard,
+  Chip,
+  Field,
+  SegmentedControl,
+  space,
+  Text,
+  TimeField,
+  themed,
+} from '@run-coach/ui';
 import { formatRaceRange } from '@run-coach/ui/format';
 import { StyleSheet, View } from 'react-native';
 import { OnboardingStep } from '@/components/OnboardingStep';
@@ -109,8 +119,10 @@ export default function AbilityStep() {
   );
 }
 
-const styles = StyleSheet.create({
-  group: { gap: space[3] },
-  chips: { flexDirection: 'row', gap: space[2] },
-  card: { gap: space[2] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    group: { gap: space[3] },
+    chips: { flexDirection: 'row', gap: space[2] },
+    card: { gap: space[2] },
+  }),
+);

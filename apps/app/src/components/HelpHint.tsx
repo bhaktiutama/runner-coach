@@ -1,4 +1,4 @@
-import { color, Icon, space } from '@run-coach/ui';
+import { color, Icon, space, themed } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet } from 'react-native';
 import { helpCatalog } from '@/i18n/help';
@@ -19,4 +19,4 @@ export function HelpHint({ topic, term }: { topic: string; term: string }) {
   );
 }
 
-const styles = StyleSheet.create({ hit: { alignItems: 'center', justifyContent: 'center' } });
+const styles = themed(() => StyleSheet.create({ hit: { alignItems: 'center', justifyContent: 'center' } }));

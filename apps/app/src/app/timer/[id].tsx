@@ -3,6 +3,7 @@ import {
   BibTag,
   border,
   color,
+  FadeIn,
   fontFiles,
   Icon,
   type IconName,
@@ -12,6 +13,8 @@ import {
   space,
   Text,
   TrackRing,
+  ZoomIn,
+  themed,
 } from '@run-coach/ui';
 import { formatClock, formatDuration, formatPaceValue } from '@run-coach/ui/format';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
@@ -25,7 +28,7 @@ import { t } from '@/i18n/t';
 import { getPermission, notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
 import { intensitySegments } from '@/lib/workoutView';
-import { requestWakeLock } from '@/timer/cues';
+import { countdownTick, requestWakeLock } from '@/timer/cues';
 import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
 import { plannedS } from '@/timer/machine';
 import { useTimer } from '@/timer/useTimer';
@@ -78,6 +81,10 @@ export default function TimerScreen() {
     if (!ready || countdown !== null) return;
     setCountdown(3);
   }, [ready, countdown]);
+  // Getar ringan tiap angka hitung mundur.
+  useEffect(() => {
+    if (countdown !== null && countdown > 0) countdownTick();
+  }, [countdown]);
   const startRef = useRef(tm.start);
   startRef.current = tm.start;
   useEffect(() => {
@@ -290,9 +297,11 @@ export default function TimerScreen() {
             <Text variant="statusCaps" color="darkTextMuted">
               {t('timer.countdown')}
             </Text>
-            <Text variant="timer" color="darkText">
-              {String(countdown)}
-            </Text>
+            <ZoomIn key={countdown}>
+              <Text variant="timer" color="darkText">
+                {String(countdown)}
+              </Text>
+            </ZoomIn>
           </View>
         ) : (
           <>
@@ -302,11 +311,16 @@ export default function TimerScreen() {
                 height={ringW * (300 / 350)}
                 stroke={space[3] + border.selected - border.hairline / 2}
                 progress={seg?.timedS ? pos.elapsedInSegS / seg.timedS : 0}
+                motion="linear"
                 color={ringColor}
                 trackColor={dark.surfaceSunken}
               >
                 <View style={styles.ringCol}>
-                  {seg ? <BibTag label={segmentName(seg, w.data.type)} zone={zone} /> : null}
+                  {seg ? (
+                    <FadeIn k={pos.index}>
+                      <BibTag label={segmentName(seg, w.data.type)} zone={zone} />
+                    </FadeIn>
+                  ) : null}
                   {paused ? (
                     <Text variant="statusCaps" style={{ color: color.status.attention }}>
                       {t('timer.paused')}
@@ -326,44 +340,46 @@ export default function TimerScreen() {
                 </View>
               </TrackRing>
             </View>
-            <View style={styles.cards}>
-              {profile.data?.intensity_guide !== 'rpe' &&
-              seg &&
-              isRunSegment(seg) &&
-              seg.pace_s_per_km &&
-              !seg.walk ? (
+            <FadeIn k={pos.index}>
+              <View style={styles.cards}>
+                {profile.data?.intensity_guide !== 'rpe' &&
+                seg &&
+                isRunSegment(seg) &&
+                seg.pace_s_per_km &&
+                !seg.walk ? (
+                  <View style={styles.card}>
+                    <Text variant="captionStrong" color="darkTextMuted">
+                      {t('timer.targetPace')}
+                    </Text>
+                    <Text
+                      variant={zone === 'easy' || zone === 'long' || zone === 'recovery' ? 'stat' : 'title'}
+                      color="darkText"
+                      numberOfLines={1}
+                    >
+                      {zone === 'easy' || zone === 'long' || zone === 'recovery'
+                        ? `${formatPaceValue(seg.pace_s_per_km.min)}-${formatPaceValue(seg.pace_s_per_km.max)}`
+                        : formatPaceValue(seg.pace_s_per_km.min)}
+                      <Text variant="numberRowStrong" color="darkTextMuted">
+                        {t('timer.perKm')}
+                      </Text>
+                    </Text>
+                  </View>
+                ) : null}
                 <View style={styles.card}>
                   <Text variant="captionStrong" color="darkTextMuted">
-                    {t('timer.targetPace')}
+                    {t('timer.feel')}
                   </Text>
-                  <Text
-                    variant={zone === 'easy' || zone === 'long' || zone === 'recovery' ? 'stat' : 'title'}
-                    color="darkText"
-                    numberOfLines={1}
-                  >
-                    {zone === 'easy' || zone === 'long' || zone === 'recovery'
-                      ? `${formatPaceValue(seg.pace_s_per_km.min)}-${formatPaceValue(seg.pace_s_per_km.max)}`
-                      : formatPaceValue(seg.pace_s_per_km.min)}
-                    <Text variant="numberRowStrong" color="darkTextMuted">
-                      {t('timer.perKm')}
-                    </Text>
+                  <Text variant="row" color="darkText">
+                    {t(FEEL_KEY[zone])}
                   </Text>
                 </View>
-              ) : null}
-              <View style={styles.card}>
-                <Text variant="captionStrong" color="darkTextMuted">
-                  {t('timer.feel')}
-                </Text>
-                <Text variant="row" color="darkText">
-                  {t(FEEL_KEY[zone])}
-                </Text>
               </View>
-            </View>
+            </FadeIn>
             <View style={styles.progress}>
               <View style={styles.segRow}>
                 {segs.map((s2, i) => {
-                  const done = i < segIndexOf(segs, pos.totalElapsedS);
-                  const cur = i === segIndexOf(segs, pos.totalElapsedS);
+                  const done = i < segIndexOf(segs, pos.plannedElapsedS);
+                  const cur = i === segIndexOf(segs, pos.plannedElapsedS);
                   return (
                     <View
                       key={i}
@@ -649,123 +665,125 @@ function DarkButton({ label, onPress }: { label: string; onPress: () => void }) 
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  inner: {
-    flex: 1,
-    width: '100%',
-    maxWidth: size.contentMax,
-    alignSelf: 'center',
-    gap: space[5],
-    paddingHorizontal: space.screenX,
-  },
-  centerCol: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space[4],
-    paddingHorizontal: space.screenX,
-  },
-  flex: { flex: 1 },
-  top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  endPill: {
-    backgroundColor: dark.surface,
-    borderRadius: radius.stadium,
-    minHeight: size.touchMin,
-    paddingHorizontal: space[4],
-    justifyContent: 'center',
-  },
-  darkBtn: { alignSelf: 'stretch', minHeight: size.buttonSecondary },
-  round: {
-    width: space[10] + space[4],
-    height: space[10] + space[4],
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  roundSm: {
-    width: size.touchMin,
-    height: size.touchMin,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ringWrap: { alignItems: 'center' },
-  ringCol: { alignItems: 'center', gap: space[1] + space[1] / 2 },
-  blink: { opacity: 0.6 },
-  cards: { flexDirection: 'row', gap: space[2] },
-  card: {
-    flex: 1,
-    backgroundColor: dark.surface,
-    borderRadius: radius.md,
-    paddingVertical: space[3],
-    paddingHorizontal: space[4],
-    gap: space[1],
-  },
-  progress: { gap: space[2] },
-  segRow: { flexDirection: 'row', gap: space[1] },
-  segPart: { height: space[2], borderRadius: radius.stadium },
-  segFuture: {
-    backgroundColor: dark.surface,
-    boxShadow: `inset 0px 0px 0px ${border.hairline}px ${dark.line}`,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: space[2],
-  },
-  display: { fontFamily: fontFiles.display700 },
-  controls: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: space[6] + space[1],
-    paddingTop: space[2],
-    paddingBottom: space[3],
-    paddingHorizontal: space.screenX,
-  },
-  big: {
-    width: size.touchMin * 2,
-    height: size.touchMin * 2,
-    borderRadius: radius.stadium,
-    backgroundColor: color.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  footnote: { paddingHorizontal: space[8] },
-  overlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: color.overlay,
-    justifyContent: 'center',
-    padding: space[5],
-  },
-  dialog: {
-    backgroundColor: dark.surface,
-    borderRadius: radius.lg,
-    padding: space[5],
-    gap: space[3],
-    maxWidth: size.contentMax,
-    alignSelf: 'center',
-    width: '100%',
-  },
-  drill: { flex: 1, gap: space[5] },
-  drillHead: { gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
-  lanes: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
-  lane: { width: space[10], height: space[2], borderRadius: radius.stadium },
-  cues: { gap: space[2] + space[1] / 2 },
-  cueRow: { flexDirection: 'row', gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
-  drillFooter: {
-    gap: space[2],
-    paddingTop: space[2],
-    paddingHorizontal: space.screenX,
-    width: '100%',
-    maxWidth: size.contentMax + space.screenX * 2,
-    alignSelf: 'center',
-  },
-  textBtn: { minHeight: size.touchMin, justifyContent: 'center' },
-  strengthRow: { flexDirection: 'row', gap: space[2] },
-  restCol: { alignItems: 'center', justifyContent: 'center', gap: space[4] },
-  center: { alignItems: 'center', alignSelf: 'stretch' },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    root: { flex: 1 },
+    inner: {
+      flex: 1,
+      width: '100%',
+      maxWidth: size.contentMax,
+      alignSelf: 'center',
+      gap: space[5],
+      paddingHorizontal: space.screenX,
+    },
+    centerCol: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[4],
+      paddingHorizontal: space.screenX,
+    },
+    flex: { flex: 1 },
+    top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    endPill: {
+      backgroundColor: dark.surface,
+      borderRadius: radius.stadium,
+      minHeight: size.touchMin,
+      paddingHorizontal: space[4],
+      justifyContent: 'center',
+    },
+    darkBtn: { alignSelf: 'stretch', minHeight: size.buttonSecondary },
+    round: {
+      width: space[10] + space[4],
+      height: space[10] + space[4],
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    roundSm: {
+      width: size.touchMin,
+      height: size.touchMin,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ringWrap: { alignItems: 'center' },
+    ringCol: { alignItems: 'center', gap: space[1] + space[1] / 2 },
+    blink: { opacity: 0.6 },
+    cards: { flexDirection: 'row', gap: space[2] },
+    card: {
+      flex: 1,
+      backgroundColor: dark.surface,
+      borderRadius: radius.md,
+      paddingVertical: space[3],
+      paddingHorizontal: space[4],
+      gap: space[1],
+    },
+    progress: { gap: space[2] },
+    segRow: { flexDirection: 'row', gap: space[1] },
+    segPart: { height: space[2], borderRadius: radius.stadium },
+    segFuture: {
+      backgroundColor: dark.surface,
+      boxShadow: `inset 0px 0px 0px ${border.hairline}px ${dark.line}`,
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: space[2],
+    },
+    display: { fontFamily: fontFiles.display700 },
+    controls: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: space[6] + space[1],
+      paddingTop: space[2],
+      paddingBottom: space[3],
+      paddingHorizontal: space.screenX,
+    },
+    big: {
+      width: size.touchMin * 2,
+      height: size.touchMin * 2,
+      borderRadius: radius.stadium,
+      backgroundColor: color.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    footnote: { paddingHorizontal: space[8] },
+    overlay: {
+      ...StyleSheet.absoluteFill,
+      backgroundColor: color.overlay,
+      justifyContent: 'center',
+      padding: space[5],
+    },
+    dialog: {
+      backgroundColor: dark.surface,
+      borderRadius: radius.lg,
+      padding: space[5],
+      gap: space[3],
+      maxWidth: size.contentMax,
+      alignSelf: 'center',
+      width: '100%',
+    },
+    drill: { flex: 1, gap: space[5] },
+    drillHead: { gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
+    lanes: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
+    lane: { width: space[10], height: space[2], borderRadius: radius.stadium },
+    cues: { gap: space[2] + space[1] / 2 },
+    cueRow: { flexDirection: 'row', gap: space[2] + space[1] / 2, alignItems: 'flex-start' },
+    drillFooter: {
+      gap: space[2],
+      paddingTop: space[2],
+      paddingHorizontal: space.screenX,
+      width: '100%',
+      maxWidth: size.contentMax + space.screenX * 2,
+      alignSelf: 'center',
+    },
+    textBtn: { minHeight: size.touchMin, justifyContent: 'center' },
+    strengthRow: { flexDirection: 'row', gap: space[2] },
+    restCol: { alignItems: 'center', justifyContent: 'center', gap: space[4] },
+    center: { alignItems: 'center', alignSelf: 'stretch' },
+  }),
+);
