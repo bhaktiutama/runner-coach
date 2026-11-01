@@ -2,39 +2,21 @@ import {
   BibTag,
   Card,
   color,
+  Icon,
   LaneMark,
   LinkButton,
-  PopIn,
   PrimaryButton,
   SegmentBar,
   space,
   Text,
   themed,
 } from '@run-coach/ui';
-import { router, usePathname } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import type { Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
-import { consumeCelebrate } from '@/lib/celebrate';
 import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
-
-/**
- * True setelah latihan ini baru disimpan (lihat `lib/celebrate.ts`) dan layar Today terlihat.
- * Tidak bergantung pada perubahan status di layar yang tertutup, jadi tetap jalan walau kartu
- * dipasang ulang saat kembali dari timer/2.4.
- */
-function usePopWhenVisible(workoutId: string, done: boolean): boolean {
-  // Today = rute '/'. Selama timer atau 2.4 di atasnya, path-nya berbeda.
-  const focused = usePathname() === '/';
-  const [pop, setPop] = useState(false);
-  useEffect(() => {
-    if (!done) setPop(false);
-    else if (focused && consumeCelebrate(workoutId)) setPop(true);
-  }, [done, focused, workoutId]);
-  return pop;
-}
 
 type Props = { workout: Workout; onStart?: () => void; onDetails?: () => void; startLabel?: string };
 
@@ -43,17 +25,17 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
   const zone = TYPE_ZONE[workout.type];
   const rows = segmentRows(workout.steps, workout.type);
   const done = workout.status === 'completed';
-  const pop = usePopWhenVisible(workout.id, done);
   return (
     <Card style={styles.card} testID="workout-card">
       <View style={styles.head}>
-        <PopIn play={pop}>
-          <BibTag label={typeName(workout.type)} zone={zone} done={done} testID="workout-bib" />
-        </PopIn>
+        <BibTag label={typeName(workout.type)} zone={zone} />
         {done ? (
-          <Text variant="controlStrong" color="success">
-            {t('today.done')}
-          </Text>
+          <View style={styles.done}>
+            <Icon name="check" size={space[4]} color={color.success} />
+            <Text variant="controlStrong" color="success">
+              {t('today.done')}
+            </Text>
+          </View>
         ) : (
           <Text variant="controlStrong" color="textMuted">
             {t('today.approxKm', { km: approxKm(workout.steps) })}
@@ -107,17 +89,17 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   const locked = isLocked(workout, ent);
   const done = workout.status === 'completed';
   const n = workout.steps.filter((s) => s.kind === 'exercise').length;
-  const pop = usePopWhenVisible(workout.id, done);
   return (
     <Card style={[styles.card, styles.strength]} testID="strength-card">
       <View style={styles.head}>
-        <PopIn play={pop}>
-          <BibTag label={typeName(workout.type)} zone="strength" done={done} testID="strength-bib" />
-        </PopIn>
+        <BibTag label={typeName(workout.type)} zone="strength" />
         {done ? (
-          <Text variant="controlStrong" color="success">
-            {t('today.done')}
-          </Text>
+          <View style={styles.done}>
+            <Icon name="check" size={space[4]} color={color.success} />
+            <Text variant="controlStrong" color="success">
+              {t('today.done')}
+            </Text>
+          </View>
         ) : (
           <Text variant="controlStrong" color="textMuted">
             {t('strength.exercises', { n })}
@@ -159,6 +141,7 @@ const styles = themed(() =>
     strength: { borderLeftWidth: space[2], borderLeftColor: color.zone.strength },
     card: { gap: space[4] },
     head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    done: { flexDirection: 'row', gap: space[1], alignItems: 'center' },
     big: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     rows: { gap: space[2] + space[1] / 2 },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space[3] },

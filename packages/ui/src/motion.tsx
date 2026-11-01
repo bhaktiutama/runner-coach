@@ -11,8 +11,6 @@ export const easing = {
   stride: Easing.bezier(...motion.easing.stride),
 };
 
-/** Skala awal elemen yang muncul (centang selesai). */
-const POP_FROM = 0.4;
 /** Interval pembaruan timer (1 detik): cincin timer bergerak linear selama selang ini agar tidak patah-patah. */
 const TICK_MS = 1000;
 
@@ -70,41 +68,6 @@ export function useAnimatedNumber(target: number, mode: RingMotion, from?: numbe
     return () => a.stop();
   }, [target, mode, reduced, value]);
   return shown;
-}
-
-/**
- * Muncul dengan membesar + fade in (bib selesai + centang). `play` false = langsung tampil penuh
- * (mis. layar sedang tidak terlihat). Statis jika reduce-motion.
- */
-export function PopIn({ children, play = true }: { children: ReactNode; play?: boolean }) {
-  const reduced = useReducedMotion();
-  const v = useRef(new Animated.Value(play ? 0 : 1)).current;
-  useEffect(() => {
-    if (reduced || !play) {
-      v.setValue(1);
-      return;
-    }
-    v.setValue(0);
-    const a = Animated.timing(v, {
-      toValue: 1,
-      duration: duration.base,
-      delay: duration.fast,
-      easing: easing.stride,
-      useNativeDriver: true,
-    });
-    a.start();
-    return () => a.stop();
-  }, [play, reduced, v]);
-  return (
-    <Animated.View
-      style={{
-        opacity: v,
-        transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [POP_FROM, 1] }) }],
-      }}
-    >
-      {children}
-    </Animated.View>
-  );
 }
 
 /** Memudar masuk setiap kali `k` berubah (pergantian segmen timer). Render pertama langsung tampil. */

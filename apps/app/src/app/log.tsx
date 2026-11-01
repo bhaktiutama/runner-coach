@@ -28,7 +28,6 @@ import { Screen } from '@/components/Screen';
 import type { Tag } from '@/data/activities';
 import { useMatchWorkout, useProfile, useSaveActivity, useToday } from '@/data/hooks';
 import { t } from '@/i18n/t';
-import { markCelebrate } from '@/lib/celebrate';
 import { goHome } from '@/lib/nav';
 import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { isoAtLocal } from '@/lib/today';
@@ -68,7 +67,6 @@ export default function LogRun() {
       rpe,
       tags,
     });
-    if (linked) markCelebrate(linked.id);
     goHome(r.weekDone ? '/week-summary' : '/');
   };
 
