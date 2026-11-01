@@ -4,7 +4,7 @@ import { onboard } from './helpers';
 test.use({ actionTimeout: 10_000 });
 
 // Fase 2: strength + core (F-21), bahasa (F-22), gerbang Premium nonaktif (F-23).
-test('strength: kalender, detail 2.2s dengan placeholder animasi, timer gerakan, selesai', async ({
+test('strength: kalender, detail 2.2s (video squat + placeholder), timer gerakan, selesai', async ({
   page,
 }) => {
   // Hari Selasa tetap: hasil tidak bergantung tanggal (Minggu = minggu pertama plan hanya 1 hari).
@@ -20,6 +20,11 @@ test('strength: kalender, detail 2.2s dengan placeholder animasi, timer gerakan,
   await expect(page.getByTestId('screen-detail')).toBeVisible();
   await expect(page.getByTestId('exercise-list')).toBeVisible();
   await expect(page.getByTestId('exercise-animation-squat')).toBeVisible();
+  // Squat sudah punya video (web): berputar, tanpa suara, berulang. Gerakan lain masih placeholder.
+  const video = page.getByTestId('exercise-animation-squat').locator('video');
+  await expect(video).toBeVisible();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(0);
+  expect(await video.evaluate((v: HTMLVideoElement) => v.loop && v.muted)).toBe(true);
   await expect(page.getByText('Animasi gerakan menyusul').first()).toBeVisible();
   await expect(page.getByText(/Latihan kekuatan \dx seminggu/)).toBeVisible();
   await page.getByTestId('screen-detail').getByTestId('start').click();
