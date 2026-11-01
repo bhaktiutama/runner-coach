@@ -103,6 +103,8 @@ export default function ProgressTab() {
         ) : (
           <>
             <BarChart
+              key={`bars-${focused ? 'on' : 'off'}`}
+              animate
               height={space[10] * 2 + space[4]}
               bars={shown.map((w, i) => ({
                 value: w.distanceM,
@@ -136,6 +138,8 @@ export default function ProgressTab() {
         {trend.length >= 2 ? (
           <>
             <LineTrend
+              key={`trend-${focused ? 'on' : 'off'}`}
+              animate
               values={trend.map((x) => x.pace)}
               width={chartW}
               height={space[10] + space[4]}

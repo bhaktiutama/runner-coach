@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
-import { useAnimatedNumber, type RingMotion } from '../motion';
+import { duration, useAnimatedNumber, type RingMotion } from '../motion';
 import { size as sizes, themed } from '../theme';
 
 type Props = {
@@ -36,7 +36,7 @@ export function TrackRing({
   const r = Math.min(w, h) / 2;
   const perimeter = 2 * (w - 2 * r) + 2 * (h - 2 * r) + 2 * Math.PI * r;
   const target = Math.max(0, Math.min(1, progress));
-  const shown = useAnimatedNumber(target, motion, animateIn ? 0 : undefined);
+  const shown = useAnimatedNumber(target, motion, animateIn ? { from: 0, delay: duration.base } : {});
   // Easing stride boleh melewati 1 sebentar; busur dibatasi ke 0..1.
   const p = Math.max(0, Math.min(1, shown));
   const p100 = Math.round(target * 100);

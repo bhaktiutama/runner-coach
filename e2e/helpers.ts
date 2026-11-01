@@ -27,3 +27,16 @@ export async function onboard(page: Page, opts: { days?: number[]; strength?: bo
   await page.getByTestId('auth-skip').click();
   await expect(page.getByTestId('screen-today')).toBeVisible();
 }
+
+/** Pulihkan data contoh (docs/prototypes/seed) lewat alur Masuk > Pulihkan dari file, sampai Hari ini. */
+export async function restoreSeed(page: Page, file = 'docs/prototypes/seed/seed-minggu-4.json') {
+  await page.goto('/');
+  await page.getByText('Sudah punya akun? Masuk').click();
+  await page.getByTestId('auth-skip').click();
+  await page.getByText('Pulihkan dari file backup').click();
+  const chooser = page.waitForEvent('filechooser');
+  await page.getByTestId('restore').click();
+  await (await chooser).setFiles(file);
+  await page.getByTestId('restore-yes').click();
+  await expect(page.getByTestId('screen-today')).toBeVisible();
+}

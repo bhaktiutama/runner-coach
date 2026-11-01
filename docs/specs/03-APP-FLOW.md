@@ -176,7 +176,7 @@ Paywall mati (default fase 2): tidak ada yang terkunci, baris Premium di 4.1 ter
 
 | State | Aksi / sistem | State berikut |
 |-------|---------------|---------------|
-| idle | Mulai (hitung mundur 3 detik) | running |
+| idle | Mulai (hitung mundur 3 detik, angka zoom + getar ringan, UI/UX 11) | running |
 | running | Jeda | paused (label "DIJEDA") |
 | paused | Lanjutkan | running |
 | running | Segmen habis | running (segmen berikut) atau finished |

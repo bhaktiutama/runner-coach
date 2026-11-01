@@ -27,7 +27,7 @@ Tipografi juga jadi pembeda: **Bricolage Grotesque** (judul, angka) dan **Plus J
 2. Warna selalu disertai teks: bib menulis "TEMPO", status menulis "Tertinggal".
 3. Warna pastel (status, zona terang) hanya untuk isian dengan teks charcoal. Untuk teks/ikon berwarna pakai varian `-ink`.
 4. Angka (pace, jarak, waktu) selalu `font.family.display` + `tnum`.
-5. Animasi maksimal 320 ms (kecuali pengisian cincin `ring` 1000 ms) dan dimatikan saat setting "kurangi gerakan" aktif. Easing `stride` hanya untuk progres bertambah.
+5. Animasi maksimal 320 ms (kecuali pengisian cincin, penggambaran garis tren, dan angka naik: `ring` 1000 ms) dan dimatikan saat setting "kurangi gerakan" aktif. Easing `stride` hanya untuk progres bertambah.
 6. Setiap perubahan token warna wajib lolos `check_contrast.py`.
 
 ## 3. Arti warna
