@@ -145,7 +145,7 @@ export function LaneWeek({ days, animate = false }: { days: LaneDay[]; animate?:
             style={styles.dayCol}
             disabled={!d.onPress}
           >
-            <ScaleIn index={i} enabled={animate}>
+            <ScaleIn index={i} enabled={animate} style={styles.stretch}>
               <View style={[styles.dayLane, lane, d.today && styles.todayOutline]}>
                 {d.state === 'completed' ? (
                   <Icon name="check" size={space[4]} color={color.text} strokeWidth={3} />
@@ -368,6 +368,7 @@ const styles = themed(() =>
       borderBottomRightRadius: space[1],
     },
     week: { flexDirection: 'row', gap: space[2] },
+    stretch: { alignSelf: 'stretch' },
     dayCol: { alignItems: 'center', gap: space[1] + space[1] / 2, flex: 1 },
     todayOutline: {
       outlineWidth: border.selected - border.hairline / 2,

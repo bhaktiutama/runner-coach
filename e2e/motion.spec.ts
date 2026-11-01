@@ -67,6 +67,15 @@ test('Today: lajur minggu muncul bergantian; Progres: batang tumbuh', async ({ p
   // Lajur terakhir (Min) muncul paling akhir: pernah belum tampil penuh, lalu penuh.
   expect(Math.min(...lanes)).toBeLessThan(1);
   expect(lanes[lanes.length - 1]).toBe(1);
+  // Lajur tetap selebar kolomnya setelah animasi (bug: pembungkus animasi menyempitkan lajur).
+  const widths = await page.evaluate(() =>
+    ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((d) => {
+      const col = document.querySelector(`[data-testid="screen-today"] [aria-label="${d}"]`) as HTMLElement;
+      const lane = col.children[0]!.children[0] as HTMLElement;
+      return lane.getBoundingClientRect().width / col.getBoundingClientRect().width;
+    }),
+  );
+  for (const w of widths) expect(w).toBeGreaterThan(0.95);
 
   await page.getByRole('tab', { name: 'Progres' }).click();
   const frames = await sample(
@@ -118,13 +127,16 @@ test('hitung mundur, pilihan RPE, dan sakelar bergerak halus', async ({ page }) 
   await page.getByTestId('rpe-6').click();
   const rpe = await sample(() =>
     page.evaluate(() => {
-      const t = document.querySelector('[data-testid="rpe-6"] > div') as HTMLElement | null;
-      const m = t && /matrix\(\s*([^,]+),/.exec(getComputedStyle(t).transform);
-      return m ? Number(m[1]) : 1;
+      const t = document.querySelector('[data-testid="rpe-6"]') as HTMLElement | null;
+      const cs = t && getComputedStyle(t);
+      const m = cs && /matrix\(\s*([^,]+),/.exec(cs.transform);
+      return { scale: m ? Number(m[1]) : 1, bg: cs ? cs.backgroundColor : '' };
     }),
   );
-  expect(Math.max(...rpe)).toBeGreaterThan(1.02); // membesar melewati 1
-  expect(rpe[rpe.length - 1]).toBeCloseTo(1, 1);
+  // Kotak tombolnya (bukan hanya angka) membesar melewati 1 lalu menetap, dan warnanya terisi bertahap.
+  expect(Math.max(...rpe.map((r) => r.scale))).toBeGreaterThan(1.05);
+  expect(rpe[rpe.length - 1]!.scale).toBeCloseTo(1, 1);
+  expect(new Set(rpe.map((r) => r.bg)).size).toBeGreaterThan(2);
 
   await page.getByTestId('finish-save').click();
   const week = await page

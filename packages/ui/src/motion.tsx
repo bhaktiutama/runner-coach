@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from 'react-native';
+import {
+  AccessibilityInfo,
+  Animated,
+  Easing,
+  StyleSheet,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { confettiPieces } from './confetti-layout';
 import { border, color, motion, space } from './theme';
 
@@ -203,19 +211,25 @@ export function useEntrance({
 export function ScaleIn({
   index = 0,
   enabled = true,
+  style,
   children,
 }: {
   index?: number;
   enabled?: boolean;
+  /** Gaya tata letak pembungkus (mis. `alignSelf: 'stretch'` agar anak berukuran 100% tetap selebar induk). */
+  style?: StyleProp<ViewStyle>;
   children: ReactNode;
 }) {
   const v = useEntrance({ delay: index * STAGGER_LANE, enabled });
   return (
     <Animated.View
-      style={{
-        opacity: v,
-        transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [SCALE_FROM, 1] }) }],
-      }}
+      style={[
+        style,
+        {
+          opacity: v,
+          transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [SCALE_FROM, 1] }) }],
+        },
+      ]}
     >
       {children}
     </Animated.View>
