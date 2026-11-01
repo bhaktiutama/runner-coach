@@ -36,7 +36,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
 | Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
-| Gerak | 120 / 200 / 320 ms (cincin 1000 ms); easing `stride` hanya untuk progres |
+| Gerak | 120 / 200 / 320 ms (cincin, garis tren, angka naik 1000 ms); easing `stride` hanya untuk progres; detail di bagian 11 |
 
 ## 3. Komponen inti (`packages/ui`)
 
@@ -143,9 +143,14 @@ Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua
 | G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
 | G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
 | G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |
+| G7 | Batang volume tumbuh dari dasar bergantian (jeda 70 ms, `slow` + `stride`), angkanya naik dari 0; garis tren tergambar kiri ke kanan (`ring`, setelah jeda 320 ms) | Progres 3.3 (juga dipakai grafik 1.8 jika `animate`) | Diputar setiap tab Progres terlihat. Angka naik tanpa melewati nilai akhir (easing `standard`) | `BarChart` dan `LineTrend` (`animate`) |
+| G8 | Tujuh lajur "Minggu ini" muncul membesar + fade in bergantian (jeda 80 ms, `base` + `stride`); angka km minggu ini naik dari 0 (`ring`) | Hari ini 2.1 | **Sekali per sesi app** (saat Today pertama terlihat), bukan setiap membuka tab | `LaneWeek` (`animate`), `useAnimatedNumber` |
+| G9 | Tombol RPE terpilih membesar 0.9 ke 1.12 lalu 1 | 2.4, 2.6 | `base` + `fast`, `stride`. Tidak ada saat pilihan awal | `RpePicker` |
+| G10 | Knob sakelar bergeser halus, bukan loncat | Semua `Switch` (mis. 4.1, 4.5) | `base` + `standard` | `Switch` |
+| G11 | Angka hitung mundur 3-2-1 mengecil dari 1.5x sambil fade in; getar ringan per angka | Timer 2.3 | `slow` + `standard`. Getar hanya di iOS/Android (`countdownTick`) | `ZoomIn`, `cues.ts` |
 
 Aturan umum:
-- **Kurangi gerakan**: semua G1, G2, G3, G6 berhenti (nilai langsung ke akhir; konfeti tidak dirender). Dibaca dari setelan OS (web: `prefers-reduced-motion`) lewat `useReducedMotion`.
+- **Kurangi gerakan**: semua G1, G2, G6 sampai G11 berhenti (nilai langsung ke akhir; konfeti tidak dirender). Dibaca dari setelan OS (web: `prefers-reduced-motion`) lewat `useReducedMotion`.
 - Animasi tidak boleh menahan input dan tidak boleh mengubah posisi timer (posisi tetap dihitung dari timestamp, TRD 5).
 - Durasi dan easing hanya dari token; tidak ada angka milidetik di komponen layar.
 - Efek visual tren (kaca, kabut, aurora, grain, border bercahaya, clay) **belum** dipakai di app dan belum ada keputusan. Butuh `expo-blur` / `expo-glass-effect` untuk efek kaca (di luar TRD 1) dan cek kontras `check_contrast.py`. Eksplorasi hanya ada di prototipe.

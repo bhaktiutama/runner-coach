@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { duration, easing, useReducedMotion } from '../motion';
 import { border, color, radius, shadow, size, space, themed } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
@@ -102,6 +104,25 @@ export function Switch({
   label: string;
   testID?: string;
 }) {
+  const reduced = useReducedMotion();
+  const x = useRef(new Animated.Value(value ? SWITCH_TRAVEL : 0)).current;
+  const first = useRef(true);
+  useEffect(() => {
+    const to = value ? SWITCH_TRAVEL : 0;
+    if (first.current || reduced) {
+      first.current = false;
+      x.setValue(to);
+      return;
+    }
+    const a = Animated.timing(x, {
+      toValue: to,
+      duration: duration.base,
+      easing: easing.standard,
+      useNativeDriver: true,
+    });
+    a.start();
+    return () => a.stop();
+  }, [value, reduced, x]);
   return (
     <Pressable
       accessibilityRole="switch"
@@ -111,7 +132,7 @@ export function Switch({
       testID={testID}
       style={[styles.switch, { backgroundColor: value ? color.success : color.lineStrong }]}
     >
-      <View style={[styles.knob, value ? styles.knobOn : null]} />
+      <Animated.View style={[styles.knob, { transform: [{ translateX: x }] }]} />
     </Pressable>
   );
 }
@@ -148,6 +169,8 @@ export function DangerButton({
 /** Sakelar 52 x 32, kenop 26, celah 3 (4.5). */
 const KNOB = space[6] + border.selected - border.hairline / 2;
 const KNOB_PAD = (space[8] - KNOB) / 2;
+/** Jarak geser knob dari kiri ke kanan. */
+const SWITCH_TRAVEL = size.input - KNOB - 2 * KNOB_PAD;
 const styles = themed(() =>
   StyleSheet.create({
     labelCol: { flex: 1, gap: border.selected - border.hairline / 2 },
@@ -174,7 +197,6 @@ const styles = themed(() =>
       justifyContent: 'center',
     },
     knob: { width: KNOB, height: KNOB, borderRadius: radius.stadium, backgroundColor: color.surface },
-    knobOn: { alignSelf: 'flex-end' },
     danger: {
       height: size.buttonPrimary,
       borderRadius: radius.stadium,

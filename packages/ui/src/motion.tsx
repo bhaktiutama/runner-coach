@@ -14,8 +14,15 @@ export const easing = {
 /** Interval pembaruan timer (1 detik): cincin timer bergerak linear selama selang ini agar tidak patah-patah. */
 const TICK_MS = 1000;
 
-/** Cara progres bergerak: `stride` (memantul, nilai bertambah), `linear` (timer), `none` (langsung). */
-export type RingMotion = 'stride' | 'linear' | 'none';
+/** Skala awal elemen yang muncul (lajur minggu, angka hitung mundur memakai kebalikannya). */
+const SCALE_FROM = 0.4;
+const ZOOM_FROM = 1.5;
+/** Jeda antar elemen pada animasi berurutan (stagger). */
+export const STAGGER_BAR = 70;
+export const STAGGER_LANE = 80;
+
+/** Cara angka bergerak: `stride` (memantul), `linear` (timer), `count` (naik tanpa melewati target), `none` (langsung). */
+export type RingMotion = 'stride' | 'linear' | 'count' | 'none';
 
 /** Setelan "kurangi gerakan" milik OS (web: prefers-reduced-motion). Semua animasi wajib berhenti jika true. */
 export function useReducedMotion(): boolean {
@@ -36,7 +43,12 @@ export function useReducedMotion(): boolean {
  * Menganimasikan angka menuju `target`. `stride`: easing stride, `base`. `linear`: 1 detik tanpa
  * easing (timer). Langsung ke nilai jika `none` atau reduce-motion aktif. Dipakai TrackRing.
  */
-export function useAnimatedNumber(target: number, mode: RingMotion, from?: number): number {
+export function useAnimatedNumber(
+  target: number,
+  mode: RingMotion,
+  opts: { from?: number; delay?: number; durationMs?: number } = {},
+): number {
+  const { from, delay = 0, durationMs } = opts;
   const reduced = useReducedMotion();
   const [shown, setShown] = useState(from ?? target);
   const value = useRef(new Animated.Value(from ?? target)).current;
@@ -58,15 +70,14 @@ export function useAnimatedNumber(target: number, mode: RingMotion, from?: numbe
     }
     const a = Animated.timing(value, {
       toValue: target,
-      duration: mode === 'linear' ? TICK_MS : duration.ring,
-      // Mulai dari 0 (layar baru tampil): jeda sebentar supaya awal gerak terlihat setelah transisi layar.
-      delay: from !== undefined ? duration.base : 0,
-      easing: mode === 'linear' ? Easing.linear : easing.stride,
+      duration: durationMs ?? (mode === 'linear' ? TICK_MS : duration.ring),
+      delay,
+      easing: mode === 'linear' ? Easing.linear : mode === 'count' ? easing.standard : easing.stride,
       useNativeDriver: false,
     });
     a.start();
     return () => a.stop();
-  }, [target, mode, reduced, value]);
+  }, [target, mode, reduced, value, delay, durationMs]);
   return shown;
 }
 
@@ -148,5 +159,80 @@ export function Confetti({ count = 16 }: { count?: number }) {
         />
       ))}
     </View>
+  );
+}
+
+/**
+ * Nilai 0 ke 1 sekali saat komponen dipasang (stagger lewat `delay`). Langsung 1 jika `enabled` false
+ * atau reduce-motion aktif.
+ */
+export function useEntrance({
+  delay = 0,
+  durationMs = duration.base,
+  ease = easing.stride,
+  enabled = true,
+}: {
+  delay?: number;
+  durationMs?: number;
+  ease?: (t: number) => number;
+  enabled?: boolean;
+} = {}): Animated.Value {
+  const reduced = useReducedMotion();
+  const skip = !enabled || reduced;
+  const v = useRef(new Animated.Value(enabled ? 0 : 1)).current;
+  useEffect(() => {
+    if (skip) {
+      v.setValue(1);
+      return;
+    }
+    v.setValue(0);
+    const a = Animated.timing(v, {
+      toValue: 1,
+      duration: durationMs,
+      delay,
+      easing: ease,
+      useNativeDriver: true,
+    });
+    a.start();
+    return () => a.stop();
+  }, [skip, delay, durationMs, ease, v]);
+  return v;
+}
+
+/** Muncul membesar + fade in, berurutan per `index` (lajur "Minggu ini"). */
+export function ScaleIn({
+  index = 0,
+  enabled = true,
+  children,
+}: {
+  index?: number;
+  enabled?: boolean;
+  children: ReactNode;
+}) {
+  const v = useEntrance({ delay: index * STAGGER_LANE, enabled });
+  return (
+    <Animated.View
+      style={{
+        opacity: v,
+        transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [SCALE_FROM, 1] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+
+/** Muncul mengecil dari besar + fade in saat dipasang; ganti `key` untuk memutar ulang (hitung mundur 3-2-1). */
+export function ZoomIn({ children }: { children: ReactNode }) {
+  const v = useEntrance({ durationMs: duration.slow, ease: easing.standard });
+  return (
+    <Animated.View
+      style={{
+        opacity: v,
+        transform: [{ scale: v.interpolate({ inputRange: [0, 1], outputRange: [ZOOM_FROM, 1] }) }],
+      }}
+    >
+      {children}
+    </Animated.View>
   );
 }

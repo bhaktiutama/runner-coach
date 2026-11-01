@@ -3,6 +3,7 @@ import {
   border,
   Card,
   color,
+  duration,
   fontFiles,
   InfoBox,
   LaneWeek,
@@ -12,11 +13,13 @@ import {
   space,
   StatusChip,
   Text,
+  useAnimatedNumber,
   weekdayShortName,
   themed,
 } from '@run-coach/ui';
 import { formatDate, formatNumber } from '@run-coach/ui/format';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
+import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
@@ -45,12 +48,26 @@ function backupDue(m: MetaRow | undefined, planStart: string, d: string) {
 }
 
 /** 2.1 Hari ini. Tata letak = wireframe Today (jarak antarblok 18). */
+/** Pembukaan Today (lajur muncul bergantian + km naik) hanya sekali per sesi app (UI/UX bagian 11, G8). */
+let introPlayed = false;
+
 export default function Today() {
   const today = useToday();
   const plan = useActivePlan();
   const week = useWeekWorkouts(plan.data?.id, today);
   const dates = weekDates(today);
   const done = useActivityDistance(dates[0]!, dates[6]!);
+  const visible = usePathname() === '/';
+  // Diputar saat Today pertama kali terlihat dan data sudah ada.
+  const playIntro = useRef(!introPlayed);
+  useEffect(() => {
+    if (visible && done.data !== undefined) introPlayed = true;
+  }, [visible, done.data]);
+  const km = useAnimatedNumber(
+    Math.round((done.data ?? 0) / 100) / 10,
+    playIntro.current ? 'count' : 'none',
+    playIntro.current ? { from: 0, delay: duration.base } : {},
+  );
   const meta = useMeta();
   const ops = usePlanOps();
   const privacy = usePrivacyActions();
@@ -150,12 +167,13 @@ export default function Today() {
           </View>
           <Text variant="control" color="textMuted" testID="week-km">
             <Text variant="control" style={styles.weekDone}>
-              {formatNumber(Math.round((done.data ?? 0) / 100) / 10, 1)}
+              {formatNumber(km, 1)}
             </Text>
             {t('today.weekKmRest', { target: formatNumber(Math.round(target / 1000)) })}
           </Text>
         </View>
         <LaneWeek
+          animate={playIntro.current}
           days={dates.map((d, i) => {
             const w = workouts.find((x) => x.date === d);
             return {

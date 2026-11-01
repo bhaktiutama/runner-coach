@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { duration, easing, useReducedMotion } from '../motion';
 import { border, color, radius, ring, size, space, themed } from '../theme';
 import { Chip } from './Controls';
 import { Text } from './Text';
@@ -19,31 +21,9 @@ export function RpePicker({
   return (
     <View style={styles.wrap}>
       <View style={styles.row} accessibilityRole="radiogroup">
-        {Array.from({ length: 10 }, (_, i) => {
-          const n = i + 1;
-          const on = value === n;
-          return (
-            <Pressable
-              key={n}
-              testID={`rpe-${n}`}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: on }}
-              accessibilityLabel={String(n)}
-              onPress={() => onChange(n)}
-              style={[
-                styles.btn,
-                on && {
-                  backgroundColor: rpeColor(n),
-                  ...ring(border.selected - border.hairline / 2, color.text),
-                },
-              ]}
-            >
-              <Text variant="rpe" style={on && n >= 9 ? { color: color.zone.onInterval } : null}>
-                {String(n)}
-              </Text>
-            </Pressable>
-          );
-        })}
+        {Array.from({ length: 10 }, (_, i) => (
+          <RpeButton key={i + 1} n={i + 1} on={value === i + 1} onPress={() => onChange(i + 1)} />
+        ))}
       </View>
       <View style={styles.scale}>
         {labels.map((l) => (
@@ -53,6 +33,54 @@ export function RpePicker({
         ))}
       </View>
     </View>
+  );
+}
+
+/** Tombol RPE: saat terpilih membesar sedikit lalu menetap (UI/UX bagian 11, G9). */
+function RpeButton({ n, on, onPress }: { n: number; on: boolean; onPress: () => void }) {
+  const reduced = useReducedMotion();
+  const scale = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (!on || reduced) return;
+    scale.setValue(0.9);
+    const a = Animated.sequence([
+      Animated.timing(scale, {
+        toValue: 1.12,
+        duration: duration.base,
+        easing: easing.stride,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: duration.fast,
+        easing: easing.standard,
+        useNativeDriver: true,
+      }),
+    ]);
+    a.start();
+    return () => a.stop();
+  }, [on, reduced, scale]);
+  return (
+    <Pressable
+      testID={`rpe-${n}`}
+      accessibilityRole="radio"
+      accessibilityState={{ selected: on }}
+      accessibilityLabel={String(n)}
+      onPress={onPress}
+      style={[
+        styles.btn,
+        on && {
+          backgroundColor: rpeColor(n),
+          ...ring(border.selected - border.hairline / 2, color.text),
+        },
+      ]}
+    >
+      <Animated.View style={{ transform: [{ scale }] }}>
+        <Text variant="rpe" style={on && n >= 9 ? { color: color.zone.onInterval } : null}>
+          {String(n)}
+        </Text>
+      </Animated.View>
+    </Pressable>
   );
 }
 

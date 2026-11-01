@@ -13,6 +13,7 @@ import {
   space,
   Text,
   TrackRing,
+  ZoomIn,
   themed,
 } from '@run-coach/ui';
 import { formatClock, formatDuration, formatPaceValue } from '@run-coach/ui/format';
@@ -27,7 +28,7 @@ import { t } from '@/i18n/t';
 import { getPermission, notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
 import { intensitySegments } from '@/lib/workoutView';
-import { requestWakeLock } from '@/timer/cues';
+import { countdownTick, requestWakeLock } from '@/timer/cues';
 import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
 import { plannedS } from '@/timer/machine';
 import { useTimer } from '@/timer/useTimer';
@@ -80,6 +81,10 @@ export default function TimerScreen() {
     if (!ready || countdown !== null) return;
     setCountdown(3);
   }, [ready, countdown]);
+  // Getar ringan tiap angka hitung mundur.
+  useEffect(() => {
+    if (countdown !== null && countdown > 0) countdownTick();
+  }, [countdown]);
   const startRef = useRef(tm.start);
   startRef.current = tm.start;
   useEffect(() => {
@@ -292,9 +297,11 @@ export default function TimerScreen() {
             <Text variant="statusCaps" color="darkTextMuted">
               {t('timer.countdown')}
             </Text>
-            <Text variant="timer" color="darkText">
-              {String(countdown)}
-            </Text>
+            <ZoomIn key={countdown}>
+              <Text variant="timer" color="darkText">
+                {String(countdown)}
+              </Text>
+            </ZoomIn>
           </View>
         ) : (
           <>
