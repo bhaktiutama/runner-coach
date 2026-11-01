@@ -14,3 +14,4 @@ export * from './components/LineTrend';
 export * from './components/Settings';
 export * from './motion';
 export * from './confetti-layout';
+export * from './components/Dialog';

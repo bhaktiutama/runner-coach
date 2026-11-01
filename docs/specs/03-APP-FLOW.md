@@ -123,7 +123,7 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 ### FL-10 Keluar (4.5)
 
-"Keluar" -> pilihan: "Keluar, data tetap di HP ini" atau "Keluar dan hapus data di HP ini" (tawarkan backup dulu). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
+"Keluar" -> dialog konfirmasi di tengah layar ("Keluar dari akun?", "Data latihanmu tetap ada di HP ini"): Keluar / Batal. Data lokal tidak dihapus; menghapus data punya menu sendiri ("Hapus data di HP ini", dialog konfirmasi + tawaran backup). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
 
 ### FL-12 Strength + core (F-21)
 

@@ -40,3 +40,4 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 - Jangan memakai `--prod` atau `eas deploy:promote` tanpa perintah pemilik produk.
 - Merge ke `development` hanya setelah pemilik produk selesai review di preview web.
 - Header COOP/COEP untuk `expo-sqlite` di web diatur di `apps/app/app.json`; periksa jika preview tidak mau memuat database.
+- Menjalankan E2E lokal/di container: ekspor web **dengan** `EXPO_PUBLIC_E2E=1` (seperti CI), jalankan dengan `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium pnpm test:e2e`. Tanpa flag itu hampir semua test gagal (timeout 60 detik). Jangan men-deploy build berflag E2E ke preview: ekspor ulang tanpa flag dulu.

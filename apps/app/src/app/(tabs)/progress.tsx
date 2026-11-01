@@ -27,7 +27,7 @@ import {
   formatRaceRange,
   formatWeekdayShort,
 } from '@run-coach/ui/format';
-import { router } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
@@ -41,6 +41,7 @@ import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 
 /** 3.3 Progres (F-07). Tata letak = wireframe Progress. */
 export default function ProgressTab() {
+  const focused = useIsFocused();
   const today = useToday();
   const plan = useActivePlan();
   const all = useActivities();
@@ -154,6 +155,8 @@ export default function ProgressTab() {
         <Card style={styles.small}>
           <View style={styles.ringBox}>
             <TrackRing
+              key={focused ? 'on' : 'off'}
+              animateIn
               width={space[10] * 3 + space[3]}
               height={space[10] + space[8] + space[1]}
               stroke={space[2] + space[1] / 2}

@@ -12,12 +12,36 @@ import {
   Text,
   themed,
 } from '@run-coach/ui';
-import { router } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
 import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
+
+/**
+ * True sekali saja: saat status baru jadi selesai dan layar Today sedang terlihat. Jika status
+ * berubah saat layar tertutup (timer/2.4 di atasnya), animasi ditunda sampai layar kembali terlihat.
+ */
+function usePopWhenVisible(done: boolean): boolean {
+  const focused = useIsFocused();
+  const prev = useRef(done);
+  const [pending, setPending] = useState(false);
+  const [pop, setPop] = useState(false);
+  useEffect(() => {
+    if (done && !prev.current) setPending(true);
+    if (!done) setPop(false);
+    prev.current = done;
+  }, [done]);
+  useEffect(() => {
+    if (pending && focused) {
+      setPending(false);
+      setPop(true);
+    }
+  }, [pending, focused]);
+  return pop;
+}
 
 type Props = { workout: Workout; onStart?: () => void; onDetails?: () => void; startLabel?: string };
 
@@ -26,12 +50,13 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
   const zone = TYPE_ZONE[workout.type];
   const rows = segmentRows(workout.steps, workout.type);
   const done = workout.status === 'completed';
+  const pop = usePopWhenVisible(done);
   return (
     <Card style={styles.card} testID="workout-card">
       <View style={styles.head}>
         <BibTag label={typeName(workout.type)} zone={zone} />
         {done ? (
-          <PopIn>
+          <PopIn play={pop}>
             <View style={styles.done}>
               <Icon name="check" size={space[4]} color={color.success} />
               <Text variant="controlStrong" color="success">
@@ -92,12 +117,13 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   const locked = isLocked(workout, ent);
   const done = workout.status === 'completed';
   const n = workout.steps.filter((s) => s.kind === 'exercise').length;
+  const pop = usePopWhenVisible(done);
   return (
     <Card style={[styles.card, styles.strength]} testID="strength-card">
       <View style={styles.head}>
         <BibTag label={typeName(workout.type)} zone="strength" />
         {done ? (
-          <PopIn>
+          <PopIn play={pop}>
             <View style={styles.done}>
               <Icon name="check" size={space[4]} color={color.success} />
               <Text variant="controlStrong" color="success">

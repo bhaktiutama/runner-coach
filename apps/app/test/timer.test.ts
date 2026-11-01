@@ -100,3 +100,22 @@ describe('timer state machine (App Flow 3.2)', () => {
     expect(sum.distanceM).toBe(run);
   });
 });
+
+// Bar segmen mengikuti segmen yang sedang berjalan, bukan waktu berjalan (bug: dilewati tapi bar tetap di segmen 1).
+describe('plannedElapsedS (bar segmen)', () => {
+  const steps = runWalk(4, 60, 60, z);
+  const segs = buildSegments(steps);
+
+  it('di segmen pertama = waktu di segmen itu', () => {
+    const st = start(initialState('w'), s(0));
+    expect(position(st, segs, s(20)).plannedElapsedS).toBe(20);
+  });
+  it('setelah melewati segmen, posisi rencana lompat ke awal segmen berikutnya (bukan 14 detik)', () => {
+    let st = start(initialState('w'), s(0));
+    st = skipGroup(st, segs, s(14));
+    const p = position(st, segs, s(14));
+    expect(p.totalElapsedS).toBe(14);
+    expect(p.plannedElapsedS).toBeGreaterThan(p.totalElapsedS);
+    expect(p.plannedElapsedS).toBe(segs.slice(0, p.index).reduce((a, x) => a + (x.timedS ?? 0), 0));
+  });
+});

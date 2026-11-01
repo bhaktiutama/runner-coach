@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
-import { useAnimatedNumber } from '../motion';
+import { useAnimatedNumber, type RingMotion } from '../motion';
 import { size as sizes, themed } from '../theme';
 
 type Props = {
@@ -12,8 +12,8 @@ type Props = {
   color: string;
   trackColor: string;
   stroke?: number;
-  /** Animasi stride saat progres berubah. Matikan untuk progres yang berubah tiap detik (timer). Default true. */
-  animate?: boolean;
+  /** Gerak saat progres berubah: `stride` (default), `linear` (timer, per detik), `none`. */
+  motion?: RingMotion;
   /** Mulai dari 0 saat pertama tampil (perayaan minggu tuntas). */
   animateIn?: boolean;
   children?: ReactNode;
@@ -27,7 +27,7 @@ export function TrackRing({
   color,
   trackColor,
   stroke = sizes.trackStroke,
-  animate = true,
+  motion = 'stride',
   animateIn = false,
   children,
 }: Props) {
@@ -36,7 +36,7 @@ export function TrackRing({
   const r = Math.min(w, h) / 2;
   const perimeter = 2 * (w - 2 * r) + 2 * (h - 2 * r) + 2 * Math.PI * r;
   const target = Math.max(0, Math.min(1, progress));
-  const shown = useAnimatedNumber(target, animate, animateIn ? 0 : undefined);
+  const shown = useAnimatedNumber(target, motion, animateIn ? 0 : undefined);
   // Easing stride boleh melewati 1 sebentar; busur dibatasi ke 0..1.
   const p = Math.max(0, Math.min(1, shown));
   const p100 = Math.round(target * 100);

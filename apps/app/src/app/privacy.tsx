@@ -1,8 +1,8 @@
 import { diffDays, type EngineMessageKey } from '@run-coach/training-engine';
 import {
+  ConfirmDialog,
   border,
   color,
-  DangerButton,
   IconButton,
   InfoBox,
   Logo,
@@ -138,35 +138,38 @@ export default function Privacy() {
           <Text>{msg.text}</Text>
         </InfoBox>
       ) : null}
-      {sheet && typeof sheet === 'object' ? (
-        <View style={styles.sheet} testID="restore-confirm">
-          <Text variant="heading">{t('privacy.restoreTitle')}</Text>
-          <Text color="textMuted">
-            {t('privacy.restoreSummary', {
-              goal: sheet.summary.goal ? et(`distance.${sheet.summary.goal}` as EngineMessageKey) : '-',
-              workouts: sheet.summary.workouts,
-              activities: sheet.summary.activities,
-              date: formatDateLong(sheet.summary.exportedAt.slice(0, 10)),
-            })}
-          </Text>
-          <DangerButton
-            label={t('privacy.restoreReplace')}
-            testID="restore-yes"
-            loading={a.restore.isPending}
-            onPress={async () => {
-              try {
-                await a.restore.mutateAsync(sheet.file);
-                track('backup_restored');
-                startFresh();
-              } catch {
-                setSheet(null);
-                setMsg({ tone: 'danger', text: t('privacy.restoreFailed') });
-              }
-            }}
-          />
-          <SecondaryButton label={t('common.cancel')} onPress={() => setSheet(null)} />
-        </View>
-      ) : null}
+      <ConfirmDialog
+        visible={!!sheet && typeof sheet === 'object'}
+        danger
+        title={t('privacy.restoreTitle')}
+        body={
+          sheet && typeof sheet === 'object'
+            ? t('privacy.restoreSummary', {
+                goal: sheet.summary.goal ? et(`distance.${sheet.summary.goal}` as EngineMessageKey) : '-',
+                workouts: sheet.summary.workouts,
+                activities: sheet.summary.activities,
+                date: formatDateLong(sheet.summary.exportedAt.slice(0, 10)),
+              })
+            : undefined
+        }
+        confirmLabel={t('privacy.restoreReplace')}
+        cancelLabel={t('common.cancel')}
+        loading={a.restore.isPending}
+        testID="restore-confirm"
+        confirmTestID="restore-yes"
+        onConfirm={async () => {
+          if (!sheet || typeof sheet !== 'object') return;
+          try {
+            await a.restore.mutateAsync(sheet.file);
+            track('backup_restored');
+            startFresh();
+          } catch {
+            setSheet(null);
+            setMsg({ tone: 'danger', text: t('privacy.restoreFailed') });
+          }
+        }}
+        onCancel={() => setSheet(null)}
+      />
       <SettingsGroup>
         <SettingsRow
           first
@@ -223,45 +226,37 @@ export default function Privacy() {
           testID="delete-account"
         />
       </SettingsGroup>
-      {sheet === 'signout' ? (
-        <View style={styles.sheet}>
-          <Text variant="heading">{t('privacy.signOutTitle')}</Text>
-          <PrimaryButton
-            label={t('privacy.signOutKeep')}
-            onPress={async () => {
-              await a.signOut.mutateAsync();
-              setSheet(null);
-            }}
-          />
-          <SecondaryButton label={t('privacy.backupCta')} icon="share" onPress={() => void doBackup()} />
-          <DangerButton
-            label={t('privacy.signOutWipe')}
-            onPress={async () => {
-              await a.signOut.mutateAsync();
-              await a.wipe.mutateAsync();
-              router.replace('/welcome');
-            }}
-          />
-          <SecondaryButton label={t('common.cancel')} variant="ghost" onPress={() => setSheet(null)} />
-        </View>
-      ) : null}
-      {sheet === 'wipe' ? (
-        <View style={styles.sheet} testID="wipe-confirm">
-          <Text variant="heading">{t('privacy.wipeTitle')}</Text>
-          <Text color="textMuted">{t('privacy.wipeBody')}</Text>
-          <SecondaryButton label={t('privacy.backupCta')} icon="share" onPress={() => void doBackup()} />
-          <DangerButton
-            label={t('privacy.wipeYes')}
-            testID="wipe-yes"
-            onPress={async () => {
-              await a.wipe.mutateAsync();
-              if (router.canDismiss()) router.dismissAll();
-              router.replace('/welcome');
-            }}
-          />
-          <SecondaryButton label={t('common.cancel')} variant="ghost" onPress={() => setSheet(null)} />
-        </View>
-      ) : null}
+      <ConfirmDialog
+        visible={sheet === 'signout'}
+        title={t('privacy.signOutTitle')}
+        body={t('privacy.signOutBody')}
+        confirmLabel={t('privacy.signOutYes')}
+        cancelLabel={t('common.cancel')}
+        confirmTestID="signout-yes"
+        onConfirm={async () => {
+          await a.signOut.mutateAsync();
+          setSheet(null);
+        }}
+        onCancel={() => setSheet(null)}
+      />
+      <ConfirmDialog
+        visible={sheet === 'wipe'}
+        danger
+        title={t('privacy.wipeTitle')}
+        body={t('privacy.wipeBody')}
+        confirmLabel={t('privacy.wipeYes')}
+        cancelLabel={t('common.cancel')}
+        extra={{ label: t('privacy.backupCta'), onPress: () => void doBackup() }}
+        testID="wipe-confirm"
+        confirmTestID="wipe-yes"
+        onConfirm={async () => {
+          await a.wipe.mutateAsync();
+          setSheet(null);
+          if (router.canDismiss()) router.dismissAll();
+          router.replace('/welcome');
+        }}
+        onCancel={() => setSheet(null)}
+      />
     </Screen>
   );
 }
@@ -280,6 +275,5 @@ const styles = themed(() =>
     heroBody: { lineHeight: space[5] + border.hairline, opacity: 0.85 },
     group: { gap: space[2] + border.selected - border.hairline / 2 },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-    sheet: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
   }),
 );

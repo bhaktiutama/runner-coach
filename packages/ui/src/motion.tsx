@@ -13,6 +13,11 @@ export const easing = {
 
 /** Skala awal elemen yang muncul (centang selesai). */
 const POP_FROM = 0.4;
+/** Interval pembaruan timer (1 detik): cincin timer bergerak linear selama selang ini agar tidak patah-patah. */
+const TICK_MS = 1000;
+
+/** Cara progres bergerak: `stride` (memantul, nilai bertambah), `linear` (timer), `none` (langsung). */
+export type RingMotion = 'stride' | 'linear' | 'none';
 
 /** Setelan "kurangi gerakan" milik OS (web: prefers-reduced-motion). Semua animasi wajib berhenti jika true. */
 export function useReducedMotion(): boolean {
@@ -30,19 +35,24 @@ export function useReducedMotion(): boolean {
 }
 
 /**
- * Menganimasikan angka menuju `target` (easing stride, `base`). Kembali ke nilai langsung jika
- * `animate` false atau reduce-motion aktif. Dipakai TrackRing.
+ * Menganimasikan angka menuju `target`. `stride`: easing stride, `base`. `linear`: 1 detik tanpa
+ * easing (timer). Langsung ke nilai jika `none` atau reduce-motion aktif. Dipakai TrackRing.
  */
-export function useAnimatedNumber(target: number, animate: boolean, from?: number): number {
+export function useAnimatedNumber(target: number, mode: RingMotion, from?: number): number {
   const reduced = useReducedMotion();
   const [shown, setShown] = useState(from ?? target);
   const value = useRef(new Animated.Value(from ?? target)).current;
+  const last = useRef(from ?? target);
   useEffect(() => {
-    const id = value.addListener(({ value: v }) => setShown(v));
+    const id = value.addListener(({ value: v }) => {
+      last.current = v;
+      setShown(v);
+    });
     return () => value.removeListener(id);
   }, [value]);
   useEffect(() => {
-    if (!animate || reduced) {
+    // Timer: pindah segmen mereset progres ke awal; jangan "memutar balik" selama 1 detik.
+    if (mode === 'none' || reduced || (mode === 'linear' && target < last.current)) {
       value.stopAnimation();
       value.setValue(target);
       setShown(target);
@@ -50,22 +60,25 @@ export function useAnimatedNumber(target: number, animate: boolean, from?: numbe
     }
     const a = Animated.timing(value, {
       toValue: target,
-      duration: duration.base,
-      easing: easing.stride,
+      duration: mode === 'linear' ? TICK_MS : duration.base,
+      easing: mode === 'linear' ? Easing.linear : easing.stride,
       useNativeDriver: false,
     });
     a.start();
     return () => a.stop();
-  }, [target, animate, reduced, value]);
+  }, [target, mode, reduced, value]);
   return shown;
 }
 
-/** Muncul dengan membesar + fade in saat dipasang (bib selesai + centang). Statis jika reduce-motion. */
-export function PopIn({ children }: { children: ReactNode }) {
+/**
+ * Muncul dengan membesar + fade in (bib selesai + centang). `play` false = langsung tampil penuh
+ * (mis. layar sedang tidak terlihat). Statis jika reduce-motion.
+ */
+export function PopIn({ children, play = true }: { children: ReactNode; play?: boolean }) {
   const reduced = useReducedMotion();
-  const v = useRef(new Animated.Value(0)).current;
+  const v = useRef(new Animated.Value(play ? 0 : 1)).current;
   useEffect(() => {
-    if (reduced) {
+    if (reduced || !play) {
       v.setValue(1);
       return;
     }
@@ -78,7 +91,7 @@ export function PopIn({ children }: { children: ReactNode }) {
     });
     a.start();
     return () => a.stop();
-  }, [reduced, v]);
+  }, [play, reduced, v]);
   return (
     <Animated.View
       style={{

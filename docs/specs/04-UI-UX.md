@@ -137,9 +137,9 @@ Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua
 
 | # | Gerak | Di mana | Aturan | Komponen |
 |---|---|---|---|---|
-| G1 | Busur TrackRing tumbuh ke nilai baru | Kepatuhan (3.3), minggu tuntas (2.5) | `base` + easing `stride` (sedikit memantul; busur dibatasi 0..100%). 2.5 mulai dari 0 saat layar tampil. **Timer 2.3 tidak dianimasikan** (progres berubah tiap detik; posisi tetap dari timestamp) | `TrackRing` (`animate`, `animateIn`) |
+| G1 | Busur TrackRing tumbuh ke nilai baru | Kepatuhan (3.3), minggu tuntas (2.5), timer (2.3) | Kepatuhan dan 2.5: `base` + easing `stride` (sedikit memantul; busur dibatasi 0..100%), mulai dari 0 setiap layar/tab terlihat. Timer 2.3: bergerak linear 1 detik per tick agar halus; pindah segmen (progres turun) langsung reset tanpa memutar balik. Posisi timer tetap dihitung dari timestamp | `TrackRing` (`animate`, `animateIn`) |
 | G2 | Konfeti kecil, 16 potongan, warna palet | 2.5 hanya jika semua latihan minggu itu tuntas | Sekali putar saat layar tampil, `slow` 320 ms, memudar di akhir. Tata letak deterministik (tanpa acak) | `Confetti`, `confettiPieces` |
-| G3 | Centang "Selesai" muncul dengan membesar + fade in | Kartu latihan dan kartu strength (2.1) saat status jadi selesai | `base` + `stride`, skala awal 0.4. Bib tidak berubah warna | `PopIn` |
+| G3 | Centang "Selesai" muncul dengan membesar + fade in | Kartu latihan dan kartu strength (2.1) saat status jadi selesai. Jika status berubah saat 2.1 tertutup (timer/2.4 di atasnya), animasi ditunda sampai 2.1 terlihat lagi | `base` + `stride`, skala awal 0.4. Bib tidak berubah warna | `PopIn` |
 | G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
 | G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
 | G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |
@@ -149,3 +149,7 @@ Aturan umum:
 - Animasi tidak boleh menahan input dan tidak boleh mengubah posisi timer (posisi tetap dihitung dari timestamp, TRD 5).
 - Durasi dan easing hanya dari token; tidak ada angka milidetik di komponen layar.
 - Efek visual tren (kaca, kabut, aurora, grain, border bercahaya, clay) **belum** dipakai di app dan belum ada keputusan. Butuh `expo-blur` / `expo-glass-effect` untuk efek kaca (di luar TRD 1) dan cek kontras `check_contrast.py`. Eksplorasi hanya ada di prototipe.
+
+### Dialog konfirmasi (v0.8)
+
+Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).

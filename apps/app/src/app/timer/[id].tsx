@@ -304,7 +304,7 @@ export default function TimerScreen() {
                 height={ringW * (300 / 350)}
                 stroke={space[3] + border.selected - border.hairline / 2}
                 progress={seg?.timedS ? pos.elapsedInSegS / seg.timedS : 0}
-                animate={false}
+                motion="linear"
                 color={ringColor}
                 trackColor={dark.surfaceSunken}
               >
@@ -371,8 +371,8 @@ export default function TimerScreen() {
             <View style={styles.progress}>
               <View style={styles.segRow}>
                 {segs.map((s2, i) => {
-                  const done = i < segIndexOf(segs, pos.totalElapsedS);
-                  const cur = i === segIndexOf(segs, pos.totalElapsedS);
+                  const done = i < segIndexOf(segs, pos.plannedElapsedS);
+                  const cur = i === segIndexOf(segs, pos.plannedElapsedS);
                   return (
                     <View
                       key={i}
