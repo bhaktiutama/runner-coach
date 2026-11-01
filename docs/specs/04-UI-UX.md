@@ -36,7 +36,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
 | Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
-| Gerak | 120 / 200 / 320 ms; easing `stride` hanya untuk progres |
+| Gerak | 120 / 200 / 320 ms (cincin 1000 ms); easing `stride` hanya untuk progres |
 
 ## 3. Komponen inti (`packages/ui`)
 
@@ -137,9 +137,9 @@ Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua
 
 | # | Gerak | Di mana | Aturan | Komponen |
 |---|---|---|---|---|
-| G1 | Busur TrackRing tumbuh ke nilai baru | Kepatuhan (3.3), minggu tuntas (2.5), timer (2.3) | Kepatuhan dan 2.5: `base` + easing `stride` (sedikit memantul; busur dibatasi 0..100%), mulai dari 0 setiap layar/tab terlihat. Timer 2.3: bergerak linear 1 detik per tick agar halus; pindah segmen (progres turun) langsung reset tanpa memutar balik. Posisi timer tetap dihitung dari timestamp | `TrackRing` (`animate`, `animateIn`) |
+| G1 | Busur TrackRing tumbuh ke nilai baru | Kepatuhan (3.3), minggu tuntas (2.5), timer (2.3) | Kepatuhan dan 2.5: `ring` 1000 ms + easing `stride` (sedikit memantul; busur dibatasi 0..100%), mulai dari 0 setelah jeda 200 ms setiap layar/tab terlihat. Timer 2.3: bergerak linear 1 detik per tick agar halus; pindah segmen (progres turun) langsung reset tanpa memutar balik. Posisi timer tetap dihitung dari timestamp | `TrackRing` (`motion`, `animateIn`) |
 | G2 | Konfeti kecil, 16 potongan, warna palet | 2.5 hanya jika semua latihan minggu itu tuntas | Sekali putar saat layar tampil, `slow` 320 ms, memudar di akhir. Tata letak deterministik (tanpa acak) | `Confetti`, `confettiPieces` |
-| G3 | Centang "Selesai" muncul dengan membesar + fade in | Kartu latihan dan kartu strength (2.1) saat status jadi selesai. Jika status berubah saat 2.1 tertutup (timer/2.4 di atasnya), animasi ditunda sampai 2.1 terlihat lagi | `base` + `stride`, skala awal 0.4. Bib tidak berubah warna | `PopIn` |
+| G3 | Centang "Selesai" muncul dengan membesar + fade in | Kartu latihan dan kartu strength (2.1) saat status jadi selesai. Dipicu oleh penyimpanan latihan (`lib/celebrate.ts`), diputar saat 2.1 terlihat lagi setelah timer/2.4 (jeda 120 ms). Tidak diputar ulang saat membuka Today biasa | `base` + `stride`, skala awal 0.4. Bib tidak berubah warna | `PopIn` |
 | G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
 | G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
 | G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |

@@ -60,7 +60,9 @@ export function useAnimatedNumber(target: number, mode: RingMotion, from?: numbe
     }
     const a = Animated.timing(value, {
       toValue: target,
-      duration: mode === 'linear' ? TICK_MS : duration.base,
+      duration: mode === 'linear' ? TICK_MS : duration.ring,
+      // Mulai dari 0 (layar baru tampil): jeda sebentar supaya awal gerak terlihat setelah transisi layar.
+      delay: from !== undefined ? duration.base : 0,
       easing: mode === 'linear' ? Easing.linear : easing.stride,
       useNativeDriver: false,
     });
@@ -86,6 +88,7 @@ export function PopIn({ children, play = true }: { children: ReactNode; play?: b
     const a = Animated.timing(v, {
       toValue: 1,
       duration: duration.base,
+      delay: duration.fast,
       easing: easing.stride,
       useNativeDriver: true,
     });

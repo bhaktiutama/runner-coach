@@ -722,7 +722,8 @@ export const tokens = {
     "duration": {
       "fast": 120,
       "base": 200,
-      "slow": 320
+      "slow": 320,
+      "ring": 1000
     },
     "easing": {
       "standard": [

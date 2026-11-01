@@ -21,6 +21,7 @@ import { Screen } from '@/components/Screen';
 import type { LoadFeel, Tag } from '@/data/activities';
 import { useActiveTimer, useDiscardTimer, useSaveActivity, useWorkout } from '@/data/hooks';
 import { t } from '@/i18n/t';
+import { markCelebrate } from '@/lib/celebrate';
 import { goHome } from '@/lib/nav';
 import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { typeName } from '@/lib/workoutView';
@@ -82,6 +83,7 @@ export default function Finish() {
       loadFeel: support ? feel : null,
       clearTimer: true,
     });
+    markCelebrate(w.data!.id);
     goHome(r.weekDone ? '/week-summary' : '/');
   };
 

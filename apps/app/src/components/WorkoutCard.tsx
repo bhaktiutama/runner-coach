@@ -12,34 +12,28 @@ import {
   Text,
   themed,
 } from '@run-coach/ui';
-import { router, useIsFocused } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { router, usePathname } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
+import { consumeCelebrate } from '@/lib/celebrate';
 import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
 
 /**
- * True sekali saja: saat status baru jadi selesai dan layar Today sedang terlihat. Jika status
- * berubah saat layar tertutup (timer/2.4 di atasnya), animasi ditunda sampai layar kembali terlihat.
+ * True setelah latihan ini baru disimpan (lihat `lib/celebrate.ts`) dan layar Today terlihat.
+ * Tidak bergantung pada perubahan status di layar yang tertutup, jadi tetap jalan walau kartu
+ * dipasang ulang saat kembali dari timer/2.4.
  */
-function usePopWhenVisible(done: boolean): boolean {
-  const focused = useIsFocused();
-  const prev = useRef(done);
-  const [pending, setPending] = useState(false);
+function usePopWhenVisible(workoutId: string, done: boolean): boolean {
+  // Today = rute '/'. Selama timer atau 2.4 di atasnya, path-nya berbeda.
+  const focused = usePathname() === '/';
   const [pop, setPop] = useState(false);
   useEffect(() => {
-    if (done && !prev.current) setPending(true);
     if (!done) setPop(false);
-    prev.current = done;
-  }, [done]);
-  useEffect(() => {
-    if (pending && focused) {
-      setPending(false);
-      setPop(true);
-    }
-  }, [pending, focused]);
+    else if (focused && consumeCelebrate(workoutId)) setPop(true);
+  }, [done, focused, workoutId]);
   return pop;
 }
 
@@ -50,7 +44,7 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
   const zone = TYPE_ZONE[workout.type];
   const rows = segmentRows(workout.steps, workout.type);
   const done = workout.status === 'completed';
-  const pop = usePopWhenVisible(done);
+  const pop = usePopWhenVisible(workout.id, done);
   return (
     <Card style={styles.card} testID="workout-card">
       <View style={styles.head}>
@@ -117,7 +111,7 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   const locked = isLocked(workout, ent);
   const done = workout.status === 'completed';
   const n = workout.steps.filter((s) => s.kind === 'exercise').length;
-  const pop = usePopWhenVisible(done);
+  const pop = usePopWhenVisible(workout.id, done);
   return (
     <Card style={[styles.card, styles.strength]} testID="strength-card">
       <View style={styles.head}>
