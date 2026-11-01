@@ -31,10 +31,7 @@ test('centang selesai dan cincin Progres beranimasi saat layar terlihat', async 
   // Ukur skala/opacity centang tiap 40 ms: harus pernah di bawah 1 lalu berakhir di 1.
   const readCheck = () =>
     page.evaluate(() => {
-      const el = [...document.querySelectorAll('[data-testid="workout-card"] *')].find(
-        (e) => e.children.length === 0 && e.textContent === 'SELESAI',
-      );
-      let n: Element | null = el ?? null;
+      let n: Element | null = document.querySelector('[data-testid="workout-bib"]');
       let min = 1;
       for (let k = 0; k < 6 && n; k++, n = n.parentElement)
         min = Math.min(min, Number(getComputedStyle(n).opacity));

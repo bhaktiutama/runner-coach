@@ -9,13 +9,23 @@ const onKey = (z: Zone) => `on${z[0]!.toUpperCase()}${z.slice(1)}` as ZoneKey;
 
 /**
  * Label tipe latihan gaya nomor dada (design system ciri 3). `done`: bib selesai (isi `success`,
- * centang di kiri label), menggantikan warna zona.
+ * centang di kiri label); nama tipe latihan tetap tampil.
  */
-export function BibTag({ label, zone, done }: { label: string; zone: Zone; done?: boolean }) {
+export function BibTag({
+  label,
+  zone,
+  done,
+  testID,
+}: {
+  label: string;
+  zone: Zone;
+  done?: boolean;
+  testID?: string;
+}) {
   const bg = done ? color.success : color.zone[zone];
   const fg = done ? color.onSuccess : color.zone[onKey(zone)];
   return (
-    <View style={[styles.bib, { backgroundColor: bg }]} accessibilityRole="text">
+    <View style={[styles.bib, { backgroundColor: bg }]} accessibilityRole="text" testID={testID}>
       {[styles.tl, styles.tr, styles.bl, styles.br].map((pos, i) => (
         <View key={i} style={[styles.pin, pos, { backgroundColor: fg, opacity: 0.55 }]} />
       ))}

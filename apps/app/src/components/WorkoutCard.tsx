@@ -47,16 +47,18 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
   return (
     <Card style={styles.card} testID="workout-card">
       <View style={styles.head}>
+        <PopIn play={pop}>
+          <BibTag label={typeName(workout.type)} zone={zone} done={done} testID="workout-bib" />
+        </PopIn>
         {done ? (
-          <PopIn play={pop}>
-            <BibTag label={t('today.done')} zone={zone} done />
-          </PopIn>
+          <Text variant="controlStrong" color="success">
+            {t('today.done')}
+          </Text>
         ) : (
-          <BibTag label={typeName(workout.type)} zone={zone} />
+          <Text variant="controlStrong" color="textMuted">
+            {t('today.approxKm', { km: approxKm(workout.steps) })}
+          </Text>
         )}
-        <Text variant="controlStrong" color="textMuted">
-          {t('today.approxKm', { km: approxKm(workout.steps) })}
-        </Text>
       </View>
       <View style={styles.big}>
         <Text variant="numberLg" testID="workout-minutes">
@@ -109,16 +111,18 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   return (
     <Card style={[styles.card, styles.strength]} testID="strength-card">
       <View style={styles.head}>
+        <PopIn play={pop}>
+          <BibTag label={typeName(workout.type)} zone="strength" done={done} testID="strength-bib" />
+        </PopIn>
         {done ? (
-          <PopIn play={pop}>
-            <BibTag label={t('today.done')} zone="strength" done />
-          </PopIn>
+          <Text variant="controlStrong" color="success">
+            {t('today.done')}
+          </Text>
         ) : (
-          <BibTag label={typeName(workout.type)} zone="strength" />
+          <Text variant="controlStrong" color="textMuted">
+            {t('strength.exercises', { n })}
+          </Text>
         )}
-        <Text variant="controlStrong" color="textMuted">
-          {t('strength.exercises', { n })}
-        </Text>
       </View>
       <View style={styles.big}>
         <Text variant="numberLg" testID="strength-minutes">
