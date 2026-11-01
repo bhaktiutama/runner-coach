@@ -32,7 +32,7 @@ test('centang selesai dan cincin Progres beranimasi saat layar terlihat', async 
   const readCheck = () =>
     page.evaluate(() => {
       const el = [...document.querySelectorAll('[data-testid="workout-card"] *')].find(
-        (e) => e.children.length === 0 && e.textContent === 'Selesai',
+        (e) => e.children.length === 0 && e.textContent === 'SELESAI',
       );
       let n: Element | null = el ?? null;
       let min = 1;
