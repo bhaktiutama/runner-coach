@@ -5,6 +5,10 @@ import { border, color, radius, ring, size, space, themed } from '../theme';
 import { Chip } from './Controls';
 import { Text } from './Text';
 
+/** Skala awal dan puncak animasi pilihan RPE. */
+const POP_START = 0.85;
+const POP_PEAK = 1.15;
+
 const rpeColor = (n: number) =>
   n <= 3 ? color.rpe['1-3'] : n <= 6 ? color.rpe['4-6'] : n <= 8 ? color.rpe['7-8'] : color.rpe['9-10'];
 
@@ -36,32 +40,55 @@ export function RpePicker({
   );
 }
 
-/** Tombol RPE: saat terpilih membesar sedikit lalu menetap (UI/UX bagian 11, G9). */
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+/**
+ * Tombol RPE: saat terpilih, kotaknya (bukan hanya angka) membesar 0.85 ke 1.15 lalu 1 sambil warnanya
+ * terisi dari abu ke warna skala (UI/UX bagian 11, G9). Pilihan awal tampil langsung.
+ */
 function RpeButton({ n, on, onPress }: { n: number; on: boolean; onPress: () => void }) {
   const reduced = useReducedMotion();
+  const fill = useRef(new Animated.Value(on ? 1 : 0)).current;
   const scale = useRef(new Animated.Value(1)).current;
+  const first = useRef(true);
   useEffect(() => {
-    if (!on || reduced) return;
-    scale.setValue(0.9);
-    const a = Animated.sequence([
-      Animated.timing(scale, {
-        toValue: 1.12,
-        duration: duration.base,
-        easing: easing.stride,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scale, {
+    const initial = first.current;
+    first.current = false;
+    if (initial || reduced || !on) {
+      fill.setValue(on ? 1 : 0);
+      scale.setValue(1);
+      return;
+    }
+    fill.setValue(0);
+    scale.setValue(POP_START);
+    // JS driver untuk keduanya: warna tidak bisa memakai native driver, dan satu node tidak boleh campur.
+    const a = Animated.parallel([
+      Animated.timing(fill, {
         toValue: 1,
-        duration: duration.fast,
+        duration: duration.base,
         easing: easing.standard,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
+      Animated.sequence([
+        Animated.timing(scale, {
+          toValue: POP_PEAK,
+          duration: duration.base,
+          easing: easing.stride,
+          useNativeDriver: false,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: duration.fast,
+          easing: easing.standard,
+          useNativeDriver: false,
+        }),
+      ]),
     ]);
     a.start();
     return () => a.stop();
-  }, [on, reduced, scale]);
+  }, [on, reduced, fill, scale]);
   return (
-    <Pressable
+    <AnimatedPressable
       testID={`rpe-${n}`}
       accessibilityRole="radio"
       accessibilityState={{ selected: on }}
@@ -69,18 +96,20 @@ function RpeButton({ n, on, onPress }: { n: number; on: boolean; onPress: () => 
       onPress={onPress}
       style={[
         styles.btn,
-        on && {
-          backgroundColor: rpeColor(n),
-          ...ring(border.selected - border.hairline / 2, color.text),
+        {
+          backgroundColor: fill.interpolate({
+            inputRange: [0, 1],
+            outputRange: [color.surfaceSunken, rpeColor(n)],
+          }),
+          transform: [{ scale }],
         },
+        on && ring(border.selected - border.hairline / 2, color.text),
       ]}
     >
-      <Animated.View style={{ transform: [{ scale }] }}>
-        <Text variant="rpe" style={on && n >= 9 ? { color: color.zone.onInterval } : null}>
-          {String(n)}
-        </Text>
-      </Animated.View>
-    </Pressable>
+      <Text variant="rpe" style={on && n >= 9 ? { color: color.zone.onInterval } : null}>
+        {String(n)}
+      </Text>
+    </AnimatedPressable>
   );
 }
 
