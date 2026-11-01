@@ -21,7 +21,7 @@ pip install --quiet pillow
 # 5. Font wireframe (render.js butuh font terpasang di sistem); diambil dari paket npm app
 mkdir -p ~/.fonts
 find -L node_modules/@expo-google-fonts/bricolage-grotesque node_modules/@expo-google-fonts/plus-jakarta-sans \
-  -name '*.ttf' -exec cp -n {} ~/.fonts/ \;
+  -name '*.ttf' -exec cp --update=none {} ~/.fonts/ \;
 fc-cache -f >/dev/null 2>&1 || true
 
 # Chromium + Playwright sudah terpasang di image (/opt/pw-browsers/chromium).
