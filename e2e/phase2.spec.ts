@@ -7,7 +7,8 @@ test.use({ actionTimeout: 10_000 });
 test('strength: kalender, detail 2.2s dengan placeholder animasi, timer gerakan, selesai', async ({
   page,
 }) => {
-  await page.clock.install();
+  // Hari Selasa tetap: hasil tidak bergantung tanggal (Minggu = minggu pertama plan hanya 1 hari).
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await onboard(page, { strength: true });

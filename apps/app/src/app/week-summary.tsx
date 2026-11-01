@@ -11,6 +11,7 @@ import {
   space,
   Text,
   TrackRing,
+  themed,
 } from '@run-coach/ui';
 import { formatDistance, formatTotalDuration } from '@run-coach/ui/format';
 import { useMemo, useState } from 'react';
@@ -188,33 +189,35 @@ export default function WeekSummary() {
   );
 }
 
-const styles = StyleSheet.create({
-  center: { alignItems: 'center', gap: space[3] },
-  pair: { flexDirection: 'row', gap: space[2] },
-  stat: {
-    flex: 1,
-    backgroundColor: color.surface,
-    borderRadius: radius.lg,
-    padding: space[3] + space[1] / 2,
-    gap: space[1],
-    ...shadow.card,
-  },
-  adjust: {
-    backgroundColor: color.status.recovery,
-    borderRadius: radius.lg,
-    padding: space[4] + space[1] / 2,
-    gap: space[3],
-  },
-  adjustHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-  changes: { backgroundColor: color.surface, borderRadius: radius.md, padding: space[3], gap: space[2] },
-  changeRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  btn: {
-    flex: 1,
-    height: size.buttonSecondary,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnDark: { backgroundColor: color.text },
-  btnLight: { backgroundColor: color.surface },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    center: { alignItems: 'center', gap: space[3] },
+    pair: { flexDirection: 'row', gap: space[2] },
+    stat: {
+      flex: 1,
+      backgroundColor: color.surface,
+      borderRadius: radius.lg,
+      padding: space[3] + space[1] / 2,
+      gap: space[1],
+      ...shadow.card,
+    },
+    adjust: {
+      backgroundColor: color.status.recovery,
+      borderRadius: radius.lg,
+      padding: space[4] + space[1] / 2,
+      gap: space[3],
+    },
+    adjustHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    changes: { backgroundColor: color.surface, borderRadius: radius.md, padding: space[3], gap: space[2] },
+    changeRow: { flexDirection: 'row', justifyContent: 'space-between' },
+    btn: {
+      flex: 1,
+      height: size.buttonSecondary,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    btnDark: { backgroundColor: color.text },
+    btnLight: { backgroundColor: color.surface },
+  }),
+);

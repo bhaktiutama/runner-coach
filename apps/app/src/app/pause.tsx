@@ -10,6 +10,7 @@ import {
   SegmentedControl,
   space,
   Text,
+  themed,
 } from '@run-coach/ui';
 import { formatDateLong } from '@run-coach/ui/format';
 import { router } from 'expo-router';
@@ -140,14 +141,16 @@ export default function Pause() {
   );
 }
 
-const styles = StyleSheet.create({
-  group: { gap: space[2] + border.selected - border.hairline / 2 },
-  row: { flexDirection: 'row', gap: space[2] },
-  wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-  returnBox: {
-    gap: space[1] + space[1] / 2,
-    padding: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: color.status.recovery,
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    group: { gap: space[2] + border.selected - border.hairline / 2 },
+    row: { flexDirection: 'row', gap: space[2] },
+    wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+    returnBox: {
+      gap: space[1] + space[1] / 2,
+      padding: space[4],
+      borderRadius: radius.lg,
+      backgroundColor: color.status.recovery,
+    },
+  }),
+);

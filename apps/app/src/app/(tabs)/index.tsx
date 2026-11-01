@@ -13,6 +13,7 @@ import {
   StatusChip,
   Text,
   weekdayShortName,
+  themed,
 } from '@run-coach/ui';
 import { formatDate, formatNumber } from '@run-coach/ui/format';
 import { router } from 'expo-router';
@@ -213,20 +214,22 @@ function RestCard({ next }: { next: Workout | null }) {
   );
 }
 
-const styles = StyleSheet.create({
-  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  titleCol: { gap: space[1] },
-  week: {
-    gap: space[3],
-    padding: space[4],
-    borderRadius: radius.lg,
-    backgroundColor: color.surface,
-    ...ring(border.hairline, color.line),
-  },
-  weekHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  weekDone: { fontFamily: fontFiles.display700, color: color.text },
-  rest: { gap: space[2], borderLeftWidth: space[2], borderLeftColor: color.status.recovery },
-  backup: { gap: space[2] },
-  backupRow: { flexDirection: 'row', gap: space[3] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+    titleCol: { gap: space[1] },
+    week: {
+      gap: space[3],
+      padding: space[4],
+      borderRadius: radius.lg,
+      backgroundColor: color.surface,
+      ...ring(border.hairline, color.line),
+    },
+    weekHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    weekDone: { fontFamily: fontFiles.display700, color: color.text },
+    rest: { gap: space[2], borderLeftWidth: space[2], borderLeftColor: color.status.recovery },
+    backup: { gap: space[2] },
+    backupRow: { flexDirection: 'row', gap: space[3] },
+  }),
+);

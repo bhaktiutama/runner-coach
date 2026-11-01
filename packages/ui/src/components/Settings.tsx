@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { border, color, radius, shadow, size, space } from '../theme';
+import { border, color, radius, shadow, size, space, themed } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
@@ -148,37 +148,39 @@ export function DangerButton({
 /** Sakelar 52 x 32, kenop 26, celah 3 (4.5). */
 const KNOB = space[6] + border.selected - border.hairline / 2;
 const KNOB_PAD = (space[8] - KNOB) / 2;
-const styles = StyleSheet.create({
-  labelCol: { flex: 1, gap: border.selected - border.hairline / 2 },
-  rowTall: { minHeight: space[10] + space[6] },
-  group: { gap: space[2] },
-  groupTitle: { paddingLeft: space[1] },
-  card: { backgroundColor: color.surface, borderRadius: radius.md, overflow: 'hidden', ...shadow.card },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    minHeight: size.input,
-    paddingHorizontal: space[4],
-    paddingVertical: space[2],
-  },
-  sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
-  valueWrap: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2, maxWidth: '55%' },
-  value: { flexShrink: 1 },
-  switch: {
-    width: size.input,
-    height: space[8],
-    borderRadius: radius.stadium,
-    padding: KNOB_PAD,
-    justifyContent: 'center',
-  },
-  knob: { width: KNOB, height: KNOB, borderRadius: radius.stadium, backgroundColor: color.surface },
-  knobOn: { alignSelf: 'flex-end' },
-  danger: {
-    height: size.buttonPrimary,
-    borderRadius: radius.stadium,
-    backgroundColor: color.status.behindInk,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    labelCol: { flex: 1, gap: border.selected - border.hairline / 2 },
+    rowTall: { minHeight: space[10] + space[6] },
+    group: { gap: space[2] },
+    groupTitle: { paddingLeft: space[1] },
+    card: { backgroundColor: color.surface, borderRadius: radius.md, overflow: 'hidden', ...shadow.card },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      minHeight: size.input,
+      paddingHorizontal: space[4],
+      paddingVertical: space[2],
+    },
+    sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
+    valueWrap: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2, maxWidth: '55%' },
+    value: { flexShrink: 1 },
+    switch: {
+      width: size.input,
+      height: space[8],
+      borderRadius: radius.stadium,
+      padding: KNOB_PAD,
+      justifyContent: 'center',
+    },
+    knob: { width: KNOB, height: KNOB, borderRadius: radius.stadium, backgroundColor: color.surface },
+    knobOn: { alignSelf: 'flex-end' },
+    danger: {
+      height: size.buttonPrimary,
+      borderRadius: radius.stadium,
+      backgroundColor: color.status.behindInk,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }),
+);

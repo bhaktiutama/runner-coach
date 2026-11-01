@@ -19,6 +19,7 @@ import {
   Text,
   weekdayShortName,
   type PhaseKey,
+  themed,
 } from '@run-coach/ui';
 import { formatDateFull, formatDayMonth, formatNumber } from '@run-coach/ui/format';
 import { router } from 'expo-router';
@@ -177,39 +178,41 @@ export default function PlanTab() {
   );
 }
 
-const styles = StyleSheet.create({
-  supRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-  hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-  head: { gap: space[1] },
-  nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },
-  days: { gap: space[2] },
-  day: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    minHeight: size.dayRow,
-    paddingVertical: space[2],
-    paddingLeft: space[2] + space[1] / 2,
-    paddingRight: space[3] + space[1] / 2,
-    borderRadius: radius.md,
-  },
-  dayWorkout: { backgroundColor: color.surface, ...shadow.card },
-  dayRest: ring(border.control, color.line),
-  dayToday: { backgroundColor: color.surface, ...ring(border.selected, color.text) },
-  date: { width: space[10], alignItems: 'center' },
-  body: { flex: 1, gap: border.selected - border.hairline / 2 },
-  restMark: {
-    width: space[1] + space[1] / 2,
-    alignSelf: 'stretch',
-    borderRadius: radius.stadium,
-    backgroundColor: color.surfaceSunken,
-  },
-  strike: { textDecorationLine: 'line-through' },
-  tag: {
-    backgroundColor: color.text,
-    borderRadius: radius.stadium,
-    paddingHorizontal: space[2],
-    paddingVertical: space[1],
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    supRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    head: { gap: space[1] },
+    nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },
+    days: { gap: space[2] },
+    day: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      minHeight: size.dayRow,
+      paddingVertical: space[2],
+      paddingLeft: space[2] + space[1] / 2,
+      paddingRight: space[3] + space[1] / 2,
+      borderRadius: radius.md,
+    },
+    dayWorkout: { backgroundColor: color.surface, ...shadow.card },
+    dayRest: ring(border.control, color.line),
+    dayToday: { backgroundColor: color.surface, ...ring(border.selected, color.text) },
+    date: { width: space[10], alignItems: 'center' },
+    body: { flex: 1, gap: border.selected - border.hairline / 2 },
+    restMark: {
+      width: space[1] + space[1] / 2,
+      alignSelf: 'stretch',
+      borderRadius: radius.stadium,
+      backgroundColor: color.surfaceSunken,
+    },
+    strike: { textDecorationLine: 'line-through' },
+    tag: {
+      backgroundColor: color.text,
+      borderRadius: radius.stadium,
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+    },
+  }),
+);

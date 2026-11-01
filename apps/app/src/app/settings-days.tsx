@@ -8,6 +8,7 @@ import {
   space,
   Text,
   weekdayShortName,
+  themed,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -122,4 +123,6 @@ export default function SettingsDays() {
   );
 }
 
-const styles = StyleSheet.create({ row: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] } });
+const styles = themed(() =>
+  StyleSheet.create({ row: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] } }),
+);

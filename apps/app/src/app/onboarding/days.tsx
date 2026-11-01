@@ -12,6 +12,7 @@ import {
   space,
   Text,
   weekdayShortName,
+  themed,
 } from '@run-coach/ui';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -167,28 +168,30 @@ export default function DaysStep() {
   );
 }
 
-const styles = StyleSheet.create({
-  days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
-  day: {
-    flex: 1,
-    height: space[10] + space[6],
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayOn: { backgroundColor: color.text },
-  dayOff: { backgroundColor: color.surface, ...ring(border.control, color.line) },
-  reminder: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    minHeight: space[10] + space[5],
-    paddingHorizontal: space[4],
-    borderRadius: radius.lg,
-    ...ring(border.hairline, color.line),
-    backgroundColor: color.surface,
-  },
-  reminderLabel: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
-  off: { opacity: 0.5 },
-  times: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
+    day: {
+      flex: 1,
+      height: space[10] + space[6],
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dayOn: { backgroundColor: color.text },
+    dayOff: { backgroundColor: color.surface, ...ring(border.control, color.line) },
+    reminder: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      minHeight: space[10] + space[5],
+      paddingHorizontal: space[4],
+      borderRadius: radius.lg,
+      ...ring(border.hairline, color.line),
+      backgroundColor: color.surface,
+    },
+    reminderLabel: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+    off: { opacity: 0.5 },
+    times: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+  }),
+);

@@ -1,5 +1,16 @@
 import type { BottomTabBarProps } from 'expo-router/tabs';
-import { border, color, fontFiles, Icon, type IconName, radius, size, space, Text } from '@run-coach/ui';
+import {
+  border,
+  color,
+  fontFiles,
+  Icon,
+  type IconName,
+  radius,
+  size,
+  space,
+  Text,
+  themed,
+} from '@run-coach/ui';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -47,28 +58,30 @@ export function TabBar({ state, descriptors, navigateToTab }: BottomTabBarProps)
   );
 }
 
-const styles = StyleSheet.create({
-  bar: {
-    flexDirection: 'row',
-    backgroundColor: color.surface,
-    boxShadow: `inset 0px ${border.hairline}px 0px 0px ${color.line}`,
-    paddingTop: space[2],
-    paddingHorizontal: space[2],
-  },
-  item: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space[1],
-    minHeight: size.touchMin + space[2],
-  },
-  pill: {
-    width: space[10] + space[4],
-    height: space[8] - space[1] / 2,
-    borderRadius: radius.stadium,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pillActive: { backgroundColor: color.surfaceSunken },
-  active: { fontFamily: fontFiles.ui800 },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    bar: {
+      flexDirection: 'row',
+      backgroundColor: color.surface,
+      boxShadow: `inset 0px ${border.hairline}px 0px 0px ${color.line}`,
+      paddingTop: space[2],
+      paddingHorizontal: space[2],
+    },
+    item: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[1],
+      minHeight: size.touchMin + space[2],
+    },
+    pill: {
+      width: space[10] + space[4],
+      height: space[8] - space[1] / 2,
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pillActive: { backgroundColor: color.surfaceSunken },
+    active: { fontFamily: fontFiles.ui800 },
+  }),
+);

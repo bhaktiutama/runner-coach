@@ -115,15 +115,6 @@ export function FadeIn({ k, children }: { k: string | number; children: ReactNod
   return <Animated.View style={{ opacity: v }}>{children}</Animated.View>;
 }
 
-const CONFETTI_COLORS = [
-  color.palette.orange,
-  color.palette.lavender,
-  color.palette.mint,
-  color.palette.sand,
-  color.palette.coral,
-  color.palette.peach,
-];
-
 /**
  * Konfeti kecil sekali putar (durasi `slow`, hanya untuk perayaan minggu tuntas). Isi penuh induknya
  * (taruh di dalam View yang `position: relative`). Tidak dirender jika reduce-motion aktif.
@@ -131,6 +122,15 @@ const CONFETTI_COLORS = [
 export function Confetti({ count = 16 }: { count?: number }) {
   const reduced = useReducedMotion();
   const pieces = useMemo(() => confettiPieces(count), [count]);
+  // Dibaca saat render (bukan konstanta modul), sesuai aturan tema di theme.ts.
+  const palette = [
+    color.palette.orange,
+    color.palette.lavender,
+    color.palette.mint,
+    color.palette.sand,
+    color.palette.coral,
+    color.palette.peach,
+  ];
   const v = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     if (reduced) return;
@@ -158,7 +158,7 @@ export function Confetti({ count = 16 }: { count?: number }) {
             width: space[2],
             height: space[3],
             borderRadius: border.selected,
-            backgroundColor: CONFETTI_COLORS[p.colorIndex],
+            backgroundColor: palette[p.colorIndex],
             opacity,
             transform: [
               { translateX: v.interpolate({ inputRange: [0, 1], outputRange: [0, p.dx * space[1]] }) },

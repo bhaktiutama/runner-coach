@@ -14,6 +14,8 @@ import {
   space,
   Switch,
   Text,
+  themed,
+  isDark,
 } from '@run-coach/ui';
 import { formatDateLong } from '@run-coach/ui/format';
 import { router } from 'expo-router';
@@ -81,12 +83,12 @@ export default function Privacy() {
       </View>
       <View style={styles.hero}>
         <View style={styles.heroHead}>
-          <Logo variant="mark" dark height={space[8] + space[1]} />
-          <Text variant="stat" color="darkText" style={styles.flex}>
+          <Logo variant="mark" dark={!isDark()} height={space[8] + space[1]} />
+          <Text variant="stat" style={[styles.flex, { color: color.bg }]}>
             {t('privacy.heroTitle')}
           </Text>
         </View>
-        <Text variant="bodySm" color="darkText" style={styles.heroBody}>
+        <Text variant="bodySm" style={[styles.heroBody, { color: color.bg }]}>
           {t('privacy.heroBody')}
         </Text>
       </View>
@@ -264,18 +266,20 @@ export default function Privacy() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  top: { flexDirection: 'row', alignItems: 'center' },
-  spacer: { width: space[10] + space[2] },
-  hero: { backgroundColor: color.text, borderRadius: radius.lg, padding: space[5], gap: space[3] },
-  heroHead: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[2] + border.selected - border.hairline / 2,
-  },
-  heroBody: { lineHeight: space[5] + border.hairline, opacity: 0.85 },
-  group: { gap: space[2] + border.selected - border.hairline / 2 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
-  sheet: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    top: { flexDirection: 'row', alignItems: 'center' },
+    spacer: { width: space[10] + space[2] },
+    hero: { backgroundColor: color.text, borderRadius: radius.lg, padding: space[5], gap: space[3] },
+    heroHead: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[2] + border.selected - border.hairline / 2,
+    },
+    heroBody: { lineHeight: space[5] + border.hairline, opacity: 0.85 },
+    group: { gap: space[2] + border.selected - border.hairline / 2 },
+    row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+    sheet: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
+  }),
+);

@@ -10,6 +10,7 @@ import {
   space,
   Text,
   TextField,
+  themed,
 } from '@run-coach/ui';
 import { formatDuration, formatNumber, formatPaceValue } from '@run-coach/ui/format';
 import { isSupportType } from '@run-coach/training-engine';
@@ -187,19 +188,21 @@ export default function Finish() {
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  head: { gap: space[2], alignItems: 'flex-start' },
-  row: { flexDirection: 'row', gap: space[2], alignItems: 'flex-end' },
-  avgCol: { gap: space[2] },
-  feel: { gap: space[2] },
-  avgBox: { height: size.input, justifyContent: 'center' },
-  check: {
-    width: size.input,
-    height: size.input,
-    borderRadius: radius.stadium,
-    backgroundColor: color.success,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const styles = themed(() =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    head: { gap: space[2], alignItems: 'flex-start' },
+    row: { flexDirection: 'row', gap: space[2], alignItems: 'flex-end' },
+    avgCol: { gap: space[2] },
+    feel: { gap: space[2] },
+    avgBox: { height: size.input, justifyContent: 'center' },
+    check: {
+      width: size.input,
+      height: size.input,
+      borderRadius: radius.stadium,
+      backgroundColor: color.success,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }),
+);

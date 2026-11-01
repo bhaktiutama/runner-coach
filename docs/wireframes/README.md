@@ -54,6 +54,16 @@ Dibuat dengan `phase2.py` (satu sumber, keluaran Bahasa Indonesia dan English), 
 | 4.4 | Premium (menggantikan 4.4 lama; pembelian nonaktif di fase 2) | [png](png/4-4-premium.png) | [png](png/4-4-premium-en.png) | F-23 |
 | 4.8 | Bahasa | [png](png/4-8-bahasa.png) | [png](png/4-8-bahasa-en.png) | F-22 |
 
+## Mode gelap (v0.6, 2026-10-31)
+
+![Semua layar, mode gelap](overview-dark.png)
+
+32 layar (26 MVP + fase 2, versi ID) dirender ulang dari sumber yang sama dengan token `[data-theme="dark"]` (`tokens.json` `color.dark`), ke `png/dark/` dengan nama file yang sama seperti `png/`. Untuk 4.1 dan 4.4 dipakai versi fase 2. Tidak ada tata letak baru; hanya warna yang berubah.
+
+- Perintah: `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium bash docs/wireframes/dark.sh` (`render.js` membaca `WF_THEME=dark`).
+- Timer (2.3, 2.3b, 2.3s) sudah selalu gelap, jadi tampilannya sama dengan versi terang.
+- Perbaikan ikut: kotak privasi di 4.4 kini memakai `--on-status` sebagai warna teks (sebelumnya teks terang di atas lavender pada mode gelap).
+
 ## Yang berubah di v0.4
 
 | Perubahan | Layar |
@@ -87,6 +97,7 @@ Dibuat dengan `phase2.py` (satu sumber, keluaran Bahasa Indonesia dan English), 
 | `source/*.dc.html` + `canvas.json` | Sumber tiap layar + susunan canvas dan catatan journey. Butuh runtime artifact untuk tampil interaktif |
 | `source/ds/lintas/` | Salinan Lintas untuk canvas: `tokens.css` (dibuat dari `tokens.json`), `tokens.json`, `components/bundle.css` |
 | `render.js` | Script ekspor `source/` ke PNG |
+| `dark.sh`, `png/dark/`, `overview-dark.png` | Ekspor mode gelap |
 
 ## Ekspor ulang
 
