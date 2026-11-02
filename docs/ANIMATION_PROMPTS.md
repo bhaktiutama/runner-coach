@@ -16,9 +16,8 @@ Status: Draft v0.1 (2026-11-02). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `ap
 | 0 | Buat card karakter (sekali) | Generate card laki-laki dan perempuan (bagian "Card karakter"), pilih hasil terbaik, simpan. Dipakai sebagai referensi identitas di semua prompt keyframe |
 | 1 | Generate lembar keyframe | Tempel prompt gambar + prompt negatif. Hasil: satu gambar 1:1 berisi 9 panel |
 | 2 | Periksa lembar | Pakai daftar periksa gerakan. Ulangi sampai 9 panel benar dan orangnya sama |
-| 2b | Potong panel 1 | Potong panel kiri atas menjadi gambar 1:1 tunggal, tanpa garis putih pemisah dan tanpa panel lain. Ini yang menjadi subjek video |
 | 3 | Pilih model video | Pakai model **reference-to-video** (`seedance-2.0-mini-reference-to-video`, atau versi fast atau standard), **bukan** image-to-video. Model image-to-video hanya menerima frame pertama dan terakhir, sehingga lembar 3x3 yang diunggah ikut tampil sebagai kisi |
-| 4 | Generate video | Unggah **2 gambar, urutannya penting**: (1) panel 1 yang dipotong (`@image1`, subjek), (2) lembar 3x3 utuh (`@image2`, panduan gerak saja). Rasio 1:1, resolusi 720p, durasi 5 dtk. Tempel Prompt 2 |
+| 4 | Generate video | Unggah **hanya 1 gambar**: lembar 3x3 utuh, tanpa dipotong (`@image1`). Di prompt, panel 1 (kiri atas) menjadi subjek dan panel 2 sampai 9 hanya panduan gerak. Rasio 1:1, resolusi 720p, durasi 5 dtk. Tempel Prompt 2 |
 | 5 | Periksa video | Gerakan sama dengan keyframe, tampak samping tetap, loop mulus, latar hijau rata |
 | 6 | Kirim ke Claude | Untuk chroma key, pasangan terang/gelap dan pemasangan di app |
 
@@ -29,7 +28,7 @@ Pengaturan yang disarankan untuk video (model reference-to-video):
 | Pengaturan | Nilai | Alasan |
 |---|---|---|
 | Model | `seedance-2.0-mini-reference-to-video` dulu. Jika kisi 3x3 masih muncul atau gerakan meleset, coba fast atau standard | Mini paling murah untuk uji coba |
-| Gambar | 2 gambar, urutan tetap: (1) panel 1 terpotong, (2) lembar 3x3 utuh | `@image1` = subjek (rupa, bingkai, ukuran, latar). `@image2` = panduan gerak saja. Urutan unggah menentukan nomor tag |
+| Gambar | 1 gambar: lembar 3x3 utuh | `@image1`. Satu gambar menjaga biaya. Pembagian peran (panel 1 = subjek, panel 2-9 = panduan gerak) hanya lewat teks prompt |
 | Rasio | 1:1 | Didukung (`1:1`) |
 | Resolusi | 720p | Default. 480p terlalu rendah untuk chroma key yang rapi. 1080p hanya di model standard |
 | Durasi | 5 detik | Sama dengan timeline di prompt (rentang yang didukung 4 sampai 15 detik) |
@@ -38,7 +37,7 @@ Sumber: dokumentasi EvoLink Seedance 2.0 (model `*-reference-to-video`: 0 sampai
 
 EvoLink tidak punya kolom negative prompt untuk Seedance 2.0, jadi larangan ditulis di dalam prompt, pada baris `Avoid:` di akhir. Batas panjang prompt yang direkomendasikan 1.000 kata Inggris (prompt di sini 640 sampai 810 kata).
 
-Riwayat masalah: (1) lembar 3x3 yang diunggah ke model image-to-video menghasilkan video berisi kisi 3x3, karena model itu menganggapnya frame pertama. (2) Prompt dengan timeline per panel ("tiba di pose panel 4 pada detik 1,8") membuat video terasa berubah bentuk mengikuti foto referensi. Karena itu kini hanya panel 1 yang menjadi subjek, lembar 3x3 hanya panduan postur, dan gerakan ditulis sebagai satu gerak kontinu dengan tiga fase waktu.
+Riwayat masalah: (1) lembar 3x3 yang diunggah ke model image-to-video menghasilkan video berisi kisi 3x3, karena model itu menganggapnya frame pertama. (2) Prompt dengan timeline per panel ("tiba di pose panel 4 pada detik 1,8") membuat video terasa berubah bentuk mengikuti foto referensi. Karena itu kini prompt menegaskan lewat teks bahwa hanya panel 1 (kiri atas) yang menjadi subjek, panel 2 sampai 9 hanya panduan postur, dan gerakan ditulis sebagai satu gerak kontinu dengan empat fase waktu. Tetap satu gambar (biaya); risiko: karena pembagian peran hanya lewat teks, kisi masih bisa bocor ke video.
 
 ## Aturan bersama
 
@@ -207,18 +206,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the bodyweight squat. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the bodyweight squat, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the bodyweight squat, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the bodyweight squat in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the bodyweight squat in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: Feet shoulder-width apart, toes turned out about 15 degrees, both feet flat. No prop.
 
@@ -226,13 +227,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He sits back and down slowly with the arms rising straight forward to shoulder height as a counterbalance, pauses briefly at the bottom with the thighs parallel to the floor, then drives up through the heels while the arms lower back to his sides.
 
-Peak posture (panel 5 of @image2): thighs parallel to the floor (knees about 90 degrees), shins leaning forward slightly, knees stacked over the middle of the feet and pointing the same way as the toes, torso leaning forward about 35 to 40 degrees with a neutral flat back and chest up, heels flat on the floor, arms straight forward at shoulder height, head neutral.
+Peak posture (panel 5): thighs parallel to the floor (knees about 90 degrees), shins leaning forward slightly, knees stacked over the middle of the feet and pointing the same way as the toes, torso leaning forward about 35 to 40 degrees with a neutral flat back and chest up, heels flat on the floor, arms straight forward at shoulder height, head neutral.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - Knees stay in line with the toes and never cave inward.
@@ -240,7 +241,7 @@ Technique rules:
 - Both heels stay flat on the floor, feet do not slide or shuffle.
 - Depth: thighs parallel to the floor, not deeper.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
 ```
@@ -286,18 +287,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the split squat (static lunge). It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the split squat (static lunge), read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the split squat (static lunge), read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the split squat (static lunge) in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the split squat (static lunge) in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: Split stance: the near (right) leg is the FRONT leg, the far (left) leg is the BACK leg, about 90 cm between the feet front to back and about hip-width apart side to side. Front foot flat, back heel raised with the toes on the floor. Both hands on his hips. The feet do not move during the whole repetition. No prop.
 
@@ -305,13 +308,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He lowers his hips straight down, the back knee travelling vertically toward the floor, pauses briefly at the bottom, then pushes up through the front heel back to the start, torso upright the whole time.
 
-Peak posture (panel 5 of @image2): front thigh parallel to the floor (front knee about 90 degrees), front shin vertical with the knee directly above the ankle and not past the toes, back knee about 90 degrees and about 5 cm above the floor, back thigh vertical, torso upright and tall, pelvis level, hands on hips.
+Peak posture (panel 5): front thigh parallel to the floor (front knee about 90 degrees), front shin vertical with the knee directly above the ankle and not past the toes, back knee about 90 degrees and about 5 cm above the floor, back thigh vertical, torso upright and tall, pelvis level, hands on hips.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - Both feet stay planted in the same place, no stepping.
@@ -319,7 +322,7 @@ Technique rules:
 - Front knee stays above the ankle, the front heel stays down.
 - Back knee moves straight down, hips stay level and square to the camera plane.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
 ```
@@ -366,18 +369,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the Bulgarian split squat. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the Bulgarian split squat, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the Bulgarian split squat, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the Bulgarian split squat in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the Bulgarian split squat in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: The far (left) foot is the REAR foot, with the top of the foot (laces down) resting on the bench behind him. The near (right) leg is the FRONT leg, with the front foot flat on the floor about 75 cm in front of the bench. Both hands on his hips. The front foot does not move during the repetition.
 
@@ -385,13 +390,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He lowers slowly and under control until the front thigh is parallel to the floor, pauses briefly, then pushes up through the front heel back to the start, with the rear foot resting on the bench the whole time.
 
-Peak posture (panel 5 of @image2): front thigh parallel to the floor (front knee about 90 degrees), front shin nearly vertical with the knee over the ankle, rear knee bent about 100 degrees and pointing down about 15 cm above the floor, rear foot still on the bench, torso upright with a forward lean of about 10 degrees, pelvis level, weight on the front heel.
+Peak posture (panel 5): front thigh parallel to the floor (front knee about 90 degrees), front shin nearly vertical with the knee over the ankle, rear knee bent about 100 degrees and pointing down about 15 cm above the floor, rear foot still on the bench, torso upright with a forward lean of about 10 degrees, pelvis level, weight on the front heel.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The rear foot stays on the bench, the front foot stays planted.
@@ -399,7 +404,7 @@ Technique rules:
 - Torso stays nearly upright, pelvis stays level.
 - Slow, controlled tempo, no bouncing at the bottom.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
 ```
@@ -445,18 +450,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the glute bridge. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the glute bridge, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the glute bridge, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the glute bridge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the glute bridge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He lies on his back, knees bent about 90 degrees, feet flat and hip-width apart with the heels about 30 cm from his glutes, arms resting on the floor along his sides with the palms down. The feet do not move.
 
@@ -464,13 +471,13 @@ View: exact side profile at floor level, camera about 30 cm above the floor. He 
 
 Movement: He lifts his hips smoothly by pushing through his heels until the body is a straight line from shoulders to knees, holds that top position for one second, then lowers slowly back to the floor.
 
-Peak posture (panel 5 of @image2): hips fully raised so that shoulders, hips and knees form one straight diagonal line that rises from the shoulders (on the floor) to the knees, the thighs sloping up from the hips to the knees at about 20 to 30 degrees above horizontal, shins vertical, knees about 90 degrees, feet flat directly below the knees, glutes squeezed, ribs down with no arch in the lower back, shoulders and head still on the floor, arms along his sides.
+Peak posture (panel 5): hips fully raised so that shoulders, hips and knees form one straight diagonal line that rises from the shoulders (on the floor) to the knees, the thighs sloping up from the hips to the knees at about 20 to 30 degrees above horizontal, shins vertical, knees about 90 degrees, feet flat directly below the knees, glutes squeezed, ribs down with no arch in the lower back, shoulders and head still on the floor, arms along his sides.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.0 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.0 to 3.0 s: holds the peak posture briefly.
-- 3.0 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 3.0 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The line from shoulders to knees is straight at the top, with no arching of the lower back and no over-extension.
@@ -478,7 +485,7 @@ Technique rules:
 - Hold the top position for about 1 second.
 - Lower slowly, the glutes just touch the floor before the next repetition.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
 ```
@@ -524,18 +531,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the single-leg glute bridge. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the single-leg glute bridge, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the single-leg glute bridge, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the single-leg glute bridge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the single-leg glute bridge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He lies on his back. The near (right) foot is flat on the floor with the knee bent about 90 degrees: this is the working leg. The far (left) leg is held straight (knee 180 degrees) with its thigh parallel to the near thigh, the foot flexed, hovering in the air and never touching the floor. Arms rest on the floor along his sides, palms down.
 
@@ -543,13 +552,13 @@ View: exact side profile at floor level, camera about 30 cm above the floor. He 
 
 Movement: He lifts his hips by pushing through the heel of the near foot only, while the other leg stays straight and parallel to the working thigh, holds the top for one second with level hips, then lowers slowly.
 
-Peak posture (panel 5 of @image2): hips fully raised so that shoulders, hips and the near knee form one straight diagonal line, near shin vertical, near foot flat, far leg straight and held in line with the near thigh (parallel to it, rising at about 20 to 30 degrees above horizontal), pelvis level and square (hips not dropping or twisting), ribs down with no arch in the lower back, shoulders and head on the floor.
+Peak posture (panel 5): hips fully raised so that shoulders, hips and the near knee form one straight diagonal line, near shin vertical, near foot flat, far leg straight and held in line with the near thigh (parallel to it, rising at about 20 to 30 degrees above horizontal), pelvis level and square (hips not dropping or twisting), ribs down with no arch in the lower back, shoulders and head on the floor.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.0 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.0 to 3.0 s: holds the peak posture briefly.
-- 3.0 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 3.0 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - Only the near foot is on the floor, the far leg stays straight and parallel to the working thigh the whole time.
@@ -557,7 +566,7 @@ Technique rules:
 - No arching of the lower back, shoulders and head stay on the floor.
 - Hold the top for about 1 second, lower slowly.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
 ```
@@ -603,18 +612,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the bodyweight single-leg deadlift. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the bodyweight single-leg deadlift, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the bodyweight single-leg deadlift, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the bodyweight single-leg deadlift in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the bodyweight single-leg deadlift in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He stands on the near (right) leg, which is the working leg, with the knee slightly soft (about 170 degrees). The far (left) leg is the free leg: it starts hanging beside the working leg with the toes hovering about 3 cm above the floor, and it swings straight back. Arms hang straight down, no weights. The standing foot does not move.
 
@@ -622,13 +633,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He hinges forward from the hips like a seesaw, the torso lowering as the free leg rises straight back, keeps the back flat, pauses briefly, then returns slowly to standing by squeezing the glute of the standing leg.
 
-Peak posture (panel 5 of @image2): torso and free leg together form one long straight line, almost parallel to the floor (torso about 80 degrees forward from vertical, free leg raised back to the same height as the hips), standing knee softly bent about 155 degrees, back flat and neutral, hips square to the side (pelvis not opened), free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral looking at the floor about 1 meter ahead.
+Peak posture (panel 5): torso and free leg together form one long straight line, almost parallel to the floor (torso about 80 degrees forward from vertical, free leg raised back to the same height as the hips), standing knee softly bent about 155 degrees, back flat and neutral, hips square to the side (pelvis not opened), free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral looking at the floor about 1 meter ahead.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The movement is a hip hinge: the standing knee only softens slightly, it does not squat.
@@ -636,7 +647,7 @@ Technique rules:
 - Hips stay square, the free leg goes straight back without rotating the pelvis open.
 - The standing foot stays planted, slow controlled tempo, the free foot does not touch the floor.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
 ```
@@ -682,18 +693,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the reverse lunge. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the reverse lunge, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the reverse lunge, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the reverse lunge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the reverse lunge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He starts standing with the feet hip-width apart, both hands on his hips. The near (right) leg steps BACK and the far (left) leg stays as the front leg with the foot planted. No prop.
 
@@ -701,13 +714,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He steps one leg straight back and lowers until the back knee almost touches the floor, pauses briefly, then pushes through the front foot and brings the back foot forward to stand tall again.
 
-Peak posture (panel 5 of @image2): front thigh parallel to the floor (front knee about 90 degrees) with the shin vertical and the knee above the ankle, back knee about 90 degrees and almost touching the floor (about 3 cm above it), back heel raised, torso upright, hands on hips, pelvis level.
+Peak posture (panel 5): front thigh parallel to the floor (front knee about 90 degrees) with the shin vertical and the knee above the ankle, back knee about 90 degrees and almost touching the floor (about 3 cm above it), back heel raised, torso upright, hands on hips, pelvis level.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.8 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The front foot stays planted and does not move, the front heel stays down.
@@ -715,7 +728,7 @@ Technique rules:
 - The back knee lowers almost to the floor but does not rest on it.
 - Stand fully back up, feet hip-width apart, before the next repetition.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
 ```
@@ -762,18 +775,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the step-up. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the step-up, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the step-up, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the step-up in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the step-up in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: The near (right) foot is the working foot, placed flat on top of the box. The far (left) foot is on the floor. Both hands on his hips. He steps up with the near foot and steps down with the same foot leading.
 
@@ -781,13 +796,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He drives up through the near foot on the box until the near leg is fully straight and the other knee lifts, pauses briefly standing tall, then lowers slowly and controlled with the same near leg until the other foot touches the floor.
 
-Peak posture (panel 5 of @image2): standing tall on the box on the near leg with the near knee fully straight (about 180 degrees), the far knee raised to about hip height with the shin hanging down and the foot not touching anything, torso upright, hands on hips, pelvis level.
+Peak posture (panel 5): standing tall on the box on the near leg with the near knee fully straight (about 180 degrees), the far knee raised to about hip height with the shin hanging down and the foot not touching anything, torso upright, hands on hips, pelvis level.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.0 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.0 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The near foot stays flat on the box and does all the work, the far foot does not push off the floor.
@@ -795,7 +810,7 @@ Technique rules:
 - Lower slowly with control, no dropping or jumping down.
 - Torso stays upright, pelvis stays level.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
 ```
@@ -841,18 +856,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the standing calf raise. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the standing calf raise, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the standing calf raise, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the standing calf raise in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the standing calf raise in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He stands on a flat floor with the feet hip-width apart and parallel, both hands on his hips. No prop.
 
@@ -860,13 +877,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He rises up onto the balls of his feet as high as he can, holds the top position for one second, then lowers slowly and under control until the heels touch the floor.
 
-Peak posture (panel 5 of @image2): rising as high as possible onto the balls of both feet, heels about 15 cm off the floor, ankles fully extended, knees straight (180 degrees), torso tall and vertical, hips stacked over the balls of the feet.
+Peak posture (panel 5): rising as high as possible onto the balls of both feet, heels about 15 cm off the floor, ankles fully extended, knees straight (180 degrees), torso tall and vertical, hips stacked over the balls of the feet.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion.
 - 1.6 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - Knees stay straight the whole time, no bending.
@@ -874,7 +891,7 @@ Technique rules:
 - Hold the top for about 1 second.
 - Lower slowly (the lowering is about twice as long as the rising), the body stays upright, no swaying.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
 ```
@@ -921,18 +938,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the single-leg calf raise. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the single-leg calf raise, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the single-leg calf raise, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the single-leg calf raise in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the single-leg calf raise in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He stands on the near (right) leg only, which is the working leg. The far (left) leg is bent about 90 degrees with the foot raised behind him (shin roughly parallel to the floor), not touching the standing leg or the floor. His near hand rests with the fingertips lightly on the wall panel at shoulder height, the arm slightly bent. Only a light touch for balance, no pushing.
 
@@ -940,13 +959,13 @@ View: exact side profile. He faces the right edge of the frame and the camera se
 
 Movement: He rises up onto the ball of the near foot as high as possible with the other foot held off the floor behind him, holds the top for one second, then lowers slowly and under control, with fingertips lightly on the wall for balance.
 
-Peak posture (panel 5 of @image2): rising as high as possible onto the ball of the near foot, heel about 15 cm off the floor, ankle fully extended, near knee straight (180 degrees), torso tall and vertical, far foot still raised behind, fingertips lightly on the wall.
+Peak posture (panel 5): rising as high as possible onto the ball of the near foot, heel about 15 cm off the floor, ankle fully extended, near knee straight (180 degrees), torso tall and vertical, far foot still raised behind, fingertips lightly on the wall.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion.
 - 1.6 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - Only the near foot touches the floor, the far foot never touches down.
@@ -954,7 +973,7 @@ Technique rules:
 - The hand only touches the wall lightly for balance, it does not pull or push.
 - Hold the top for about 1 second, lower slowly.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
 ```
@@ -1000,18 +1019,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the forearm plank. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the forearm plank, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the forearm plank, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the forearm plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the forearm plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He comes from kneeling on forearms and knees into a full forearm plank, holds it, then lowers back to the knees. The forearms are flat on the floor, parallel and pointing forward, elbows directly below the shoulders.
 
@@ -1019,13 +1040,13 @@ View: exact side profile at low camera height (about 40 cm above the floor). He 
 
 Movement: He moves from kneeling into a straight forearm plank, holds it steady for about two seconds with only a very slight breathing movement of the ribcage and no other movement, then lowers his knees back to the floor.
 
-Peak posture (panel 5 of @image2): full forearm plank, forearms flat on the floor with the upper arms vertical and the elbows directly below the shoulders, toes on the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, glutes and abs braced, neck neutral with eyes looking at the floor about 30 cm ahead of the hands.
+Peak posture (panel 5): full forearm plank, forearms flat on the floor with the upper arms vertical and the elbows directly below the shoulders, toes on the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, glutes and abs braced, neck neutral with eyes looking at the floor about 30 cm ahead of the hands.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion.
 - 1.6 to 3.6 s: holds the peak posture perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - In the plank the body is one straight line from head to heels, hips do not sag and do not rise.
@@ -1033,7 +1054,7 @@ Technique rules:
 - Neck stays neutral, the eyes look at the floor.
 - During the hold only the breathing moves, the body stays perfectly still.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
 ```
@@ -1079,18 +1100,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the side plank. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the side plank, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the side plank, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the side plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the side plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He lies on his right side with his legs stacked. The right forearm lies flat on the floor with the elbow directly below the right shoulder, perpendicular to his body line and pointing toward the camera. The left arm rests on his left hip. He lifts into a side plank, holds it, then lowers his hips to the floor.
 
@@ -1098,13 +1121,13 @@ View: front view, the camera faces his chest squarely at the height of his torso
 
 Movement: He lifts his hips from the floor into a straight side plank supported by the forearm and the side of the feet, holds it steady for about two seconds with only a very slight breathing movement, then lowers his hips back to the floor.
 
-Peak posture (panel 5 of @image2): full side plank, body one straight line from the head through the hips to the stacked feet, the hips lifted high and not dropping, the right elbow directly below the right shoulder with the forearm flat on the floor, the left hand resting on the left hip, the chest facing the camera (no rotation forward or backward), neck neutral.
+Peak posture (panel 5): full side plank, body one straight line from the head through the hips to the stacked feet, the hips lifted high and not dropping, the right elbow directly below the right shoulder with the forearm flat on the floor, the left hand resting on the left hip, the chest facing the camera (no rotation forward or backward), neck neutral.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion.
 - 1.6 to 3.6 s: holds the peak posture perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - In the hold the body is one straight line from head to feet, the hips do not drop or pike.
@@ -1112,7 +1135,7 @@ Technique rules:
 - The legs stay stacked and straight.
 - During the hold only the breathing moves.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
 ```
@@ -1158,18 +1181,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the dead bug. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the dead bug, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the dead bug, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the dead bug in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the dead bug in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He lies on his back in the tabletop position: both arms straight and pointing straight up to the ceiling, both hips and knees bent 90 degrees with the shins parallel to the floor. In this video the NEAR (right) arm and the FAR (left) leg move together. The lower back stays pressed to the floor the whole time.
 
@@ -1177,13 +1202,13 @@ View: exact side profile at floor level, camera about 30 cm above the floor. He 
 
 Movement: He slowly lowers the near arm backward over his head and extends the opposite (far) leg at the same time, both hovering just above the floor, with the lower back pressed flat, then slowly returns both to the tabletop starting position.
 
-Peak posture (panel 5 of @image2): the near arm straight overhead and hovering about 10 cm above the floor, the far leg fully straight and hovering about 10 cm above the floor, the other arm still vertical and the near leg still in tabletop (hip 90 degrees, knee 90 degrees), the lower back pressed flat to the floor with no arch, ribs down, head and shoulders on the floor.
+Peak posture (panel 5): the near arm straight overhead and hovering about 10 cm above the floor, the far leg fully straight and hovering about 10 cm above the floor, the other arm still vertical and the near leg still in tabletop (hip 90 degrees, knee 90 degrees), the lower back pressed flat to the floor with no arch, ribs down, head and shoulders on the floor.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 2.2 s: moves from the start posture to the peak posture in one continuous motion.
 - 2.2 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 2.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The lower back stays pressed into the floor with no arching at any time.
@@ -1191,7 +1216,7 @@ Technique rules:
 - The other arm stays vertical and the other leg stays in tabletop.
 - The arm and leg hover above the floor and do not touch it.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
 ```
@@ -1237,18 +1262,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the bird dog. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the bird dog, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the bird dog, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the bird dog in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the bird dog in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He starts on hands and knees facing the right edge of the frame: hands directly below the shoulders, knees directly below the hips, back flat, head neutral looking at the floor. In this video the NEAR (right) arm and the FAR (left) leg extend together.
 
@@ -1256,13 +1283,13 @@ View: exact side profile at low camera height (about 40 cm above the floor). He 
 
 Movement: He reaches the near arm forward and extends the opposite (far) leg backward until they form one straight horizontal line with the torso, holds that position steady for two seconds with the hips level, then brings the arm and leg back to the hands-and-knees position.
 
-Peak posture (panel 5 of @image2): the near arm fully extended forward at shoulder height and the far leg fully extended backward at hip height, so the arm, torso and leg form one straight horizontal line from the fingertips to the heel, the far foot flexed, the hips level and square (no rotation), the back flat, the neck neutral with the eyes on the floor, the supporting hand and supporting knee firmly on the floor.
+Peak posture (panel 5): the near arm fully extended forward at shoulder height and the far leg fully extended backward at hip height, so the arm, torso and leg form one straight horizontal line from the fingertips to the heel, the far foot flexed, the hips level and square (no rotation), the back flat, the neck neutral with the eyes on the floor, the supporting hand and supporting knee firmly on the floor.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.3 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.3 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.3 to 1.6 s: moves from the start posture to the peak posture in one continuous motion.
 - 1.6 to 3.6 s: holds the peak posture briefly.
-- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - The hips and shoulders stay level and square, no rotation or tilting.
@@ -1270,7 +1297,7 @@ Technique rules:
 - The arm and the opposite leg extend to the height of the torso, not higher.
 - Hold the extended position for about 2 seconds, then return slowly.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
 ```
@@ -1317,18 +1344,20 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
 ```
 
-### Prompt 2: video (`@image1` = panel 1, `@image2` = lembar 3x3)
+### Prompt 2: video (`@image1` = lembar 3x3 utuh; panel 1 = subjek)
 
-Model `seedance-2.0-*-reference-to-video`. Unggah 2 gambar berurutan: panel 1 terpotong dulu, lembar 3x3 utuh kedua.
+Model `seedance-2.0-*-reference-to-video`. Unggah hanya lembar 3x3 utuh sebagai satu-satunya gambar.
 
 ```text
-Reference-to-video with two references that have different jobs.
+Reference-to-video with ONE reference image used for two different jobs.
 
-@image1 is the SUBJECT: a single photo of the man in the start posture of the Copenhagen plank. It is the only source for his face, hair, body, clothes, the camera framing, his size and position in the frame, and the plain green background. The video starts exactly from @image1 and ends exactly back on it.
+@image1 is a storyboard sheet: a 3x3 grid of nine panels of one man performing one repetition of the Copenhagen plank, read left to right and top to bottom (panel 1 is the top-left cell, panel 5 is the middle cell and the peak of the movement, panel 9 is the bottom-right cell and is the start posture again).
 
-@image2 is a MOTION GUIDE ONLY: a 3x3 storyboard sheet of nine stages of one repetition of the Copenhagen plank, read left to right and top to bottom (panel 1 is the start, panel 5 is the peak, panel 9 is the start again). Take from @image2 only the body posture and the order of the movement. Do NOT copy anything else from @image2: not the grid, not the white lines, not the panels, not the camera framing, scale or position, not the background, and not the look of the man in any panel. Never show @image2, never cut to it, never blend or morph toward it.
+JOB 1, the SUBJECT: use ONLY the man in panel 1 (the top-left cell) as the subject of the video. Panel 1 is the only source for his face, hair, body, clothes, his size and position in the frame, the camera angle, and the plain green background. The video starts exactly from panel 1, enlarged so that the area of panel 1 fills the whole video frame, and it ends exactly back on that same image.
 
-The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera. The man performs ONE slow, controlled repetition of the Copenhagen plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of @image2 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
+JOB 2, the MOTION GUIDE: panels 2 to 9 are only a guide for the body posture and the order of the movement. Do NOT copy anything else from panels 2 to 9: not the grid, not the white lines, not the cell borders, not the camera framing, scale or position, not the background, and not the look of the man in any of those panels. Never show the sheet, never show several panels or several men, never cut to a panel, never blend or morph toward a panel.
+
+The output is ONE normal full-frame 1:1 video with ONE man, filmed by one static camera, framed exactly like panel 1. The man performs ONE slow, controlled repetition of the Copenhagen plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. The postures of panels 2 to 9 are a guide for how the body should look along the way; the movement passes through them naturally and never needs to stop or snap to them.
 
 Exercise setup: He lies on his right side. The right forearm is on the floor with the elbow directly below the right shoulder. The TOP leg (left) rests with the inside of the foot and the ankle on top of the bench. The BOTTOM leg (right) is not on the bench and hangs under the top leg. The left arm rests on the left hip. He lifts into the Copenhagen plank, holds it, then lowers back.
 
@@ -1336,13 +1365,13 @@ View: front view, the camera faces his chest squarely at the height of his torso
 
 Movement: He lifts his hips into a straight Copenhagen plank with the top leg on the bench and the bottom leg hanging in the air under it, holds it steady for two seconds with only a very slight breathing movement, then lowers his hips and bottom leg back to the floor.
 
-Peak posture (panel 5 of @image2): full Copenhagen plank, body one straight line from the head through the hips to the top foot on the bench, the right elbow directly below the right shoulder, the bottom leg lifted off the floor and held straight right under the top leg, the left hand on the left hip, the chest facing the camera, the hips lifted and not dropping, neck neutral.
+Peak posture (panel 5): full Copenhagen plank, body one straight line from the head through the hips to the top foot on the bench, the right elbow directly below the right shoulder, the bottom leg lifted off the floor and held straight right under the top leg, the left hand on the left hip, the chest facing the camera, the hips lifted and not dropping, neck neutral.
 
 Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stands (or lies) still, exactly as in @image1.
+- 0.0 to 0.4 s: stands (or lies) still, exactly as the man in panel 1.
 - 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion.
 - 1.6 to 3.6 s: holds the peak posture perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as in @image1.
+- 3.6 to 5.0 s: returns from the peak posture to the start posture in one continuous motion and ends exactly as the man in panel 1.
 
 Technique rules:
 - In the hold the body is one straight line from head to the top foot, the hips do not drop.
@@ -1350,7 +1379,7 @@ Technique rules:
 - The bottom leg hangs in the air under the top leg and does not touch the floor or the bench.
 - During the hold only the breathing moves.
 
-Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut, and the man stays at the same size and position as in @image1 throughout. The same flat uniform chroma key green background (#00B140) as in @image1 for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times.
+Camera and look: single full-frame 1:1 video, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut), the man at the same size and position as in panel 1 throughout. The same flat uniform chroma key green background (#00B140) as in panel 1, with no gradient, no floor line, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes as in panel 1. The full body stays inside the frame with at least 8 percent margin.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
 ```
