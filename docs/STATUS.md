@@ -78,7 +78,7 @@ Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Ur
 | 4 | M7 persiapan rilis: halaman kebijakan privasi (model "data di HP"), isian App Privacy / Data safety, profil EAS production, Sentry + PostHog aktif | `release/beta` | Kunci PostHog/Sentry (B7), akun Apple Developer + Google Play, keputusan rilis |
 | 5 | Review aturan engine oleh pelatih (B4/D6) dengan `07-ENGINE-EVIDENCE.md` sebagai checklist | - | Pelatih bersertifikat |
 | 6 | ~~Fase 2: strength + core, English, konsep paywall~~ Selesai 2026-10-30 (lihat log) | `claude/festive-hopper-ml7tp7` | Review B8, B9 |
-| 7 | Animasi gerakan strength (D8): `squat` sudah video di web (2026-11-01). Sisa: 14 gerakan lain, native (`expo-video`, perlu persetujuan spec + development build), konfirmasi lisensi video, review teknik oleh pelatih | `claude/fervent-carson-lm9zfb` | Video Seedance per gerakan (`apps/app/assets/exercises/README.md`) |
+| 7 | Animasi gerakan strength (D8): `squat` sudah video di web (2026-11-01). Sisa: 14 gerakan lain, native (`expo-video`, perlu persetujuan spec + development build), konfirmasi lisensi video, review teknik oleh pelatih | `claude/fervent-carson-lm9zfb` | Video Seedance per gerakan. Prompt 2 langkah (9 keyframe lalu video) untuk 15 gerakan: `docs/ANIMATION_PROMPTS.md`; pemrosesan: `apps/app/assets/exercises/README.md` |
 | 8 | Integrasi Strava, HealthKit, Health Connect + layar 4.2 + panduan HR di 2.2 | `feat/p2-integrations` | Client ID/secret Strava, HP fisik, dev build |
 | 9 | Fase 3: pembelian Premium lewat RevenueCat, trial, restore, `subscription_started` | `feat/p3-premium` | Akun App Store / Play, keputusan harga (08 bagian 6) |
 
