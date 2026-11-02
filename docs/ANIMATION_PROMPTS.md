@@ -13,6 +13,7 @@ Status: Draft v0.1 (2026-11-02). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `ap
 
 | # | Langkah | Yang dilakukan |
 |---|---|---|
+| 0 | Buat card karakter (sekali) | Generate card laki-laki dan perempuan (bagian "Card karakter"), pilih hasil terbaik, simpan. Dipakai sebagai referensi identitas di semua prompt keyframe |
 | 1 | Generate lembar keyframe | Tempel prompt gambar + prompt negatif. Hasil: satu gambar 1:1 berisi 9 panel |
 | 2 | Periksa lembar | Pakai daftar periksa gerakan. Ulangi sampai 9 panel benar dan orangnya sama |
 | 3 | Potong panel 1 | Potong panel kiri atas jadi gambar 1:1 sendiri untuk frame pertama |
@@ -59,6 +60,97 @@ Catatan: fitur Seedance yang dipakai di langkah 3 dan 4 (frame pertama, gambar r
 
 Urutan di tabel = urutan pengerjaan yang disarankan: mulai dari squat (ulang versi laki-laki) untuk mengunci tampilan karakter, lalu gerakan berdiri, lantai, dan terakhir yang memakai properti.
 
+## Card karakter (langkah 0)
+
+Buat satu kali per model, sebelum semua keyframe. Hasilnya menjadi referensi identitas: unggah card sebagai gambar referensi di setiap prompt keyframe (kalimat "If a character reference image is attached..." sudah ada di blok karakter). Jika alat hanya menerima satu gambar referensi, pakai gambar tampak samping (prompt B).
+
+| Hal | Laki-laki | Perempuan |
+|---|---|---|
+| Dipakai untuk | Semua keyframe di dokumen ini | Versi perempuan (belum dibuat prompt keyframe-nya) |
+| Tinggi | 175 cm | 163 cm |
+| Rambut | Hitam pendek rapi | Hitam panjang, kuncir tinggi |
+| Pakaian | Kaos slate-blue lengan pendek, celana hitam di atas lutut, sepatu abu muda | Sama |
+
+Pakaian perempuan sengaja kaos lengan pendek (bukan sports bra seperti video squat sebelumnya) agar seragam dengan laki-laki dan badan tidak terbuka.
+
+### Card Laki-laki
+
+Prompt A: card 2x2 (depan, samping kanan, belakang, wajah)
+
+```text
+Photorealistic studio character reference sheet of ONE person, used as the identity reference for later exercise photos. The person: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing.
+
+Layout: ONE square image (1:1) with a 2x2 grid of four equal square panels separated by thin solid white lines. No text, no numbers, no labels, no arrows, no frames around the figure.
+Panel 1 (top-left): full body from the front, standing relaxed in a neutral pose, feet hip-width apart, arms hanging with a small gap from the body, looking straight at the camera.
+Panel 2 (top-right): the same person, full body, exact side profile facing the RIGHT edge of the panel (the camera sees the right side of the body), standing relaxed with the arms hanging naturally.
+Panel 3 (bottom-left): the same person, full body from behind, same pose as panel 1.
+Panel 4 (bottom-right): head and shoulders close-up from the front, calm neutral expression, mouth closed, showing the face, the hair and the neckline of the shirt clearly.
+
+In panels 1 to 3 the full body from head to shoes is visible with at least 8 percent margin on every side, at the same scale and with the feet at the same position in each panel. The face, hair, body proportions, clothes and colors are exactly identical in all four panels.
+
+Background: a perfectly flat, uniform chroma key green screen (#00B140) in every panel, with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting, identical in all panels. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
+```
+
+Prompt negatif:
+
+```text
+text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, 3D render, cartoon, illustration, smiling, glasses, hat, accessories
+```
+
+Prompt B: satu gambar tampak samping (referensi tunggal)
+
+```text
+Photorealistic full-body studio photo of ONE person: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing. One square image (1:1) with a single panel and no grid. Exact side profile facing the RIGHT edge of the image (the camera sees the right side of the body), standing relaxed and tall, feet hip-width apart, arms hanging naturally at the sides, eyes looking straight ahead. The whole body from head to shoes is visible, centered, about 85 percent of the image height, with clear margin around it.
+
+Background: a perfectly flat, uniform chroma key green screen (#00B140), with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
+```
+
+Prompt negatif:
+
+```text
+text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, 3D render, cartoon, illustration, smiling, glasses, hat, accessories, front view, three-quarter view, back view
+```
+
+### Card Perempuan
+
+Prompt A: card 2x2 (depan, samping kanan, belakang, wajah)
+
+```text
+Photorealistic studio character reference sheet of ONE person, used as the identity reference for later exercise photos. The person: an Indonesian woman in her late 20s, about 163 cm tall, lean athletic build, long black hair tied in a high ponytail, no visible makeup, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing.
+
+Layout: ONE square image (1:1) with a 2x2 grid of four equal square panels separated by thin solid white lines. No text, no numbers, no labels, no arrows, no frames around the figure.
+Panel 1 (top-left): full body from the front, standing relaxed in a neutral pose, feet hip-width apart, arms hanging with a small gap from the body, looking straight at the camera.
+Panel 2 (top-right): the same person, full body, exact side profile facing the RIGHT edge of the panel (the camera sees the right side of the body), standing relaxed with the arms hanging naturally.
+Panel 3 (bottom-left): the same person, full body from behind, same pose as panel 1.
+Panel 4 (bottom-right): head and shoulders close-up from the front, calm neutral expression, mouth closed, showing the face, the hair and the neckline of the shirt clearly.
+
+In panels 1 to 3 the full body from head to shoes is visible with at least 8 percent margin on every side, at the same scale and with the feet at the same position in each panel. The face, hair, body proportions, clothes and colors are exactly identical in all four panels.
+
+Background: a perfectly flat, uniform chroma key green screen (#00B140) in every panel, with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting, identical in all panels. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
+```
+
+Prompt negatif:
+
+```text
+text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, 3D render, cartoon, illustration, smiling, glasses, hat, accessories
+```
+
+Prompt B: satu gambar tampak samping (referensi tunggal)
+
+```text
+Photorealistic full-body studio photo of ONE person: an Indonesian woman in her late 20s, about 163 cm tall, lean athletic build, long black hair tied in a high ponytail, no visible makeup, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing. One square image (1:1) with a single panel and no grid. Exact side profile facing the RIGHT edge of the image (the camera sees the right side of the body), standing relaxed and tall, feet hip-width apart, arms hanging naturally at the sides, eyes looking straight ahead. The whole body from head to shoes is visible, centered, about 85 percent of the image height, with clear margin around it.
+
+Background: a perfectly flat, uniform chroma key green screen (#00B140), with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
+```
+
+Prompt negatif:
+
+```text
+text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, 3D render, cartoon, illustration, smiling, glasses, hat, accessories, front view, three-quarter view, back view
+```
+
+**Periksa card:** satu orang yang sama di semua panel (wajah, rambut, tinggi, baju), tampak samping benar-benar profil menghadap kanan, seluruh badan masuk dengan margin, latar hijau rata tanpa bayangan, tanpa hijau di pakaian. Jika wajah berubah antar panel, ulangi.
+
 ---
 
 ## 1. Squat (`squat`)
@@ -72,7 +164,7 @@ Urutan di tabel = urutan pengerjaan yang disarankan: mulai dari squat (ulang ver
 ```text
 Photorealistic studio photo sheet of one man performing the bodyweight squat, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -151,7 +243,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the split squat (static lunge), shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -230,7 +322,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the Bulgarian split squat, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -310,7 +402,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the glute bridge, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -389,7 +481,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the single-leg glute bridge, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -468,7 +560,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the bodyweight single-leg deadlift, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -547,7 +639,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the reverse lunge, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -626,7 +718,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the step-up, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -706,7 +798,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the standing calf raise, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -785,7 +877,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the single-leg calf raise, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -865,7 +957,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the forearm plank, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -943,7 +1035,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the side plank, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -1021,7 +1113,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the dead bug, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -1100,7 +1192,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the bird dog, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
@@ -1179,7 +1271,7 @@ camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background
 ```text
 Photorealistic studio photo sheet of one man performing the Copenhagen plank, shown as nine sequential keyframes of ONE repetition.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing.
+The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
 
 Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
 
