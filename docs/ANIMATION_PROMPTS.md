@@ -33,7 +33,7 @@ Pengaturan yang disarankan untuk video (model reference-to-video):
 | Resolusi | 720p | Default. 480p terlalu rendah untuk chroma key yang rapi. 1080p hanya di model standard |
 | Durasi | 5 detik | Sama dengan timeline di prompt (rentang yang didukung 4 sampai 15 detik) |
 
-Sumber: dokumentasi EvoLink Seedance 2.0 (model `*-reference-to-video`: 0 sampai 9 gambar, tag `@image1`, rasio `1:1`, 480p dan 720p di semua model, 1080p hanya standard, durasi 4 sampai 15 detik). Panduan di jaringan menyebut mode referensi bisa mengikuti storyboard dalam satu lembar, tetapi tidak ada jaminan: periksa tiap hasil, dan jika video masih menampilkan kisi, pakai Prompt 2B.
+Sumber: dokumentasi EvoLink Seedance 2.0 (model `*-reference-to-video`: 0 sampai 9 gambar, tag `@image1`, rasio `1:1`, 480p dan 720p di semua model, 1080p hanya standard, durasi 4 sampai 15 detik). Panduan di jaringan menyebut mode referensi bisa mengikuti storyboard dalam satu lembar, tetapi tidak ada jaminan: periksa tiap hasil, dan jika video masih menampilkan kisi, coba model fast atau standard.
 
 EvoLink tidak punya kolom negative prompt untuk Seedance 2.0, jadi larangan ditulis di dalam prompt, pada baris `Avoid:` di akhir. Batas panjang prompt yang direkomendasikan 1.000 kata Inggris (prompt di sini 640 sampai 810 kata).
 
@@ -206,7 +206,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -240,38 +240,6 @@ Technique rules:
 - Depth: thighs parallel to the floor, not deeper.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the bodyweight squat. He performs ONE slow, controlled repetition of the bodyweight squat and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: Feet shoulder-width apart, toes turned out about 15 degrees, both feet flat. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He sits back and down slowly with the arms rising straight forward to shoulder height as a counterbalance, pauses briefly at the bottom with the thighs parallel to the floor, then drives up through the heels while the arms lower back to his sides.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.4 s: moves smoothly toward the peak and passes through this pose: knees bent to about 125 degrees, hips further back, torso leaning forward about 20 degrees, arms straight and raised to about 60 degrees from vertical.
-- 1.4 to 2.4 s: arrives at the peak pose: thighs parallel to the floor (knees about 90 degrees), shins leaning forward slightly, knees stacked over the middle of the feet and pointing the same way as the toes, torso leaning forward about 35 to 40 degrees with a neutral flat back and chest up, heels flat on the floor, arms straight forward at shoulder height, head neutral.
-- 2.4 to 2.8 s: holds the peak pose briefly.
-- 2.8 to 3.9 s: moves back and passes through this pose: knees bent to about 125 degrees, hips further back, torso leaning forward about 20 degrees, arms straight and raised to about 60 degrees from vertical.
-- 3.9 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- Knees stay in line with the toes and never cave inward.
-- Back stays flat and neutral, chest up, no rounding.
-- Both heels stay flat on the floor, feet do not slide or shuffle.
-- Depth: thighs parallel to the floor, not deeper.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
 ```
@@ -317,7 +285,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -351,38 +319,6 @@ Technique rules:
 - Back knee moves straight down, hips stay level and square to the camera plane.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the split squat (static lunge). He performs ONE slow, controlled repetition of the split squat (static lunge) and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: Split stance: the near (right) leg is the FRONT leg, the far (left) leg is the BACK leg, about 90 cm between the feet front to back and about hip-width apart side to side. Front foot flat, back heel raised with the toes on the floor. Both hands on his hips. The feet do not move during the whole repetition. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He lowers his hips straight down, the back knee travelling vertically toward the floor, pauses briefly at the bottom, then pushes up through the front heel back to the start, torso upright the whole time.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.4 s: moves smoothly toward the peak and passes through this pose: front knee about 120 degrees, back knee about 115 degrees, torso vertical, back knee about 25 cm above the floor.
-- 1.4 to 2.4 s: arrives at the peak pose: front thigh parallel to the floor (front knee about 90 degrees), front shin vertical with the knee directly above the ankle and not past the toes, back knee about 90 degrees and about 5 cm above the floor, back thigh vertical, torso upright and tall, pelvis level, hands on hips.
-- 2.4 to 2.8 s: holds the peak pose briefly.
-- 2.8 to 3.9 s: moves back and passes through this pose: front knee about 120 degrees, back knee about 115 degrees, torso vertical, back knee about 25 cm above the floor.
-- 3.9 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- Both feet stay planted in the same place, no stepping.
-- Torso stays upright, no forward lean beyond a few degrees.
-- Front knee stays above the ankle, the front heel stays down.
-- Back knee moves straight down, hips stay level and square to the camera plane.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
 ```
@@ -429,7 +365,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -463,38 +399,6 @@ Technique rules:
 - Slow, controlled tempo, no bouncing at the bottom.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the Bulgarian split squat. He performs ONE slow, controlled repetition of the Bulgarian split squat and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: The far (left) foot is the REAR foot, with the top of the foot (laces down) resting on the bench behind him. The near (right) leg is the FRONT leg, with the front foot flat on the floor about 75 cm in front of the bench. Both hands on his hips. The front foot does not move during the repetition.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height. Prop: A plain dark grey bench about 45 cm high and 40 cm long, standing on the LEFT side of the frame behind him (the bench is the only prop). Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He lowers slowly and under control until the front thigh is parallel to the floor, pauses briefly, then pushes up through the front heel back to the start, with the rear foot resting on the bench the whole time.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.4 s: moves smoothly toward the peak and passes through this pose: front knee about 120 degrees, rear knee about 125 degrees, torso upright with a slight forward lean of about 8 degrees.
-- 1.4 to 2.4 s: arrives at the peak pose: front thigh parallel to the floor (front knee about 90 degrees), front shin nearly vertical with the knee over the ankle, rear knee bent about 100 degrees and pointing down about 15 cm above the floor, rear foot still on the bench, torso upright with a forward lean of about 10 degrees, pelvis level, weight on the front heel.
-- 2.4 to 2.8 s: holds the peak pose briefly.
-- 2.8 to 3.9 s: moves back and passes through this pose: front knee about 120 degrees, rear knee about 125 degrees, torso upright with a slight forward lean of about 8 degrees.
-- 3.9 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The rear foot stays on the bench, the front foot stays planted.
-- Front knee stays above the ankle and tracks over the toes, front heel stays down.
-- Torso stays nearly upright, pelvis stays level.
-- Slow, controlled tempo, no bouncing at the bottom.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
 ```
@@ -540,7 +444,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -574,38 +478,6 @@ Technique rules:
 - Lower slowly, the glutes just touch the floor before the next repetition.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the glute bridge. He performs ONE slow, controlled repetition of the glute bridge and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He lies on his back, knees bent about 90 degrees, feet flat and hip-width apart with the heels about 30 cm from his glutes, arms resting on the floor along his sides with the palms down. The feet do not move.
-
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the frame and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He lifts his hips smoothly by pushing through his heels until the body is a straight line from shoulders to knees, holds that top position for one second, then lowers slowly back to the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.2 s: moves smoothly toward the peak and passes through this pose: hips about 15 cm off the floor, thighs and torso forming a shallow angle with the floor, shoulders on the floor.
-- 1.2 to 2.0 s: arrives at the peak pose: hips fully raised so that shoulders, hips and knees form one straight diagonal line that rises from the shoulders (on the floor) to the knees, the thighs sloping up from the hips to the knees at about 20 to 30 degrees above horizontal, shins vertical, knees about 90 degrees, feet flat directly below the knees, glutes squeezed, ribs down with no arch in the lower back, shoulders and head still on the floor, arms along his sides.
-- 2.0 to 3.0 s: holds the peak pose briefly.
-- 3.0 to 4.0 s: moves back and passes through this pose: hips about 15 cm off the floor, thighs and torso forming a shallow angle with the floor, shoulders on the floor.
-- 4.0 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The line from shoulders to knees is straight at the top, with no arching of the lower back and no over-extension.
-- Feet stay flat and in place, shoulders and head stay on the floor.
-- Hold the top position for about 1 second.
-- Lower slowly, the glutes just touch the floor before the next repetition.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
 ```
@@ -651,7 +523,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -685,38 +557,6 @@ Technique rules:
 - Hold the top for about 1 second, lower slowly.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the single-leg glute bridge. He performs ONE slow, controlled repetition of the single-leg glute bridge and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He lies on his back. The near (right) foot is flat on the floor with the knee bent about 90 degrees: this is the working leg. The far (left) leg is held straight (knee 180 degrees) with its thigh parallel to the near thigh, the foot flexed, hovering in the air and never touching the floor. Arms rest on the floor along his sides, palms down.
-
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the frame and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He lifts his hips by pushing through the heel of the near foot only, while the other leg stays straight and parallel to the working thigh, holds the top for one second with level hips, then lowers slowly.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.2 s: moves smoothly toward the peak and passes through this pose: hips about 15 cm off the floor, far leg straight, pelvis level (not rotating toward either side).
-- 1.2 to 2.0 s: arrives at the peak pose: hips fully raised so that shoulders, hips and the near knee form one straight diagonal line, near shin vertical, near foot flat, far leg straight and held in line with the near thigh (parallel to it, rising at about 20 to 30 degrees above horizontal), pelvis level and square (hips not dropping or twisting), ribs down with no arch in the lower back, shoulders and head on the floor.
-- 2.0 to 3.0 s: holds the peak pose briefly.
-- 3.0 to 4.0 s: moves back and passes through this pose: hips about 15 cm off the floor, far leg straight, pelvis level (not rotating toward either side).
-- 4.0 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- Only the near foot is on the floor, the far leg stays straight and parallel to the working thigh the whole time.
-- Hips stay level at the top, no rotation or dropping of the far hip.
-- No arching of the lower back, shoulders and head stay on the floor.
-- Hold the top for about 1 second, lower slowly.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
 ```
@@ -762,7 +602,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -796,38 +636,6 @@ Technique rules:
 - The standing foot stays planted, slow controlled tempo, the free foot does not touch the floor.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the bodyweight single-leg deadlift. He performs ONE slow, controlled repetition of the bodyweight single-leg deadlift and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He stands on the near (right) leg, which is the working leg, with the knee slightly soft (about 170 degrees). The far (left) leg is the free leg: it starts hanging beside the working leg with the toes hovering about 3 cm above the floor, and it swings straight back. Arms hang straight down, no weights. The standing foot does not move.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He hinges forward from the hips like a seesaw, the torso lowering as the free leg rises straight back, keeps the back flat, pauses briefly, then returns slowly to standing by squeezing the glute of the standing leg.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.4 s: moves smoothly toward the peak and passes through this pose: torso about 40 degrees forward, free leg raised back about 25 degrees, back flat.
-- 1.4 to 2.4 s: arrives at the peak pose: torso and free leg together form one long straight line, almost parallel to the floor (torso about 80 degrees forward from vertical, free leg raised back to the same height as the hips), standing knee softly bent about 155 degrees, back flat and neutral, hips square to the side (pelvis not opened), free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral looking at the floor about 1 meter ahead.
-- 2.4 to 2.8 s: holds the peak pose briefly.
-- 2.8 to 3.9 s: moves back and passes through this pose: torso about 40 degrees forward, free leg raised back about 25 degrees, back flat.
-- 3.9 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The movement is a hip hinge: the standing knee only softens slightly, it does not squat.
-- Back stays flat, no rounding.
-- Hips stay square, the free leg goes straight back without rotating the pelvis open.
-- The standing foot stays planted, slow controlled tempo, the free foot does not touch the floor.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
 ```
@@ -873,7 +681,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -907,38 +715,6 @@ Technique rules:
 - Stand fully back up, feet hip-width apart, before the next repetition.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the reverse lunge. He performs ONE slow, controlled repetition of the reverse lunge and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He starts standing with the feet hip-width apart, both hands on his hips. The near (right) leg steps BACK and the far (left) leg stays as the front leg with the foot planted. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He steps one leg straight back and lowers until the back knee almost touches the floor, pauses briefly, then pushes through the front foot and brings the back foot forward to stand tall again.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.4 s: moves smoothly toward the peak and passes through this pose: the near foot is about 50 cm behind, toes on the floor with the heel raised, both knees bent about 130 degrees, torso vertical.
-- 1.4 to 2.4 s: arrives at the peak pose: front thigh parallel to the floor (front knee about 90 degrees) with the shin vertical and the knee above the ankle, back knee about 90 degrees and almost touching the floor (about 3 cm above it), back heel raised, torso upright, hands on hips, pelvis level.
-- 2.4 to 2.8 s: holds the peak pose briefly.
-- 2.8 to 3.9 s: moves back and passes through this pose: the near foot is about 50 cm behind, toes on the floor with the heel raised, both knees bent about 130 degrees, torso vertical.
-- 3.9 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The front foot stays planted and does not move, the front heel stays down.
-- Front knee stays above the ankle, torso stays upright.
-- The back knee lowers almost to the floor but does not rest on it.
-- Stand fully back up, feet hip-width apart, before the next repetition.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
 ```
@@ -985,7 +761,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1019,38 +795,6 @@ Technique rules:
 - Torso stays upright, pelvis stays level.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the step-up. He performs ONE slow, controlled repetition of the step-up and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: The near (right) foot is the working foot, placed flat on top of the box. The far (left) foot is on the floor. Both hands on his hips. He steps up with the near foot and steps down with the same foot leading.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height. Prop: A plain dark grey sturdy box about 40 cm high and 50 cm long, placed on the RIGHT side of the frame in front of him (the box is the only prop). Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He drives up through the near foot on the box until the near leg is fully straight and the other knee lifts, pauses briefly standing tall, then lowers slowly and controlled with the same near leg until the other foot touches the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.2 s: moves smoothly toward the peak and passes through this pose: far foot leaving the floor, near knee about 145 degrees, hips rising straight up over the box.
-- 1.2 to 2.0 s: arrives at the peak pose: standing tall on the box on the near leg with the near knee fully straight (about 180 degrees), the far knee raised to about hip height with the shin hanging down and the foot not touching anything, torso upright, hands on hips, pelvis level.
-- 2.0 to 2.6 s: holds the peak pose briefly.
-- 2.6 to 3.8 s: moves back and passes through this pose: lowering: near knee about 120 degrees, the far foot just above the floor.
-- 3.8 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The near foot stays flat on the box and does all the work, the far foot does not push off the floor.
-- Stand fully tall at the top with the near knee straight.
-- Lower slowly with control, no dropping or jumping down.
-- Torso stays upright, pelvis stays level.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
 ```
@@ -1096,7 +840,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1130,38 +874,6 @@ Technique rules:
 - Lower slowly (the lowering is about twice as long as the rising), the body stays upright, no swaying.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the standing calf raise. He performs ONE slow, controlled repetition of the standing calf raise and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He stands on a flat floor with the feet hip-width apart and parallel, both hands on his hips. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He rises up onto the balls of his feet as high as he can, holds the top position for one second, then lowers slowly and under control until the heels touch the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.0 s: moves smoothly toward the peak and passes through this pose: heels about 7 cm off the floor, weight on the balls of the feet.
-- 1.0 to 1.6 s: arrives at the peak pose: rising as high as possible onto the balls of both feet, heels about 15 cm off the floor, ankles fully extended, knees straight (180 degrees), torso tall and vertical, hips stacked over the balls of the feet.
-- 1.6 to 2.6 s: holds the peak pose briefly.
-- 2.6 to 3.8 s: moves back and passes through this pose: heels about 7 cm off the floor, weight on the balls of the feet.
-- 3.8 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- Knees stay straight the whole time, no bending.
-- Rise as high as possible, the ankles stay upright (no rolling outward).
-- Hold the top for about 1 second.
-- Lower slowly (the lowering is about twice as long as the rising), the body stays upright, no swaying.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
 ```
@@ -1208,7 +920,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1242,38 +954,6 @@ Technique rules:
 - Hold the top for about 1 second, lower slowly.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the single-leg calf raise. He performs ONE slow, controlled repetition of the single-leg calf raise and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He stands on the near (right) leg only, which is the working leg. The far (left) leg is bent about 90 degrees with the foot raised behind him (shin roughly parallel to the floor), not touching the standing leg or the floor. His near hand rests with the fingertips lightly on the wall panel at shoulder height, the arm slightly bent. Only a light touch for balance, no pushing.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height. Prop: A plain dark grey vertical wall panel about 1.4 m tall standing at the RIGHT edge of the frame in front of him, used only for balance. Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He rises up onto the ball of the near foot as high as possible with the other foot held off the floor behind him, holds the top for one second, then lowers slowly and under control, with fingertips lightly on the wall for balance.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.0 s: moves smoothly toward the peak and passes through this pose: near heel about 7 cm off the floor.
-- 1.0 to 1.6 s: arrives at the peak pose: rising as high as possible onto the ball of the near foot, heel about 15 cm off the floor, ankle fully extended, near knee straight (180 degrees), torso tall and vertical, far foot still raised behind, fingertips lightly on the wall.
-- 1.6 to 2.6 s: holds the peak pose briefly.
-- 2.6 to 3.8 s: moves back and passes through this pose: near heel about 7 cm off the floor.
-- 3.8 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- Only the near foot touches the floor, the far foot never touches down.
-- The near knee stays straight, the ankle stays upright, no rolling outward.
-- The hand only touches the wall lightly for balance, it does not pull or push.
-- Hold the top for about 1 second, lower slowly.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
 ```
@@ -1319,7 +999,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1352,38 +1032,6 @@ Technique rules:
 - During the hold only the breathing moves, the body stays perfectly still.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the forearm plank. He performs ONE slow, controlled repetition of the forearm plank and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He comes from kneeling on forearms and knees into a full forearm plank, holds it, then lowers back to the knees. The forearms are flat on the floor, parallel and pointing forward, elbows directly below the shoulders.
-
-View: exact side profile at low camera height (about 40 cm above the floor). He faces the right edge of the frame, the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He moves from kneeling into a straight forearm plank, holds it steady for about two seconds with only a very slight breathing movement of the ribcage and no other movement, then lowers his knees back to the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.0 s: moves smoothly toward the peak and passes through this pose: both knees lifting: the legs extending backward with the toes on the floor, hips still slightly above the straight line.
-- 1.0 to 1.6 s: arrives at the peak pose: full forearm plank, forearms flat on the floor with the upper arms vertical and the elbows directly below the shoulders, toes on the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, glutes and abs braced, neck neutral with eyes looking at the floor about 30 cm ahead of the hands.
-- 1.6 to 3.6 s: holds the peak pose perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 4.3 s: moves back and passes through this pose: both knees lifting: the legs extending backward with the toes on the floor, hips still slightly above the straight line.
-- 4.3 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- In the plank the body is one straight line from head to heels, hips do not sag and do not rise.
-- Elbows stay directly under the shoulders, forearms stay flat and in place.
-- Neck stays neutral, the eyes look at the floor.
-- During the hold only the breathing moves, the body stays perfectly still.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
 ```
@@ -1429,7 +1077,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1462,38 +1110,6 @@ Technique rules:
 - During the hold only the breathing moves.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the side plank. He performs ONE slow, controlled repetition of the side plank and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He lies on his right side with his legs stacked. The right forearm lies flat on the floor with the elbow directly below the right shoulder, perpendicular to his body line and pointing toward the camera. The left arm rests on his left hip. He lifts into a side plank, holds it, then lowers his hips to the floor.
-
-View: front view, the camera faces his chest squarely at the height of his torso. His body lies horizontally across the frame with his head toward the left edge and his feet toward the right edge, resting on his right side (his right forearm is the supporting arm). There is no mat and no visible floor.
-
-Movement: He lifts his hips from the floor into a straight side plank supported by the forearm and the side of the feet, holds it steady for about two seconds with only a very slight breathing movement, then lowers his hips back to the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.0 s: moves smoothly toward the peak and passes through this pose: hips about 20 cm off the floor, body forming a shallow angle with the floor.
-- 1.0 to 1.6 s: arrives at the peak pose: full side plank, body one straight line from the head through the hips to the stacked feet, the hips lifted high and not dropping, the right elbow directly below the right shoulder with the forearm flat on the floor, the left hand resting on the left hip, the chest facing the camera (no rotation forward or backward), neck neutral.
-- 1.6 to 3.6 s: holds the peak pose perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 4.3 s: moves back and passes through this pose: hips about 20 cm off the floor, body forming a shallow angle with the floor.
-- 4.3 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- In the hold the body is one straight line from head to feet, the hips do not drop or pike.
-- The elbow stays directly below the shoulder, the chest faces the camera, no rolling forward or backward.
-- The legs stay stacked and straight.
-- During the hold only the breathing moves.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
 ```
@@ -1539,7 +1155,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1573,38 +1189,6 @@ Technique rules:
 - The arm and leg hover above the floor and do not touch it.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the dead bug. He performs ONE slow, controlled repetition of the dead bug and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He lies on his back in the tabletop position: both arms straight and pointing straight up to the ceiling, both hips and knees bent 90 degrees with the shins parallel to the floor. In this video the NEAR (right) arm and the FAR (left) leg move together. The lower back stays pressed to the floor the whole time.
-
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the frame and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He slowly lowers the near arm backward over his head and extends the opposite (far) leg at the same time, both hovering just above the floor, with the lower back pressed flat, then slowly returns both to the tabletop starting position.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.3 s: moves smoothly toward the peak and passes through this pose: the near arm about 45 degrees from vertical, the far leg about 150 degrees at the knee and lowering.
-- 1.3 to 2.2 s: arrives at the peak pose: the near arm straight overhead and hovering about 10 cm above the floor, the far leg fully straight and hovering about 10 cm above the floor, the other arm still vertical and the near leg still in tabletop (hip 90 degrees, knee 90 degrees), the lower back pressed flat to the floor with no arch, ribs down, head and shoulders on the floor.
-- 2.2 to 2.6 s: holds the peak pose briefly.
-- 2.6 to 3.8 s: moves back and passes through this pose: the near arm about 45 degrees from vertical, the far leg about 150 degrees at the knee and lowering.
-- 3.8 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The lower back stays pressed into the floor with no arching at any time.
-- The arm and the opposite leg move together, slowly and with control.
-- The other arm stays vertical and the other leg stays in tabletop.
-- The arm and leg hover above the floor and do not touch it.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
 ```
@@ -1650,7 +1234,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1684,38 +1268,6 @@ Technique rules:
 - Hold the extended position for about 2 seconds, then return slowly.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the bird dog. He performs ONE slow, controlled repetition of the bird dog and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He starts on hands and knees facing the right edge of the frame: hands directly below the shoulders, knees directly below the hips, back flat, head neutral looking at the floor. In this video the NEAR (right) arm and the FAR (left) leg extend together.
-
-View: exact side profile at low camera height (about 40 cm above the floor). He faces the right edge of the frame, the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He reaches the near arm forward and extends the opposite (far) leg backward until they form one straight horizontal line with the torso, holds that position steady for two seconds with the hips level, then brings the arm and leg back to the hands-and-knees position.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.3 s: holds still in the start pose (the pose of the input image).
-- 0.3 to 0.9 s: moves smoothly toward the peak and passes through this pose: the near arm reaching forward at about 20 degrees below horizontal, the far leg about 20 degrees below horizontal and almost straight.
-- 0.9 to 1.6 s: arrives at the peak pose: the near arm fully extended forward at shoulder height and the far leg fully extended backward at hip height, so the arm, torso and leg form one straight horizontal line from the fingertips to the heel, the far foot flexed, the hips level and square (no rotation), the back flat, the neck neutral with the eyes on the floor, the supporting hand and supporting knee firmly on the floor.
-- 1.6 to 3.6 s: holds the peak pose briefly.
-- 3.6 to 4.3 s: moves back and passes through this pose: the near arm reaching forward at about 20 degrees below horizontal, the far leg about 20 degrees below horizontal and almost straight.
-- 4.3 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- The hips and shoulders stay level and square, no rotation or tilting.
-- The back stays flat, no arching and no sagging.
-- The arm and the opposite leg extend to the height of the torso, not higher.
-- Hold the extended position for about 2 seconds, then return slowly.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
 ```
@@ -1762,7 +1314,7 @@ Prompt negatif:
 text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
 ```
 
-### Prompt 2: video, mode referensi (lembar 3x3 utuh = `@image1`)
+### Prompt 2: video (lembar 3x3 utuh = `@image1`)
 
 Model `seedance-2.0-*-reference-to-video`. Unggah lembar 3x3 utuh sebagai satu-satunya gambar.
 
@@ -1795,38 +1347,6 @@ Technique rules:
 - During the hold only the breathing moves.
 
 Camera and look: single full-frame 1:1 video, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. A flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes as in @image1. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
-```
-
-### Prompt 2B: video, cadangan (model image-to-video, frame pertama dan terakhir)
-
-Hanya jika mode referensi tidak tersedia atau terus menampilkan kisi. Unggah panel 1 yang sudah dipotong (1:1, tanpa garis putih) sebagai frame pertama dan frame terakhir.
-
-```text
-Image-to-video. The input image is the first frame and shows the start pose: the same man standing or lying in the start position of the Copenhagen plank. He performs ONE slow, controlled repetition of the Copenhagen plank and ends in exactly the same pose as the first frame, so the video loops seamlessly. Keep the same man, the same clothes, the same camera framing and scale, and the same plain green background as in the input image, with a single person in the frame.
-
-Exercise setup: He lies on his right side. The right forearm is on the floor with the elbow directly below the right shoulder. The TOP leg (left) rests with the inside of the foot and the ankle on top of the bench. The BOTTOM leg (right) is not on the bench and hangs under the top leg. The left arm rests on the left hip. He lifts into the Copenhagen plank, holds it, then lowers back.
-
-View: front view, the camera faces his chest squarely at the height of his torso. His body lies horizontally across the frame with his head toward the left edge and his feet toward the right edge, resting on his right side (his right forearm is the supporting arm). There is no mat and no visible floor. Prop: A plain dark grey bench about 45 cm high and 100 cm long, lying along the RIGHT side of the frame, used as the support for the top leg. Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He lifts his hips into a straight Copenhagen plank with the top leg on the bench and the bottom leg hanging in the air under it, holds it steady for two seconds with only a very slight breathing movement, then lowers his hips and bottom leg back to the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: holds still in the start pose (the pose of the input image).
-- 0.4 to 1.0 s: moves smoothly toward the peak and passes through this pose: hips about 22 cm off the floor, the bottom leg beginning to lift off the floor.
-- 1.0 to 1.6 s: arrives at the peak pose: full Copenhagen plank, body one straight line from the head through the hips to the top foot on the bench, the right elbow directly below the right shoulder, the bottom leg lifted off the floor and held straight right under the top leg, the left hand on the left hip, the chest facing the camera, the hips lifted and not dropping, neck neutral.
-- 1.6 to 3.6 s: holds the peak pose perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 4.3 s: moves back and passes through this pose: hips about 22 cm off the floor, the bottom leg beginning to lift off the floor.
-- 4.3 to 5.0 s: returns to the start pose, identical to the first frame.
-
-Technique rules:
-- In the hold the body is one straight line from head to the top foot, the hips do not drop.
-- The elbow stays directly below the shoulder, the chest faces the camera.
-- The bottom leg hangs in the air under the top leg and does not touch the floor or the bench.
-- During the hold only the breathing moves.
-
-Camera and look: square 1:1, 24 fps, the camera is completely static and locked off with no pan, zoom, shake or cut. The same flat uniform chroma key green background (#00B140) for the whole video, with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. The man keeps the same face, the same slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin at all times. Realistic human motion, smooth and even tempo, no sudden accelerations.
 
 Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
 ```
