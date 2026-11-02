@@ -30,6 +30,21 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 - Credential Supabase dibaca dari environment (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`). Jangan menulis credential ke repo.
 - Supabase MCP (`.mcp.json`, token dari env `SUPABASE_ACCESS_TOKEN`) dan skill `.claude/skills/supabase*` boleh dipakai untuk Auth, Edge Function, log dan dokumentasi. **Jangan** memakai tool database/migration untuk membuat tabel data pengguna; schema `public` harus tetap kosong (Schema bagian 5). Skill `supabase-postgres-best-practices` hanya relevan jika kelak ada tabel non-pribadi yang disetujui spec.
 
+## Setup sesi (cloud)
+
+Sesi baru memulai dari container kosong; hanya isi repo yang dibawa. Jangan memasang tool secara manual lalu berharap tersimpan.
+
+| Lapisan | Mengurus | Lokasi |
+|---|---|---|
+| Setup script environment (pengaturan environment, bukan repo) | Tool sistem: pnpm 10.28.0, `eas-cli`, Pillow, `PW_CHROMIUM_PATH` di `~/.bashrc`, font wireframe | `bash /home/user/runner-coach/scripts/setup-session.sh` |
+| Hook SessionStart (di repo, hanya cloud) | `pnpm install --frozen-lockfile` bila manifest/lockfile berubah, `PW_CHROMIUM_PATH` ke env sesi | `.claude/hooks/session-start.sh`, `.claude/settings.json` |
+| Environment variables (pengaturan environment) | `EXPO_TOKEN`, `SUPABASE_ACCESS_TOKEN`, `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Jangan ditulis di repo atau chat | Pengaturan environment |
+
+- Awal sesi: `git pull origin development` dulu (sesi lain juga merge ke sana), lalu baca `docs/STATUS.md` bagian "Berikutnya".
+- Jangan `playwright install`; Chromium bawaan ada di `/opt/pw-browsers/chromium`.
+- Tool atau library baru yang dibutuhkan lintas sesi: tambahkan ke `scripts/setup-session.sh` (tool sistem) atau `package.json` (dependensi repo, perlu persetujuan spec), bukan hanya dipasang di sesi.
+- Perintah harian, deploy, alur git dan daftar masalah yang pernah terjadi: `docs/DEV-SESSION.md`.
+
 ## Preview dan deploy (EAS)
 
 - **Default: hanya web.** Jangan menjalankan build iOS/Android (`eas build`, `eas submit`) sampai pemilik produk memberi perintah eksplisit. Review dilakukan di web dulu.
