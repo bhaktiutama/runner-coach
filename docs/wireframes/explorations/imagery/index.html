@@ -1,0 +1,140 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><title>Eksplorasi imagery</title>
+<link rel="stylesheet" href="../../source/ds/lintas/tokens.css">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#DCD8D3;font-family:var(--font-ui);color:var(--text);padding:56px 40px 40px;display:flex;flex-wrap:wrap;gap:72px 40px;width:1840px}
+.d,.num{font-family:var(--font-display);font-variant-numeric:tabular-nums}
+.w{position:relative}.lab{position:absolute;top:-32px;left:4px;font:700 15px var(--font-ui)}.lab span{font-weight:500;color:var(--text-muted)}
+.ph{width:390px;height:844px;border-radius:44px;overflow:hidden;position:relative;background:var(--bg);box-shadow:0 18px 44px #0002}
+.sb{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;padding:16px 28px 0;font:700 15px var(--font-ui)}.sb.lt{color:#fff}
+.img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.btn{height:56px;border-radius:28px;background:var(--primary);color:var(--on-primary);font:700 17px var(--font-ui);display:flex;align-items:center;justify-content:center;gap:10px}
+.btn2{height:52px;border-radius:26px;border:1.5px solid var(--line-strong);font:600 16px var(--font-ui);display:flex;align-items:center;justify-content:center}
+.lnk{text-align:center;font-weight:600;color:var(--primary-ink)}
+.logo{display:flex;align-items:center;gap:8px;font:800 22px var(--font-display)}
+.dots{display:flex;gap:6px;justify-content:center}.dots i{width:22px;height:4px;border-radius:2px;background:var(--line)}.dots i.on{background:var(--text)}
+.chip{display:inline-block;background:var(--primary);color:var(--on-primary);font:800 12px var(--font-display);letter-spacing:2px;padding:5px 11px;border-radius:8px}
+.note{position:absolute;right:12px;bottom:12px;z-index:6;background:#242C32d9;color:#FFF9F2;font:600 11px var(--font-ui);padding:5px 9px;border-radius:8px;max-width:250px;line-height:1.35}
+.tab{position:absolute;bottom:0;left:0;right:0;height:78px;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding-top:12px;font-size:12px;color:var(--text-muted)}
+.tab div{text-align:center}.tab b{display:block;width:22px;height:22px;margin:0 auto 4px;border:2px solid currentColor;border-radius:7px}.tab .a{color:var(--text);font-weight:700}
+.card{background:var(--surface);border-radius:28px;overflow:hidden}
+.field{height:54px;border-radius:16px;border:1.5px solid var(--line-strong);background:var(--surface);padding:0 16px;display:flex;align-items:center;color:var(--text-muted)}
+h1{font:800 34px/1.08 var(--font-display)}h2{font:800 26px/1.1 var(--font-display)}
+p.sub{color:var(--text-muted);font-size:15px;line-height:1.5}
+/* sheet */
+.sheet{width:1760px;background:var(--surface);border-radius:28px;padding:32px}
+.sheet h2{margin-bottom:4px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:20px}
+.tile img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:16px;display:block}.tile b{display:block;font:700 14px var(--font-ui);margin-top:8px}.tile small{color:var(--text-muted);font-size:12.5px;line-height:1.4;display:block}
+table{border-collapse:collapse;margin-top:22px;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:8px 14px 8px 0;text-align:left;vertical-align:middle}th{color:var(--text-muted);font-weight:600}
+td img{width:64px;height:40px;object-fit:cover;border-radius:8px;display:block}
+</style></head><body>
+<!-- IMG=../../../design-system/assets/imagery/ -->
+
+<div class="w" id="s-splash"><div class="lab">0 Splash in-app <span>road-sunrise-f</span></div><div class="ph">
+<img class="img" src="../../../design-system/assets/imagery/road-sunrise-f.webp" style="object-position:78% 50%">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0E2E30cc 0%,#0E2E3000 38%,#0E2E3000 62%,#0E2E30e6 100%)"></div>
+<div class="sb lt"><span>9:41</span><span>●●● ▮</span></div>
+<div style="position:absolute;top:120px;left:0;right:0;text-align:center;color:#FFF9F2"><div class="logo" style="justify-content:center;font-size:30px"><svg width="40" height="40" viewBox="0 0 64 64"><rect x="8" y="16" width="48" height="32" rx="16" fill="none" stroke="#F26B38" stroke-width="7" stroke-dasharray="110 22"/><circle cx="50" cy="18" r="5" fill="#FFF9F2"/></svg>run coach</div></div>
+<div style="position:absolute;bottom:64px;left:0;right:0;text-align:center;color:#FFF9F2;font:600 15px var(--font-ui)">Menyiapkan plan kamu…<div style="width:120px;height:4px;border-radius:2px;background:#FFF9F255;margin:14px auto 0"><div style="width:55%;height:100%;border-radius:2px;background:var(--primary)"></div></div></div>
+<div class="note">Muncul setelah splash native (ikon). Sumber 866 px: buram di layar penuh, perlu versi resolusi tinggi</div>
+</div></div>
+
+<div class="w" id="s-welcome"><div class="lab">1.1 Selamat datang <span>road-sunrise-m</span></div><div class="ph">
+<div style="position:absolute;top:0;left:0;right:0;height:500px"><img class="img" src="../../../design-system/assets/imagery/road-sunrise-m.webp" style="object-position:60% 40%">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0000 55%,var(--bg) 100%)"></div></div>
+<div class="sb lt"><span>9:41</span><span>●●● ▮</span></div>
+<div style="position:absolute;left:24px;right:24px;top:470px">
+<div class="dots" style="justify-content:flex-start;margin-bottom:18px"><i class="on"></i><i></i><i></i></div>
+<h1>Latihan lari yang ikut ritme kamu</h1><p class="sub" style="margin:12px 0 26px">Plan harian untuk 5K sampai maraton. Semua data tetap di perangkatmu.</p>
+<div class="btn">Mulai</div><div class="lnk" style="margin-top:18px">Saya sudah punya akun</div></div>
+<div class="note">Slide 2 dan 3: riverside-city-f, track-back</div>
+</div></div>
+
+<div class="w" id="s-login"><div class="lab">1.9 Masuk <span>riverside-city-f</span></div><div class="ph">
+<div style="position:absolute;top:0;left:0;right:0;height:300px;border-radius:0 0 32px 32px;overflow:hidden"><img class="img" src="../../../design-system/assets/imagery/riverside-city-f.webp" style="object-position:72% 55%">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0E2E3066,#0000 40%)"></div></div>
+<div class="sb lt"><span>9:41</span><span>●●● ▮</span></div>
+<div style="position:absolute;left:24px;right:24px;top:328px">
+<h2>Selamat datang kembali</h2><p class="sub" style="margin:8px 0 22px">Masuk untuk memulihkan plan dari file backup di HP ini.</p>
+<div class="field">Email</div><div class="btn" style="margin-top:14px">Kirim tautan masuk</div>
+<div style="display:flex;align-items:center;gap:10px;margin:20px 0;color:var(--text-muted);font-size:13px"><span style="flex:1;height:1px;background:var(--line)"></span>atau<span style="flex:1;height:1px;background:var(--line)"></span></div>
+<div class="btn2">Lanjut dengan Google</div><div class="btn2" style="margin-top:10px">Lanjut dengan Apple</div></div>
+</div></div>
+
+<div class="w" id="s-today"><div class="lab">2.1 Hari ini <span>track-back (tempo)</span></div><div class="ph">
+<div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div style="padding:58px 20px 0;display:flex;justify-content:space-between;align-items:flex-end"><div><div style="color:var(--text-muted);font-size:15px">Selasa, 27 Okt</div><h2 style="font-size:28px">Latihan hari ini</h2></div><div style="border:1.5px solid var(--line);background:var(--surface);border-radius:20px;padding:6px 12px;font-weight:700;font-size:14px" class="d">Minggu 3/10</div></div>
+<div class="card" style="margin:14px 16px 0">
+<div style="height:170px;position:relative"><img class="img" src="../../../design-system/assets/imagery/track-back.webp" style="object-position:50% 45%">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0000 35%,#242C32b3 100%)"></div>
+<span class="chip" style="position:absolute;left:16px;top:14px">TEMPO</span>
+<div style="position:absolute;left:16px;bottom:12px;color:#FFF9F2;display:flex;align-items:baseline;gap:8px"><span class="num" style="font:800 52px/1 var(--font-display)">42</span><span style="font-weight:600;font-size:18px">menit · ~5,5 km</span></div></div>
+<div style="padding:16px 18px 18px">
+<div style="display:flex;gap:5px;margin-bottom:14px"><i style="flex:2;height:10px;border-radius:5px;background:var(--peach,#E9B79D)"></i><i style="flex:1.4;height:10px;border-radius:5px;background:repeating-linear-gradient(45deg,#E9B79D 0 4px,#fff 4px 8px)"></i><i style="flex:2.8;height:10px;border-radius:5px;background:var(--primary)"></i><i style="flex:2;height:10px;border-radius:5px;background:#E9B79D"></i></div>
+<div style="display:grid;grid-template-columns:1fr auto;row-gap:8px;font-size:15px"><span>Pemanasan</span><span style="color:var(--text-muted)">10 mnt, easy</span><span>Drill ABC</span><span style="color:var(--text-muted)">2 x 20 m</span><b>Tempo</b><b class="num">14 mnt @ 6:45 /km</b><span>Pendinginan</span><span style="color:var(--text-muted)">10 mnt, easy</span></div>
+<div class="btn" style="margin-top:16px">▶ Mulai latihan</div><div class="lnk" style="margin-top:12px;font-size:14px">Lihat detail &amp; alasan latihan</div></div></div>
+<div class="card" style="margin:12px 16px;display:flex;align-items:center;gap:12px;padding:10px;border-radius:20px"><img src="../../../design-system/assets/imagery/riverside-city-m.webp" style="width:56px;height:56px;border-radius:14px;object-fit:cover;object-position:80% 60%"><div style="flex:1"><div style="font-size:12px;color:var(--text-muted)">Besok</div><b>Easy run · 35 mnt</b></div><span style="color:var(--text-muted);padding-right:8px">›</span></div>
+<div class="tab"><div class="a"><b></b>Hari ini</div><div><b></b>Plan</div><div><b></b>Progres</div><div><b></b>Profil</div></div>
+</div></div>
+
+<div class="w" id="s-finish"><div class="lab">2.4 Selesai + RPE <span>shoe-sole</span></div><div class="ph">
+<div style="position:absolute;top:0;left:0;right:0;height:360px"><img class="img" src="../../../design-system/assets/imagery/shoe-sole.webp" style="object-position:60% 40%">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,#0000 40%,#242C32d9 100%)"></div>
+<div style="position:absolute;left:24px;bottom:22px;color:#FFF9F2"><div style="font-weight:600;font-size:15px;opacity:.9">Tempo · Minggu 3</div><h1 style="font-size:38px">Latihan selesai!</h1></div></div>
+<div class="sb lt"><span>9:41</span><span>●●● ▮</span></div>
+<div style="position:absolute;left:16px;right:16px;top:376px">
+<div style="display:flex;gap:8px">
+<div class="card" style="flex:1;padding:12px;border-radius:18px"><div class="num" style="font:800 24px var(--font-display)">42:10</div><small style="color:var(--text-muted)">Waktu</small></div>
+<div class="card" style="flex:1;padding:12px;border-radius:18px"><div class="num" style="font:800 24px var(--font-display)">5,6 km</div><small style="color:var(--text-muted)">Jarak</small></div>
+<div class="card" style="flex:1;padding:12px;border-radius:18px"><div class="num" style="font:800 24px var(--font-display)">6:41</div><small style="color:var(--text-muted)">/km</small></div></div>
+<div class="card" style="margin-top:12px;padding:18px;border-radius:24px"><b style="font-size:16px">Seberapa berat rasanya?</b>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px">
+<div class="btn2" style="height:44px">1-2</div><div class="btn2" style="height:44px">3-4</div><div class="btn2" style="height:44px;background:var(--text);color:var(--surface);border-color:var(--text)">5-6</div><div class="btn2" style="height:44px">7-8</div><div class="btn2" style="height:44px">9-10</div></div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-top:8px"><span>Ringan</span><span>Maksimal</span></div></div>
+<div class="btn" style="margin-top:16px">Simpan</div></div>
+</div></div>
+
+<div class="w" id="s-empty"><div class="lab">3.3 Progres kosong <span>track-aerial</span></div><div class="ph">
+<div class="sb"><span>9:41</span><span>●●● ▮</span></div>
+<div style="padding:58px 20px 0"><h2 style="font-size:28px">Progres</h2></div>
+<div class="card" style="margin:18px 16px;padding:0">
+<div style="height:260px;position:relative"><img class="img" src="../../../design-system/assets/imagery/track-aerial.webp" style="object-position:50% 50%"></div>
+<div style="padding:20px;text-align:center"><b style="font:800 20px var(--font-display)">Belum ada lari tercatat</b><p class="sub" style="margin:8px 0 18px">Selesaikan latihan pertama atau catat lari manual. Grafik volume dan pace muncul di sini.</p><div class="btn">Lihat latihan hari ini</div><div class="lnk" style="margin-top:14px">Catat lari manual</div></div></div>
+<div class="tab"><div><b></b>Hari ini</div><div><b></b>Plan</div><div class="a"><b></b>Progres</div><div><b></b>Profil</div></div>
+</div></div>
+
+<div class="w" id="s-premium"><div class="lab">4.4 Premium <span>riverside-city-m</span></div><div class="ph" style="background:#10292B">
+<div style="position:absolute;top:0;left:0;right:0;height:470px"><img class="img" src="../../../design-system/assets/imagery/riverside-city-m.webp" style="object-position:80% 50%">
+<div style="position:absolute;inset:0;background:linear-gradient(180deg,#10292B55 0%,#0000 30%,#10292B 100%)"></div></div>
+<div class="sb lt"><span>9:41</span><span>●●● ▮</span></div>
+<div style="position:absolute;left:24px;right:24px;top:380px;color:#FFF9F2">
+<span class="chip">PREMIUM</span><h1 style="margin:12px 0 10px">Latihan lebih lengkap, data tetap milikmu</h1>
+<div style="display:grid;gap:10px;font-size:15px;margin:16px 0 22px;color:#E6ECEA"><span>✓ Latihan strength dengan animasi gerakan</span><span>✓ Adaptasi plan mingguan</span><span>✓ Banyak target sekaligus</span></div>
+<div class="btn">Lihat paket</div><div style="text-align:center;margin-top:14px;font-weight:600;color:#CFE0DC">Nanti saja</div></div>
+<div class="note">Isi teks mengikuti 08-MONETIZATION; ini hanya tata letak</div>
+</div></div>
+
+<div class="w" id="s-sheet"><div class="lab">Library imagery <span>docs/design-system/assets/imagery (draft)</span></div><div class="sheet">
+<h2>10 gambar hasil slice</h2><p class="sub">Format WebP q82. Ukuran asli tidak diubah. Status draft: lisensi sumber belum diverifikasi.</p>
+<div class="grid">
+<div class="tile"><img src="../../../design-system/assets/imagery/road-sunrise-f.webp"><b>road-sunrise-f</b><small>866x887. Splash, onboarding, long run</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/road-sunrise-m.webp"><b>road-sunrise-m</b><small>867x887. Hero 1.1, long run</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/riverside-city-f.webp"><b>riverside-city-f</b><small>866x887. Header 1.9, easy run</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/riverside-city-m.webp"><b>riverside-city-m</b><small>864x887. Premium 4.4, easy run</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/track-back.webp"><b>track-back</b><small>527x506. Kartu tempo, slide 1.1</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/track-side.webp"><b>track-side</b><small>508x506. Kartu interval</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/track-overhead.webp"><b>track-overhead</b><small>504x507. Kartu drill, ringkasan minggu 2.5</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/track-aerial.webp"><b>track-aerial</b><small>508x507. Empty state, hari istirahat</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/shoe-sole.webp"><b>shoe-sole</b><small>502x507. Selesai 2.4, pencapaian</small></div>
+<div class="tile"><img src="../../../design-system/assets/imagery/pov-feet.webp"><b>pov-feet</b><small>482x506. Catat lari manual 2.6, pemanasan</small></div>
+</div>
+<table><tr><th>Jenis latihan</th><th>Gambar kartu 2.1</th><th></th><th>Catatan</th></tr>
+<tr><td>Easy</td><td>riverside-city-f / -m</td><td><img src="../../../design-system/assets/imagery/riverside-city-m.webp" style="object-position:80% 50%"></td><td>Bergantian f/m per hari</td></tr>
+<tr><td>Tempo</td><td>track-back</td><td><img src="../../../design-system/assets/imagery/track-back.webp"></td><td></td></tr>
+<tr><td>Interval</td><td>track-side</td><td><img src="../../../design-system/assets/imagery/track-side.webp"></td><td></td></tr>
+<tr><td>Long run</td><td>road-sunrise-f / -m</td><td><img src="../../../design-system/assets/imagery/road-sunrise-m.webp" style="object-position:60% 50%"></td><td></td></tr>
+<tr><td>Drill</td><td>track-overhead</td><td><img src="../../../design-system/assets/imagery/track-overhead.webp"></td><td></td></tr>
+<tr><td>Istirahat</td><td>track-aerial</td><td><img src="../../../design-system/assets/imagery/track-aerial.webp"></td><td></td></tr>
+<tr><td>Strength</td><td>(belum ada)</td><td></td><td>Perlu gambar baru, gaya sama</td></tr></table>
+</div></div>
+</body></html>
