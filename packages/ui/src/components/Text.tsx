@@ -2,7 +2,8 @@ import { createContext, useContext } from 'react';
 import { Text as RNText, type TextProps } from 'react-native';
 import { color as colors, typography, type TypographyVariant } from '../theme';
 
-type ColorKey = 'text' | 'textMuted' | 'primaryInk' | 'onPrimary' | 'success' | 'accentInk' | 'onStatus' | 'onImage';
+type ColorKey =
+  'text' | 'textMuted' | 'primaryInk' | 'onPrimary' | 'success' | 'accentInk' | 'onStatus' | 'onImage';
 
 export type AppTextProps = TextProps & {
   variant?: TypographyVariant;
