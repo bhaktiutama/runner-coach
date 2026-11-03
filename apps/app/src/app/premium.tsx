@@ -20,6 +20,7 @@ import { t, type MessageKey } from '@/i18n/t';
 import { track } from '@/lib/analytics';
 import { FREE_STRENGTH_WEEKS, useEntitlement } from '@/lib/entitlement';
 import { PRICES, yearlySavingPct } from '@/lib/pricing';
+import { IMAGES } from '@/lib/imagery';
 
 const FREE: MessageKey[] = [
   'premium.free.plan',
@@ -49,6 +50,7 @@ export default function Premium() {
   return (
     <Screen
       testID="screen-premium"
+      hero={{ source: IMAGES.riversideCityM, keepFirst: true }}
       footer={
         <>
           <PrimaryButton

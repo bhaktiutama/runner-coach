@@ -1,6 +1,6 @@
 # Imagery (draft, eksplorasi)
 
-Status: **draft, belum masuk spec**. Belum dipakai di app. Sebelum dipakai, perlu perubahan spec (`04-UI-UX.md`, `design-system/README.md`) dan verifikasi lisensi.
+Status: **draft**. Dipakai di app sejak 2026-11-03 (UI/UX bagian 12; salinan di `apps/app/assets/imagery/`). Verifikasi lisensi wajib sebelum rilis toko.
 
 - Sumber: 3 gambar referensi dari pemilik produk (2026-11-03), gaya ilustrasi digital semi-realis. **Lisensi dan asal gambar belum diverifikasi** (kemungkinan hasil AI generator); jangan rilis sebelum jelas.
 - Proses: dipotong per panel (gutter putih dibuang), ukuran asli dipertahankan, disimpan WebP kualitas 82. Total sekitar 500 KB.

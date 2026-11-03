@@ -3,7 +3,9 @@ import {
   Card,
   color,
   Icon,
+  ImageHeader,
   LaneMark,
+  radius,
   LinkButton,
   PrimaryButton,
   SegmentBar,
@@ -16,6 +18,7 @@ import { StyleSheet, View } from 'react-native';
 import type { Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
 import { isLocked, useEntitlement } from '@/lib/entitlement';
+import { workoutImage } from '@/lib/imagery';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
 
 type Props = { workout: Workout; onStart?: () => void; onDetails?: () => void; startLabel?: string };
@@ -25,23 +28,34 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
   const zone = TYPE_ZONE[workout.type];
   const rows = segmentRows(workout.steps, workout.type);
   const done = workout.status === 'completed';
+  const image = workoutImage(workout.type, workout.date);
+  const bib = <BibTag label={typeName(workout.type)} zone={zone} />;
+  const status = done ? (
+    <View style={styles.done}>
+      <Icon name="check" size={space[4]} color={color.success} />
+      <Text variant="controlStrong" color="success">
+        {t('today.done')}
+      </Text>
+    </View>
+  ) : (
+    <Text variant="controlStrong" color={image ? 'text' : 'textMuted'}>
+      {t('today.approxKm', { km: approxKm(workout.steps) })}
+    </Text>
+  );
   return (
     <Card style={styles.card} testID="workout-card">
-      <View style={styles.head}>
-        <BibTag label={typeName(workout.type)} zone={zone} />
-        {done ? (
-          <View style={styles.done}>
-            <Icon name="check" size={space[4]} color={color.success} />
-            <Text variant="controlStrong" color="success">
-              {t('today.done')}
-            </Text>
-          </View>
-        ) : (
-          <Text variant="controlStrong" color="textMuted">
-            {t('today.approxKm', { km: approxKm(workout.steps) })}
-          </Text>
-        )}
-      </View>
+      {image ? (
+        // UI/UX 12: baris bib + jarak menjadi header bergambar; jarak/status di pil surface.
+        <ImageHeader source={image}>
+          {bib}
+          <View style={styles.pill}>{status}</View>
+        </ImageHeader>
+      ) : (
+        <View style={styles.head}>
+          {bib}
+          {status}
+        </View>
+      )}
       <View style={styles.big}>
         <Text variant="numberLg" testID="workout-minutes">
           {String(minutesOf(workout.steps))}
@@ -142,6 +156,12 @@ const styles = themed(() =>
     card: { gap: space[4] },
     head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     done: { flexDirection: 'row', gap: space[1], alignItems: 'center' },
+    pill: {
+      backgroundColor: color.surface,
+      borderRadius: radius.stadium,
+      paddingHorizontal: space[2] + space[1] / 2,
+      paddingVertical: space[1],
+    },
     big: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     rows: { gap: space[2] + space[1] / 2 },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space[3] },

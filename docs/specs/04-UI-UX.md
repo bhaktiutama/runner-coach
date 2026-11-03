@@ -167,3 +167,33 @@ Aturan umum:
 ### Dialog konfirmasi (v0.8)
 
 Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).
+
+## 12. Gambar (imagery, v0.9, 2026-11-03)
+
+Status: **draft**. Gambar dari `docs/design-system/assets/imagery/` (salinan app: `apps/app/assets/imagery/`, peta `apps/app/src/lib/imagery.ts`). Lisensi sumber belum diverifikasi: wajib jelas sebelum rilis toko. Gambar statis di dalam app, tidak diunduh, tidak berisi data pengguna.
+
+| Komponen (`packages/ui`) | Isi | Dipakai |
+|---|---|---|
+| `ImageHero` | Gambar selebar layar di atas, tinggi `size.hero` 300 (1.1: `size.hero-tall` 480), scrim `color.scrim` 60% di 120 px teratas, memudar ke `bg` mulai 45% tinggi (ikut tema). Dekoratif, disembunyikan dari pembaca layar. `Screen` prop `hero` menggeser isi ke bawah gambar; `keepFirst` = tombol kembali/tutup tetap di atas gambar. Status bar terang | 1.1, 1.9, 2.4, 2.5, 2.6, 4.4 |
+| `ImageHeader` | Header gambar `size.card-image` 150 di tepi atas `Card` (menembus padding 20); bib dan pil jarak (latar `surface`) di atasnya | 2.1 kartu latihan dan kartu istirahat, 3.3 kosong (tanpa bleed, radius `md`) |
+
+Teks langsung di atas gambar memakai `color.on-image` (#FFF9F2, kedua tema) dan hanya di area scrim (logo 1.1, judul kecil 2.6).
+
+| Layar / keadaan | Gambar |
+|---|---|
+| 1.1 Selamat datang (menggantikan tangga zona) | road-sunrise-m |
+| 1.9 Masuk | riverside-city-f |
+| 2.1 easy, recovery, run-walk | riverside-city-f / -m (bergantian per tanggal) |
+| 2.1 tempo, progression | track-back |
+| 2.1 interval | track-side |
+| 2.1 strides | track-overhead |
+| 2.1 long | road-sunrise-f / -m (bergantian per tanggal) |
+| 2.1 istirahat (`RestCard`, garis kiri recovery dihapus) | track-aerial |
+| 2.1 strength / core | Tanpa gambar (belum ada) |
+| 2.4 Selesai | shoe-sole |
+| 2.5 Ringkasan minggu | track-overhead |
+| 2.6 Catat lari manual | pov-feet |
+| 3.3 Belum ada aktivitas (kartu volume) | track-aerial |
+| 4.4 Premium | riverside-city-m |
+
+Wireframe: `docs/wireframes/png/imagery/` (+ `dark/`), canvas baris "5. Eksplorasi imagery".

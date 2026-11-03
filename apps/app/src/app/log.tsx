@@ -32,6 +32,7 @@ import { goHome } from '@/lib/nav';
 import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { isoAtLocal } from '@/lib/today';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
+import { IMAGES } from '@/lib/imagery';
 
 /** 2.6 Catat lari manual (F-15, FL-3). Tata letak = wireframe LogManual. */
 export default function LogRun() {
@@ -73,6 +74,7 @@ export default function LogRun() {
   return (
     <Screen
       testID="screen-log"
+      hero={{ source: IMAGES.povFeet, keepFirst: true }}
       footer={
         <>
           {error ? <InfoBox tone="danger">{error}</InfoBox> : null}
@@ -87,7 +89,7 @@ export default function LogRun() {
     >
       <View style={styles.top}>
         <IconButton icon="close" label={t('common.close')} onPress={close} />
-        <Text variant="controlStrong" color="textMuted" align="center" style={styles.flex}>
+        <Text variant="controlStrong" color="onImage" align="center" style={styles.flex}>
           {t('log.header')}
         </Text>
         <View style={styles.spacer} />

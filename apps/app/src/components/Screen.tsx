@@ -1,6 +1,7 @@
-import { color, size, space, themed } from '@run-coach/ui';
-import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { color, ImageHero, size, space, themed } from '@run-coach/ui';
+import { StatusBar } from 'expo-status-bar';
+import { Children, type ReactNode } from 'react';
+import { ScrollView, StyleSheet, View, type ImageSourcePropType } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
@@ -11,6 +12,11 @@ type Props = {
   testID?: string;
   /** Jarak antarblok: 20 (default) atau 24 (wireframe 1.2, 1.5). */
   gap?: keyof typeof GAP;
+  /**
+   * Gambar hero di atas layar (UI/UX 12). Isi digeser ke bawah gambar; `keepFirst` = anak pertama
+   * (tombol kembali/tutup) tetap di atas gambar.
+   */
+  hero?: { source: ImageSourcePropType; keepFirst?: boolean };
 };
 
 /** Kerangka layar: padding 20, konten maks 640 di tengah (UI/UX 5), footer tombol di bawah. */
@@ -24,24 +30,46 @@ const GAP = {
   progress: space[3] + space[1] / 2,
 } as const;
 
-export function Screen({ children, footer, scroll = true, dark = false, testID, gap = 'normal' }: Props) {
+export function Screen({
+  children,
+  footer,
+  scroll = true,
+  dark = false,
+  testID,
+  gap = 'normal',
+  hero,
+}: Props) {
   const insets = useSafeAreaInsets();
   const bg = dark ? color.dark.bg : color.bg;
-  const body = <View style={[styles.inner, { gap: GAP[gap] }]}>{children}</View>;
+  const top = Math.max(space.screenTop, insets.top + space[2]);
+  let kids: ReactNode = children;
+  if (hero) {
+    // Judul jatuh di bagian hero yang sudah hampir pudar (sekitar 90% tinggi gambar).
+    const above = hero.keepFirst ? size.touchMin + GAP[gap] : 0;
+    const gapH = Math.max(0, size.hero - top - above - GAP[gap] - space[6]);
+    const spacer = <View key="hero-gap" style={{ height: gapH }} />;
+    const list = Children.toArray(children);
+    kids = hero.keepFirst ? [list[0], spacer, ...list.slice(1)] : [spacer, ...list];
+  }
+  const body = <View style={[styles.inner, { gap: GAP[gap] }]}>{kids}</View>;
+  const content = (
+    <>
+      {hero ? <ImageHero source={hero.source} /> : null}
+      {body}
+    </>
+  );
   return (
-    <View
-      testID={testID}
-      style={[
-        styles.root,
-        { backgroundColor: bg, paddingTop: Math.max(space.screenTop, insets.top + space[2]) },
-      ]}
-    >
+    <View testID={testID} style={[styles.root, { backgroundColor: bg, paddingTop: hero ? 0 : top }]}>
+      {hero ? <StatusBar style="light" /> : null}
       {scroll ? (
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          {body}
+        <ScrollView
+          contentContainerStyle={[styles.scroll, hero && { paddingTop: top }]}
+          keyboardShouldPersistTaps="handled"
+        >
+          {content}
         </ScrollView>
       ) : (
-        <View style={[styles.scroll, styles.fill]}>{body}</View>
+        <View style={[styles.scroll, styles.fill, hero && { paddingTop: top }]}>{content}</View>
       )}
       {footer ? (
         <View

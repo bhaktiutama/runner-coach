@@ -5,6 +5,7 @@ import {
   color,
   duration,
   fontFiles,
+  ImageHeader,
   InfoBox,
   LaneWeek,
   LinkButton,
@@ -13,10 +14,11 @@ import {
   space,
   StatusChip,
   Text,
+  themed,
   useAnimatedNumber,
   weekdayShortName,
-  themed,
 } from '@run-coach/ui';
+import { IMAGES } from '@/lib/imagery';
 import { formatDate, formatNumber } from '@run-coach/ui/format';
 import { router, usePathname } from 'expo-router';
 import { useEffect, useRef } from 'react';
@@ -217,6 +219,7 @@ export default function Today() {
 function RestCard({ next }: { next: Workout | null }) {
   return (
     <Card testID="rest-card" style={styles.rest}>
+      <ImageHeader source={IMAGES.trackAerial} />
       <Text variant="title">{t('today.restTitle')}</Text>
       <Text variant="bodySm" color="textMuted">
         {t('today.restBody')}
@@ -246,7 +249,8 @@ const styles = themed(() =>
     },
     weekHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     weekDone: { fontFamily: fontFiles.display700, color: color.text },
-    rest: { gap: space[2], borderLeftWidth: space[2], borderLeftColor: color.status.recovery },
+    // UI/UX 12: gambar track-aerial menggantikan garis kiri recovery.
+    rest: { gap: space[2] },
     backup: { gap: space[2] },
     backupRow: { flexDirection: 'row', gap: space[3] },
   }),

@@ -25,6 +25,7 @@ import { goHome } from '@/lib/nav';
 import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { typeName } from '@/lib/workoutView';
 import { buildSegments, summary, type TimerState } from '@/timer/machine';
+import { IMAGES } from '@/lib/imagery';
 
 /** 2.4 Selesai + RPE. Data dari timer yang baru selesai (app_meta.active_timer). */
 export default function Finish() {
@@ -88,6 +89,7 @@ export default function Finish() {
   return (
     <Screen
       testID="screen-finish"
+      hero={{ source: IMAGES.shoeSole }}
       gap="finish"
       footer={
         <>

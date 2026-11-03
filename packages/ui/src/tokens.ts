@@ -82,7 +82,9 @@ export const tokens = {
       "overlay": "#00000099",
       "shadowCard": "#00000066",
       "shadowRaised": "#00000080"
-    }
+    },
+    "onImage": "#FFF9F2",
+    "scrim": "#161B1F"
   },
   "font": {
     "family": {
@@ -695,7 +697,10 @@ export const tokens = {
     "trackStroke": 10,
     "contentMax": 640,
     "dayRow": 70,
-    "iconSm": 22
+    "iconSm": 22,
+    "hero": 300,
+    "heroTall": 480,
+    "cardImage": 150
   },
   "border": {
     "hairline": 1,

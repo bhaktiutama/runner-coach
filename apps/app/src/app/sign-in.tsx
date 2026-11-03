@@ -27,6 +27,7 @@ import { useActivePlan, useCompleteSignIn, useMeta, useSaveDraft } from '@/data/
 import { emptyDraft } from '@/data/onboarding';
 import { t } from '@/i18n/t';
 import { startFresh } from '@/lib/nav';
+import { IMAGES } from '@/lib/imagery';
 
 /** 1.9 Masuk (akun lama / HP baru), FL-9 + TRD 3.4. Tata letak = wireframe OB9-Masuk. */
 export default function SignIn() {
@@ -74,7 +75,7 @@ export default function SignIn() {
     ) : undefined;
 
   return (
-    <Screen testID="screen-signin" footer={footer}>
+    <Screen testID="screen-signin" footer={footer} hero={{ source: IMAGES.riversideCityF, keepFirst: true }}>
       <IconButton icon="back" label={t('common.back')} onPress={back} />
       <View style={styles.brand}>
         <Logo variant="mark" height={space[8] + space[1]} />

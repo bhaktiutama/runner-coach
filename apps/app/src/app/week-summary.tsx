@@ -32,6 +32,7 @@ import { track } from '@/lib/analytics';
 import { goHome } from '@/lib/nav';
 import { weekIndexOf } from '@/lib/planView';
 import { et, rationaleText } from '@/lib/rationale';
+import { IMAGES } from '@/lib/imagery';
 
 function changeRow(c: Change): [MessageKey, string] | null {
   switch (c.kind) {
@@ -80,7 +81,7 @@ export default function WeekSummary() {
   const delta = stats.dist - stats.prev;
 
   return (
-    <Screen testID="screen-week">
+    <Screen testID="screen-week" hero={{ source: IMAGES.trackOverhead, keepFirst: true }}>
       <IconButton icon="close" label={t('week.close')} onPress={() => goHome()} />
       <View style={styles.center}>
         <View>

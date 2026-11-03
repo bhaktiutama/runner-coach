@@ -50,6 +50,7 @@ PAIRS = [
     ("color.dark.success-ink", "color.dark.surface", 4.5, "gelap: teks sukses"),
     ("color.dark.text", "color.dark.zone-strength", 4.5, "gelap: bib strength"),
     ("color.on-primary", "color.primary", 4.5, "gelap: tombol utama (sama)"),
+    ("color.on-image", "color.scrim", 4.5, "teks di atas gambar (bagian scrim penuh)"),
 ]
 
 

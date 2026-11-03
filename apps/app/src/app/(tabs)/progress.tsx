@@ -5,6 +5,7 @@ import {
   color,
   fontFiles,
   Icon,
+  ImageHeader,
   LaneMark,
   LineTrend,
   radius,
@@ -12,8 +13,8 @@ import {
   size,
   space,
   Text,
-  TrackRing,
   themed,
+  TrackRing,
 } from '@run-coach/ui';
 import {
   formatDayMonth,
@@ -38,6 +39,7 @@ import { t, type MessageKey } from '@/i18n/t';
 import { adherence, easyPaceTrend, rangeStart, weeklyVolume, type Range } from '@/lib/progress';
 import { et } from '@/lib/rationale';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
+import { IMAGES } from '@/lib/imagery';
 
 /** 3.3 Progres (F-07). Tata letak = wireframe Progress. */
 export default function ProgressTab() {
@@ -97,9 +99,13 @@ export default function ProgressTab() {
           </Text>
         </View>
         {shown.every((w) => w.distanceM === 0) ? (
-          <Text variant="bodySm" color="textMuted">
-            {t('progress.empty')}
-          </Text>
+          <>
+            {/* UI/UX 12: keadaan belum ada aktivitas memakai gambar track-aerial. */}
+            <ImageHeader source={IMAGES.trackAerial} style={styles.emptyImage} />
+            <Text variant="bodySm" color="textMuted">
+              {t('progress.empty')}
+            </Text>
+          </>
         ) : (
           <>
             <BarChart
@@ -253,6 +259,7 @@ export default function ProgressTab() {
 
 const styles = themed(() =>
   StyleSheet.create({
+    emptyImage: { marginTop: 0, marginHorizontal: 0, borderRadius: radius.md },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     shrink: { flexShrink: 1 },
     flex: { flex: 1 },
