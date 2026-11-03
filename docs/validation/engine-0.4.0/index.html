@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Validasi Engine Run Coach</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+<style>
+/* Layout: satu kolom baca 980px; ringkasan dulu (putusan + angka), lalu bagian detail, legenda kode di akhir. Palet = design system Lintas, sama dengan engine-review.html. */
+:root {
+  --bg: #F5F4F2; --surface: #FFFFFF; --sunken: #EAE8E5; --fg: #242C32; --muted: #5E6670; --line: #DDDAD6;
+  --primary: #F26B38; --primary-ink: #C63F0D;
+  --ok: #70D6B3; --ok-ink: #247F60; --warn: #F2C66D; --warn-ink: #95680D; --bad: #FF806E; --bad-ink: #C42F1C; --rec: #A6B8FF;
+  --on-chip: #242C32;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --ui: "Plus Jakarta Sans", system-ui, sans-serif;
+  --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161B1F; --surface: #242C32; --sunken: #1D2328; --fg: #FFF9F2; --muted: #A9B0B7; --line: #343D44;
+  --primary-ink: #F58A5F; --ok-ink: #6FB394; --warn-ink: #E3B65A; --bad-ink: #FF8A78; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #161B1F; --surface: #242C32; --sunken: #1D2328; --fg: #FFF9F2; --muted: #A9B0B7; --line: #343D44;
+  --primary-ink: #F58A5F; --ok-ink: #6FB394; --warn-ink: #E3B65A; --bad-ink: #FF8A78; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 500 15px/1.55 var(--ui); margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px }
+.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 36px }
+h1, h2, h3 { font-family: var(--display); font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(28px, 5.5vw, 40px); line-height: 1.08 }
+h2 { font-size: 22px; line-height: 1.2 }
+h3 { font-size: 16px; line-height: 1.3; letter-spacing: 0 }
+p { margin: 0; max-width: 72ch }
+a { color: var(--primary-ink) }
+a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px }
+code { font-family: var(--mono); font-size: .88em; background: var(--sunken); padding: 1px 5px; border-radius: 5px }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+.muted { color: var(--muted) }
+header { display: flex; flex-direction: column; gap: 12px }
+nav { display: flex; flex-wrap: wrap; gap: 8px }
+nav a { font-size: 13px; font-weight: 700; text-decoration: none; padding: 6px 12px; border-radius: 99px; background: var(--surface); box-shadow: 0 0 0 1px var(--line) inset; color: var(--fg) }
+nav a[aria-current="page"] { background: var(--fg); color: var(--bg) }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted) }
+.meta b { color: var(--fg); font-weight: 700 }
+.verdict { border-radius: 16px; padding: 18px 20px; display: flex; gap: 14px; align-items: flex-start; background: var(--surface); box-shadow: 0 0 0 1px var(--line) inset }
+.verdict.s-kritis { box-shadow: 0 0 0 2px var(--bad) inset }
+.verdict.s-mayor { box-shadow: 0 0 0 2px var(--warn) inset }
+.verdict.s-pass { box-shadow: 0 0 0 2px var(--ok) inset }
+.verdict p { font-size: 16px; font-weight: 600 }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px }
+.tile { background: var(--surface); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 0; box-shadow: 0 1px 0 var(--line) }
+.tile .v { font-family: var(--display); font-weight: 800; font-size: 28px; font-variant-numeric: tabular-nums; line-height: 1.1 }
+.tile.s-kritis .v { color: var(--bad-ink) } .tile.s-mayor .v { color: var(--warn-ink) } .tile.s-pass .v { color: var(--ok-ink) }
+.tile .l { font-size: 13px; font-weight: 700 }
+.tile .note { font-size: 12px; color: var(--muted) }
+section { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 16px }
+.tw { overflow-x: auto; background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line) inset }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line) }
+th { font-size: 12px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); background: var(--sunken); white-space: nowrap }
+tr:last-child td { border-bottom: 0 }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap }
+td .sub { display: block; font-size: 12px; color: var(--muted) }
+.chip { display: inline-block; font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 99px; white-space: nowrap; color: var(--on-chip) }
+.s-pass.chip { background: var(--ok) } .s-kritis.chip { background: var(--bad) } .s-mayor.chip { background: var(--warn) }
+.s-minor.chip { background: var(--sunken); color: var(--fg); box-shadow: 0 0 0 1px var(--line) inset }
+.s-skip.chip { background: var(--sunken); color: var(--muted) } .s-known.chip { background: var(--warn) } .s-info.chip { background: var(--rec) }
+abbr[title] { text-decoration: underline dotted; text-underline-offset: 3px; cursor: help }
+.note { font-size: 13px; color: var(--muted) }
+.callout { background: var(--surface); border-radius: 14px; padding: 14px 16px; box-shadow: 0 0 0 1px var(--line) inset; display: flex; flex-direction: column; gap: 6px }
+ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px }
+.legend td:first-child { font-weight: 800; white-space: nowrap }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<nav aria-label="Laporan lain"><a href="#" aria-current="page">Ringkasan</a><a href="lapisan-1.html">Lapisan 1: app = engine</a><a href="lapisan-2.html">Lapisan 2: engine = aturan</a><a href="lapisan-3.html">Lapisan 3: aturan = referensi</a><a href="review-pelatih.html">Paket review pelatih</a></nav>
+<span class="eyebrow">Paket bukti validasi · engine 0.4.0</span>
+<h1>Apakah saran latihan Run Coach bisa dipertanggungjawabkan?</h1>
+<p>Hasil menjalankan dokumen <i>Plan Validity Testing Engine Run Coach</i> pada satu versi engine. Tiga lapisan diperiksa dengan pembanding terpisah: app dibanding engine, engine dibanding aturan, aturan dibanding referensi dan pelatih.</p>
+<div class="meta"><span>Versi engine: <b>0.4.0</b></span><span>Commit: <b>b542537</b></span><span>Diperbarui: <b>2026-11-03 22:22 WIB</b></span></div>
+</header>
+<div class="verdict s-mayor"><span class="chip s-mayor">Gagal Mayor</span><p>Engine 0.4.0 belum memenuhi kriteria lulus: ada pelanggaran Mayor tanpa pengecualian yang disetujui.</p></div>
+<div class="tiles"><div class="tile s-pass"><span class="v">101 / 101</span><span class="l">Lapisan 1: app = engine</span><span class="note">Pemeriksaan lulus</span></div><div class="tile s-mayor"><span class="v">0</span><span class="l">Lapisan 2: engine = aturan</span><span class="note">Kritis gagal</span></div><div class="tile s-pass"><span class="v">0</span><span class="l">Lapisan 3: aturan = referensi</span><span class="note">Parameter beda</span></div><div class="tile s-skip"><span class="v">10</span><span class="l">Paket review pelatih (L3.6)</span><span class="note">Plan</span></div></div>
+<nav aria-label="Isi laporan"><a href="#lapisan">Hasil per lapisan</a><a href="#kriteria">Kriteria lulus</a><a href="#cara">Cara menjalankan ulang</a><a href="#legenda">Legenda kode</a></nav>
+<section id="lapisan"><h2>Hasil per lapisan</h2><div class="tw"><table><thead><tr><th>Lapisan</th><th>Status</th><th>Ringkasan</th><th>Angka utama</th><th>Dijalankan</th></tr></thead><tbody><tr><td><a href="lapisan-1.html">Lapisan 1: app = engine</a></td><td><span class="chip s-pass">Lulus</span></td><td>101 pemeriksaan lulus, 0 gagal, 1 catatan desain, pada 12 persona/skenario.</td><td>Pemeriksaan lulus: <b>101 / 101</b><br>Gagal: <b>0</b><br>Catatan desain: <b>1</b></td><td>2026-11-03 22:20 WIB</td></tr><tr><td><a href="lapisan-2.html">Lapisan 2: engine = aturan</a></td><td><span class="chip s-mayor">Gagal Mayor</span></td><td>0 pemeriksaan Kritis dan 1 Mayor gagal pada 1.653 plan.</td><td>Kritis gagal: <b>0</b><br>Mayor gagal: <b>1</b><br>Plan diperiksa: <b>1.653</b></td><td>2026-11-03 22:21 WIB</td></tr><tr><td><a href="lapisan-3.html">Lapisan 3: aturan = referensi</a></td><td><span class="chip s-pass">Lulus</span></td><td>0 parameter beda antara dokumen dan kode; 0 aturan dengan tingkat bukti/keberadaan tidak konsisten; L3.5 lulus, L3.4 belum bisa dijalankan.</td><td>Parameter beda: <b>0</b><br>Klaim tanpa dasar: <b>0</b><br>Aturan tidak konsisten: <b>0</b></td><td>2026-11-03 22:21 WIB</td></tr><tr><td><a href="review-pelatih.html">Paket review pelatih (L3.6)</a></td><td><span class="chip s-skip">Tidak dijalankan</span></td><td>10 plan persona dan 6 pertanyaan siap dikirim ke pelatih; belum dinilai.</td><td>Plan: <b>10</b><br>Status: <b>Menunggu pelatih</b></td><td>2026-11-03 22:22 WIB</td></tr></tbody></table></div></section>
+<section id="kriteria"><h2>Kriteria lulus</h2><p class="muted">Dari dokumen Plan Validity Testing, bagian Kriteria lulus. Versi engine dinyatakan bisa dipertanggungjawabkan jika semua baris terpenuhi pada commit yang sama.</p><div class="tw"><table><thead><tr><th>Kriteria</th><th>Batas lulus</th></tr></thead><tbody><tr><td><abbr title="Uji di dokumen Plan Validity Testing">L1.1</abbr>-<abbr title="Uji di dokumen Plan Validity Testing">L1.6</abbr> diff app vs engine (10 persona, ID dan EN)</td><td>0 beda</td></tr><tr><td>Lapisan 2: pelanggaran Kritis di matriks penuh</td><td>0</td></tr><tr><td>Lapisan 2: pelanggaran Mayor</td><td>0, atau tiap pengecualian tercatat dan disetujui pemilik produk</td></tr><tr><td>Lapisan 2: pelanggaran Minor</td><td>Dicatat dan dilacak, tidak menghalangi</td></tr><tr><td>Kasus regresi <abbr title="Temuan prioritas tinggi yang sudah diketahui (dokumen Plan Validity Testing)">H1</abbr>-<abbr title="Temuan prioritas tinggi yang sudah diketahui (dokumen Plan Validity Testing)">H4</abbr></td><td>Lulus setelah perbaikan; tetap ada di suite</td></tr><tr><td>Lapisan 3: paritas dokumen-kode dan klaim teks</td><td>0 selisih tanpa catatan</td></tr><tr><td>Lapisan 3: review pelatih</td><td>10 dari 10 plan tanpa "Tidak setuju" terbuka, formulir ditandatangani</td></tr></tbody></table></div></section>
+<section id="cara"><h2>Cara menjalankan ulang</h2><div class="callout"><p>Suite ini <b>tidak</b> masuk CI. Jalankan kapan saja dari akar repo:</p><ul><li><code>pnpm validate:engine</code> menjalankan Lapisan 2, Lapisan 3 dan paket review pelatih (sekitar 1 menit).</li><li><code>pnpm validate:app</code> menjalankan Lapisan 1 lewat Playwright. Ekspor web dulu dengan <code>EXPO_PUBLIC_E2E=1</code>.</li></ul><p class="note">Setiap run menimpa laporan di folder versi engine yang sama. Detail di <code>validation/README.md</code>.</p></div></section>
+<section id="legenda" class="legend"><h2>Legenda kode</h2><p class="muted">Arti setiap kode huruf-angka di laporan ini dan dokumen asalnya. Arahkan kursor ke kode bergaris titik untuk melihat artinya langsung.</p>
+<div class="tw"><table><thead><tr><th>Kode</th><th>Artinya</th><th>Dari dokumen</th></tr></thead><tbody><tr><td>E-01 sampai E-26</td><td>Aturan engine: cara app menyusun dan menyesuaikan plan. Contoh: E-06 = batas jarak satu sesi, E-10 = sesi berat, E-11 = taper.</td><td>docs/specs/02-TRD.md bagian 4.2 dan 4.3; bukti tiap aturan di docs/specs/07-ENGINE-EVIDENCE.md bagian 2; versi untuk pelatih di docs/engine-review.html</td></tr><tr><td>E-06a, E-11b, ...</td><td>Sub-pemeriksaan validator untuk satu aturan. Huruf kecil di belakang = pemeriksaan ke berapa untuk aturan itu (daftar lengkap di laporan Lapisan 2).</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Lapisan 2; validation/lib/oracle.ts</td></tr><tr><td>E-O1 sampai E-O5</td><td>Keputusan terbuka engine (pertanyaan yang belum final, misal E-O4 = koefisien VDOT belum dicek ke buku Daniels).</td><td>docs/specs/07-ENGINE-EVIDENCE.md bagian 4; docs/engine-review.html bagian &quot;Keputusan terbuka&quot;</td></tr><tr><td>R1 sampai R24</td><td>Referensi penelitian yang menjadi dasar aturan (misal R7 = kohort 5.205 pelari, R13 = meta-analisis taper).</td><td>docs/specs/07-ENGINE-EVIDENCE.md bagian 5; docs/engine-review.html bagian &quot;Daftar pustaka&quot;; packages/training-engine/src/evidence/references.ts</td></tr><tr><td>Bukti A, B, C, D</td><td>Tingkat bukti aturan. A = meta-analisis/review sistematis, B = RCT atau kohort besar, C = studi terbatas/konsensus, D = praktik pelatih tanpa studi langsung.</td><td>docs/specs/07-ENGINE-EVIDENCE.md bagian 1; docs/engine-review.html</td></tr><tr><td>D6</td><td>Keputusan produk: aturan engine wajib direview pelatih bersertifikat sebelum beta publik.</td><td>docs/specs/01-PRD.md tabel keputusan (baris D6)</td></tr><tr><td>F-01, F-11, F-21, ...</td><td>Nomor fitur produk (misal F-11 = adaptasi mingguan, F-21 = strength + core).</td><td>docs/specs/01-PRD.md</td></tr><tr><td>Layar 1.8, 2.2, 2.5, 3.2</td><td>Nomor layar app: 1.8 Preview plan (&quot;Kenapa plan ini?&quot;), 2.2 Detail latihan (&quot;Kenapa latihan ini?&quot;), 2.5 Ringkasan minggu (usulan adaptasi), 3.2 Pindah latihan.</td><td>docs/specs/03-APP-FLOW.md; gambar di docs/wireframes/png/</td></tr><tr><td>TRD 4.2, 07 3.5, ...</td><td>Nomor bagian dokumen spec. TRD = 02-TRD.md, 07 = 07-ENGINE-EVIDENCE.md, PRD = 01-PRD.md.</td><td>docs/specs/</td></tr><tr><td>L1.1 sampai L1.6</td><td>Uji Lapisan 1: saran di app sama dengan keluaran engine (plan, teks saran, angka di layar, adaptasi, pindah latihan, tanpa perubahan diam-diam).</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Lapisan 1</td></tr><tr><td>L3.1 sampai L3.6</td><td>Uji Lapisan 3: aturan sesuai referensi (paritas dokumen-kode, klaim teks, tingkat bukti, benchmark VDOT, benchmark Riegel, review pelatih).</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Lapisan 3</td></tr><tr><td>H1 sampai H4</td><td>Temuan prioritas tinggi yang sudah diketahui sebelum run ini (taper, sesi berat sesudah long run, sesi kualitas taper, teks E-03).</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Temuan yang sudah diketahui</td></tr><tr><td>N1 sampai N3</td><td>Temuan minor yang sudah diketahui (angka E-07, easy run &lt; 2 km, engine-review usang).</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Temuan yang sudah diketahui</td></tr><tr><td>M1 sampai M5</td><td>Temuan coaching yang diputuskan pelatih, bukan test otomatis (long run, dosis interval, easy run pendek, easy run minggu race, minggu 8).</td><td>Analisis seed minggu 4; Plan Validity Testing Engine Run Coach (Claude Docs), pertanyaan pelatih di Lapisan 3</td></tr><tr><td>P1 sampai P10</td><td>Persona golden: 10 profil pengguna contoh yang dipakai di Lapisan 1 dan review pelatih.</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Matriks skenario; validation/lib/scenarios.ts</td></tr><tr><td>S-0001, S-0002, ...</td><td>Nomor skenario matriks Lapisan 2, dibuat otomatis dan selalu sama tiap run (seed tetap).</td><td>validation/lib/scenarios.ts; daftar lengkap di file JSON hasil run</td></tr><tr><td>AD-01, RR-01, PD-01</td><td>Skenario adaptasi (AD), Return to run setelah jeda (RR), dan pindah latihan (PD).</td><td>validation/lapisan2.val.ts; Plan Validity Testing Engine Run Coach (Claude Docs), tabel Skenario adaptasi</td></tr><tr><td>RAT-a sampai RAT-f</td><td>Pemeriksaan angka di teks rationale (&quot;Kenapa plan/latihan ini?&quot;) dibandingkan angka plan sebenarnya.</td><td>docs/specs/07-ENGINE-EVIDENCE.md bagian 3</td></tr><tr><td>WAJ-a sampai WAJ-e</td><td>Pemeriksaan batas wajar: easy run minimal 2 km, tanggal di dalam plan, tidak ada 2 lari di tanggal sama, setiap latihan punya rationale, template terisi.</td><td>docs/specs/07-ENGINE-EVIDENCE.md bagian 3.5 dan 7</td></tr><tr><td>Kritis / Mayor / Minor</td><td>Tingkat keparahan pelanggaran. Kritis = keamanan atau janji ke pengguna; Mayor = tidak sesuai spec; Minor = kualitas atau konsistensi.</td><td>Plan Validity Testing Engine Run Coach (Claude Docs), bagian Lapisan 2</td></tr><tr><td>VDOT, RPE, HM, FM</td><td>VDOT = skor kebugaran Daniels dari waktu race; RPE = rasa berat latihan 1-10; HM = half marathon 21,1 km; FM = full marathon 42,2 km.</td><td>docs/engine-review.html bagian &quot;Daftar istilah&quot;</td></tr><tr><td>Pace E, M, T, I, R</td><td>Zona pace Daniels: Easy, Marathon, Threshold (tempo), Interval, Repetition (strides).</td><td>docs/specs/02-TRD.md bagian 4.1; R3 (Daniels' Running Formula)</td></tr></tbody></table></div></section>
+</div>
+</body>
+</html>
