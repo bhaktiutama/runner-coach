@@ -288,6 +288,60 @@
    "title": "4.4 Premium + header gambar (draft)",
    "is_interactive": true,
    "radius": 40
+  },
+  "IMG-2-5-ringkasan-minggu.dc.html": {
+   "x": 0,
+   "y": 6144,
+   "w": 390,
+   "h": 844,
+   "title": "2.5 Ringkasan minggu + gambar (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-2-6-catat-lari.dc.html": {
+   "x": 470,
+   "y": 6144,
+   "w": 390,
+   "h": 844,
+   "title": "2.6 Catat lari manual + gambar (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-2-1i-hari-ini-interval.dc.html": {
+   "x": 940,
+   "y": 6144,
+   "w": 390,
+   "h": 844,
+   "title": "2.1i Hari ini, interval (keadaan baru) (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-2-1r-hari-ini-istirahat.dc.html": {
+   "x": 1410,
+   "y": 6144,
+   "w": 390,
+   "h": 844,
+   "title": "2.1r Hari ini, istirahat (keadaan baru) (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-3-3k-progres-kosong.dc.html": {
+   "x": 1880,
+   "y": 6144,
+   "w": 390,
+   "h": 844,
+   "title": "3.3k Progres, belum ada aktivitas (keadaan baru) (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-1-1b-selamat-datang.dc.html": {
+   "x": 0,
+   "y": 7188,
+   "w": 390,
+   "h": 844,
+   "title": "1.1 Selamat datang, gambar B (draft)",
+   "is_interactive": true,
+   "radius": 40
   }
  },
  "order": [
@@ -321,7 +375,13 @@
   "IMG-1-9-masuk.dc.html",
   "IMG-2-1-hari-ini.dc.html",
   "IMG-2-4-selesai.dc.html",
-  "IMG-4-4-premium.dc.html"
+  "IMG-4-4-premium.dc.html",
+  "IMG-2-5-ringkasan-minggu.dc.html",
+  "IMG-2-6-catat-lari.dc.html",
+  "IMG-2-1i-hari-ini-interval.dc.html",
+  "IMG-2-1r-hari-ini-istirahat.dc.html",
+  "IMG-3-3k-progres-kosong.dc.html",
+  "IMG-1-1b-selamat-datang.dc.html"
  ],
  "notes": {
   "t1": {

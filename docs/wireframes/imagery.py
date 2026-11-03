@@ -18,6 +18,7 @@ source/ds/lintas/imagery/ seperti token disalin ke source/ds/lintas/.
 
 import json
 import os
+import re
 import shutil
 import sys
 
@@ -51,8 +52,30 @@ def spacer(h):
     return f'<div aria-hidden="true" style="height: {h}px; flex-shrink: 0"></div>'
 
 
+
+def card_image(img, pos, height=150):
+    """Header gambar di dalam kartu (bleed ke tepi kartu dengan padding 20/16)."""
+    return (
+        f'<div aria-hidden="true" style="margin: -20px -20px 0; height: {height}px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden">'
+        f'<img src="ds/lintas/imagery/{img}.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; object-position: {pos}; display: block"></div>'
+    )
+
+
+BACK_ROW_END = '<span style="width: 44px"></span></div>'
+WORKOUT_CARD = r'<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: var\(--radius-lg\); background: var\(--surface\); box-shadow: var\(--shadow-card\)"><div style="display: flex; justify-content: space-between; align-items: center"><span class="ln-bib ln-bib--tempo">.*?Lihat detail &amp; alasan latihan</a></div>'
+
+# Teks kartu istirahat dari katalog app: today.restTitle, today.restBody, today.next (apps/app/src/i18n/id.ts).
+REST_CARD = (
+    '<div style="display: flex; flex-direction: column; gap: 10px; padding: 20px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-card)">'
+    + card_image('track-aerial', '50% 50%', 190)
+    + '<h2 style="margin: 6px 0 0; font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Istirahat</h2>'
+    '<p style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--text-muted)">Hari ini istirahat. Jalan santai atau stretching boleh.</p>'
+    '<a href="WorkoutDetail.dc.html" style="display: flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--primary-ink)">Berikutnya: Easy Run, Rab 28 Okt</a></div>'
+)
+
 LOGO_DOT = '<circle cx="49.5" cy="19.5" r="5" fill="var(--text)"/>'
 CONTENT_TOP = 'padding: 56px 20px 16px; min-height: 0">'
+
 
 SCREENS = [
     {
@@ -111,7 +134,75 @@ SCREENS = [
             ('<span style="width: 44px"></span></div>', '<span style="width: 44px"></span></div>' + spacer(150)),
         ],
     },
+    # --- Tahap lanjutan: 5 gambar sisa ---
+    {
+        'src': 'WeekDone.dc.html', 'out': 'IMG-2-5-ringkasan-minggu', 'title': '2.5 Ringkasan minggu + gambar',
+        'img': 'track-overhead',
+        'edits': [
+            (ROOT_OPEN, ROOT_OPEN + hero('track-overhead', 300, '50% 40%', 45)),
+            (CONTENT_TOP, CONTENT_TOP.replace('min-height: 0', 'min-height: 0; position: relative; z-index: 1')),
+            (BACK_ROW_END, BACK_ROW_END + spacer(120)),
+        ],
+    },
+    {
+        'src': 'LogManual.dc.html', 'out': 'IMG-2-6-catat-lari', 'title': '2.6 Catat lari manual + gambar',
+        'img': 'pov-feet',
+        'edits': [
+            (ROOT_OPEN, ROOT_OPEN + hero('pov-feet', 300, '55% 55%', 45)),
+            (CONTENT_TOP, CONTENT_TOP.replace('min-height: 0', 'min-height: 0; position: relative; z-index: 1')),
+            (BACK_ROW_END, BACK_ROW_END + spacer(150)),
+            # judul kecil di baris atas berada di atas gambar
+            ('font-weight: 700; color: var(--text-muted)">Catat lari</span>', 'font-weight: 700; color: var(--on-image)">Catat lari</span>'),
+        ],
+    },
+    {
+        'src': 'Today.dc.html', 'out': 'IMG-2-1i-hari-ini-interval', 'title': '2.1i Hari ini, interval (keadaan baru)',
+        'img': 'track-side',
+        'edits': [
+            ('<div style="display: flex; justify-content: space-between; align-items: center"><span class="ln-bib ln-bib--tempo"><span class="ln-bib-inner">TEMPO</span></span>',
+             '<div style="position: relative; margin: -20px -20px 0; height: 150px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; overflow: hidden; display: flex; justify-content: space-between; align-items: flex-start; padding: 16px; box-sizing: border-box">'
+             '<img src="ds/lintas/imagery/track-side.webp" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%">'
+             '<span style="position: relative" class="ln-bib ln-bib--interval"><span class="ln-bib-inner">INTERVAL</span></span>'),
+            ('<span style="font-size: 14px; font-weight: 700; color: var(--text-muted)">~5,5 km</span>',
+             '<span style="position: relative; padding: 4px 10px; border-radius: var(--radius-stadium); background: var(--surface); font-size: 14px; font-weight: 700; color: var(--text)">~7,5 km</span>'),
+            ('font-size: 56px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">42</span>',
+             'font-size: 56px; font-weight: 800; letter-spacing: -0.03em; line-height: 1">61</span>'),
+            ('<div style="flex: 14; border-radius: var(--radius-stadium); background: var(--zone-tempo)"></div>',
+             '<div style="flex: 33; border-radius: var(--radius-stadium); background: repeating-linear-gradient(90deg, var(--zone-interval) 0 18px, var(--zone-recovery) 18px 26px)"></div>'),
+            ('background: var(--zone-tempo)"></span>Tempo</span><span style="">14 mnt @ 6:45 /km</span>',
+             'background: var(--zone-interval)"></span>Interval</span><span style="">5 x (800 m + 2 mnt)</span>'),
+        ],
+    },
+    {
+        'src': 'Today.dc.html', 'out': 'IMG-2-1r-hari-ini-istirahat', 'title': '2.1r Hari ini, istirahat (keadaan baru)',
+        'img': 'track-aerial',
+        'edits': [('re', WORKOUT_CARD, REST_CARD)],
+    },
+    {
+        'src': 'Progress.dc.html', 'out': 'IMG-3-3k-progres-kosong', 'title': '3.3k Progres, belum ada aktivitas (keadaan baru)',
+        'img': 'track-aerial',
+        'edits': [
+            # Teks dari katalog: progress.empty, progress.paceEmpty, progress.adherenceEmpty.
+            ('re', r'<div role="img" aria-label="Volume 8 minggu terakhir.*?<span>Ini</span></div>',
+             '<div aria-hidden="true" style="height: 150px; border-radius: var(--radius-md); overflow: hidden"><img src="ds/lintas/imagery/track-aerial.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; display: block"></div>'
+             '<span style="font-size: 14px; line-height: 1.45; color: var(--text-muted)">Belum ada aktivitas. Selesaikan latihan pertamamu dari Hari ini.</span>'),
+            ('<span style="font-family: var(--font-display); font-weight: 700; color: var(--success-ink)">7:58 ke 7:41 /km</span>', ''),
+            ('re', r'<svg width="318" height="56".*?kebugaran naik</span>',
+             '<span style="font-size: 14px; color: var(--text-muted)">Belum cukup easy run untuk melihat tren.</span>'),
+            ('stroke-dasharray="85 100"', 'stroke-dasharray="85 100" stroke-opacity="0"'),
+            ('aria-label="Kepatuhan 85 persen"', 'aria-label="Kepatuhan belum ada"'),
+            ('font-size: 22px; font-weight: 800">85%</span>', 'font-size: 22px; font-weight: 800">-</span>'),
+            ('11 dari 13 latihan', 'Belum ada latihan yang jatuh tempo'),
+            ('re', r'<a href="ActivityDetail\.dc\.html".*?</a>',
+             '<span style="font-size: 14px; color: var(--text-muted)">Belum ada aktivitas. Selesaikan latihan pertamamu dari Hari ini.</span>'),
+        ],
+    },
 ]
+
+# 1.1 varian B: sisipan sama dengan 1.1, gambar road-sunrise-f.
+_m = SCREENS[0]
+SCREENS.append({'src': _m['src'], 'out': 'IMG-1-1b-selamat-datang', 'title': '1.1 Selamat datang, gambar B', 'img': 'road-sunrise-f',
+                'edits': [(o, n.replace('road-sunrise-m', 'road-sunrise-f').replace('62% 38%', '74% 45%')) if o != 're' else (o, n) for o, n in _m['edits']]})
 
 
 def build():
@@ -119,7 +210,13 @@ def build():
     for s in SCREENS:
         shutil.copyfile(os.path.join(IMG_SRC, s['img'] + '.webp'), os.path.join(IMG_DST, s['img'] + '.webp'))
         html = open(os.path.join(SRC, s['src']), encoding='utf8').read()
-        for old, new in s['edits']:
+        for e in s['edits']:
+            if e[0] == 're':
+                html, n = re.subn(e[1], lambda m, r=e[2]: r, html, flags=re.S)
+                if n != 1:
+                    sys.exit(f"{s['src']}: pola regex cocok {n}x (harus 1): {e[1][:70]}")
+                continue
+            old, new = e
             n = html.count(old)
             if n != 1:
                 sys.exit(f"{s['src']}: titik sisip ditemukan {n}x (harus 1): {old[:70]}")
@@ -135,7 +232,7 @@ def build():
     y = 5100
     for i, s in enumerate(SCREENS):
         k = s['out'] + '.dc.html'
-        c['boards'][k] = {'x': i * 470, 'y': y, 'w': 390, 'h': 844, 'title': s['title'] + ' (draft)', 'is_interactive': True, 'radius': 40}
+        c['boards'][k] = {'x': (i % 5) * 470, 'y': y + (i // 5) * 1044, 'w': 390, 'h': 844, 'title': s['title'] + ' (draft)', 'is_interactive': True, 'radius': 40}
         if k not in c['order']:
             c['order'].append(k)
     c['notes']['t5'] = {'x': 0, 'y': y - 300, 'text': '5. Eksplorasi imagery (draft, belum masuk spec)', 'kind': 'title1', 'maxW': 2300}

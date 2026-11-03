@@ -122,10 +122,18 @@ Gambar dari `docs/design-system/assets/imagery/` ditempelkan ke **layar yang sud
 | Layar | Sumber asli | Gambar | Perubahan | Terang | Gelap |
 |---|---|---|---|---|---|
 | 1.1 | `Main.dc.html` | road-sunrise-m | Grafik lajur zona diganti foto setengah atas, memudar ke `--bg`; logo memakai `--on-image` | [png](png/imagery/1-1-selamat-datang.png) | [png](png/imagery/dark/1-1-selamat-datang.png) |
+| 1.1 B | `Main.dc.html` | road-sunrise-f | Sama dengan 1.1, gambar alternatif (pilih salah satu, atau jadikan slide) | [png](png/imagery/1-1b-selamat-datang.png) | [png](png/imagery/dark/1-1b-selamat-datang.png) |
 | 1.9 | `OB9-Masuk.dc.html` | riverside-city-f | Header bergambar di belakang tombol kembali | [png](png/imagery/1-9-masuk.png) | [png](png/imagery/dark/1-9-masuk.png) |
-| 2.1 | `Today.dc.html` | track-back | Baris bib + jarak jadi header bergambar di kartu latihan | [png](png/imagery/2-1-hari-ini.png) | [png](png/imagery/dark/2-1-hari-ini.png) |
+| 2.1 | `Today.dc.html` | track-back | Baris bib + jarak jadi header bergambar di kartu latihan (tempo) | [png](png/imagery/2-1-hari-ini.png) | [png](png/imagery/dark/2-1-hari-ini.png) |
+| 2.1i (baru) | `Today.dc.html` | track-side | Keadaan latihan interval: bib INTERVAL, segmen `5 x (800 m + 2 mnt)` dari `intervalRun` engine; durasi dan jarak contoh | [png](png/imagery/2-1i-hari-ini-interval.png) | [png](png/imagery/dark/2-1i-hari-ini-interval.png) |
+| 2.1r (baru) | `Today.dc.html` | track-aerial | Keadaan hari istirahat: kartu `RestCard` app (teks `today.restTitle`, `today.restBody`, `today.next`), belum pernah digambar | [png](png/imagery/2-1r-hari-ini-istirahat.png) | [png](png/imagery/dark/2-1r-hari-ini-istirahat.png) |
 | 2.4 | `Finish.dc.html` | shoe-sole | Gambar di atas judul "selesai" | [png](png/imagery/2-4-selesai.png) | [png](png/imagery/dark/2-4-selesai.png) |
+| 2.5 | `WeekDone.dc.html` | track-overhead | Gambar di belakang tombol tutup dan cincin 4/4 | [png](png/imagery/2-5-ringkasan-minggu.png) | [png](png/imagery/dark/2-5-ringkasan-minggu.png) |
+| 2.6 | `LogManual.dc.html` | pov-feet | Header bergambar; judul kecil memakai `--on-image` | [png](png/imagery/2-6-catat-lari.png) | [png](png/imagery/dark/2-6-catat-lari.png) |
+| 3.3k (baru) | `Progress.dc.html` | track-aerial | Keadaan belum ada aktivitas: teks `progress.empty`, `progress.paceEmpty`, `progress.adherenceEmpty` dari app; gambar di kartu volume | [png](png/imagery/3-3k-progres-kosong.png) | [png](png/imagery/dark/3-3k-progres-kosong.png) |
 | 4.4 | `P2-4-4-premium.dc.html` | riverside-city-m | Header bergambar | [png](png/imagery/4-4-premium.png) | [png](png/imagery/dark/4-4-premium.png) |
+
+"(baru)" = keadaan layar yang sudah ada di app tetapi belum pernah ada di wireframe. Ke-10 gambar library terpakai.
 
 Perintah: lihat kepala `imagery.py`. `render.js` kini meng-inline gambar `ds/...` sebagai data URI (sama seperti stylesheet).
 
@@ -134,7 +142,7 @@ Perintah: lihat kepala `imagery.py`. `render.js` kini meng-inline gambar `ds/...
 | Tahap | Kegiatan | Hasil | Status |
 |---|---|---|---|
 | 1. Library | Slice gambar referensi, simpan di `assets/imagery/` + README (ukuran, pemakaian, batasan) | 10 WebP | Selesai (draft) |
-| 2. Varian dari sumber asli | `imagery.py` membuat `IMG-*.dc.html` dari 5 layar asli; gambar disalin ke `source/ds/lintas/imagery/` | 5 varian, terang + gelap | Selesai |
+| 2. Varian dari sumber asli | `imagery.py` membuat `IMG-*.dc.html` dari 7 sumber asli (11 varian, termasuk 3 keadaan baru); gambar disalin ke `source/ds/lintas/imagery/` | 11 varian, terang + gelap | Selesai |
 | 3. Keputusan pemilik produk | Pilih layar yang dipakai, gambar mana, lisensi/asal gambar, perlu versi resolusi tinggi atau tidak | Daftar layar disetujui | Menunggu |
 | 4. Token | Masukkan `--on-image`, `--scrim-top` ke `tokens.json` (`color` dan `color.dark`), uji teks di atas scrim dengan `check_contrast.py`, buat ulang `source/ds/lintas/tokens.css`, perbarui artifact Lintas | Token resmi, kontras lolos | Belum |
 | 5. Canvas Claude Design | Unggah `source/ds/lintas/imagery/*` dan `IMG-*.dc.html` ke artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka), tambah baris "5. Eksplorasi imagery" dari `canvas.json`; review terang/gelap di canvas | Varian tampil di samping layar asli | Belum (perlu izin pemilik) |
