@@ -32,5 +32,5 @@ const BY_TYPE: Record<WorkoutType, ImageKey | readonly [ImageKey, ImageKey] | nu
 export function workoutImageKey(type: WorkoutType, date: string): ImageKey | null {
   const v = BY_TYPE[type];
   if (v === null || typeof v === 'string') return v;
-  return v[Number(date.slice(8, 10)) % 2];
+  return Number(date.slice(8, 10)) % 2 === 0 ? v[0] : v[1];
 }
