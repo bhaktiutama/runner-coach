@@ -135,6 +135,7 @@ export const en: Record<MessageKey, string> = {
   'health.disclaimer': 'I understand Run Coach is a training guide, not medical advice.',
   'health.cta': 'Build my plan',
   'health.error': "The plan can't be built yet: {reason}",
+  'engineError.race_too_far': 'the race is more than 52 weeks away. Pick a closer race.',
   'engineError.race_too_soon': 'the race date is too close.',
   'engineError.race_in_past': 'the race date has passed.',
   'engineError.invalid_days': 'pick 3-6 running days.',

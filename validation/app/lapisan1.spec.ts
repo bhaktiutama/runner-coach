@@ -343,7 +343,7 @@ for (const s of ps) {
         const verdict = (await page.getByTestId('move-verdict').innerText()).trim();
         const mon = mondayOf('2027-01-06');
         const week = appW
-          .filter((w) => String(w.date) >= mon && String(w.date) <= addDays(mon, 6))
+          .filter((w) => String(w.date) >= addDays(mon, -1) && String(w.date) <= addDays(mon, 7))
           .map(
             (w) =>
               ({

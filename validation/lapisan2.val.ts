@@ -391,10 +391,10 @@ function moves(): Row[] {
       expectWarn: false,
     },
     {
-      desc: 'Tempo Rabu minggu depan dipindah ke Senin (sehari sesudah long run Minggu minggu ini); app hanya mengirim latihan minggu yang sama',
+      desc: 'Tempo Rabu minggu depan dipindah ke Senin (sehari sesudah long run Minggu minggu ini); app mengirim minggu itu + sehari sebelum/sesudahnya',
       moving: nextWeek[0]!,
       to: '2027-01-11',
-      list: nextWeek,
+      list: [week[4]!, ...nextWeek],
       expectWarn: true,
     },
     {
@@ -617,7 +617,7 @@ test('Lapisan 2: engine sesuai aturan', () => {
         id: 'pindah',
         title: 'Pindah latihan (layar 3.2, E-10)',
         intro:
-          'Memanggil <code>checkMove()</code> dengan daftar latihan seperti yang dikirim app (hanya minggu yang sama).',
+          'Memanggil <code>checkMove()</code> dengan daftar latihan seperti yang dikirim app (minggu yang sama ditambah sehari sebelum dan sesudahnya).',
         html: rowTable(pd),
       },
       {

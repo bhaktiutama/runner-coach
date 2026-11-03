@@ -7,6 +7,8 @@ export const engineId = {
   'rule.E-02':
     'Pace latihan dihitung dengan kerangka Daniels (VDOT {vdot}). Easy run di {easy_min_pace} - {easy_max_pace}, cukup pelan untuk tetap bisa ngobrol.',
   'rule.E-03': 'Plan {distance_code} ini {weeks} minggu, durasi umum yang dipakai pelatih untuk target ini.',
+  'rule.E-03.race':
+    'Plan {distance_code} ini {weeks} minggu, mengikuti tanggal race kamu. Durasi umum untuk target ini {default_weeks} minggu.',
   'rule.E-04':
     'Plan dibagi jadi fase Base {base} minggu, Build {build} minggu, Peak {peak} minggu dan Taper {taper} minggu, supaya beban naik bertahap dengan waktu pulih yang cukup.',
   'rule.E-05':

@@ -57,7 +57,7 @@ export const CHECKS: CheckDef[] = [
   {
     id: 'E-03a',
     rule: 'E-03',
-    title: 'Jumlah minggu = default tanpa race, atau sampai minggu race (maks 30)',
+    title: 'Jumlah minggu = default tanpa race, atau sampai minggu race (maks 52, lebih jauh ditolak)',
     severity: 'mayor',
     source: 'TRD 4.2, 07 bagian 7 baris Minggu race',
   },
@@ -168,22 +168,21 @@ export const CHECKS: CheckDef[] = [
   {
     id: 'E-11a',
     rule: 'E-11',
-    title: 'Minggu taper terakhir (kalender) turun 40-60% dari minggu puncak',
+    title: 'Jendela taper 7 hari (dihitung mundur dari race) tidak melebihi puncak dan turun menuju race',
     severity: 'mayor',
-    source: 'TRD 4.2, 07 3.5 no. 6',
+    source: 'TRD 4.2 E-11 (v0.4, berbasis tanggal race)',
   },
   {
     id: 'E-11b',
     rule: 'E-11',
     title: 'Volume 7 hari sebelum race turun 40-60% dari minggu puncak',
     severity: 'mayor',
-    source: 'TRD 4.2 + Plan Validity Testing (H1)',
-    proposed: true,
+    source: 'TRD 4.2 E-11 (v0.4), 07 3.5 no. 6',
   },
   {
     id: 'E-11c',
     rule: 'E-11',
-    title: 'Jumlah sesi kualitas minggu taper tidak berkurang dari minggu puncak',
+    title: 'Jumlah sesi kualitas minggu taper tidak berkurang dari minggu puncak (sejauh muat sebelum race)',
     severity: 'mayor',
     source: 'TRD 4.2, 07 3.5 no. 6',
   },
@@ -425,7 +424,7 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
   const expWeeks = (() => {
     if (!race) return DEFAULT_WEEKS[g.distance]!;
     const w = daysBetween(mondayOf(input.startDate), mondayOf(race)) / 7 + (weekdayOf(race) >= 2 ? 1 : 0);
-    return Math.min(w, 30);
+    return w;
   })();
   check(
     'E-03a',
@@ -434,12 +433,18 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
   );
   const e03 = plan.rationale.find((r) => r.rule === 'E-03');
   if (e03) {
-    const claimsCommon = /durasi umum|common duration/i.test(ctx.catalogs.id['rule.E-03'] ?? '');
+    // Template yang dipakai app: varian `rule.E-03.<scope>` bila engine mengisi scope.
+    const key = typeof e03.values.scope === 'string' ? `rule.E-03.${e03.values.scope}` : 'rule.E-03';
+    const tpl = ctx.catalogs.id[key] ?? ctx.catalogs.id['rule.E-03'] ?? '';
+    // Klaim "durasi {weeks} ini = durasi umum" hanya boleh bila jumlah minggu = default.
+    const claimsCommon = /\{weeks\} minggu, durasi umum/i.test(tpl);
+    const defaultOk =
+      e03.values.default_weeks == null || Number(e03.values.default_weeks) === DEFAULT_WEEKS[g.distance];
     check(
       'E-03b',
-      !(claimsCommon && plan.weeks.length !== DEFAULT_WEEKS[g.distance]),
+      !(claimsCommon && plan.weeks.length !== DEFAULT_WEEKS[g.distance]) && defaultOk,
       () =>
-        `plan ${plan.weeks.length} minggu (default ${g.distance}: ${DEFAULT_WEEKS[g.distance]}), tetapi teks E-03 menyebut "durasi umum yang dipakai pelatih"`,
+        `plan ${plan.weeks.length} minggu (default ${g.distance}: ${DEFAULT_WEEKS[g.distance]}), template ${key}: "${tpl}"`,
     );
   }
 
@@ -539,6 +544,14 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
   for (const w of plan.weeks) {
     const rw = (weeks.get(w.weekIndex) ?? []).some((x) => x.type === 'run_walk');
     if (w.phase === 'taper' || rw) {
+      streak = 0;
+      continue;
+    }
+    // Cutback yang ekornya masuk jendela taper (berbasis tanggal race) ikut diturunkan taper; E-11 menilai.
+    const inTaperWindow =
+      !!race &&
+      daysBetween(addDays(w.startDate, 6), race) <= 7 * plan.weeks.filter((x) => x.phase === 'taper').length;
+    if (w.cutback && inTaperWindow) {
       streak = 0;
       continue;
     }
@@ -728,14 +741,24 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
   if (race) {
     const nonTaper = plan.weeks.filter((w) => w.phase !== 'taper');
     const peak = Math.max(...nonTaper.map((w) => w.volumeM));
-    const lastW = plan.weeks.at(-1)!;
-    if (lastW.phase === 'taper') {
-      const drop = 1 - lastW.volumeM / peak;
+    // Jendela k = hari ke-(7k-6) s.d. ke-7k sebelum race; k = 1 paling dekat race.
+    const nTaper = plan.weeks.filter((w) => w.phase === 'taper').length;
+    if (nTaper > 1) {
+      const winSum = (k: number) =>
+        runs
+          .filter((w) => {
+            const d = daysBetween(w.date, race);
+            return d >= 7 * (k - 1) + 1 && d <= 7 * k;
+          })
+          .reduce((a, w) => a + dist.get(w)!, 0);
+      const sums = Array.from({ length: nTaper }, (_, i) => winSum(nTaper - i));
+      const ok = sums.every((v, i) => v <= peak * 1.02 && (i === 0 || v <= sums[i - 1]! * 1.05));
       check(
         'E-11a',
-        drop >= 0.4 && drop <= 0.6,
-        () => `minggu taper ${lastW.weekIndex}: turun ${pct(drop)} dari puncak ${km(peak)} km`,
-        lastW.startDate,
+        ok,
+        () =>
+          `jendela taper (jauh ke dekat): ${sums.map((v) => `${km(v)} km`).join(', ')}; puncak ${km(peak)} km`,
+        race,
       );
     }
     const pre = runs.filter((w) => {
@@ -751,7 +774,8 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
         `7 hari sebelum race (${WEEKDAY_ID[weekdayOf(race)]} ${race}): ${km(preSum)} km = ${pct(preSum / peak)} dari puncak ${km(peak)} km`,
       race,
     );
-    const r11 = runs.flatMap((w) => w.rationale).find((x) => x.rule === 'E-11');
+    // Angka di layar 1.8 (rationale plan) = penurunan 7 hari terakhir sebelum race.
+    const r11 = plan.rationale.find((x) => x.rule === 'E-11');
     if (r11)
       check(
         'RAT-e',
@@ -765,12 +789,36 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
         0,
         ...peakWeeks.map((w) => (weeks.get(w.weekIndex) ?? []).filter((x) => HARD_TYPES.has(x.type)).length),
       );
+      // Per minggu kalender taper. Harapan = min(sesi kualitas minggu puncak, jumlah maksimum yang
+      // muat di minggu itu: hari tersedia, >= 3 hari sebelum race (E-11d), bukan hari long run dan
+      // tidak sehari sebelum/sesudah long run (E-10), tidak bersebelahan satu sama lain).
+      const longDates = new Set(runs.filter((x) => x.type === 'long').map((x) => x.date));
       for (const tw of plan.weeks.filter((w) => w.phase === 'taper')) {
-        const q = (weeks.get(tw.weekIndex) ?? []).filter((x) => HARD_TYPES.has(x.type)).length;
+        const days = Array.from({ length: 7 }, (_, i) => addDays(tw.startDate, i)).filter(
+          (d) => d >= input.startDate && d < race,
+        );
+        const q = runs.filter((x) => HARD_TYPES.has(x.type) && days.includes(x.date)).length;
+        const cand = days.filter(
+          (d) =>
+            input.availableDays.includes(weekdayOf(d)) &&
+            daysBetween(d, race) >= 3 &&
+            !longDates.has(d) &&
+            !longDates.has(addDays(d, -1)) &&
+            !longDates.has(addDays(d, 1)),
+        );
+        let feasible = 0;
+        let last: string | null = null;
+        for (const d of cand) {
+          if (last && daysBetween(last, d) <= 1) continue;
+          feasible++;
+          last = d;
+        }
+        const need = Math.min(peakQ, feasible);
         check(
           'E-11c',
-          q >= peakQ,
-          () => `minggu taper ${tw.weekIndex}: ${q} sesi kualitas, minggu puncak ${peakQ}`,
+          q >= need,
+          () =>
+            `minggu taper ${tw.weekIndex}: ${q} sesi kualitas, harapan ${need} (puncak ${peakQ}, muat ${feasible})`,
           tw.startDate,
         );
       }

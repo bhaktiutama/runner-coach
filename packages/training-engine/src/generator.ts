@@ -15,6 +15,7 @@ import {
   type WorkoutType,
 } from './types';
 import { planStrength } from './strength';
+import { applyRaceTaper } from './taper';
 import { LEVEL_VDOT, paceZones, raceTimeFromVdot, vdotFromRace, type PaceZones } from './vdot';
 import {
   DRILL_MINUTES,
@@ -33,7 +34,7 @@ import {
   tempoRun,
 } from './workouts';
 
-export const ENGINE_VERSION = '0.3.0';
+export const ENGINE_VERSION = '0.4.0';
 
 // ---- Konstanta aturan (TRD 4.2). Angka heuristik (tingkat D) wajib direview pelatih (D6). ----
 
@@ -41,8 +42,8 @@ export const ENGINE_VERSION = '0.3.0';
 export const DEFAULT_WEEKS: Record<GoalDistance, number> = { '5k': 8, '10k': 10, hm: 12, fm: 16, fitness: 8 };
 /** Durasi minimum plan dipadatkan; di bawah ini engine menolak (UI menawarkan target lebih pendek). */
 export const MIN_WEEKS: Record<GoalDistance, number> = { '5k': 4, '10k': 5, hm: 6, fm: 8, fitness: 8 };
-/** Batas atas: minggu ekstra masuk fase Base. */
-export const MAX_WEEKS = 30;
+/** Batas atas: minggu ekstra masuk fase Base. Race lebih jauh ditolak (`race_too_far`). */
+export const MAX_WEEKS = 52;
 
 /** Volume puncak target per level (m/minggu). Tidak pernah dicapai lebih cepat dari E-05. */
 const PEAK_VOLUME_M: Record<Level, Record<GoalDistance, number>> = {
@@ -82,7 +83,8 @@ const TAPER_FRACTIONS: Record<number, number[]> = { 1: [0.5], 2: [0.7, 0.5], 3: 
 
 export class EngineError extends Error {
   constructor(
-    public code: 'race_too_soon' | 'race_in_past' | 'invalid_days' | 'long_run_day_unavailable',
+    public code:
+      'race_too_soon' | 'race_too_far' | 'race_in_past' | 'invalid_days' | 'long_run_day_unavailable',
     message?: string,
   ) {
     super(message ?? code);
@@ -119,7 +121,9 @@ export function planWeeks(input: PlanInput): number {
   const raceWeekCounts = weekday(raceDate) >= 2 ? 1 : 0;
   const weeks = diffDays(mondayOf(input.startDate), mondayOf(raceDate)) / 7 + raceWeekCounts;
   if (weeks < MIN_WEEKS[distance]) throw new EngineError('race_too_soon');
-  return Math.min(weeks, MAX_WEEKS);
+  // Plan selalu berakhir di race (E-11); race di luar batas ditolak, bukan dipotong.
+  if (weeks > MAX_WEEKS) throw new EngineError('race_too_far');
+  return weeks;
 }
 
 export function taperWeeks(distance: GoalDistance, weeks: number): number {
@@ -184,23 +188,24 @@ export function chooseHardDays(
   count: number,
   latest?: Weekday,
 ): Weekday[] {
-  const blocked = new Set<Weekday>([longDay]);
-  const hard: Weekday[] = [];
-  // Utamakan hari yang paling jauh dari long run.
-  const candidates = runDays
-    .filter((d) => d !== longDay && (latest == null || d <= latest))
-    .sort((a, b) => {
-      const ga = Math.min(Math.abs(a - longDay), 7 - Math.abs(a - longDay));
-      const gb = Math.min(Math.abs(b - longDay), 7 - Math.abs(b - longDay));
-      return gb - ga || a - b;
-    });
-  for (const d of candidates) {
-    if (hard.length >= count) break;
-    if ([...blocked].some((b) => adjacentWeekdays(b, d))) continue;
-    hard.push(d);
-    blocked.add(d);
-  }
-  return hard.sort((a, b) => a - b);
+  const candidates = runDays.filter((d) => d !== longDay && (latest == null || d <= latest));
+  const gap = (d: Weekday) => Math.min(Math.abs(d - longDay), 7 - Math.abs(d - longDay));
+  const greedy = (order: Weekday[]) => {
+    const blocked = new Set<Weekday>([longDay]);
+    const hard: Weekday[] = [];
+    for (const d of order) {
+      if (hard.length >= count) break;
+      if ([...blocked].some((b) => adjacentWeekdays(b, d))) continue;
+      hard.push(d);
+      blocked.add(d);
+    }
+    return hard.sort((a, b) => a - b);
+  };
+  // Utamakan hari yang paling jauh dari long run; bila itu memuat lebih sedikit sesi, pakai urutan hari.
+  const far = greedy([...candidates].sort((a, b) => gap(b) - gap(a) || a - b));
+  if (far.length >= count) return far;
+  const early = greedy([...candidates].sort((a, b) => a - b));
+  return early.length > far.length ? early : far;
 }
 
 export type RunWalkBlock = { runS: number; walkS: number; easyReps: number; longReps: number };
@@ -302,6 +307,8 @@ function hardSteps(
 function longest30(date: string, input: PlanInput, history: GeneratedWorkout[]): number {
   let longest = diffDays(input.startDate, date) <= LONGEST_WINDOW_DAYS ? input.goal.longestRunM : 0;
   for (const w of history) {
+    // Latihan minggu 1 sebelum tanggal mulai tidak dijalankan pengguna, jadi tidak dihitung.
+    if (w.date < input.startDate) continue;
     const d = diffDays(w.date, date);
     if (d > 0 && d <= LONGEST_WINDOW_DAYS) longest = Math.max(longest, runningDistance(w.steps));
   }
@@ -334,6 +341,20 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
   let runWalkActive = runWalkPlan;
   let taperIndex = 0;
   let peakHard = 0;
+  let peakSessions = 0;
+  // Run-walk (E-14, E-05): 4 sesi per minggu, atau 3 bila 4 sesi sudah melebihi volume awal.
+  const rwSessions = (() => {
+    if (!runWalkPlan) return 0;
+    const b = nextRunWalkBlock(null);
+    const k = Math.min(input.availableDays.length, 4);
+    const vol = chooseRunDays(input.availableDays, k, input.longRunDay).reduce<number>(
+      (x, d) =>
+        x +
+        runningDistance(runWalk(d === input.longRunDay ? b.longReps : b.easyReps, b.runS, b.walkS, zones)),
+      0,
+    );
+    return vol > startVolume ? Math.min(k, 3) : k;
+  })();
   const phaseWeekCounter: Partial<Record<Phase, number>> = {};
 
   for (let w = 1; w <= weeks; w++) {
@@ -341,7 +362,7 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
     phaseWeekCounter[phase] = (phaseWeekCounter[phase] ?? 0) + 1;
     const phaseWeek = phaseWeekCounter[phase]!;
     const monday = addDays(firstMonday, (w - 1) * 7);
-    const cutback = !runWalkActive && phase !== 'taper' && w % CUTBACK_EVERY === 0 && w < weeks;
+    const cutback = !runWalkActive && phase !== 'taper' && w % CUTBACK_EVERY === 0;
 
     // Target volume minggu ini.
     let target: number;
@@ -361,25 +382,44 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
       target = Math.max(target, Math.min(lastFullVolume, roundDown(peakTarget)));
     }
 
-    const week = buildWeek({
-      input,
-      weekIndex: w,
-      phase,
-      phaseWeek,
-      monday,
-      target,
-      cutback,
-      level,
-      zones,
-      raceDate,
-      history,
-      runWalk: runWalkActive ? (block = phase === 'taper' && block ? block : nextRunWalkBlock(block)) : null,
-      taperPct,
-      peakHard,
-    });
+    if (runWalkActive) block = phase === 'taper' && block ? block : nextRunWalkBlock(block);
+    // E-05: minggu 1 maks volume awal, minggu biasa maks +10%. Jarak per sesi dibulatkan sendiri-sendiri
+    // (durasi per menit, strides, pendinginan), jadi target diturunkan per 100 m sampai lolos.
+    const limit =
+      w === 1
+        ? startVolume
+        : cutback || phase === 'taper'
+          ? Infinity
+          : lastFullVolume * (1 + MAX_WEEKLY_INCREASE);
+    let week!: ReturnType<typeof buildWeek>;
+    for (let tries = 0; tries < 40; tries++) {
+      week = buildWeek({
+        input,
+        weekIndex: w,
+        phase,
+        phaseWeek,
+        monday,
+        target,
+        cutback,
+        level,
+        zones,
+        raceDate,
+        history,
+        runWalk: runWalkActive ? block : null,
+        rwSessions,
+        taperPct,
+        peakHard,
+        peakSessions,
+      });
+      if (week.volume <= limit || runWalkActive) break;
+      target -= 100;
+    }
 
     if (runWalkActive && block && block.runS >= RUN_WALK_EXIT_S) runWalkActive = false;
-    if (phase === 'peak') peakHard = Math.max(peakHard, week.hard);
+    if (phase === 'peak') {
+      peakHard = Math.max(peakHard, week.hard);
+      peakSessions = Math.max(peakSessions, week.sessions);
+    }
     if (phase !== 'taper' && !cutback) {
       lastFullVolume = week.volume;
       peakVolume = Math.max(peakVolume, week.volume);
@@ -388,6 +428,24 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
     history.push(...week.workouts);
   }
 
+  // E-11 berbasis tanggal race: volume tiap jendela 7 hari sebelum race (taper.ts).
+  let taperDrop = 50;
+  const taperN = !raceDate ? 0 : phases.filter((p) => p === 'taper').length;
+  if (raceDate && taperN > 0 && peakVolume > 0) {
+    taperDrop = applyRaceTaper(history, summaries, {
+      raceDate,
+      startDate: input.startDate,
+      peakVolumeM: peakVolume,
+      fractions: TAPER_FRACTIONS[taperN]!,
+      zones,
+      longestStartM: input.goal.longestRunM,
+      longShare: LONG_RUN_SHARE[distance],
+      sessionCap: SESSION_CAP,
+      windowDays: LONGEST_WINDOW_DAYS,
+      availableDays: days,
+      longTimeCapM: Math.floor((LONG_RUN_MAX_S[distance] / easyPaceMid(zones)) * 1000),
+    });
+  }
   const runs = history.filter((x) => x.date >= input.startDate && (!raceDate || x.date < raceDate));
   const strength = input.strength
     ? planStrength(runs, {
@@ -417,6 +475,7 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
     prediction,
     runWalkPlan,
     level,
+    taperDrop,
   });
 
   return {
@@ -455,15 +514,22 @@ type BuildWeekArgs = {
   raceDate: string | null;
   history: GeneratedWorkout[];
   runWalk: RunWalkBlock | null;
+  rwSessions: number;
   taperPct: number;
   peakHard: number;
+  peakSessions: number;
 };
 
 function dateOf(monday: string, d: Weekday) {
   return addDays(monday, d);
 }
 
-function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: number; hard: number } {
+function buildWeek(a: BuildWeekArgs): {
+  workouts: GeneratedWorkout[];
+  volume: number;
+  hard: number;
+  sessions: number;
+} {
   const { input, weekIndex, phase, monday, target, cutback, zones, raceDate } = a;
   const longDay = input.longRunDay;
   const daysToRace = (d: Weekday) => (raceDate ? diffDays(dateOf(monday, d), raceDate) : Infinity);
@@ -490,7 +556,7 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
   if (a.runWalk) {
     const rw = a.runWalk;
     const factor = phase === 'taper' ? 1 - a.taperPct / 100 : 1;
-    const runDays = chooseRunDays(input.availableDays, Math.min(input.availableDays.length, 4), longDay);
+    const runDays = chooseRunDays(input.availableDays, a.rwSessions, longDay);
     const vals = { run_min: rw.runS / 60, walk_min: rw.walkS / 60 };
     const workouts = runDays
       .filter((d) => daysToRace(d) > 0)
@@ -502,7 +568,7 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
       const r = Math.max(1, Math.round((d === longDay ? rw.longReps : rw.easyReps) * factor));
       return x + runningDistance(runWalk(r, rw.runS, rw.walkS, zones));
     }, 0);
-    return { workouts, volume: full, hard: 0 };
+    return { workouts, volume: full, hard: 0, sessions: runDays.length };
   }
 
   // Menjelang race: tidak ada latihan pada/sesudah hari race; long run dan sesi berat >= 3 hari sebelum race.
@@ -514,14 +580,28 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
   // Jumlah hari lari: volume kecil tidak dipecah ke terlalu banyak sesi.
   // Dibulatkan ke terdekat: dengan pembulatan ke bawah, minggu 7,3 km hanya dapat 2 sesi dan
   // sesi kedua terpotong E-06, sehingga cutback/taper turun lebih dari yang direncanakan.
-  const sessions = Math.min(pool.length, Math.max(2, Math.round(target / 2500)));
+  let sessions = Math.min(pool.length, Math.max(2, Math.round(target / 2500)));
+  // E-11: taper menurunkan volume, bukan frekuensi; jumlah hari lari minggu puncak dipertahankan
+  // selama tiap hari easy tetap dapat minimal MIN_EASY_M.
+  if (phase === 'taper')
+    sessions = Math.min(
+      pool.length,
+      Math.max(sessions, Math.min(a.peakSessions, Math.floor(target / MIN_EASY_M))),
+    );
   const usable = hasLong ? chooseRunDays(pool, sessions, longDay) : chooseRunDays(pool, sessions, pool[0]!);
 
   let h = hardCount(phase, a.level, usable.length, input, cutback);
   if (phase === 'taper') h = Math.max(h, Math.min(a.peakHard, h === 0 ? 0 : 2));
   // Minggu race tanpa long run: hari race diperlakukan sebagai sesi kunci untuk aturan jarak.
   const anchor = hasLong || !inRaceWeek ? longDay : raceWd!;
-  const hardPool = usable.filter((d) => daysToRace(d) >= 3);
+  // E-10 lintas minggu: sesi berat tidak sehari sesudah long run / sesi berat minggu lalu.
+  const afterPrevHeavy = (d: Weekday) =>
+    a.history.some(
+      (w) =>
+        (w.type === 'long' || w.type === 'tempo' || w.type === 'interval') &&
+        diffDays(w.date, dateOf(monday, d)) === 1,
+    );
+  const hardPool = usable.filter((d) => daysToRace(d) >= 3 && !afterPrevHeavy(d));
   const hardDays: Weekday[] = h > 0 ? chooseHardDays(hardPool, anchor, h) : [];
 
   const workouts: GeneratedWorkout[] = [];
@@ -733,7 +813,7 @@ function buildWeek(a: BuildWeekArgs): { workouts: GeneratedWorkout[]; volume: nu
     }
   }
   // Volume minggu = jarak rencana penuh (termasuk hari sebelum startDate di minggu 1).
-  return { workouts, volume, hard: hard.length };
+  return { workouts, volume, hard: hard.length, sessions: usable.length };
 }
 
 function buildPrediction(input: PlanInput, vdot: number): Prediction | null {
@@ -757,6 +837,7 @@ type PlanRationaleArgs = {
   prediction: Prediction | null;
   runWalkPlan: boolean;
   level: Level;
+  taperDrop: number;
 };
 
 /** Rationale level plan (07 bagian 3.1). Urutan = urutan tampil di 1.8 (4 teratas). */
@@ -804,7 +885,7 @@ function planRationale(a: PlanRationaleArgs): Rationale[] {
     rule: 'E-09',
     values: { easy_pct: Math.round((split.e / Math.max(1, split.e + split.h)) * 100) },
   });
-  if (count('taper') > 0) out.push({ rule: 'E-11', values: { pct: 50, weeks: count('taper') } });
+  if (count('taper') > 0) out.push({ rule: 'E-11', values: { pct: a.taperDrop, weeks: count('taper') } });
   if (a.prediction && a.input.goal.baselineDistance && a.input.goal.baselineTimeS) {
     out.push({
       rule: 'E-01',
@@ -821,7 +902,19 @@ function planRationale(a: PlanRationaleArgs): Rationale[] {
     rule: 'E-02',
     values: { vdot: a.vdot, easy_min_pace: a.zones.easy.min, easy_max_pace: a.zones.easy.max },
   });
-  out.push({ rule: 'E-03', values: { weeks: a.weeks, distance_code: a.input.goal.distance } });
+  const defaultWeeks = DEFAULT_WEEKS[a.input.goal.distance];
+  out.push({
+    rule: 'E-03',
+    values:
+      a.weeks === defaultWeeks
+        ? { weeks: a.weeks, distance_code: a.input.goal.distance }
+        : {
+            weeks: a.weeks,
+            distance_code: a.input.goal.distance,
+            default_weeks: defaultWeeks,
+            scope: 'race',
+          },
+  });
   out.push({
     rule: 'E-04',
     values: { base: count('base'), build: count('build'), peak: count('peak'), taper: count('taper') },
