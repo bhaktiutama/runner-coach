@@ -25,3 +25,20 @@ Status: **draft, belum masuk spec**. Belum dipakai di app. Sebelum dipakai, perl
 - **Strength**: belum ada gambar; perlu satu gambar baru dengan gaya sama.
 - **Teks di atas gambar** wajib memakai lapisan gelap (scrim); kontras belum diuji dengan `check_contrast.py` dan token scrim belum ada.
 - **Mode gelap**: gambar sama, scrim memudar ke `bg` gelap; belum digambar.
+
+## Aset di canvas Claude Design
+
+Diunggah ke artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka) pada 2026-11-03. Di canvas, `src` gambar memakai URL aset ini, bukan `ds/lintas/imagery/`.
+
+| File | URL aset canvas |
+|---|---|
+| road-sunrise-m | `/_blob/1f7882d23309b31a09fb6d5316fd5859` |
+| road-sunrise-f | `/_blob/bca490cb80ebd077e6efd4f267bf5ee9` |
+| riverside-city-f | `/_blob/000a6fa608241094d20c9de5f21461a0` |
+| riverside-city-m | `/_blob/0c1b9bfaa000af3cf98d39a403370992` |
+| track-back | `/_blob/05d5a118bf81aba3a998128faf518498` |
+| track-side | `/_blob/6dd43ccb9b1b01dab08521082116e8de` |
+| track-overhead | `/_blob/f69f82754bd3d61d63d07ca066ec9398` |
+| track-aerial | `/_blob/a22c77ced456377b101861290ad2d8a5` |
+| shoe-sole | `/_blob/462c48c4b566ef85ee7fa47e7648483c` |
+| pov-feet | `/_blob/53301d8cbc8520c89eb2dc9400da5138` |

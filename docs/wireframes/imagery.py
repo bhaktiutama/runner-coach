@@ -272,7 +272,7 @@ def build():
     c['notes']['s5'] = {'x': -560, 'y': y, 'w': 460, 'fill': 'teal', 'size': 'm', 'text': (
         'Eksplorasi imagery\n\nVarian dari layar asli (tata letak dan teks sama), dibuat oleh imagery.py. '
         'Gambar: ds/lintas/imagery (lisensi belum diverifikasi). Usulan token: --on-image, --scrim-top. '
-        'Mode gelap: gambar sama, fade ke --bg gelap.')}
+        'Mode gelap: gambar sama, fade ke --bg gelap. 3.1b: status hari selesai (centang warna zona) dan terlewat (dicoret), UI/UX 8a.')}
     json.dump(c, open(path, 'w', encoding='utf8'), indent=1, ensure_ascii=False)
     open(path, 'a').write('\n')
     print('update canvas.json')

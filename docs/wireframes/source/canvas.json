@@ -467,7 +467,7 @@
    "w": 460,
    "fill": "teal",
    "size": "m",
-   "text": "Eksplorasi imagery\n\nVarian dari layar asli (tata letak dan teks sama), dibuat oleh imagery.py. Gambar: ds/lintas/imagery (lisensi belum diverifikasi). Usulan token: --on-image, --scrim-top. Mode gelap: gambar sama, fade ke --bg gelap."
+   "text": "Eksplorasi imagery\n\nVarian dari layar asli (tata letak dan teks sama), dibuat oleh imagery.py. Gambar: ds/lintas/imagery (lisensi belum diverifikasi). Usulan token: --on-image, --scrim-top. Mode gelap: gambar sama, fade ke --bg gelap. 3.1b: status hari selesai (centang warna zona) dan terlewat (dicoret), UI/UX 8a."
   }
  },
  "designSystems": [
