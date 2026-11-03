@@ -215,37 +215,42 @@ const RW_EASY_BLOCK_S = RUN_WALK_EASY_S - 600;
 const RW_LONG_BLOCK_S = RUN_WALK_LONG_S - 600;
 
 /**
- * E-14 + E-05: blok run-walk berikutnya. Menit lari aktual tiap sesi (ulangan x blok lari)
- * naik maks 10%, total waktu sesi tetap. Grid 15 detik.
+ * E-14 + E-05: blok run-walk berikutnya (v0.4). Progresi eksplisit:
+ * - total menit lari sesi easy naik 10% per minggu (grid 5 detik);
+ * - jeda jalan turun 15 detik per minggu sampai 30 detik;
+ * - jumlah ulangan = sebanyak yang muat di waktu sesi (30 mnt easy, 40 mnt long), tidak pernah
+ *   membuat blok lari lebih pendek dari minggu lalu;
+ * - long run: total menit lari naik maks 10%, ulangan sebanyak yang muat;
+ * - ulangan easy paling banyak berkurang setengah per minggu;
+ * - begitu total lari easy >= 20 mnt / 1,1, minggu berikutnya lari 20 mnt tanpa henti (keluar).
  */
 export function nextRunWalkBlock(prev: RunWalkBlock | null): RunWalkBlock {
-  const reps = (runS: number, walkS: number, blockS: number) =>
-    Math.max(1, Math.floor(blockS / (runS + walkS)));
-  const make = (runS: number, walkS: number): RunWalkBlock => ({
-    runS,
-    walkS,
-    easyReps: reps(runS, walkS, RW_EASY_BLOCK_S),
-    longReps: reps(runS, walkS, RW_LONG_BLOCK_S),
-  });
-  if (!prev) return make(60, 120);
+  if (!prev) {
+    const reps = (blockS: number) => Math.max(1, Math.floor(blockS / 180));
+    return { runS: 60, walkS: 120, easyReps: reps(RW_EASY_BLOCK_S), longReps: reps(RW_LONG_BLOCK_S) };
+  }
   const prevEasy = prev.easyReps * prev.runS;
   const prevLong = prev.longReps * prev.runS;
-  let best = prev;
-  let bestFrac = prev.runS / (prev.runS + prev.walkS);
-  for (let walkS = 120; walkS >= 30; walkS -= 15) {
-    for (let runS = prev.runS; runS <= RUN_WALK_EXIT_S; runS += 15) {
-      const c = make(runS, walkS);
-      const f = runS / (runS + walkS);
-      const ok =
-        c.easyReps * runS <= prevEasy * (1 + MAX_WEEKLY_INCREASE) + 1e-9 &&
-        c.longReps * runS <= prevLong * (1 + MAX_WEEKLY_INCREASE) + 1e-9;
-      if (ok && f > bestFrac + 1e-9) {
-        best = c;
-        bestFrac = f;
-      }
-    }
-  }
-  return best;
+  if (prevEasy * (1 + MAX_WEEKLY_INCREASE) >= RUN_WALK_EXIT_S)
+    return { runS: RUN_WALK_EXIT_S, walkS: prev.walkS, easyReps: 1, longReps: 1 };
+  const step5 = (x: number) => Math.floor(x / 5) * 5;
+  const walkS = Math.max(30, prev.walkS - 15);
+  // Ulangan paling banyak berkurang setengah per minggu (blok lari maks ~2x lebih panjang).
+  const minReps = Math.ceil(prev.easyReps / 2);
+  const easyTotal = Math.min(
+    step5(prevEasy * (1 + MAX_WEEKLY_INCREASE)),
+    step5(RW_EASY_BLOCK_S - minReps * walkS),
+  );
+  // Ulangan sebanyak yang muat: n x (lari + jalan) <= waktu blok, dan blok lari tidak memendek.
+  let n = Math.max(1, Math.floor((RW_EASY_BLOCK_S - easyTotal) / walkS));
+  n = Math.max(1, Math.min(n, prev.easyReps, Math.floor(easyTotal / prev.runS)));
+  const runS = Math.max(prev.runS, step5(easyTotal / n));
+  const longCap = prevLong * (1 + MAX_WEEKLY_INCREASE);
+  const longReps = Math.max(
+    1,
+    Math.min(Math.floor(longCap / runS), Math.floor(RW_LONG_BLOCK_S / (runS + walkS))),
+  );
+  return { runS, walkS, easyReps: n, longReps };
 }
 
 function hardCount(phase: Phase, level: Level, sessions: number, input: PlanInput, cutback: boolean): number {
@@ -392,6 +397,8 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
           ? Infinity
           : lastFullVolume * (1 + MAX_WEEKLY_INCREASE);
     let week!: ReturnType<typeof buildWeek>;
+    let bestCut: ReturnType<typeof buildWeek> | null = null;
+    let cutDir = 0;
     for (let tries = 0; tries < 40; tries++) {
       week = buildWeek({
         input,
@@ -411,9 +418,25 @@ export function generatePlan(input: PlanInput): GeneratedPlan {
         peakHard,
         peakSessions,
       });
-      if (week.volume <= limit || runWalkActive) break;
+      if (runWalkActive) break;
+      // E-07: cutback turun 20-30%. Jarak per sesi dibulatkan sendiri-sendiri, jadi target dicoba
+      // naik per 100 m; bila tidak ada yang tepat, dipakai yang paling dekat 25%.
+      if (cutback) {
+        const drop = 1 - week.volume / lastFullVolume;
+        if (!bestCut || Math.abs(drop - 0.25) < Math.abs(1 - bestCut.volume / lastFullVolume - 0.25))
+          bestCut = week;
+        if ((drop > 0.3 || drop < 0.2) && tries < 30) {
+          target += drop > 0.3 ? 100 : -100;
+          if (drop < 0.2 && cutDir > 0) break;
+          cutDir = drop > 0.3 ? 1 : -1;
+          continue;
+        }
+        break;
+      }
+      if (week.volume <= limit) break;
       target -= 100;
     }
+    if (cutback && bestCut) week = bestCut;
 
     if (runWalkActive && block && block.runS >= RUN_WALK_EXIT_S) runWalkActive = false;
     if (phase === 'peak') {

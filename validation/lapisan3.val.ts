@@ -302,7 +302,7 @@ const PARAMS: Param[] = [
   {
     rule: 'E-14',
     label: 'Run-walk awal / sesi easy / sesi long',
-    code: `${Number(srcNum(SRC.generator, /return make\((\d+), \d+\)/)) / 60}/${Number(srcNum(SRC.generator, /return make\(\d+, (\d+)\)/)) / 60} mnt / ${Number(srcNum(SRC.generator, /RUN_WALK_EASY_S = (\d+)/)) || 30} mnt / ${Number(srcNum(SRC.generator, /RUN_WALK_LONG_S = (\d+)/)) || 40} mnt`,
+    code: `${Number(srcNum(SRC.generator, /runS: (\d+), walkS: \d+, easyReps: reps/)) / 60}/${Number(srcNum(SRC.generator, /runS: \d+, walkS: (\d+), easyReps: reps/)) / 60} mnt / ${Number(srcNum(SRC.generator, /RUN_WALK_EASY_S = (\d+)/)) || 30} mnt / ${Number(srcNum(SRC.generator, /RUN_WALK_LONG_S = (\d+)/)) || 40} mnt`,
     s07: m(
       S07,
       /Mulai (\d) mnt lari \/ (\d) mnt jalan.*sesi easy (\d+) mnt, long (\d+) mnt/,

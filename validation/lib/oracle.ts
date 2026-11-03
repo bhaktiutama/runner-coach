@@ -222,6 +222,14 @@ export const CHECKS: CheckDef[] = [
     source: '07 E-O2',
   },
   {
+    id: 'E-14c',
+    rule: 'E-14',
+    title:
+      'Run-walk benar-benar naik: blok lari atau menit lari easy bertambah tiap minggu (di luar taper) sampai lari 20 menit',
+    severity: 'mayor',
+    source: '07 E-O2, TRD 4.2 E-14',
+  },
+  {
     id: 'E-15a',
     rule: 'E-15',
     title: 'Tempo/interval: drill 8-12 menit sesudah pemanasan, sebelum bagian kerja',
@@ -879,6 +887,8 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
   );
   if (isRunWalkPlan) {
     let prevRun = 0;
+    let prevBlock = 0;
+    let prevEasyMin = 0;
     for (const [wi, ws] of [...weeks].sort((a, b) => a[0] - b[0])) {
       const rw = ws.filter((x) => x.type === 'run_walk');
       if (!rw.length) continue;
@@ -905,7 +915,26 @@ export function validatePlan(input: PlanInput, plan: GeneratedPlan, tally: Tally
           `minggu ${wi}: menit lari ${Math.round(runMin / 60)} (sebelumnya ${Math.round(prevRun / 60)}), blok ${block} dtk`,
         s.startDate,
       );
-      if (s.phase !== 'taper') prevRun = runMin;
+      if (s.phase !== 'taper') {
+        const easy = rw.map((x) =>
+          segments(x.steps as AnyStep[])
+            .filter((q) => q.kind === 'work' && !q.walk)
+            .reduce((a, q) => a + q.durationS, 0),
+        );
+        const easyMin = Math.min(...easy);
+        // Minggu pertama yang terlihat bisa sebagian; dibanding mulai minggu kedua.
+        if (prevBlock > 0 && prevBlock < 1200)
+          check(
+            'E-14c',
+            block > prevBlock || easyMin > prevEasyMin,
+            () =>
+              `minggu ${wi}: blok ${block} dtk dan lari easy ${easyMin} dtk sama dengan minggu sebelumnya`,
+            s.startDate,
+          );
+        prevBlock = block;
+        prevEasyMin = easyMin;
+        prevRun = runMin;
+      }
     }
   }
 
