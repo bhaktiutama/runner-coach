@@ -4,7 +4,7 @@ Status: **draft, belum masuk spec**. Belum dipakai di app. Sebelum dipakai, perl
 
 - Sumber: 3 gambar referensi dari pemilik produk (2026-11-03), gaya ilustrasi digital semi-realis. **Lisensi dan asal gambar belum diverifikasi** (kemungkinan hasil AI generator); jangan rilis sebelum jelas.
 - Proses: dipotong per panel (gutter putih dibuang), ukuran asli dipertahankan, disimpan WebP kualitas 82. Total sekitar 500 KB.
-- Wireframe pemakaian: `docs/wireframes/explorations/imagery/`.
+- Wireframe pemakaian: varian layar asli `docs/wireframes/source/IMG-*.dc.html` (dibuat `docs/wireframes/imagery.py`), PNG di `docs/wireframes/png/imagery/` (+ `dark/`).
 
 | File | Ukuran (px) | Isi | Usulan pemakaian |
 |---|---|---|---|

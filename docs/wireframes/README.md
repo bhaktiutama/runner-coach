@@ -112,3 +112,32 @@ node docs/wireframes/render.js docs/wireframes/source docs/wireframes/png \
 `render.js` meniru sebagian kecil runtime artifact: `{{nilai}}`, `<sc-for>`, `<sc-if>`, state awal, dan stylesheet `ds/`. Jika wireframe mulai memakai fitur lain (misalnya `<dc-import>`), script perlu ditambah.
 
 Jika token di `docs/design-system/tokens.json` berubah: perbarui artifact Lintas, buat ulang `source/ds/lintas/tokens.css`, lalu ekspor ulang PNG.
+
+## Eksplorasi imagery (draft, v0.7, 2026-11-03)
+
+![Asli vs imagery, terang dan gelap](png/imagery/compare.png)
+
+Gambar dari `docs/design-system/assets/imagery/` ditempelkan ke **layar yang sudah ada**, bukan digambar ulang. `imagery.py` membaca sumber asli, menyisipkan blok gambar di titik tertentu (harus cocok tepat 1x, kalau tidak script berhenti), lalu menulis varian `source/IMG-*.dc.html`. Teks, komponen dan token tetap dari sumber asli; mode gelap memakai `[data-theme="dark"]` yang sama. Papan baru ada di baris "5. Eksplorasi imagery" di `canvas.json`; papan asli tidak diubah.
+
+| Layar | Sumber asli | Gambar | Perubahan | Terang | Gelap |
+|---|---|---|---|---|---|
+| 1.1 | `Main.dc.html` | road-sunrise-m | Grafik lajur zona diganti foto setengah atas, memudar ke `--bg`; logo memakai `--on-image` | [png](png/imagery/1-1-selamat-datang.png) | [png](png/imagery/dark/1-1-selamat-datang.png) |
+| 1.9 | `OB9-Masuk.dc.html` | riverside-city-f | Header bergambar di belakang tombol kembali | [png](png/imagery/1-9-masuk.png) | [png](png/imagery/dark/1-9-masuk.png) |
+| 2.1 | `Today.dc.html` | track-back | Baris bib + jarak jadi header bergambar di kartu latihan | [png](png/imagery/2-1-hari-ini.png) | [png](png/imagery/dark/2-1-hari-ini.png) |
+| 2.4 | `Finish.dc.html` | shoe-sole | Gambar di atas judul "selesai" | [png](png/imagery/2-4-selesai.png) | [png](png/imagery/dark/2-4-selesai.png) |
+| 4.4 | `P2-4-4-premium.dc.html` | riverside-city-m | Header bergambar | [png](png/imagery/4-4-premium.png) | [png](png/imagery/dark/4-4-premium.png) |
+
+Perintah: lihat kepala `imagery.py`. `render.js` kini meng-inline gambar `ds/...` sebagai data URI (sama seperti stylesheet).
+
+### Tahapan menerapkan ke wireframe Claude Design
+
+| Tahap | Kegiatan | Hasil | Status |
+|---|---|---|---|
+| 1. Library | Slice gambar referensi, simpan di `assets/imagery/` + README (ukuran, pemakaian, batasan) | 10 WebP | Selesai (draft) |
+| 2. Varian dari sumber asli | `imagery.py` membuat `IMG-*.dc.html` dari 5 layar asli; gambar disalin ke `source/ds/lintas/imagery/` | 5 varian, terang + gelap | Selesai |
+| 3. Keputusan pemilik produk | Pilih layar yang dipakai, gambar mana, lisensi/asal gambar, perlu versi resolusi tinggi atau tidak | Daftar layar disetujui | Menunggu |
+| 4. Token | Masukkan `--on-image`, `--scrim-top` ke `tokens.json` (`color` dan `color.dark`), uji teks di atas scrim dengan `check_contrast.py`, buat ulang `source/ds/lintas/tokens.css`, perbarui artifact Lintas | Token resmi, kontras lolos | Belum |
+| 5. Canvas Claude Design | Unggah `source/ds/lintas/imagery/*` dan `IMG-*.dc.html` ke artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxka), tambah baris "5. Eksplorasi imagery" dari `canvas.json`; review terang/gelap di canvas | Varian tampil di samping layar asli | Belum (perlu izin pemilik) |
+| 6. Promosi | Pindahkan sisipan yang disetujui ke sumber asli (`Main.dc.html` dst.), hapus varian `IMG-*`, render ulang `png/`, `dark.sh`, overview | Wireframe v0.7 resmi | Belum |
+| 7. Spec | `04-UI-UX.md` (komponen gambar hero/kartu, aturan scrim, pemetaan jenis latihan ke gambar), `design-system/README.md` (prinsip imagery), anggaran ukuran aset | Spec diperbarui di PR yang sama | Belum |
+| 8. App | Implementasi komponen dengan `Image` bawaan React Native (tanpa library baru), aset lokal, test | Fitur di app | Belum |

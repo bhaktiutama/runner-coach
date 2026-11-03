@@ -243,6 +243,51 @@
    "title": "4.6 Hapus akun",
    "is_interactive": true,
    "radius": 40
+  },
+  "IMG-1-1-selamat-datang.dc.html": {
+   "x": 0,
+   "y": 5100,
+   "w": 390,
+   "h": 844,
+   "title": "1.1 Selamat datang + hero (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-1-9-masuk.dc.html": {
+   "x": 470,
+   "y": 5100,
+   "w": 390,
+   "h": 844,
+   "title": "1.9 Masuk + header gambar (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-2-1-hari-ini.dc.html": {
+   "x": 940,
+   "y": 5100,
+   "w": 390,
+   "h": 844,
+   "title": "2.1 Hari ini + latar kartu (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-2-4-selesai.dc.html": {
+   "x": 1410,
+   "y": 5100,
+   "w": 390,
+   "h": 844,
+   "title": "2.4 Selesai + gambar (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-4-4-premium.dc.html": {
+   "x": 1880,
+   "y": 5100,
+   "w": 390,
+   "h": 844,
+   "title": "4.4 Premium + header gambar (draft)",
+   "is_interactive": true,
+   "radius": 40
   }
  },
  "order": [
@@ -271,7 +316,12 @@
   "InjuryPause.dc.html",
   "Paywall.dc.html",
   "DataPrivacy.dc.html",
-  "DeleteAccount.dc.html"
+  "DeleteAccount.dc.html",
+  "IMG-1-1-selamat-datang.dc.html",
+  "IMG-1-9-masuk.dc.html",
+  "IMG-2-1-hari-ini.dc.html",
+  "IMG-2-4-selesai.dc.html",
+  "IMG-4-4-premium.dc.html"
  ],
  "notes": {
   "t1": {
@@ -333,6 +383,21 @@
    "fill": "purple",
    "size": "m",
    "text": "Journey 4: Pengaturan & kasus khusus\n\nData & privasi (4.5): data ada di HP ini, backup ke file, pulihkan, data anonim, keluar, hapus akun (4.6).\n\nIntegrasi (fase 2): Strava, Apple Health, Health Connect; hasilnya tetap di HP.\n\nJeda plan saat cedera/sakit -> kembali via minggu 'Return to run'.\n\nPaywall Premium baru muncul di fase 3. Harga = placeholder."
+  },
+  "t5": {
+   "x": 0,
+   "y": 4800,
+   "text": "5. Eksplorasi imagery (draft, belum masuk spec)",
+   "kind": "title1",
+   "maxW": 2300
+  },
+  "s5": {
+   "x": -560,
+   "y": 5100,
+   "w": 460,
+   "fill": "teal",
+   "size": "m",
+   "text": "Eksplorasi imagery\n\nVarian dari layar asli (tata letak dan teks sama), dibuat oleh imagery.py. Gambar: ds/lintas/imagery (lisensi belum diverifikasi). Usulan token: --on-image, --scrim-top. Mode gelap: gambar sama, fade ke --bg gelap."
   }
  },
  "designSystems": [

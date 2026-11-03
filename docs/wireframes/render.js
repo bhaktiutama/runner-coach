@@ -68,8 +68,12 @@ window.addEventListener('DOMContentLoaded', () => {
     html = html.replace('<script src="./support.js"></script>', (process.env.WF_THEME ? `<script>window.__WF_THEME=${JSON.stringify(process.env.WF_THEME)}</script>` : '') + SHIM);
     // Inline the design-system stylesheets copied into the canvas (ds/<folder>/...).
     html = html.replace(/<link rel="stylesheet" href="(ds\/[^"]+)">/g, (_, href) => `<style>${fs.readFileSync(path.join(projectDir, href), 'utf8')}</style>`);
+    // Gambar di ds/ (misalnya ds/lintas/imagery/*.webp) di-inline sebagai data URI.
+    const MIME = { webp: 'image/webp', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg' };
+    html = html.replace(/src="(ds\/[^"]+\.(webp|png|jpe?g))"/g, (_, src, ext) => `src="data:${MIME[ext]};base64,${fs.readFileSync(path.join(projectDir, src)).toString('base64')}"`);
     await page.setContent(html, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('body[data-rendered="1"]', { state: 'attached', timeout: 5000 });
+    await page.waitForFunction(() => [...document.images].every((i) => i.complete), null, { timeout: 5000 });
     await page.evaluate(() => document.fonts.ready);
     await page.locator('body > :first-child').screenshot({ path: path.join(outDir, png) });
     console.log('ok', name, '->', png);
