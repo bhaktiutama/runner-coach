@@ -133,6 +133,7 @@ export const id = {
   'health.disclaimer': 'Saya paham Run Coach adalah panduan latihan, bukan nasihat medis.',
   'health.cta': 'Buat plan saya',
   'health.error': 'Plan belum bisa dibuat: {reason}',
+  'engineError.race_too_far': 'tanggal race lebih dari 52 minggu lagi. Pilih race yang lebih dekat.',
   'engineError.race_too_soon': 'tanggal race terlalu dekat.',
   'engineError.race_in_past': 'tanggal race sudah lewat.',
   'engineError.invalid_days': 'pilih 3-6 hari lari.',

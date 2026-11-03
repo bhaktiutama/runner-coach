@@ -26,7 +26,7 @@ import {
   useActivePlan,
   useLongest30,
   useToday,
-  useWeekWorkouts,
+  useWorkouts,
   useWorkout,
   useWorkoutActions,
 } from '@/data/hooks';
@@ -40,7 +40,9 @@ export default function MoveSheet() {
   const today = useToday();
   const plan = useActivePlan();
   const w = useWorkout(id);
-  const week = useWeekWorkouts(plan.data?.id, w.data?.date ?? today);
+  // Minggu ini + sehari sebelum/sesudahnya: cek E-10 lintas minggu (Minggu -> Senin).
+  const weekMonday = mondayOf(w.data?.date ?? today);
+  const week = useWorkouts(plan.data?.id, addDays(weekMonday, -1), addDays(weekMonday, 7));
   const longest = useLongest30(today, plan.data?.goal.longest_run_m ?? 0);
   const actions = useWorkoutActions();
   const [target, setTarget] = useState<string | null>(null);

@@ -12,7 +12,9 @@
     "test:e2e": "playwright test",
     "test:privacy": "vitest run --config vitest.privacy.config.mts",
     "tokens": "node scripts/build-tokens.mjs",
-    "test:coverage": "vitest run packages/training-engine --coverage"
+    "test:coverage": "vitest run packages/training-engine --coverage",
+    "validate:engine": "vitest run --config validation/vitest.config.mts",
+    "validate:app": "playwright test --config validation/app/playwright.config.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

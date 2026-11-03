@@ -1,4 +1,4 @@
-import { adjacentWeekdays, diffDays, weekday } from './dates';
+import { diffDays } from './dates';
 import { runningDistance, totalDuration, type Step } from './steps';
 import type { Rationale, WorkoutType } from './types';
 import { easyRun } from './workouts';
@@ -23,7 +23,8 @@ const HARD = new Set<WorkoutType>(['tempo', 'interval']);
 export const isHard = (t: WorkoutType) => HARD.has(t);
 
 /**
- * Cek memindah `moving` ke `toDate` (minggu yang sama). `week` = latihan lain di minggu itu.
+ * Cek memindah `moving` ke `toDate` (minggu yang sama). `week` = latihan lain di minggu itu,
+ * ditambah latihan sehari sebelum dan sesudah minggu itu (cek E-10 lintas minggu).
  * `longest30M` = lari terjauh 30 hari terakhir (E-06).
  */
 export function checkMove(
@@ -60,9 +61,14 @@ export function checkMove(
       rationale: [{ rule: 'E-06', values: { distance_m: merged, longest_30d_m: longest30M, cap_m: cap } }],
     };
   }
-  const wd = weekday(toDate);
-  const hardNeighbours = others.filter((w) => isHard(w.type) && adjacentWeekdays(weekday(w.date), wd));
-  if (isHard(moving.type) && hardNeighbours.length > 0) {
+  // E-10 berdasarkan tanggal (termasuk Minggu -> Senin minggu berikutnya). `week` boleh memuat
+  // latihan sehari sebelum Senin dan sehari sesudah Minggu supaya batas minggu ikut dicek.
+  const heavy = (t: WorkoutType) => isHard(t) || t === 'long';
+  const hardNeighbours = others.filter(
+    (w) =>
+      heavy(w.type) && (isHard(w.type) || isHard(moving.type)) && Math.abs(diffDays(w.date, toDate)) === 1,
+  );
+  if (heavy(moving.type) && hardNeighbours.length > 0) {
     return {
       verdict: 'hard_adjacent',
       mergeWith: null,
