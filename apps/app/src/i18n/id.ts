@@ -597,7 +597,6 @@ export const id = {
 
   // ---- Fase 2: strength + core (F-21) ----
   'strength.animationSoon': 'Animasi gerakan menyusul',
-  'strength.animationLabel': 'Animasi gerakan {name}',
   'strength.reps': '{n}x',
   'strength.seconds': '{n} dtk',
   'strength.perSide': '{dose} / sisi',

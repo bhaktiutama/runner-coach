@@ -601,7 +601,6 @@ export const en: Record<MessageKey, string> = {
   'move.noDays': 'No days left this week.',
 
   'strength.animationSoon': 'Exercise animation coming soon',
-  'strength.animationLabel': 'Animation of {name}',
   'strength.reps': '{n}x',
   'strength.seconds': '{n} sec',
   'strength.perSide': '{dose} / side',

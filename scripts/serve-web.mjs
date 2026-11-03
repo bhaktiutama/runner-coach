@@ -16,7 +16,6 @@ const types = {
   '.ico': 'image/x-icon',
   '.ttf': 'font/ttf',
   '.svg': 'image/svg+xml',
-  '.mp4': 'video/mp4',
 };
 
 createServer(async (req, res) => {
