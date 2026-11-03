@@ -53,6 +53,18 @@ Catatan E2E: 6 test "skipped" itu normal (spec screenshot butuh `SHOTS_DIR`; sat
 
 `eas deploy --prod` (produksi) dijalankan pemilik sendiri. EAS project: `@bhaktiutama/run-coach`.
 
+### 3b. Uji di HP orang lain (penguji)
+
+| Platform | Cara | Syarat |
+|---|---|---|
+| Semua | Web preview https://run-coach--preview.expo.app (data tersimpan di browser penguji) | Browser modern |
+| Android | Kirim link halaman build APK preview (`eas build -p android --profile preview`, halaman build di expo.dev punya tombol Install/QR). Penguji mengizinkan "install dari sumber tidak dikenal". Perubahan JS berikutnya lewat `eas update --branch preview` (masuk saat app dibuka ulang, runtime sama) | Tidak perlu daftar perangkat |
+| iOS (cepat, terbatas) | Expo Go dari App Store, buka `exp://u.expo.dev/9855e7c4-9e3c-49d8-b871-d04ded670b08?channel-name=preview` (QR) | Expo Go harus mendukung SDK app; fitur native (Apple Sign In, notifikasi) bisa berbeda dari build asli |
+| iOS (build asli, ad hoc) | Pemilik menjalankan secara interaktif di komputer sendiri: `npx eas-cli device:create` (link registrasi UDID untuk penguji), lalu `npx eas-cli build -p ios --profile preview` (login Apple). Penguji install dari link build | Apple Developer Program berbayar; maks 100 iPhone per tahun; perangkat baru = build ulang |
+| iOS (TestFlight) | `npx eas-cli build -p ios --profile production` lalu `npx eas-cli submit -p ios`; undang penguji di App Store Connect > TestFlight | Apple Developer Program; penguji eksternal (link publik, maks 10.000) perlu Beta App Review |
+
+Build iOS tidak bisa dari sesi cloud selama akun EAS belum punya kredensial Apple (`eas build -p ios --non-interactive` gagal "couldn't find any credentials suitable for internal distribution"). Sekali kredensial dibuat secara interaktif, build berikutnya bisa non-interaktif.
+
 ## 4. Alur git
 
 - Branch kerja dari `development` (mis. `feat/<milestone>-<nama>`). Pemilik mengizinkan merge langsung ke `development` tanpa PR: `git checkout development && git pull --ff-only origin development && git merge --no-edit <branch> && git push origin development`.
