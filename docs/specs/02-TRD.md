@@ -117,7 +117,7 @@ Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom
 
 | ID | Aturan | Nilai default |
 |----|--------|---------------|
-| E-03 | Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2) |
+| E-03 | Durasi plan | 5K: 8 mgg, 10K: 10 mgg, HM: 12 mgg, FM: 16-18 mgg, Bugar: blok 8 mgg berulang (O2). Dengan race: sampai minggu race, min 4/5/6/8 mgg, maks 52 mgg (lebih jauh ditolak) |
 | E-04 | Fase | Base -> Build -> Peak -> Taper (Bugar: tanpa Taper) |
 | E-05 | Kenaikan volume mingguan | Maks 10% dari minggu non-cutback terakhir (batas konservatif; tidak diklaim mencegah cedera) |
 | E-14 | Run-walk | Level `beginner` + lari terjauh 4 minggu < 3 km. Blok lari naik tiap minggu; jadi lari kontinu setelah blok lari 20 mnt (07 E-O2) |
@@ -125,8 +125,8 @@ Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom
 | E-07 | Cutback week | Tiap minggu ke-3 atau ke-4, volume turun 20-30% |
 | E-08 | Long run | Maks porsi volume mingguan: 5K/10K/Bugar 30%, HM 35%, FM 45%; maks durasi 2 jam (5K/10K/Bugar), 2,5 jam (HM), 3 jam (FM). Di hari long run pilihan pengguna. Berlaku bersama E-06; yang lebih ketat menang |
 | E-09 | Intensitas | ~80% easy |
-| E-10 | Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan |
-| E-11 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg. Volume turun 40-60% dari minggu puncak; intensitas dan jumlah sesi kualitas dipertahankan |
+| E-10 | Sesi berat | Maks 2 per minggu, pemula 0-1, tidak boleh di 2 hari berurutan (per tanggal, termasuk lintas minggu dan dengan long run) |
+| E-11 | Taper | 5K/10K: 1 mgg, HM: 1-2 mgg, FM: 2-3 mgg, dihitung per 7 hari mundur dari tanggal race. Volume 7 hari sebelum race turun 40-60% dari minggu puncak; intensitas dan jumlah sesi kualitas dipertahankan |
 | E-12 | Screening "Ya" (O3) | Mode ringan: tanpa sesi berat sampai diubah pengguna |
 | E-13 | Setelah jeda plan | 1 minggu Return to run: volume rendah, tanpa sesi berat |
 | E-21 | Recovery run | Rekreasional, >= 5 hari lari, bukan mode ringan: hari easy tepat sesudah long run / sesi berat (minggu yang sama) jadi recovery run maks 30 mnt di pace easy paling lambat + 0-30 dtk/km. Sisa jarak dipindah ke hari easy lain |

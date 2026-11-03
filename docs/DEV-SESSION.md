@@ -38,6 +38,8 @@ Network: perlu `*.supabase.co`, `api.supabase.com`, `expo.dev`/`*.expo.dev`/`*.e
 | Build web untuk E2E | `cd apps/app && rm -rf dist && EXPO_PUBLIC_E2E=1 npx expo export --platform web --output-dir dist` |
 | E2E (Playwright, server dari `scripts/serve-web.mjs`) | `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium pnpm test:e2e` |
 | Screenshot vs wireframe | `SHOTS_DIR=<folder> PW_CHROMIUM_PATH=... pnpm test:e2e e2e/compare.spec.ts` lalu `python3 scripts/compare-wireframes.py <folder>` (hasil `cmp-*.jpg`: kiri wireframe PNG, kanan app) |
+| Validasi engine (manual, bukan CI): Lapisan 2, Lapisan 3, paket review pelatih | `pnpm validate:engine`; hasil HTML di `docs/validation/engine-<versi>/` (detail `validation/README.md`) |
+| Validasi app = engine (manual, bukan CI): Lapisan 1 | Ekspor web dengan `EXPO_PUBLIC_E2E=1`, lalu `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium pnpm validate:app` |
 
 Catatan E2E: 6 test "skipped" itu normal (spec screenshot butuh `SHOTS_DIR`; satu test bergantung hari ini bukan hari istirahat). `EXPO_PUBLIC_E2E=1` memunculkan "Lewati login (mode uji)".
 

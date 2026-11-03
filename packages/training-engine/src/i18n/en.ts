@@ -8,6 +8,8 @@ export const engineEn: Record<EngineMessageKey, string> = {
   'rule.E-02':
     "Training paces use Daniels' framework (VDOT {vdot}). Easy runs at {easy_min_pace} - {easy_max_pace}, slow enough to keep chatting.",
   'rule.E-03': 'This {distance_code} plan is {weeks} weeks, a common length coaches use for this goal.',
+  'rule.E-03.race':
+    'This {distance_code} plan is {weeks} weeks to fit your race date. The common length for this goal is {default_weeks} weeks.',
   'rule.E-04':
     'The plan has Base {base} weeks, Build {build} weeks, Peak {peak} weeks and Taper {taper} weeks, so load rises gradually with enough recovery.',
   'rule.E-05':
