@@ -4,4 +4,4 @@ const path=require('path');const {chromium}=require('playwright');
 await p.goto('file://'+path.join(dir,'index.html'));await p.evaluate(()=>document.fonts.ready);await p.waitForTimeout(800);
 const ids={'s-splash':'0-splash','s-welcome':'1-1-selamat-datang','s-login':'1-9-masuk','s-today':'2-1-hari-ini','s-finish':'2-4-selesai','s-empty':'3-3-progres-kosong','s-premium':'4-4-premium','s-sheet':'library'};
 for(const[id,n] of Object.entries(ids)){const el=await p.$('#'+id+' > .ph, #'+id+' > .sheet');await el.screenshot({path:path.join(dir,'png',n+'.png')});}
-await p.screenshot({path:path.join(dir,'overview.png'),fullPage:true});await b.close();})();
+await p.screenshot({path:path.join(dir,'overview.png'),fullPage:true,scale:'css'});await b.close();})();
