@@ -204,11 +204,44 @@ _m = SCREENS[0]
 SCREENS.append({'src': _m['src'], 'out': 'IMG-1-1b-selamat-datang', 'title': '1.1 Selamat datang, gambar B', 'img': 'road-sunrise-f',
                 'edits': [(o, n.replace('road-sunrise-m', 'road-sunrise-f').replace('62% 38%', '74% 45%')) if o != 're' else (o, n) for o, n in _m['edits']]})
 
+# --- Status hari di 3.1 (UI/UX 8a): minggu lalu dengan latihan selesai dan terlewat ---
+PLAN_ROWS_OLD = """      { dow: 'Sen', date: '26', type: 'rest', title: 'Istirahat', sub: 'Jalan santai atau stretching', tag: '' },
+      { dow: 'Sel', date: '27', type: 'tempo', bib: 'TEMPO', title: 'Tempo Run', sub: '42 mnt  ·  ~5,5 km  ·  + drill', tag: 'HARI INI', today: true, href: 'WorkoutDetail.dc.html' },
+      { dow: 'Rab', date: '28', type: 'rest', title: 'Istirahat', sub: '', tag: '' },
+      { dow: 'Kam', date: '29', type: 'easy', bib: 'EASY', title: 'Easy + strides', sub: '35 mnt + 6x20 dtk', tag: '', href: 'MoveWorkout.dc.html' },
+      { dow: 'Jum', date: '30', type: 'rest', title: 'Istirahat', sub: '', tag: '' },
+      { dow: 'Sab', date: '31', type: 'easy', bib: 'EASY', title: 'Easy Run', sub: '30 mnt  ·  ~4 km', tag: '' },
+      { dow: 'Min', date: '1', type: 'long', bib: 'LONG', title: 'Long Run', sub: '60 mnt  ·  ~7,5 km', tag: '' }"""
+PLAN_ROWS_NEW = """      { dow: 'Sen', date: '19', type: 'rest', title: 'Istirahat', sub: 'Jalan santai atau stretching', tag: '' },
+      { dow: 'Sel', date: '20', type: 'tempo', bib: 'TEMPO', title: 'Tempo Run', sub: '38 mnt  ·  ~5,2 km  ·  + drill', tag: '', status: 'completed' },
+      { dow: 'Rab', date: '21', type: 'rest', title: 'Istirahat', sub: '', tag: '' },
+      { dow: 'Kam', date: '22', type: 'easy', bib: 'EASY', title: 'Easy + strides', sub: '25 mnt + 6x20 dtk', tag: '', status: 'missed' },
+      { dow: 'Jum', date: '23', type: 'rest', title: 'Istirahat', sub: '', tag: '' },
+      { dow: 'Sab', date: '24', type: 'easy', bib: 'EASY', title: 'Easy Run', sub: '25 mnt  ·  ~3 km', tag: '', status: 'completed' },
+      { dow: 'Min', date: '25', type: 'long', bib: 'LONG', title: 'Long Run', sub: '50 mnt  ·  ~6 km', tag: '', status: 'completed' }"""
+CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+TAG_IF = '<sc-if value="{{d.isTag}}" hint-placeholder-val="{{false}}">'
+SCREENS.append({
+    'src': 'Plan.dc.html', 'out': 'ST-3-1b-plan-status', 'title': '3.1b Plan, minggu lalu: selesai dan terlewat', 'img': None,
+    'edits': [
+        (PLAN_ROWS_OLD, PLAN_ROWS_NEW),
+        ('>Minggu 3</span>', '>Minggu 2</span>'),
+        ('>26 Okt - 1 Nov  ·  18 km</span>', '>19 - 25 Okt  ·  17 km</span>'),
+        ("outline: i === 2 ?", "outline: i === 1 ?"),
+        ('<span style="font-size: 15px; font-weight: 700; color: {{d.titleColor}}">{{d.title}}</span>',
+         '<span style="font-size: 15px; font-weight: 700; color: {{d.titleColor}}; text-decoration: {{d.deco}}">{{d.title}}</span>'),
+        (TAG_IF, '<span style="display: flex; align-items: center; gap: 8px"><sc-if value="{{d.done}}" hint-placeholder-val="{{false}}"><span role="img" aria-label="Selesai" style="width: 24px; height: 24px; border-radius: var(--radius-stadium); display: flex; align-items: center; justify-content: center; background: {{d.color}}; color: {{d.onColor}}">' + CHECK + '</span></sc-if>' + TAG_IF),
+        ('</sc-if>\n        </a>', '</sc-if></span>\n        </a>'),
+        ("dow: r.dow, date: r.date,", "done: r.status === 'completed', deco: r.status === 'missed' ? 'line-through' : 'none', onColor: 'var(--on-zone-' + (r.type === 'rest' ? 'easy' : r.type) + ')', dow: r.dow, date: r.date,"),
+    ],
+})
+
 
 def build():
     os.makedirs(IMG_DST, exist_ok=True)
     for s in SCREENS:
-        shutil.copyfile(os.path.join(IMG_SRC, s['img'] + '.webp'), os.path.join(IMG_DST, s['img'] + '.webp'))
+        if s['img']:
+            shutil.copyfile(os.path.join(IMG_SRC, s['img'] + '.webp'), os.path.join(IMG_DST, s['img'] + '.webp'))
         html = open(os.path.join(SRC, s['src']), encoding='utf8').read()
         for e in s['edits']:
             if e[0] == 're':
@@ -235,7 +268,7 @@ def build():
         c['boards'][k] = {'x': (i % 5) * 470, 'y': y + (i // 5) * 1044, 'w': 390, 'h': 844, 'title': s['title'] + ' (draft)', 'is_interactive': True, 'radius': 40}
         if k not in c['order']:
             c['order'].append(k)
-    c['notes']['t5'] = {'x': 0, 'y': y - 300, 'text': '5. Eksplorasi imagery (draft, belum masuk spec)', 'kind': 'title1', 'maxW': 2300}
+    c['notes']['t5'] = {'x': 0, 'y': y - 300, 'text': '5. Eksplorasi imagery (draft) + status 3.1', 'kind': 'title1', 'maxW': 2300}
     c['notes']['s5'] = {'x': -560, 'y': y, 'w': 460, 'fill': 'teal', 'size': 'm', 'text': (
         'Eksplorasi imagery\n\nVarian dari layar asli (tata letak dan teks sama), dibuat oleh imagery.py. '
         'Gambar: ds/lintas/imagery (lisensi belum diverifikasi). Usulan token: --on-image, --scrim-top. '
@@ -247,6 +280,6 @@ def build():
 
 if __name__ == '__main__':
     if '--pairs' in sys.argv:
-        print(' '.join(f"{s['out']}.dc.html={s['out'][4:]}.png" for s in SCREENS))
+        print(' '.join(f"{s['out']}.dc.html={s['out'].split('-', 1)[1]}.png" for s in SCREENS))
     else:
         build()

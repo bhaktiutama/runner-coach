@@ -342,6 +342,15 @@
    "title": "1.1 Selamat datang, gambar B (draft)",
    "is_interactive": true,
    "radius": 40
+  },
+  "ST-3-1b-plan-status.dc.html": {
+   "x": 470,
+   "y": 7188,
+   "w": 390,
+   "h": 844,
+   "title": "3.1b Plan, minggu lalu: selesai dan terlewat (draft)",
+   "is_interactive": true,
+   "radius": 40
   }
  },
  "order": [
@@ -381,7 +390,8 @@
   "IMG-2-1i-hari-ini-interval.dc.html",
   "IMG-2-1r-hari-ini-istirahat.dc.html",
   "IMG-3-3k-progres-kosong.dc.html",
-  "IMG-1-1b-selamat-datang.dc.html"
+  "IMG-1-1b-selamat-datang.dc.html",
+  "ST-3-1b-plan-status.dc.html"
  ],
  "notes": {
   "t1": {
@@ -447,7 +457,7 @@
   "t5": {
    "x": 0,
    "y": 4800,
-   "text": "5. Eksplorasi imagery (draft, belum masuk spec)",
+   "text": "5. Eksplorasi imagery (draft) + status 3.1",
    "kind": "title1",
    "maxW": 2300
   },
