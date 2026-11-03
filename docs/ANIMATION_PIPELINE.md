@@ -1,6 +1,6 @@
 # Animation Pipeline: MediaPipe + Rive
 
-> Catatan 2026-11-02: arah D8 berubah ke video MP4 per gerakan (Seedance, latar hijau diganti warna token). Prompt per gerakan ada di `docs/ANIMATION_PROMPTS.md`. Dokumen ini tetap sebagai latar belakang jalur MediaPipe + Rive yang tidak dipakai.
+> Catatan 2026-11-03: jalur MediaPipe + Rive dan jalur video (Seedance) tidak dipakai. D8 sekarang: lembar ilustrasi 3x3 dipotong jadi 9 frame transparan dan diputar bertahap (`docs/ANIMATION_PROMPTS.md`, `scripts/slice-keyframes.py`). Dokumen ini hanya latar belakang.
 
 Status: Draft v0.1 (2026-10-27)
 

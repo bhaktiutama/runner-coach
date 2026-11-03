@@ -2,6 +2,41 @@
 
 Status: Draft v0.1 (2026-11-02). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `apps/app/assets/exercises/README.md`.
 
+> **Jalur aktif (2026-11-03): ilustrasi 3x3, potong, putar bertahap.** Prompt video di dokumen ini (Prompt 2 per gerakan) **tidak dipakai lagi**: hasil video tidak stabil (kisi 3x3 bocor, squat jongkok, perubahan bingkai). Yang dipakai: satu lembar ilustrasi 3x3 per gerakan, dipotong dengan `scripts/slice-keyframes.py` menjadi 9 frame WebP transparan di `apps/app/assets/exercises/`, lalu diputar bertahap oleh `ExerciseAnimation`. Prompt ilustrasi squat ada di bagian "Prompt ilustrasi (jalur aktif)" di bawah. Prompt gambar foto per gerakan di bawahnya masih bisa jadi dasar, tetapi gayanya foto, bukan ilustrasi datar.
+
+## Prompt ilustrasi (jalur aktif)
+
+Gaya: ilustrasi warna datar (cel-shading, outline bersih) supaya mudah dipotong dan ringan. Kamera, ukuran, dan posisi kaki **identik di 9 panel**, karena frame diputar bergantian. Sudut gerakan ditulis dari tinggi paha dan kemiringan badan, bukan kata "bottom" (kata itu membuat model jongkok).
+
+```text
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bodyweight parallel squat, drawn as a sheet of nine sequential keyframes.
+
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, calm neutral face, wearing a teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size.
+
+Layout: ONE square image (1:1) containing a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all nine panels): exact side profile, he faces the RIGHT edge of the panel, the camera sees his right side, the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His feet are planted at exactly the same position in every panel and he is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: one perfectly flat solid chroma key green (#00B140), no floor line, no horizon, no scenery, no shadow on the ground.
+
+Keyframes (the thigh angle is measured below horizontal, the torso lean from vertical, the arm angle from hanging straight down). Feet shoulder-width apart, heels flat on the floor in all panels, knees always in line with the toes, back always flat and neutral, head always looking straight ahead.
+Panel 1: standing tall, thighs vertical (90), torso upright (0), arms hanging at his sides (0).
+Panel 2: beginning to sit back, thighs 70, torso leans forward 10, shins lean forward 8, arms raised forward 25.
+Panel 3: thighs 50, torso leans forward 25, shins lean forward 15, arms raised forward 55.
+Panel 4: thighs 25, torso leans forward 35, shins lean forward 20, arms raised forward 85.
+Panel 5: lowest point of the squat: thighs exactly horizontal (0), parallel to the floor, hips level with the knees and clearly above the floor (about 45 cm, like sitting on a chair), torso leans forward 40, shins lean forward 22, arms straight forward at shoulder height (90). This is a half squat: NOT a deep squat, NOT a crouch.
+Panel 6: rising, same pose as panel 4.
+Panel 7: rising, same pose as panel 3.
+Panel 8: rising, same pose as panel 2.
+Panel 9: almost standing, thighs 80, torso leans forward 3, arms 5, so that panel 9 flows smoothly into panel 1 when the nine panels are cycled in a loop.
+```
+
+Prompt negatif:
+
+```text
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different face between panels, different clothes between panels, different size between panels, different camera angle between panels, perspective, three-quarter view, front view, back view, scenery, floor line, shadow on the floor, green clothing, deep squat, crouching, hips below the knees, heels lifting, knees caving inward, rounded back, hands touching the floor, extra limbs, distorted hands, distorted feet
+```
+
+Latar boleh transparan atau hijau; hasil akhir harus PNG/WebP transparan sebelum dipotong. Sheet squat yang dipakai app: hasil generator dengan latar transparan (lihat `apps/app/assets/exercises/README.md`).
+
 ## Ringkasan
 
 - 15 gerakan strength dan core (library `EXERCISES` di `packages/training-engine/src/strength.ts`). Squat sudah punya video (model perempuan), 14 lainnya belum.

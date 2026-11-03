@@ -91,4 +91,4 @@ Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 | O3 | Screening "Ya" = "plan lebih ringan" (layar 1.7) | Tanpa sesi berat sampai pengguna mengubahnya. Perlu review pelatih |
 | O4 | ~~Segmen drill belum ada di wireframe~~ Selesai: 2.2 (baris drill) dan 2.3b (timer drill). Animasi SVG dari prototipe jika siap, jika belum cukup teks cue | |
 | D7 | Strength jadi pembeda utama atau Premium | Fase 2: Premium setelah 2 minggu gratis (`08-MONETIZATION.md`); minat diukur dari pemakaian 2 minggu gratis |
-| D8 | Format animasi gerakan | Terbuka. Fase 2 memakai placeholder kosong (`ExerciseAnimation`), pipeline di `docs/ANIMATION_PIPELINE.md` |
+| D8 | Format animasi gerakan | Percobaan 2026-11-03: lembar ilustrasi 3x3 (digenerate AI) dipotong jadi 9 frame WebP transparan, diputar bertahap oleh `ExerciseAnimation` (web dan native, tanpa library baru). Baru `squat`; gerakan lain masih placeholder. Jalur video (Seedance) dibatalkan karena hasil tidak stabil. Lisensi dan izin pemakaian gambar AI belum dikonfirmasi pemilik. Alur: `docs/ANIMATION_PROMPTS.md`, `scripts/slice-keyframes.py` |
