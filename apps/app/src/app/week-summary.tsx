@@ -10,6 +10,7 @@ import {
   size,
   space,
   Text,
+  TextColorContext,
   TrackRing,
   themed,
 } from '@run-coach/ui';
@@ -138,50 +139,56 @@ export default function WeekSummary() {
           </InfoBox>
         ) : (
           <View key={p.rule} style={styles.adjust} testID={`proposal-${p.rule}`}>
-            <View style={styles.adjustHead}>
-              <Icon name="sync" size={space[5]} color={color.status.onStatus} />
-              <Text variant="cardTitle">{t('week.adjustTitle')}</Text>
-            </View>
-            <Text variant="bodySm">{rationaleText(p.rationale)}</Text>
-            <View style={styles.changes}>
-              {p.changes.map((c, i) => {
-                const r = changeRow(c);
-                return r ? (
-                  <View key={i} style={styles.changeRow}>
-                    <Text variant="bodySm">{t(r[0])}</Text>
-                    <Text variant="controlStrong">{r[1]}</Text>
-                  </View>
-                ) : null;
-              })}
-            </View>
-            <View style={styles.pair}>
-              <Pressable
-                accessibilityRole="button"
-                testID="apply"
-                style={[styles.btn, styles.btnDark]}
-                onPress={async () => {
-                  await ops.decide.mutateAsync({ weekStart, proposal: p, accept: true, today });
-                  track('adjustment_decided', { rule: p.rule, accepted: true });
-                  setDecided((d) => ({ ...d, [p.rule]: true }));
-                }}
-              >
-                <Text variant="row" style={{ color: color.bg }}>
-                  {t('week.apply')}
-                </Text>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                testID="keep"
-                style={[styles.btn, styles.btnLight]}
-                onPress={async () => {
-                  await ops.decide.mutateAsync({ weekStart, proposal: p, accept: false, today });
-                  track('adjustment_decided', { rule: p.rule, accepted: false });
-                  setDecided((d) => ({ ...d, [p.rule]: false }));
-                }}
-              >
-                <Text variant="row">{t('week.keep')}</Text>
-              </Pressable>
-            </View>
+            <TextColorContext.Provider value="onStatus">
+              <View style={styles.adjustHead}>
+                <Icon name="sync" size={space[5]} color={color.status.onStatus} />
+                <Text variant="cardTitle">{t('week.adjustTitle')}</Text>
+              </View>
+              <Text variant="bodySm">{rationaleText(p.rationale)}</Text>
+              <View style={styles.changes}>
+                <TextColorContext.Provider value="text">
+                  {p.changes.map((c, i) => {
+                    const r = changeRow(c);
+                    return r ? (
+                      <View key={i} style={styles.changeRow}>
+                        <Text variant="bodySm">{t(r[0])}</Text>
+                        <Text variant="controlStrong">{r[1]}</Text>
+                      </View>
+                    ) : null;
+                  })}
+                </TextColorContext.Provider>
+              </View>
+              <View style={styles.pair}>
+                <Pressable
+                  accessibilityRole="button"
+                  testID="apply"
+                  style={[styles.btn, styles.btnDark]}
+                  onPress={async () => {
+                    await ops.decide.mutateAsync({ weekStart, proposal: p, accept: true, today });
+                    track('adjustment_decided', { rule: p.rule, accepted: true });
+                    setDecided((d) => ({ ...d, [p.rule]: true }));
+                  }}
+                >
+                  <Text variant="row" style={{ color: color.bg }}>
+                    {t('week.apply')}
+                  </Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  testID="keep"
+                  style={[styles.btn, styles.btnLight]}
+                  onPress={async () => {
+                    await ops.decide.mutateAsync({ weekStart, proposal: p, accept: false, today });
+                    track('adjustment_decided', { rule: p.rule, accepted: false });
+                    setDecided((d) => ({ ...d, [p.rule]: false }));
+                  }}
+                >
+                  <Text variant="row" color="text">
+                    {t('week.keep')}
+                  </Text>
+                </Pressable>
+              </View>
+            </TextColorContext.Provider>
           </View>
         ),
       )}

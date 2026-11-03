@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.5 (2026-10-31) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
+Status: Draft v0.6 (2026-11-03) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
@@ -27,7 +27,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Grup | Isi |
 |------|-----|
 | Warna dasar | bg abu-abu hangat #F5F4F2, surface putih, text charcoal #242C32, primary oranye #F26B38 (teks di atasnya charcoal), accent peach #E9B79D, success hijau #467861 |
-| Status plan | On track #70D6B3, Perhatian #F2C66D, Tertinggal #FF806E, Recovery #A6B8FF; masing-masing punya varian `-ink` untuk teks |
+| Status plan | On track #70D6B3, Perhatian #F2C66D, Tertinggal #FF806E, Recovery #A6B8FF; masing-masing punya varian `-ink` untuk teks. Teks dan ikon **di atas** isian status (InfoBox, pesan 3.2, kotak adaptasi 2.5, kotak kembali 4.3, StatusChip) selalu `on-status` #242C32 di kedua tema; permukaan `surface` di dalamnya kembali ke `text`. Kode: `TextColorContext` di `packages/ui` (v0.9) |
 | Zona (skala panas) | recovery lavender, easy peach, long #D9946F, tempo oranye, interval #B4361A, strength charcoal |
 | Fase | base peach, build peach tua, peak oranye, taper lavender |
 | RPE | 1-3 easy, 4-6 long, 7-8 tempo, 9-10 interval |
@@ -94,6 +94,15 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
 - Kartu share. (Konfeti sudah masuk bagian 11.)
+
+## 8a. Status hari di kalender 3.1 (v0.9, 2026-11-03)
+
+| Status latihan | Tampilan baris |
+|---|---|
+| scheduled | Normal |
+| completed | Lingkaran 24 px warna zona latihan berisi centang (`on-<zona>`), label aksesibilitas "Selesai"; sama dengan lajur selesai di 2.1 (`LaneWeek`) |
+| missed / skipped | Nama latihan dicoret |
+| Hari ini | Garis luar 2 px + tag HARI INI (bisa bersamaan dengan centang) |
 
 ## 8. Kesetiaan ke wireframe (v0.5, 2026-10-29)
 

@@ -172,6 +172,8 @@ Paywall mati (default fase 2): tidak ada yang terkunci, baris Premium di 4.1 ter
 | missed / skipped | completed | Pengguna mencatat lari terlambat untuk latihan itu |
 | scheduled | (dihapus) | Digabung ke latihan lain di 3.2 |
 
+Tampilan status di 3.1: completed = centang di lingkaran warna zona, missed/skipped = nama dicoret (UI/UX 8a).
+
 ### 3.2 Timer (2.3)
 
 | State | Aksi / sistem | State berikut |

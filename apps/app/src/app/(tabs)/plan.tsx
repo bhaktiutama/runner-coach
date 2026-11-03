@@ -8,8 +8,10 @@ import {
 import {
   border,
   color,
+  Icon,
   IconButton,
   LaneMark,
+  onZone,
   PhaseBar,
   radius,
   ring,
@@ -118,6 +120,8 @@ export default function PlanTab() {
           const w = run ?? sup;
           const isToday = date === today;
           const struck = w && (w.status === 'skipped' || w.status === 'missed');
+          // Selesai: centang di lingkaran warna zona, sama dengan lajur minggu di 2.1 (LaneWeek).
+          const done = w?.status === 'completed';
           return (
             <Pressable
               key={date}
@@ -163,6 +167,16 @@ export default function PlanTab() {
                   </Text>
                 ) : null}
               </View>
+              {done && w ? (
+                <View
+                  testID={`plan-done-${date}`}
+                  accessible
+                  accessibilityLabel={t('detail.status.completed')}
+                  style={[styles.doneMark, { backgroundColor: color.zone[TYPE_ZONE[w.type]] }]}
+                >
+                  <Icon name="check" size={space[4]} color={onZone(TYPE_ZONE[w.type])} strokeWidth={3} />
+                </View>
+              ) : null}
               {isToday ? (
                 <View style={styles.tag}>
                   <Text variant="tag" style={{ color: color.bg }}>
@@ -208,6 +222,13 @@ const styles = themed(() =>
       backgroundColor: color.surfaceSunken,
     },
     strike: { textDecorationLine: 'line-through' },
+    doneMark: {
+      width: space[6],
+      height: space[6],
+      borderRadius: radius.stadium,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     tag: {
       backgroundColor: color.text,
       borderRadius: radius.stadium,

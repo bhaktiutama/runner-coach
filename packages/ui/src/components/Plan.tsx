@@ -117,6 +117,18 @@ export type LaneDay = {
   badge?: string;
 };
 
+const ON_ZONE = {
+  recovery: 'onRecovery',
+  easy: 'onEasy',
+  long: 'onLong',
+  tempo: 'onTempo',
+  interval: 'onInterval',
+  strength: 'onStrength',
+} as const;
+
+/** Warna isi (ikon/teks) di atas warna zona; tanpa zona = warna teks biasa. */
+export const onZone = (z: LaneZone | null | undefined) => (z ? color.zone[ON_ZONE[z]] : color.text);
+
 /** 7 lajur minggu (2.1): tinggi 44, cincin 2.5 warna zona, hari ini garis luar 2 px. */
 /** `animate`: lajur muncul membesar bergantian saat tampil (UI/UX bagian 11, G8). */
 export function LaneWeek({ days, animate = false }: { days: LaneDay[]; animate?: boolean }) {
@@ -148,7 +160,7 @@ export function LaneWeek({ days, animate = false }: { days: LaneDay[]; animate?:
             <ScaleIn index={i} enabled={animate} style={styles.stretch}>
               <View style={[styles.dayLane, lane, d.today && styles.todayOutline]}>
                 {d.state === 'completed' ? (
-                  <Icon name="check" size={space[4]} color={color.text} strokeWidth={3} />
+                  <Icon name="check" size={space[4]} color={onZone(d.zone)} strokeWidth={3} />
                 ) : null}
                 {d.badge ? <LaneBadge label={d.badge} /> : null}
               </View>
@@ -333,7 +345,9 @@ export function StatusChip({
   }
   return (
     <View style={[styles.status, { backgroundColor: color.status[tone] }]}>
-      <Text variant="controlSmStrong">{label}</Text>
+      <Text variant="controlSmStrong" color="onStatus">
+        {label}
+      </Text>
     </View>
   );
 }

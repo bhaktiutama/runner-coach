@@ -1,7 +1,8 @@
+import { createContext, useContext } from 'react';
 import { Text as RNText, type TextProps } from 'react-native';
 import { color as colors, typography, type TypographyVariant } from '../theme';
 
-type ColorKey = 'text' | 'textMuted' | 'primaryInk' | 'onPrimary' | 'success' | 'accentInk';
+type ColorKey = 'text' | 'textMuted' | 'primaryInk' | 'onPrimary' | 'success' | 'accentInk' | 'onStatus';
 
 export type AppTextProps = TextProps & {
   variant?: TypographyVariant;
@@ -41,13 +42,24 @@ const TIGHT = new Set<TypographyVariant>([
 ]);
 export const fontScaleMax = (v: TypographyVariant) => (TIGHT.has(v) ? 1.2 : 1.5);
 
-export function Text({ variant = 'body', color = 'text', align, style, ...rest }: AppTextProps) {
+/**
+ * Warna teks bawaan untuk semua Text di dalamnya (termasuk Text bertingkat dan komponen seperti LeadText).
+ * Permukaan berwarna status (InfoBox, kotak pesan, StatusChip) memakai "onStatus" agar teks tetap gelap
+ * di mode gelap; permukaan biasa di dalamnya mengembalikan ke "text". Prop `color` tetap menang.
+ */
+export const TextColorContext = createContext<AppTextProps['color']>(undefined);
+
+export function Text({ variant = 'body', color: own, align, style, ...rest }: AppTextProps) {
+  const inherited = useContext(TextColorContext);
+  const color = own ?? inherited ?? 'text';
   const c =
-    color === 'darkText'
-      ? colors.dark.text
-      : color === 'darkTextMuted'
-        ? colors.dark.textMuted
-        : colors[color];
+    color === 'onStatus'
+      ? colors.status.onStatus
+      : color === 'darkText'
+        ? colors.dark.text
+        : color === 'darkTextMuted'
+          ? colors.dark.textMuted
+          : colors[color];
   return (
     <RNText
       maxFontSizeMultiplier={fontScaleMax(variant)}

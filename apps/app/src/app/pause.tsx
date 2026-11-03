@@ -10,6 +10,7 @@ import {
   SegmentedControl,
   space,
   Text,
+  TextColorContext,
   themed,
 } from '@run-coach/ui';
 import { formatDateLong } from '@run-coach/ui/format';
@@ -134,8 +135,10 @@ export default function Pause() {
         </View>
       ) : null}
       <View style={styles.returnBox}>
-        <Text variant="boxTitle">{t('pause.returnTitle')}</Text>
-        <Text variant="bodySm">{t('pause.returnBody')}</Text>
+        <TextColorContext.Provider value="onStatus">
+          <Text variant="boxTitle">{t('pause.returnTitle')}</Text>
+          <Text variant="bodySm">{t('pause.returnBody')}</Text>
+        </TextColorContext.Provider>
       </View>
     </Screen>
   );

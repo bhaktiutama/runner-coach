@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, TextInput, View, type TextInputProps } from 'rea
 import { border, color, radius, ring, shadow, size, space, typography, themed } from '../theme';
 import { digitsToSeconds, formatTimeDigits, nextTimeDigits, secondsToDigits } from '../format';
 import { Icon, type IconName } from './Icon';
-import { Text } from './Text';
+import { Text, TextColorContext } from './Text';
 
 // Kontrol dasar. Ukuran mengikuti wireframe v0.4 (docs/wireframes/source), nilai dari token.
 
@@ -283,15 +283,17 @@ export function InfoBox({
         <Icon name={ic} size={space[5]} color={color.status.onStatus} />
       </View>
       <View style={styles.infoBody}>
-        {Children.map(children, (c) =>
-          typeof c === 'string' || typeof c === 'number' ? (
-            <Text variant="bodySm">{c}</Text>
-          ) : isValidElement<{ variant?: string }>(c) && c.type === Text && !c.props.variant ? (
-            <Text {...(c.props as object)} variant="bodySm" />
-          ) : (
-            c
-          ),
-        )}
+        <TextColorContext.Provider value="onStatus">
+          {Children.map(children, (c) =>
+            typeof c === 'string' || typeof c === 'number' ? (
+              <Text variant="bodySm">{c}</Text>
+            ) : isValidElement<{ variant?: string }>(c) && c.type === Text && !c.props.variant ? (
+              <Text {...(c.props as object)} variant="bodySm" />
+            ) : (
+              c
+            ),
+          )}
+        </TextColorContext.Provider>
       </View>
     </View>
   );

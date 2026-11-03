@@ -12,6 +12,7 @@ import {
   size,
   space,
   Text,
+  TextColorContext,
   weekdayLongName,
   weekdayShortName,
   themed,
@@ -127,21 +128,23 @@ export default function MoveSheet() {
           })}
         </View>
         <View style={[styles.msg, { backgroundColor: tone }]} testID="move-verdict">
-          <Text variant="bodySm">
-            {t(
-              blockedStrength
-                ? 'move.verdict.occupiedStrength'
-                : (`move.verdict.${check.verdict}` as MessageKey),
-            )}
-          </Text>
-          {merged ? (
-            <Text variant="note">
-              {t('move.mergeCap', {
-                total: formatDistance(Number(merged.distance_m)),
-                cap: formatDistance(Number(merged.cap_m)),
-              })}
+          <TextColorContext.Provider value="onStatus">
+            <Text variant="bodySm">
+              {t(
+                blockedStrength
+                  ? 'move.verdict.occupiedStrength'
+                  : (`move.verdict.${check.verdict}` as MessageKey),
+              )}
             </Text>
-          ) : null}
+            {merged ? (
+              <Text variant="note">
+                {t('move.mergeCap', {
+                  total: formatDistance(Number(merged.distance_m)),
+                  cap: formatDistance(Number(merged.cap_m)),
+                })}
+              </Text>
+            ) : null}
+          </TextColorContext.Provider>
         </View>
         <View style={styles.actions}>
           <PrimaryButton
