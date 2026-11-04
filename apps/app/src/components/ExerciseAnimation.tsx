@@ -1,14 +1,4 @@
-import {
-  border,
-  color,
-  Icon,
-  paletteFor,
-  radius,
-  space,
-  Text,
-  themed,
-  useReducedMotion,
-} from '@run-coach/ui';
+import { border, color, Icon, radius, space, Text, themed, useReducedMotion } from '@run-coach/ui';
 import { useEffect, useMemo, useState } from 'react';
 import { Image, type ImageSourcePropType, StyleSheet, View } from 'react-native';
 import { t } from '@/i18n/t';
@@ -52,8 +42,8 @@ function FrameAnimation({ exerciseId, frames }: { exerciseId: string; frames: Im
       testID={`exercise-animation-${exerciseId}`}
       accessibilityRole="image"
       accessibilityLabel={t('strength.animationLabel', { name: exerciseName(exerciseId) })}
-      // Ilustrasi digambar untuk latar terang (rambut dan celana gelap): selalu di atas surface-sunken terang.
-      style={[styles.frameBox, { backgroundColor: paletteFor('light').surfaceSunken }]}
+      // Tanpa kotak: frame transparan langsung di atas warna latar layar.
+      style={styles.frameBox}
     >
       {frames.map((src, k) => (
         <Image
@@ -105,8 +95,6 @@ const styles = themed(() =>
       maxWidth: FRAME_BOX_MAX,
       aspectRatio: 1,
       alignSelf: 'center',
-      borderRadius: radius.md,
-      overflow: 'hidden',
     },
     // Ukuran eksplisit: di web gambar lokal membawa ukuran aslinya sebagai style bawaan.
     frame: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', resizeMode: 'contain' },
