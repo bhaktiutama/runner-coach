@@ -359,8 +359,38 @@ def values(e, k):
     return ", ".join(out)
 
 
+# Pakaian bervariasi per gerakan (tanpa hijau). Wajah, rambut, jam dan sepatu tetap.
+BASE_OUTFIT = "a fitted teal short-sleeve athletic t-shirt"
+BASE_SHORTS = "black athletic shorts"
+OUTFIT = {
+    "squat": ("teal", "black"),
+    "split_squat": ("teal", "black"),
+    "bulgarian_split_squat": ("coral red", "navy"),
+    "glute_bridge": ("mustard yellow", "charcoal grey"),
+    "single_leg_glute_bridge": ("royal blue", "black"),
+    "single_leg_deadlift": ("orange", "navy"),
+    "reverse_lunge": ("purple", "black"),
+    "step_up": ("white", "navy"),
+    "calf_raise": ("maroon", "light grey"),
+    "single_leg_calf_raise": ("sky blue", "black"),
+    "plank": ("heather grey", "black"),
+    "side_plank": ("salmon pink", "navy"),
+    "dead_bug": ("navy", "light grey"),
+    "bird_dog": ("red", "black"),
+    "copenhagen_plank": ("lavender", "charcoal grey"),
+}
+
+
+def person(e, g):
+    P = dict(PERSON[g])
+    shirt, shorts = OUTFIT[e["id"]]
+    P["desc"] = P["desc"].replace(BASE_OUTFIT, f"a fitted {shirt} short-sleeve athletic t-shirt").replace(
+        BASE_SHORTS, f"{shorts} athletic shorts")
+    return P
+
+
 def image_prompt(e, g):
-    P = PERSON[g]
+    P = person(e, g)
     view = fill(VIEW[e["view"]], g)
     lines = [
         f"{STYLE} of ONE {P['noun']} performing ONE {e['en']}, drawn as a sheet of sixteen sequential keyframes "
@@ -460,7 +490,7 @@ def build():
     w("| Gaya | Ilustrasi warna datar (cel-shading, outline gelap rapi, 2 sampai 3 tone per warna), sama dengan lembar squat yang sudah dipakai app |")
     w("| Pria | Asia, akhir 20-an, atletis ramping, rambut hitam pendek rapi |")
     w("| Wanita | Asia, akhir 20-an, atletis ramping, rambut hitam panjang dikuncir tinggi |")
-    w("| Pakaian (keduanya) | Kaos atletik teal lengan pendek (tidak crop), celana atletik hitam 10 cm di atas lutut, smartwatch hitam, sepatu lari putih aksen oranye. Tanpa hijau |")
+    w("| Pakaian | Kaos atletik lengan pendek (tidak crop) dan celana atletik 10 cm di atas lutut; **warna berbeda per gerakan** (lihat daftar gerakan), sama untuk pria dan wanita. Smartwatch hitam dan sepatu lari putih aksen oranye selalu sama. Tanpa hijau |")
     w("| Latar | Transparan; jika tidak bisa, hijau chroma rata (#00B140). Tanpa garis lantai dan bayangan |")
     w("| Kamera | Ortografis, identik di 16 panel. Tampak samping menghadap kanan, kecuali side plank dan Copenhagen plank (tampak depan) |")
     w("| Properti | Hanya bila perlu (bangku, kotak, panel dinding): abu tua datar (#3A3A3C), tanpa logo |")
@@ -469,12 +499,12 @@ def build():
     w("")
     w("## Daftar gerakan")
     w("")
-    w("| # | `exercise_id` | Nama di app | Tampak | Properti | Tahan di panel 16 (usulan) |")
-    w("|---|---|---|---|---|---|")
+    w("| # | `exercise_id` | Nama di app | Tampak | Properti | Kaos / celana | Tahan di panel 16 |")
+    w("|---|---|---|---|---|---|---|")
     for i, e in enumerate(EX, 1):
         prop = PROP_ID.get(e["id"], "-")
         hold = f"{e['hold']:.1f}".replace(".", ",")
-        w(f"| {i} | `{e['id']}` | {e['name']} | {VIEW_ID[e['view']]} | {prop} | {hold} dtk |")
+        w(f"| {i} | `{e['id']}` | {e['name']} | {VIEW_ID[e['view']]} | {prop} | {OUTFIT[e['id']][0]} / {OUTFIT[e['id']][1]} | {hold} dtk |")
     w("")
     w("Urutan pengerjaan yang disarankan: squat dulu (pria, lalu wanita) untuk mengunci tampilan kedua karakter, lalu gerakan berdiri, lantai, dan terakhir yang memakai properti.")
     w("")
@@ -519,7 +549,7 @@ def build():
     w("## Catatan dan batasan")
     w("")
     w("- **Pilihan model pria/wanita di app belum ada di spec.** Dokumen ini hanya menyiapkan gambarnya. Fitur pilihan (pengaturan, penyimpanan lokal, teks ID/EN) perlu usulan perubahan `docs/specs/` dulu sesuai CLAUDE.md.")
-    w("- App saat ini masih memakai 9 frame squat pria dari lembar 3x3 (`squat-1.webp` ... `squat-9.webp`, diputar 1 ke 9 lalu kembali ke 1). Pemutaran bolak-balik 16 frame perlu perubahan kecil di `ExerciseAnimation`/`frameTiming.ts` saat lembar 4x4 pertama masuk.")
+    w("- Status 2026-11-04: 15 lembar pria sudah dibuat (GPT Image 2.5, medium, 2K, transparan, sekitar 2 kredit EvoLink per lembar) dan dipasang di app. Opsi potong per gerakan ada di `apps/app/assets/exercises/README.md`.")
     w("- Angka sudut adalah panduan untuk generator gambar, bukan ukuran biomekanik yang presisi. Generator biasanya tidak menggambar beda 5 sampai 6 derajat dengan tepat; yang penting urutannya naik rata dan panel 16 benar.")
     w("- 16 panel di satu gambar membuat tiap panel lebih kecil daripada 3x3. Jika generator hanya memberi 1024 x 1024, tiap panel sekitar 256 px dan figur akan sedikit buram setelah diperbesar.")
     w("- Skrip potong meluruskan titik tumpu dari tengah dan dasar sepatu. Untuk gerakan yang kakinya berpindah (reverse lunge) atau berbaring, periksa hasil potongan apakah figur bergoyang.")

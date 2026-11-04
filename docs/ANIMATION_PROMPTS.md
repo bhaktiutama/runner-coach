@@ -27,7 +27,7 @@ Status: Draft v0.2 (2026-11-04). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `ap
 | Gaya | Ilustrasi warna datar (cel-shading, outline gelap rapi, 2 sampai 3 tone per warna), sama dengan lembar squat yang sudah dipakai app |
 | Pria | Asia, akhir 20-an, atletis ramping, rambut hitam pendek rapi |
 | Wanita | Asia, akhir 20-an, atletis ramping, rambut hitam panjang dikuncir tinggi |
-| Pakaian (keduanya) | Kaos atletik teal lengan pendek (tidak crop), celana atletik hitam 10 cm di atas lutut, smartwatch hitam, sepatu lari putih aksen oranye. Tanpa hijau |
+| Pakaian | Kaos atletik lengan pendek (tidak crop) dan celana atletik 10 cm di atas lutut; **warna berbeda per gerakan** (lihat daftar gerakan), sama untuk pria dan wanita. Smartwatch hitam dan sepatu lari putih aksen oranye selalu sama. Tanpa hijau |
 | Latar | Transparan; jika tidak bisa, hijau chroma rata (#00B140). Tanpa garis lantai dan bayangan |
 | Kamera | Ortografis, identik di 16 panel. Tampak samping menghadap kanan, kecuali side plank dan Copenhagen plank (tampak depan) |
 | Properti | Hanya bila perlu (bangku, kotak, panel dinding): abu tua datar (#3A3A3C), tanpa logo |
@@ -36,23 +36,23 @@ Status: Draft v0.2 (2026-11-04). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `ap
 
 ## Daftar gerakan
 
-| # | `exercise_id` | Nama di app | Tampak | Properti | Tahan di panel 16 (usulan) |
-|---|---|---|---|---|---|
-| 1 | `squat` | Squat | samping | - | 0,4 dtk |
-| 2 | `split_squat` | Split squat | samping | - | 0,4 dtk |
-| 3 | `bulgarian_split_squat` | Bulgarian split squat | samping | bangku 45 cm | 0,4 dtk |
-| 4 | `glute_bridge` | Glute bridge | samping, lantai | - | 1,0 dtk |
-| 5 | `single_leg_glute_bridge` | Glute bridge satu kaki | samping, lantai | - | 1,0 dtk |
-| 6 | `single_leg_deadlift` | Single-leg deadlift | samping | - | 0,4 dtk |
-| 7 | `reverse_lunge` | Reverse lunge | samping | - | 0,4 dtk |
-| 8 | `step_up` | Step-up | samping | kotak 40 cm | 0,6 dtk |
-| 9 | `calf_raise` | Calf raise | samping | - | 1,0 dtk |
-| 10 | `single_leg_calf_raise` | Single-leg calf raise | samping | panel dinding (pegangan) | 1,0 dtk |
-| 11 | `plank` | Plank | samping, lantai | - | 2,0 dtk |
-| 12 | `side_plank` | Side plank | depan, lantai | - | 2,0 dtk |
-| 13 | `dead_bug` | Dead bug | samping, lantai | - | 0,4 dtk |
-| 14 | `bird_dog` | Bird dog | samping, lantai | - | 2,0 dtk |
-| 15 | `copenhagen_plank` | Copenhagen plank | depan, lantai | bangku 45 cm x 100 cm | 2,0 dtk |
+| # | `exercise_id` | Nama di app | Tampak | Properti | Kaos / celana | Tahan di panel 16 |
+|---|---|---|---|---|---|---|
+| 1 | `squat` | Squat | samping | - | teal / black | 0,4 dtk |
+| 2 | `split_squat` | Split squat | samping | - | teal / black | 0,4 dtk |
+| 3 | `bulgarian_split_squat` | Bulgarian split squat | samping | bangku 45 cm | coral red / navy | 0,4 dtk |
+| 4 | `glute_bridge` | Glute bridge | samping, lantai | - | mustard yellow / charcoal grey | 1,0 dtk |
+| 5 | `single_leg_glute_bridge` | Glute bridge satu kaki | samping, lantai | - | royal blue / black | 1,0 dtk |
+| 6 | `single_leg_deadlift` | Single-leg deadlift | samping | - | orange / navy | 0,4 dtk |
+| 7 | `reverse_lunge` | Reverse lunge | samping | - | purple / black | 0,4 dtk |
+| 8 | `step_up` | Step-up | samping | kotak 40 cm | white / navy | 0,6 dtk |
+| 9 | `calf_raise` | Calf raise | samping | - | maroon / light grey | 1,0 dtk |
+| 10 | `single_leg_calf_raise` | Single-leg calf raise | samping | panel dinding (pegangan) | sky blue / black | 1,0 dtk |
+| 11 | `plank` | Plank | samping, lantai | - | heather grey / black | 2,0 dtk |
+| 12 | `side_plank` | Side plank | depan, lantai | - | salmon pink / navy | 2,0 dtk |
+| 13 | `dead_bug` | Dead bug | samping, lantai | - | navy / light grey | 0,4 dtk |
+| 14 | `bird_dog` | Bird dog | samping, lantai | - | red / black | 2,0 dtk |
+| 15 | `copenhagen_plank` | Copenhagen plank | depan, lantai | bangku 45 cm x 100 cm | lavender / charcoal grey | 2,0 dtk |
 
 Urutan pengerjaan yang disarankan: squat dulu (pria, lalu wanita) untuk mengunci tampilan kedua karakter, lalu gerakan berdiri, lantai, dan terakhir yang memakai properti.
 
@@ -265,7 +265,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE Bulgarian split squat, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted coral red short-sleeve athletic t-shirt, navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -297,7 +297,7 @@ Panel 16: end, front knee 90, rear knee 100, rear knee height 15 cm, torso lean 
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE Bulgarian split squat, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted coral red short-sleeve athletic t-shirt (not cropped), navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -343,7 +343,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted mustard yellow short-sleeve athletic t-shirt, charcoal grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -375,7 +375,7 @@ Panel 16: end, hip height 30 cm, thighs 25. Top: shoulders, hips and knees form 
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted mustard yellow short-sleeve athletic t-shirt (not cropped), charcoal grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -421,7 +421,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE single-leg glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted royal blue short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -453,7 +453,7 @@ Panel 16: end, hip height 30 cm, thighs 25. Top: shoulders, hips and the near kn
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE single-leg glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted royal blue short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -499,7 +499,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bodyweight single-leg deadlift, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted orange short-sleeve athletic t-shirt, navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -531,7 +531,7 @@ Panel 16: end, torso lean 80, free leg 80, standing knee 155. Lowest point: tors
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE bodyweight single-leg deadlift, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted orange short-sleeve athletic t-shirt (not cropped), navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -577,7 +577,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE reverse lunge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted purple short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -609,7 +609,7 @@ Panel 16: end, step length 85 cm, front knee 90, back knee 90, back knee height 
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE reverse lunge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted purple short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -655,7 +655,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE step-up onto a box, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted white short-sleeve athletic t-shirt, navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -687,7 +687,7 @@ Panel 16: end, near knee 180, far foot height 70 cm, far thigh 90. Top: standing
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE step-up onto a box, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted white short-sleeve athletic t-shirt (not cropped), navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -733,7 +733,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE standing calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted maroon short-sleeve athletic t-shirt, light grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -765,7 +765,7 @@ Panel 16: end, heel height 15 cm. Top: on the balls of both feet as high as poss
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE standing calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted maroon short-sleeve athletic t-shirt (not cropped), light grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -811,7 +811,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE single-leg calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted sky blue short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -843,7 +843,7 @@ Panel 16: end, near heel height 15 cm. Top: on the ball of the near foot as high
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE single-leg calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted sky blue short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -889,7 +889,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE forearm plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted heather grey short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -921,7 +921,7 @@ Panel 16: end, knees 180, knee height 18 cm. Full forearm plank: knees off the f
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE forearm plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted heather grey short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -967,7 +967,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE side plank on the forearm, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted salmon pink short-sleeve athletic t-shirt, navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -999,7 +999,7 @@ Panel 16: end, hip height 22 cm. Top: body one straight line from the head throu
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE side plank on the forearm, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted salmon pink short-sleeve athletic t-shirt (not cropped), navy athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1045,7 +1045,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE dead bug, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted navy short-sleeve athletic t-shirt, light grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1077,7 +1077,7 @@ Panel 16: end, near arm 170, far knee 180, far thigh 80. Extended: near arm stra
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE dead bug, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted navy short-sleeve athletic t-shirt (not cropped), light grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1123,7 +1123,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bird dog, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted red short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1155,7 +1155,7 @@ Panel 16: end, near arm 90, far thigh 90, far knee 180. Fully extended: near arm
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE bird dog, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted red short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1201,7 +1201,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE Copenhagen plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted lavender short-sleeve athletic t-shirt, charcoal grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1233,7 +1233,7 @@ Panel 16: end, hip height 30 cm, bottom foot height 40 cm. Top: body one straigh
 ```text
 Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE Copenhagen plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted lavender short-sleeve athletic t-shirt (not cropped), charcoal grey athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
 
 Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
@@ -1273,7 +1273,7 @@ photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, l
 ## Catatan dan batasan
 
 - **Pilihan model pria/wanita di app belum ada di spec.** Dokumen ini hanya menyiapkan gambarnya. Fitur pilihan (pengaturan, penyimpanan lokal, teks ID/EN) perlu usulan perubahan `docs/specs/` dulu sesuai CLAUDE.md.
-- App saat ini masih memakai 9 frame squat pria dari lembar 3x3 (`squat-1.webp` ... `squat-9.webp`, diputar 1 ke 9 lalu kembali ke 1). Pemutaran bolak-balik 16 frame perlu perubahan kecil di `ExerciseAnimation`/`frameTiming.ts` saat lembar 4x4 pertama masuk.
+- Status 2026-11-04: 15 lembar pria sudah dibuat (GPT Image 2.5, medium, 2K, transparan, sekitar 2 kredit EvoLink per lembar) dan dipasang di app. Opsi potong per gerakan ada di `apps/app/assets/exercises/README.md`.
 - Angka sudut adalah panduan untuk generator gambar, bukan ukuran biomekanik yang presisi. Generator biasanya tidak menggambar beda 5 sampai 6 derajat dengan tepat; yang penting urutannya naik rata dan panel 16 benar.
 - 16 panel di satu gambar membuat tiap panel lebih kecil daripada 3x3. Jika generator hanya memberi 1024 x 1024, tiap panel sekitar 256 px dan figur akan sedikit buram setelah diperbesar.
 - Skrip potong meluruskan titik tumpu dari tengah dan dasar sepatu. Untuk gerakan yang kakinya berpindah (reverse lunge) atau berbaring, periksa hasil potongan apakah figur bergoyang.

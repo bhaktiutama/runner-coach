@@ -4,7 +4,7 @@ import { onboard } from './helpers';
 test.use({ actionTimeout: 10_000 });
 
 // Fase 2: strength + core (F-21), bahasa (F-22), gerbang Premium nonaktif (F-23).
-test('strength: kalender, detail 2.2s (animasi squat + placeholder), timer gerakan, selesai', async ({
+test('strength: kalender, detail 2.2s (animasi frame semua gerakan), timer gerakan, selesai', async ({
   page,
 }) => {
   // Hari Selasa tetap: hasil tidak bergantung tanggal (Minggu = minggu pertama plan hanya 1 hari).
@@ -20,12 +20,15 @@ test('strength: kalender, detail 2.2s (animasi squat + placeholder), timer gerak
   await expect(page.getByTestId('screen-detail')).toBeVisible();
   await expect(page.getByTestId('exercise-list')).toBeVisible();
   await expect(page.getByTestId('exercise-animation-squat')).toBeVisible();
-  // Squat sudah punya animasi frame (9 gambar diputar bertahap). Gerakan lain masih placeholder.
+  // Semua gerakan punya animasi frame (diputar bolak-balik); tidak ada placeholder lagi.
   const frame = page.locator('[data-testid^="exercise-frame-squat-"]');
   const before = await frame.getAttribute('data-testid');
   await page.clock.runFor(2000);
   await expect.poll(() => frame.getAttribute('data-testid')).not.toBe(before);
-  await expect(page.getByText('Animasi gerakan menyusul').first()).toBeVisible();
+  const anims = page.getByTestId('exercise-list').locator('[data-testid^="exercise-animation-"]');
+  const shown = page.getByTestId('exercise-list').locator('[data-testid^="exercise-frame-"]');
+  await expect(shown).toHaveCount(await anims.count());
+  await expect(page.getByText('Animasi gerakan menyusul')).toHaveCount(0);
   await expect(page.getByText(/Latihan kekuatan \dx seminggu/)).toBeVisible();
   await page.getByTestId('screen-detail').getByTestId('start').click();
   await expect(page.getByTestId('screen-timer')).toBeVisible();

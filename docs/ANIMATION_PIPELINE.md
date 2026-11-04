@@ -1,6 +1,6 @@
 # Animation Pipeline: MediaPipe + Rive
 
-> Catatan 2026-11-03: jalur MediaPipe + Rive dan jalur video (Seedance) tidak dipakai. D8 sekarang: lembar ilustrasi 3x3 dipotong jadi 9 frame transparan dan diputar bertahap (`docs/ANIMATION_PROMPTS.md`, `scripts/slice-keyframes.py`). Dokumen ini hanya latar belakang.
+> Catatan 2026-11-03: jalur MediaPipe + Rive dan jalur video (Seedance) tidak dipakai. D8 sekarang (2026-11-04): lembar ilustrasi 4x4 dipotong jadi 16 frame transparan persegi dan diputar bolak-balik (`docs/ANIMATION_PROMPTS.md`, `scripts/slice-keyframes.py`). Dokumen ini hanya latar belakang.
 
 Status: Draft v0.1 (2026-10-27)
 

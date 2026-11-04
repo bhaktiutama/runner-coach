@@ -1,29 +1,41 @@
 # Frame animasi gerakan (D8)
 
-Dipakai `ExerciseAnimation` lewat `src/components/exerciseFrames.ts`. Satu set per gerakan: 9 file WebP
-transparan `<exercise_id>-1.webp` sampai `-9.webp`, berukuran sama, diputar bertahap (web dan native).
+Dipakai `ExerciseAnimation` lewat `src/components/exerciseFrames.ts`. Satu set per gerakan: 15 sampai 16
+file WebP transparan persegi `<exercise_id>-m-1.webp` ... `-16.webp` (`-m` = model pria; `-f` disiapkan
+untuk model wanita), diputar bolak-balik (1 -> 16 -> 1) di web dan native.
 
 | Aturan | Nilai |
 |---|---|
-| Sumber | Lembar ilustrasi 3x3 (squat saat ini) atau 4x4 (gerakan berikutnya, versi pria `-m` dan wanita `-f`). Kamera, ukuran, dan posisi kaki identik di semua panel. Prompt: `docs/ANIMATION_PROMPTS.md` |
-| Format | WebP dengan alpha, 295x420 px (tinggi 420, kanvas sama untuk 9 frame) |
-| Urutan | 1 = berdiri, 5 = titik terendah (ditahan), 9 = hampir berdiri agar putaran 9 -> 1 mulus |
+| Sumber | Lembar ilustrasi 4x4 per gerakan (GPT Image 2.5 lewat EvoLink, 2K, latar transparan). Prompt: `docs/ANIMATION_PROMPTS.md` |
+| Format | WebP dengan alpha, 420x420 px, kanvas sama untuk semua frame satu gerakan |
+| Urutan | 1 = posisi awal, 16 = puncak gerakan. Gerakan balik tidak digambar |
 | Latar di app | Selalu `surface-sunken` terang (ilustrasi digambar untuk latar terang) |
-| Lama tiap frame | `src/components/frameTiming.ts` (satu repetisi sekitar 4,5 dtk) |
+| Tempo | `src/components/frameTiming.ts`: 100 ms per frame, awal ditahan 300 ms, puncak per gerakan (`PEAK_HOLD_MS`) |
 | Privasi dan lisensi | Gambar statis di dalam app, tanpa data pengguna. Izin pemakaian gambar AI belum dikonfirmasi pemilik |
 
-## Menambah gerakan
+## Menambah atau mengganti gerakan
 
-1. Generate lembar 4x4 dengan latar transparan (garis pemisah putih tipis boleh ada), prompt di `docs/ANIMATION_PROMPTS.md`.
-2. Potong dan luruskan titik tumpu kaki:
+1. Generate lembar 4x4 dengan latar transparan (garis pemisah putih tipis boleh ada).
+2. Potong dan luruskan titik tumpu:
 
 ```bash
-python3 -I scripts/slice-keyframes.py lembar.webp apps/app/assets/exercises <exercise_id>-m
+python3 -I scripts/slice-keyframes.py lembar.png apps/app/assets/exercises <exercise_id>-m
 ```
 
-Skrip membutuhkan Pillow dan numpy. Ia mendeteksi garis pemisah, membersihkan noise alpha, mengambil figur
-terbesar, menyamakan titik tumpu (tengah dan dasar sepatu), dan menyimpan 9 (3x3) atau 16 (4x4) frame di kanvas
-yang sama. Lembar 4x4 diputar bolak-balik (1 ke 16 lalu kembali); pemutaran ini belum ada di `ExerciseAnimation`.
+Opsi yang dipakai untuk set sekarang (lembar lain mungkin butuh opsi berbeda):
 
-3. Tambahkan entri di `src/components/exerciseFrames.ts` dan lama tiap frame di `frameTiming.ts`.
-4. Periksa frame di atas latar terang: figur tidak bergeser, kaki di garis yang sama, tidak ada sisa garis putih.
+| Gerakan | Opsi | Alasan |
+|---|---|---|
+| `bulgarian_split_squat` | `--anchor left` | Bangku di kiri jadi titik tetap |
+| `step_up` | `--anchor right --drop 16` | Kotak di kanan; panel 16 digambar lebih kecil oleh generator |
+| `single_leg_calf_raise` | `--anchor right` | Panel dinding di kanan |
+| `copenhagen_plank` | `--anchor right` | Bangku di kanan |
+| `dead_bug`, `bird_dog` | `--drop 16` | Panel 16 bergeser dari urutan |
+| lainnya | (bawaan) | Titik tumpu tengah dan dasar sepatu |
+
+Skrip membutuhkan Pillow dan numpy. Ia mendeteksi garis pemisah putih, membersihkan noise alpha dan garis
+lantai tipis, mempertahankan figur dan properti besar, meluruskan titik tumpu, lalu menyimpan frame persegi.
+
+3. Tambahkan daftar `require(...)` di `src/components/exerciseFrames.ts` dan lama tahan puncak di
+   `PEAK_HOLD_MS` (`src/components/frameTiming.ts`).
+4. Periksa frame di atas latar terang: figur dan properti tidak bergeser, tidak ada sisa garis putih.
