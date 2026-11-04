@@ -132,6 +132,7 @@ Gambar dari `docs/design-system/assets/imagery/` ditempelkan ke **layar yang sud
 | 2.6 | `LogManual.dc.html` | pov-feet | Header bergambar; judul kecil memakai `--on-image` | [png](png/imagery/2-6-catat-lari.png) | [png](png/imagery/dark/2-6-catat-lari.png) |
 | 3.3k (baru) | `Progress.dc.html` | track-aerial | Keadaan belum ada aktivitas: teks `progress.empty`, `progress.paceEmpty`, `progress.adherenceEmpty` dari app; gambar di kartu volume | [png](png/imagery/3-3k-progres-kosong.png) | [png](png/imagery/dark/3-3k-progres-kosong.png) |
 | 4.4 | `P2-4-4-premium.dc.html` | riverside-city-m | Header bergambar | [png](png/imagery/4-4-premium.png) | [png](png/imagery/dark/4-4-premium.png) |
+| 1.1 carousel (usulan) | `Main.dc.html` | promo-science, promo-privacy, promo-companion | 3 halaman penuh: berbasis riset, privasi (data di HP), teman Strava/jam. Logo, CTA, Masuk dan catatan HP sama dengan 1.1; teks `--on-image` di atas scrim gelap (sama di kedua tema). Gambar 658x732: buram di layar penuh 3x | [png](png/imagery/carousel-1-1.png) | [png](png/imagery/dark/1-1c1-carousel.png) |
 | 3.1b (status) | `Plan.dc.html` | - | Minggu lalu: latihan selesai bercentang di lingkaran warna zona, terlewat dicoret (UI/UX 8a). File `ST-3-1b-plan-status.dc.html` | [png](png/3-1b-plan-status.png) | [png](png/dark/3-1b-plan-status.png) |
 
 "(baru)" = keadaan layar yang sudah ada di app tetapi belum pernah ada di wireframe. Ke-10 gambar library terpakai.

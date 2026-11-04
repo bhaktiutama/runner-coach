@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, View, type PressableProps } from 'react-native';
-import { border, color, radius, ring, shadow, size, space, themed, isDark } from '../theme';
+import { border, color, radius, size, space, themed, isDark } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
@@ -9,6 +9,46 @@ type Base = Omit<PressableProps, 'children' | 'style'> & {
   loading?: boolean;
   testID?: string;
 };
+
+/**
+ * Tepi kaca (UI/UX 3, v0.9, meniru referensi ala liquid glass): isi rata tanpa gradasi dan tanpa
+ * bayangan keluar. Cahaya seolah tembus dari bawah: tepi atas/kiri sedikit gelap, tepi bawah/kanan
+ * sedikit terang, dengan tepi lembut. Ditekan: semua efek hilang, tombol datar sejajar layar.
+ */
+const H = border.hairline;
+const HL = border.control;
+const inset = (x: number, y: number, c: string) => `inset ${x}px ${y}px ${H}px -${H / 2}px ${c}`;
+
+function glassPrimary(pressed: boolean) {
+  if (pressed) return { boxShadow: 'none' };
+  const dark = color.scrim;
+  const light = color.palette.white;
+  return {
+    boxShadow: [
+      inset(0, H, `${dark}26`),
+      inset(H, 0, `${dark}1A`),
+      inset(0, -HL, `${light}66`),
+      inset(-H, 0, `${light}33`),
+      `0px 0px 0px ${H / 2}px ${dark}14`,
+    ].join(', '),
+  };
+}
+
+function glassSecondary(pressed: boolean) {
+  if (pressed) return { boxShadow: 'none' };
+  const dark = isDark();
+  const rim = dark ? color.palette.cream : color.palette.white;
+  const a = dark ? ['40', '26', '33', '1A'] : ['F2', 'B3', 'CC', '80'];
+  return {
+    boxShadow: [
+      inset(0, -HL, `${rim}${a[0]}`),
+      inset(-HL, 0, `${rim}${a[1]}`),
+      inset(0, H, `${rim}${a[2]}`),
+      inset(H, 0, `${rim}${a[3]}`),
+      `0px 0px 0px ${H / 2}px ${dark ? `${color.scrim}66` : `${color.text}1F`}`,
+    ].join(', '),
+  };
+}
 
 export function PrimaryButton({
   label,
@@ -31,7 +71,7 @@ export function PrimaryButton({
       style={({ pressed }) => [
         styles.primary,
         { backgroundColor: bg, opacity: off ? 0.4 : 1 },
-        pressed ? styles.pressed : styles.raised,
+        glassPrimary(pressed && !off),
       ]}
     >
       {loading ? (
@@ -66,8 +106,8 @@ export function SecondaryButton({
       style={({ pressed }) => [
         styles.secondary,
         tall && styles.tall,
-        variant === 'outline' ? styles.outline : null,
-        { opacity: disabled ? 0.4 : pressed ? 0.7 : 1 },
+        variant === 'outline' ? [styles.outline, glassSecondary(pressed && !disabled)] : null,
+        { opacity: disabled ? 0.4 : variant === 'outline' ? 1 : pressed ? 0.7 : 1 },
       ]}
     >
       <View style={styles.row}>
@@ -119,8 +159,6 @@ const styles = themed(() =>
       justifyContent: 'center',
       paddingHorizontal: space[6],
     },
-    raised: shadow.raised,
-    pressed: { transform: [{ translateY: 2 }] },
     secondary: {
       minHeight: size.buttonSecondary,
       borderRadius: radius.stadium,
@@ -129,7 +167,8 @@ const styles = themed(() =>
       paddingHorizontal: space[5],
     },
     tall: { minHeight: size.input },
-    outline: { ...ring(border.control, color.lineStrong), backgroundColor: color.surface },
+    // Sekunder kaca: abu rata (gelap: surface) + tepi kaca dari glassSecondary.
+    outline: { backgroundColor: isDark() ? color.surface : color.surfaceSunken },
     link: {
       minHeight: size.touchMin,
       alignItems: 'center',

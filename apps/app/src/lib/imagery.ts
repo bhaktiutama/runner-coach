@@ -20,6 +20,9 @@ export const IMAGES = {
   trackAerial: require('../../assets/imagery/track-aerial.webp'),
   shoeSole: require('../../assets/imagery/shoe-sole.webp'),
   povFeet: require('../../assets/imagery/pov-feet.webp'),
+  promoScience: require('../../assets/imagery/promo-science.webp'),
+  promoPrivacy: require('../../assets/imagery/promo-privacy.webp'),
+  promoCompanion: require('../../assets/imagery/promo-companion.webp'),
 } satisfies Record<ImageKey, ImageSourcePropType>;
 
 export function workoutImage(type: WorkoutType, date: string): ImageSourcePropType | null {

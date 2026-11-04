@@ -20,6 +20,7 @@ import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DbGate } from '@/components/DbGate';
 import { LocaleGate } from '@/components/LocaleGate';
+import { watchAuth } from '@/data/hooks';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -45,6 +46,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (ready) void SplashScreen.hideAsync();
   }, [ready]);
+  // Masuk/keluar langsung terlihat di semua layar tanpa muat ulang.
+  useEffect(() => watchAuth(queryClient), [queryClient]);
 
   if (!ready) return null;
 

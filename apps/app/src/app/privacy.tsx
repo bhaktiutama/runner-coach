@@ -236,6 +236,9 @@ export default function Privacy() {
         onConfirm={async () => {
           await a.signOut.mutateAsync();
           setSheet(null);
+          // FL-10: setelah keluar app kembali ke 1.9; data di HP tetap ada untuk masuk lagi.
+          if (router.canDismiss()) router.dismissAll();
+          router.replace('/sign-in');
         }}
         onCancel={() => setSheet(null)}
       />

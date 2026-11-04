@@ -12,6 +12,9 @@ export type AuthError =
 /** Mode uji (E2E/dev): login boleh dilewati. Tidak pernah aktif di build produksi. */
 export const authBypassAllowed = process.env.EXPO_PUBLIC_E2E === '1';
 
+/** Tab app butuh sesi login (FL-10). Mati di mode uji atau tanpa Auth terkonfigurasi. */
+export const authRequired = isAuthConfigured && !authBypassAllowed;
+
 function mapError(e: unknown): AuthError {
   const msg = String((e as { message?: string })?.message ?? e).toLowerCase();
   if (msg.includes('network') || msg.includes('fetch')) return 'offline';
@@ -25,6 +28,13 @@ export async function currentUserId(): Promise<string | null> {
   if (!isAuthConfigured) return null;
   const { data } = await supabase().auth.getSession();
   return data.session?.user.id ?? null;
+}
+
+/** Dengarkan perubahan sesi (masuk/keluar/refresh). Tanpa Auth terkonfigurasi: tidak melakukan apa pun. */
+export function onSessionChange(cb: (userId: string | null) => void): () => void {
+  if (!isAuthConfigured) return () => undefined;
+  const { data } = supabase().auth.onAuthStateChange((_event, session) => cb(session?.user.id ?? null));
+  return () => data.subscription.unsubscribe();
 }
 
 export async function sendEmailCode(email: string): Promise<{ ok: true } | { ok: false; error: AuthError }> {

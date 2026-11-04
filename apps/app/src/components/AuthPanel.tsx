@@ -1,22 +1,17 @@
 import {
   border,
   color,
-  fontFiles,
   InfoBox,
   LinkButton,
   PrimaryButton,
-  radius,
-  ring,
   SecondaryButton,
-  size,
   space,
   Text,
   TextField,
-  typography,
   themed,
 } from '@run-coach/ui';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { auth } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
 
@@ -173,28 +168,22 @@ export function CreateAccountButtons({ flow }: { flow: Flow }) {
   );
 }
 
-/** Tombol masuk 1.9: Apple gelap 56 + Google garis 56. */
+/** Tombol masuk 1.9: Apple (tombol utama varian gelap) + Google (sekunder kaca), gaya tombol standar. */
 export function SignInButtons({ flow }: { flow: Flow }) {
   return (
     <View style={styles.col}>
-      <Pressable
-        accessibilityRole="button"
+      <PrimaryButton
+        variant="dark"
+        label={t('auth.apple')}
         disabled={flow.busy}
         onPress={() => void flow.provider('apple')}
-        style={[styles.tall, styles.dark]}
-      >
-        <Text variant="button" style={styles.darkText}>
-          {t('auth.apple')}
-        </Text>
-      </Pressable>
-      <Pressable
-        accessibilityRole="button"
+      />
+      <SecondaryButton
+        tall
+        label={t('auth.google')}
         disabled={flow.busy}
         onPress={() => void flow.provider('google')}
-        style={[styles.tall, styles.outline]}
-      >
-        <Text variant="row">{t('auth.google')}</Text>
-      </Pressable>
+      />
     </View>
   );
 }
@@ -218,15 +207,6 @@ const styles = themed(() =>
     col: { gap: space[2] + space[1] / 2 },
     pair: { flexDirection: 'row', gap: space[2] },
     row: { flexDirection: 'row', gap: space[3], justifyContent: 'center' },
-    tall: {
-      height: size.buttonPrimary - space[1],
-      borderRadius: radius.stadium,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    dark: { backgroundColor: color.text },
-    darkText: { ...typography.body, fontFamily: fontFiles.ui700, color: color.bg },
-    outline: { backgroundColor: color.surface, ...ring(border.control, color.lineStrong) },
     or: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     line: { flex: 1, height: border.hairline, backgroundColor: color.line },
   }),

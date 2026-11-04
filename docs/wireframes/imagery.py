@@ -31,7 +31,7 @@ IMG_DST = os.path.join(SRC, 'ds', 'lintas', 'imagery')
 # layar tetap memakai var(); jika disetujui, pindahkan ke tokens.json + cek kontras.
 PROPOSED_TOKENS = """
 /* USULAN TOKEN (draft imagery), belum di tokens.json */
-:root{--on-image:#FFF9F2;--scrim-top:linear-gradient(180deg,#161B1F99 0%,#161B1F00 100%);--scrim-bottom:linear-gradient(180deg,#161B1F00 0%,#161B1FB3 100%)}
+:root{--on-image:#FFF9F2;--scrim-top:linear-gradient(180deg,#161B1F99 0%,#161B1F00 100%);--scrim-bottom:linear-gradient(180deg,#161B1F00 0%,#161B1FB3 100%);--primary-edge:#C4521F;--button-depth:inset 0 1px 1px -0.5px #161B1F26,inset 1px 0 1px -0.5px #161B1F1A,inset 0 -1.5px 1px -0.5px #FFFFFF66,inset -1px 0 1px -0.5px #FFFFFF33,0 0 0 0.5px #161B1F14}
 """
 
 ROOT_OPEN = "overflow: hidden\">"
@@ -235,6 +235,54 @@ SCREENS.append({
         ("dow: r.dow, date: r.date,", "done: r.status === 'completed', deco: r.status === 'missed' ? 'line-through' : 'none', onColor: 'var(--on-zone-' + (r.type === 'rest' ? 'easy' : r.type) + ')', dow: r.dow, date: r.date,"),
     ],
 })
+
+# --- 1.1 carousel 3 halaman penuh (usulan): keunggulan app, gambar promo-* ---
+# Isi dari layar asli Main: logo, CTA "Buat plan saya", "Sudah punya akun? Masuk", catatan HP.
+# Gambar memudar ke --bg (ikut tema); hanya logo di atas gambar memakai --on-image. UI/UX 13.
+_MAIN = open(os.path.join(SRC, 'Main.dc.html'), encoding='utf8').read()
+_LOGO = re.search(r'<svg width="40" height="40".*?</svg>', _MAIN, re.S).group(0).replace('fill="var(--text)"', 'fill="var(--on-image)"')
+_CTA = re.search(r'<a href="OB2-Target\.dc\.html".*?</a>', _MAIN, re.S).group(0)
+_LOCK = re.search(r'<svg width="16" height="16".*?</svg>', _MAIN, re.S).group(0)
+SLIDES = [
+    ('promo-science', '22% 40%', 'ADA DASARNYA', 'Latihan pintar, bukan asal capek.',
+     'Tiap sesi ada alasannya, diambil dari riset olahraga. Naiknya pelan-pelan, ada minggu santai juga.'),
+    ('promo-privacy', '45% 30%', 'PRIVASI', 'Data larimu, ya punyamu.',
+     'Plan dan catatan lari cuma disimpan di HP kamu, nggak dikirim ke server. Akun cuma buat masuk.'),
+    ('promo-companion', '40% 40%', 'TEMAN STRAVA', 'Strava tetap jalan, kami yang atur menunya.',
+     'Kamu tinggal lari. Run Coach kasih tahu hari ini lari apa, berapa lama, dan sesantai apa. Mulai dari 3 hari seminggu.'),
+]
+
+
+def _slide(i):
+    img, pos, kicker, title, body = SLIDES[i]
+    dots = ''.join(
+        f'<span style="width: {24 if j == i else 8}px; height: 8px; border-radius: var(--radius-stadium); background: {'var(--text)' if j == i else 'var(--line-strong)'}"></span>'
+        for j in range(len(SLIDES)))
+    return (
+        f'<img src="ds/lintas/imagery/{img}.webp" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: {pos}">'
+        '<div aria-hidden="true" style="position: absolute; inset: 0 0 auto 0; height: 160px; background: var(--scrim-top)"></div>'
+        '<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 36%, var(--bg) 66%)"></div>'
+        '<div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 64px 20px 0; color: var(--on-image)">'
+        f'<div style="display: flex; align-items: center; gap: 10px">{_LOGO}<span style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em">run coach</span></div>'
+        f'<span style="font-family: var(--font-display); font-size: 13px; font-weight: 700; opacity: 0.85">{i + 1}/{len(SLIDES)}</span></div>'
+        '<div style="position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 0 20px; color: var(--text)">'
+        f'<span style="align-self: flex-start; padding: 5px 10px; border-radius: var(--radius-stadium); background: var(--primary); color: var(--on-primary); font-size: 12px; font-weight: 800; letter-spacing: 0.08em">{kicker}</span>'
+        f'<h1 style="margin: 0; font-family: var(--font-display); font-size: 34px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{title}</h1>'
+        f'<p style="margin: 0; font-size: 15px; line-height: 1.45; color: var(--text-muted)">{body}</p>'
+        f'<div role="img" aria-label="Halaman {i + 1} dari {len(SLIDES)}" style="display: flex; gap: 6px; padding-top: 8px">{dots}</div></div>'
+        '<div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; padding: 20px 20px 32px">'
+        + _CTA.replace('box-shadow: var(--shadow-raised)', 'box-shadow: var(--button-depth)') +
+        '<a href="OB9-Masuk.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 44px; font-size: 15px; font-weight: 700; color: var(--primary-ink); text-decoration: none">Sudah punya akun? Masuk</a>'
+        f'<span style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text-muted)">{_LOCK}Data latihanmu tersimpan di HP ini</span></div>'
+    )
+
+
+for _i in range(len(SLIDES)):
+    SCREENS.append({
+        'src': 'Main.dc.html', 'out': f'IMG-1-1c{_i + 1}-carousel', 'title': f'1.1 Carousel {_i + 1}/3: {SLIDES[_i][2].lower()}',
+        'img': SLIDES[_i][0],
+        'edits': [('re', r'(?<=overflow: hidden">).*?(?=\n</div>\n</x-dc>)', '\n' + _slide(_i))],
+    })
 
 
 def build():

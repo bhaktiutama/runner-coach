@@ -3,9 +3,8 @@ import { paceZones } from '@run-coach/training-engine';
 import {
   border,
   color,
-  PrimaryButton,
+  ConfirmDialog,
   radius,
-  SecondaryButton,
   SettingsGroup,
   SettingsRow,
   space,
@@ -154,21 +153,6 @@ export default function ProfileTab() {
           testID="row-pause"
         />
       </SettingsGroup>
-      {confirmGoal ? (
-        <View style={styles.confirm}>
-          <Text variant="heading">{t('profile.newGoalTitle')}</Text>
-          <Text color="textMuted">{t('profile.newGoalBody')}</Text>
-          <PrimaryButton
-            label={t('profile.newGoalYes')}
-            testID="new-goal"
-            onPress={async () => {
-              await ops.newGoal.mutateAsync();
-              router.replace('/onboarding/goal');
-            }}
-          />
-          <SecondaryButton label={t('common.cancel')} onPress={() => setConfirmGoal(false)} />
-        </View>
-      ) : null}
       {ent.paywall ? (
         <SettingsGroup>
           <SettingsRow
@@ -206,6 +190,22 @@ export default function ProfileTab() {
         />
         <SettingsRow icon="distance" label={t('profile.unit')} value={t('profile.unitValue')} />
       </SettingsGroup>
+      {/* Ganti target = dialog di tengah layar, sama dengan aksi lain yang mengubah status (UI/UX dialog). */}
+      <ConfirmDialog
+        visible={confirmGoal}
+        title={t('profile.newGoalTitle')}
+        body={t('profile.newGoalBody')}
+        confirmLabel={t('profile.newGoalYes')}
+        cancelLabel={t('common.cancel')}
+        testID="new-goal-confirm"
+        confirmTestID="new-goal"
+        onConfirm={async () => {
+          await ops.newGoal.mutateAsync();
+          setConfirmGoal(false);
+          router.replace('/onboarding/goal');
+        }}
+        onCancel={() => setConfirmGoal(false)}
+      />
       <Text variant="caption" color="textMuted" align="center">
         {t('profile.version', { v: Constants.expoConfig?.version ?? '' })}
       </Text>
@@ -227,6 +227,5 @@ const styles = themed(() =>
       justifyContent: 'center',
     },
     avatarText: { color: color.zone.onEasy },
-    confirm: { backgroundColor: color.surface, borderRadius: radius.lg, padding: space[5], gap: space[3] },
   }),
 );

@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import {
   Image,
   StyleSheet,
@@ -45,16 +45,43 @@ function Gradient({ stops }: { stops: Stops }) {
  * tombol, lalu memudar ke `bg` sehingga ikut tema terang/gelap. Dekoratif (disembunyikan dari
  * pembaca layar). Diletakkan absolut di belakang isi; isi memberi jarak sendiri (lihat `Screen`).
  */
-export function ImageHero({ source, tall = false }: { source: ImageSourcePropType; tall?: boolean }) {
+export function ImageHero({
+  source,
+  tall = false,
+  height,
+  fade = [FADE_START, 1],
+  focus,
+}: {
+  source: ImageSourcePropType;
+  tall?: boolean;
+  /** Tinggi khusus (mis. layar penuh carousel 1.1); default `size.hero` / `size.hero-tall`. */
+  height?: number;
+  /** Awal dan akhir pudar ke `bg` (fraksi tinggi). */
+  fade?: [number, number];
+  /**
+   * Titik fokus horizontal (0 kiri, 1 kanan) + rasio lebar/tinggi berkas. Tanpa ini gambar dipotong di
+   * tengah; dengan ini subjek (pelari) tetap terlihat di layar sempit.
+   */
+  focus?: { x: number; aspect: number };
+}) {
+  const [boxW, setBoxW] = useState(0);
+  const h = height ?? (tall ? size.heroTall : size.hero);
+  let imgStyle: object = styles.fill;
+  if (focus && boxW > 0) {
+    const w = Math.max(boxW, h * focus.aspect);
+    const left = Math.min(0, Math.max(boxW - w, boxW / 2 - w * focus.x));
+    imgStyle = { position: 'absolute', top: 0, left, width: w, height: h };
+  }
   return (
     <View
       pointerEvents="none"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[styles.hero, { height: tall ? size.heroTall : size.hero }]}
+      style={[styles.hero, { height: h }]}
+      onLayout={focus ? (e) => setBoxW(e.nativeEvent.layout.width) : undefined}
       testID="image-hero"
     >
-      <Image source={source} style={styles.fill} resizeMode="cover" />
+      <Image source={source} style={imgStyle} resizeMode="cover" />
       <View style={styles.scrimTop}>
         <Gradient
           stops={[
@@ -65,8 +92,8 @@ export function ImageHero({ source, tall = false }: { source: ImageSourcePropTyp
       </View>
       <Gradient
         stops={[
-          { offset: FADE_START, color: color.bg, opacity: 0 },
-          { offset: 1, color: color.bg, opacity: 1 },
+          { offset: fade[0], color: color.bg, opacity: 0 },
+          { offset: fade[1], color: color.bg, opacity: 1 },
         ]}
       />
     </View>

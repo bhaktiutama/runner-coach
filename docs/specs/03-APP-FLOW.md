@@ -14,7 +14,7 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 
 | No | Layar | Ke |
 |----|-------|----|
-| 1.1 | Selamat datang | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> 1.9 |
+| 1.1 | Selamat datang (hanya saat belum ada plan): carousel 3 halaman penuh, digeser manual (UI/UX 13) | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> 1.9 (ada di setiap halaman) |
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
 | 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1; tombol kembali "Ubah jawaban" -> 1.7 (jawaban tetap tersimpan, plan dibuat ulang) |
 | 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |
@@ -52,7 +52,7 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 1.5 | Volume km/minggu (stepper + chip cepat) + lari terjauh 4 minggu | Di bawah syarat minimum target: sarankan target lebih pendek atau base building |
 | 1.6 | Hari tersedia (3-6) + hari long run (Sabtu/Minggu) + jam pengingat | < 3 hari: tombol Lanjut nonaktif. Tampilkan "X hari/minggu: pas untuk plan ...". Saat jam pengingat dipilih: penjelasan 1 kalimat lalu dialog izin notifikasi (FL-11). Web: jam pengingat nonaktif |
 | 1.7 | 5 pertanyaan Ya/Tidak + centang disclaimer | Ada "Ya": tampilkan saran ke dokter, plan mode ringan (O3). Disclaimer wajib dicentang |
-| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, kartu lipat "Kenapa plan ini?" (rationale level plan + label bukti + sumber, 07 bagian 3.3), catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
+| 1.8 | Preview: target waktu, hari/minggu, tanggal race, grafik volume per fase, zona pace, kartu lipat "Kenapa plan ini?" (rationale level plan + label bukti + sumber, 07 bagian 3.3), catatan "Data latihanmu tersimpan di HP ini" | Login Apple/Google/Email. Jika sudah masuk (target baru dari 4.1, atau plan pertama setelah 1.9): judul "Plan siap" + tombol "Mulai plan ini", tanpa login ulang. Setelah login: `app_meta.owner_id` diisi, data tetap lokal (tidak di-upload). Event `onboarding_completed`, `plan_created` (tanpa isi plan) |
 
 Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah terakhir. Login gagal: tetap di 1.8, plan tidak hilang.
 
@@ -123,7 +123,7 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 ### FL-10 Keluar (4.5)
 
-"Keluar" -> dialog konfirmasi di tengah layar ("Keluar dari akun?", "Data latihanmu tetap ada di HP ini"): Keluar / Batal. Data lokal tidak dihapus; menghapus data punya menu sendiri ("Hapus data di HP ini", dialog konfirmasi + tawaran backup). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
+"Keluar" -> dialog konfirmasi di tengah layar ("Keluar dari akun?", "Data latihanmu tetap ada di HP ini"): Keluar / Batal. Setelah Keluar app langsung ke 1.9 Masuk; tab (Hari ini, Plan, Progres, Profil) hanya terbuka saat ada sesi login, juga saat sesi habis (kecuali mode uji). Status masuk/keluar langsung terlihat tanpa muat ulang. Data lokal tidak dihapus; menghapus data punya menu sendiri ("Hapus data di HP ini", dialog konfirmasi + tawaran backup). Login akun lain saat ada data akun sebelumnya: wajib pilih backup + hapus, atau batal (TRD 3.4).
 
 ### FL-12 Strength + core (F-21)
 

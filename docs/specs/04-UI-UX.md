@@ -34,7 +34,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Timer (gelap) | bg #161B1F, teks krem, interval memakai #E0522E |
 | Mode gelap (F-24) | Ikut tema perangkat. Semantik sama, nilai dari `color.dark` + palet: bg #161B1F, surface #242C32, teks krem, `-ink` dicerahkan (primary #F58A5F, status = warna dasarnya), strength #3A444C, bayangan hitam. Isian zona/fase/RPE tidak berubah. Acuan `docs/wireframes/png/dark/`. Kode: `color` dan `themed()` di `packages/ui/src/theme.ts`; jangan simpan warna di konstanta modul |
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
-| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
+| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px (kartu). Tombol kaca (v0.9, meniru referensi liquid glass): isi rata tanpa gradasi dan tanpa bayangan keluar. Utama: tepi atas/kiri sedikit gelap (`scrim` 10-15%), tepi bawah/kanan sedikit terang (putih 20-40%), lembut 1-1,5 px. Sekunder: latar `surface-sunken` (gelap: `surface`), tepi putih/krem paling terang di bawah/kanan, garis luar 0,5 px. Ditekan: semua efek tepi hilang, tombol datar sejajar layar, tidak bergeser |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
 | Gerak | 120 / 200 / 320 ms (cincin, garis tren, angka naik 1000 ms); easing `stride` hanya untuk progres; detail di bagian 11 |
 
@@ -94,6 +94,10 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
 - Kartu share. (Konfeti sudah masuk bagian 11.)
+
+## 8b. Baris pengaturan di layar sempit (v0.9, 2026-11-04)
+
+`SettingsRow`: label dan nilai dalam satu baris yang boleh membungkus. Jika keduanya tidak muat (iPhone SE / 13 mini, Ukuran Teks besar), nilai turun ke baris kedua di bawah label, rata kiri, sama seperti teks kedua baris Strength + core. Label tidak pernah dipotong menjadi 2 kolom sempit.
 
 ## 8a. Status hari di kalender 3.1 (v0.9, 2026-11-03)
 
@@ -166,7 +170,7 @@ Aturan umum:
 
 ### Dialog konfirmasi (v0.8)
 
-Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).
+Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file, Ganti target di 4.1) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).
 
 ## 12. Gambar (imagery, v0.9, 2026-11-03)
 
@@ -197,3 +201,14 @@ Teks langsung di atas gambar memakai `color.on-image` (#FFF9F2, kedua tema) dan 
 | 4.4 Premium | riverside-city-m |
 
 Wireframe: `docs/wireframes/png/imagery/` (+ `dark/`), canvas baris "5. Eksplorasi imagery".
+
+## 13. Selamat datang 1.1: carousel (v0.9, 2026-11-04)
+
+Menggantikan hero tunggal 1.1 (bagian 12). Hanya tampil saat belum ada plan (pertama kali / setelah hapus data).
+
+| Bagian | Isi |
+|---|---|
+| Halaman | 3 halaman penuh, geser horizontal manual (tidak berganti otomatis), titik halaman bisa diketuk (tombol, label "Halaman n dari 3"), penanda `n/3` di kanan atas |
+| Gambar | `promo-science`, `promo-privacy`, `promo-companion` (658 x 732, draft, lisensi B10) selebar layar, fokus horizontal per gambar agar pelari tidak terpotong, memudar ke `bg` antara 36% dan 66% tinggi (ikut tema terang/gelap) |
+| Tetap di setiap halaman | Logo `on-image` di atas, lalu di bawah: titik halaman, "Buat plan saya", "Sudah punya akun? Masuk", catatan "Data latihanmu tersimpan di HP ini" |
+| Teks (`welcome.s1..s3`, ID + EN) | 1 Ada dasarnya / Backed by science: "Latihan pintar, bukan asal capek." 2 Privasi / Private by default: "Data larimu, ya punyamu." 3 Teman Strava / Strava's sidekick: "Strava tetap jalan, kami yang atur menunya." Bahasa santai untuk pelari muda; tanpa klaim mencegah cedera dan tanpa janji sinkron Strava (fase 2) |

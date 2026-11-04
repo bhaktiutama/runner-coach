@@ -32,8 +32,20 @@ export const id = {
   'privacy.webWarning':
     'Data tersimpan di browser ini. Menghapus data browser = data hilang, jadi rutin backup ke file.',
 
-  'welcome.title': 'Tahu harus lari apa, setiap hari.',
-  'welcome.body': 'Plan latihan personal dari 5K sampai Full Marathon. Menyesuaikan jadwal dan kondisimu.',
+  'welcome.s1.kicker': 'ADA DASARNYA',
+  'welcome.s1.title': 'Latihan pintar, bukan asal capek.',
+  'welcome.s1.body':
+    'Tiap sesi ada alasannya, diambil dari riset olahraga. Naiknya pelan-pelan, ada minggu santai juga.',
+  'welcome.s2.kicker': 'PRIVASI',
+  'welcome.s2.title': 'Data larimu, ya punyamu.',
+  'welcome.s2.body':
+    'Plan dan catatan lari cuma disimpan di HP kamu, nggak dikirim ke server. Akun cuma buat masuk.',
+  'welcome.s3.kicker': 'TEMAN STRAVA',
+  'welcome.s3.title': 'Strava tetap jalan, kami yang atur menunya.',
+  'welcome.s3.body':
+    'Kamu tinggal lari. Run Coach kasih tahu hari ini lari apa, berapa lama, dan sesantai apa. Mulai dari 3 hari seminggu.',
+  'welcome.page': '{n}/{total}',
+  'welcome.goTo': 'Halaman {n} dari {total}',
   'welcome.cta': 'Buat plan saya',
   'welcome.signIn': 'Sudah punya akun? Masuk',
 
@@ -154,6 +166,9 @@ export const id = {
   'preview.seeLess': 'Tampilkan lebih sedikit',
   'preview.sources': 'Lihat sumber',
   'preview.hideSources': 'Sembunyikan sumber',
+  'preview.signedInTitle': 'Plan siap',
+  'preview.signedInNote': 'Kamu sudah masuk. Plan dan latihanmu tetap tersimpan di HP ini.',
+  'preview.start': 'Mulai plan ini',
   'preview.accountTitle': 'Buat akun untuk mulai',
   'preview.accountNote': 'Plan dan latihanmu tersimpan di HP ini, bukan di server. Akun hanya untuk masuk.',
   'preview.rough': 'perkiraan kasar',
