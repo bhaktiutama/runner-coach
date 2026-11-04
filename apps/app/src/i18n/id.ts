@@ -684,6 +684,7 @@ export const id = {
   'timer.restNext': 'Berikutnya: {name}, set {n} dari {total}',
   'timer.exerciseBib': 'Gerakan {n}/{total}',
   'timer.exerciseHint': 'Tekan Selesai set setiap selesai 1 set. Istirahat dihitung otomatis.',
+  'timer.exerciseTimedHint': 'Set ini berjalan otomatis. Bunyi dan getar menandai akhir set.',
   'timer.cueExercise': '{name}, set {n} dari {total}',
   'timer.cueRest': 'Istirahat {sec} detik',
 } as const;

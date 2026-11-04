@@ -604,9 +604,10 @@ function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused:
             />
           ))}
         </View>
-        {clock ? (
-          <Text variant="stat" color="darkText" style={paused && styles.blink} testID="timer-remaining">
-            {clock}
+        {/* Hitung mundur hanya saat istirahat (09-VOICE bagian 6); set berwaktu dipandu bunyi/suara. */}
+        {paused ? (
+          <Text variant="statusCaps" style={{ color: color.status.attention }} testID="timer-paused">
+            {t('timer.paused')}
           </Text>
         ) : null}
       </View>
@@ -620,11 +621,9 @@ function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused:
           </View>
         ))}
       </View>
-      {seg.timedS == null ? (
-        <Text variant="controlSm" color="darkTextMuted">
-          {t('timer.exerciseHint')}
-        </Text>
-      ) : null}
+      <Text variant="controlSm" color="darkTextMuted">
+        {t(seg.timedS == null ? 'timer.exerciseHint' : 'timer.exerciseTimedHint')}
+      </Text>
     </View>
   );
 }
