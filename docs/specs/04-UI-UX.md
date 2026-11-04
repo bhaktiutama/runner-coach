@@ -34,7 +34,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Timer (gelap) | bg #161B1F, teks krem, interval memakai #E0522E |
 | Mode gelap (F-24) | Ikut tema perangkat. Semantik sama, nilai dari `color.dark` + palet: bg #161B1F, surface #242C32, teks krem, `-ink` dicerahkan (primary #F58A5F, status = warna dasarnya), strength #3A444C, bayangan hitam. Isian zona/fase/RPE tidak berubah. Acuan `docs/wireframes/png/dark/`. Kode: `color` dan `themed()` di `packages/ui/src/theme.ts`; jangan simpan warna di konstanta modul |
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
-| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px (kartu). Tombol utama bertebal (v0.9): sisi bawah padat 4 px `color.primary-edge` (varian gelap: `scrim`, di mode gelap `line-strong`), bayangan lembut pendek, kilau 1 px di tepi atas; ditekan = turun 3 px dan sisi menipis jadi 1 px |
+| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px (kartu). Tombol kaca (v0.9, meniru referensi liquid glass): isi rata tanpa gradasi dan tanpa bayangan keluar. Utama: tepi atas/kiri sedikit gelap (`scrim` 10-15%), tepi bawah/kanan sedikit terang (putih 20-40%), lembut 1-1,5 px. Sekunder: latar `surface-sunken` (gelap: `surface`), tepi putih/krem paling terang di bawah/kanan, garis luar 0,5 px. Ditekan: semua efek tepi hilang, tombol datar sejajar layar, tidak bergeser |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
 | Gerak | 120 / 200 / 320 ms (cincin, garis tren, angka naik 1000 ms); easing `stride` hanya untuk progres; detail di bagian 11 |
 

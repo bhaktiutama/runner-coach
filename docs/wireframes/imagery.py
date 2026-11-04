@@ -31,7 +31,7 @@ IMG_DST = os.path.join(SRC, 'ds', 'lintas', 'imagery')
 # layar tetap memakai var(); jika disetujui, pindahkan ke tokens.json + cek kontras.
 PROPOSED_TOKENS = """
 /* USULAN TOKEN (draft imagery), belum di tokens.json */
-:root{--on-image:#FFF9F2;--scrim-top:linear-gradient(180deg,#161B1F99 0%,#161B1F00 100%);--scrim-bottom:linear-gradient(180deg,#161B1F00 0%,#161B1FB3 100%);--primary-edge:#C4521F;--button-depth:0 4px 0 0 var(--primary-edge),0 8px 8px -4px #161B1F40,inset 0 1px 0 0 #FFFFFF59}
+:root{--on-image:#FFF9F2;--scrim-top:linear-gradient(180deg,#161B1F99 0%,#161B1F00 100%);--scrim-bottom:linear-gradient(180deg,#161B1F00 0%,#161B1FB3 100%);--primary-edge:#C4521F;--button-depth:inset 0 1px 1px -0.5px #161B1F26,inset 1px 0 1px -0.5px #161B1F1A,inset 0 -1.5px 1px -0.5px #FFFFFF66,inset -1px 0 1px -0.5px #FFFFFF33,0 0 0 0.5px #161B1F14}
 """
 
 ROOT_OPEN = "overflow: hidden\">"
