@@ -351,6 +351,33 @@
    "title": "3.1b Plan, minggu lalu: selesai dan terlewat (draft)",
    "is_interactive": true,
    "radius": 40
+  },
+  "IMG-1-1c1-carousel.dc.html": {
+   "x": 940,
+   "y": 7188,
+   "w": 390,
+   "h": 844,
+   "title": "1.1 Carousel 1/3: berbasis riset (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-1-1c2-carousel.dc.html": {
+   "x": 1410,
+   "y": 7188,
+   "w": 390,
+   "h": 844,
+   "title": "1.1 Carousel 2/3: privasi (draft)",
+   "is_interactive": true,
+   "radius": 40
+  },
+  "IMG-1-1c3-carousel.dc.html": {
+   "x": 1880,
+   "y": 7188,
+   "w": 390,
+   "h": 844,
+   "title": "1.1 Carousel 3/3: teman strava (draft)",
+   "is_interactive": true,
+   "radius": 40
   }
  },
  "order": [
@@ -391,7 +418,10 @@
   "IMG-2-1r-hari-ini-istirahat.dc.html",
   "IMG-3-3k-progres-kosong.dc.html",
   "IMG-1-1b-selamat-datang.dc.html",
-  "ST-3-1b-plan-status.dc.html"
+  "ST-3-1b-plan-status.dc.html",
+  "IMG-1-1c1-carousel.dc.html",
+  "IMG-1-1c2-carousel.dc.html",
+  "IMG-1-1c3-carousel.dc.html"
  ],
  "notes": {
   "t1": {

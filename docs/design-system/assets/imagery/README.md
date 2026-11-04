@@ -17,6 +17,9 @@ Status: **draft**. Dipakai di app sejak 2026-11-03 (UI/UX bagian 12; salinan di 
 | `track-overhead.webp` | 504x507 | Pelari dari atas, bayangan pohon | Kartu drill, 2.5 Ringkasan minggu |
 | `track-aerial.webp` | 508x507 | Lintasan merah dari udara | Empty state, hari istirahat |
 | `shoe-sole.webp` | 502x507 | Sol sepatu dari bawah | 2.4 Selesai, pencapaian |
+| `promo-science.webp` | 658x732 | Pelari di lintasan + grafik naik | Carousel 1.1: berbasis riset |
+| `promo-privacy.webp` | 659x732 | Pelari melihat HP dalam lingkaran pelindung | Carousel 1.1: privasi |
+| `promo-companion.webp` | 659x732 | Tiga pelari di tepi sungai | Carousel 1.1: teman Strava |
 | `pov-feet.webp` | 482x506 | Sudut pandang kaki sendiri | 2.6 Catat lari manual, pemanasan |
 
 ## Batasan yang sudah diketahui
@@ -42,3 +45,6 @@ Diunggah ke artifact wireframe (https://claude.ai/artifact/69xQ9s7SxafNVUKL2vWxk
 | track-aerial | `/_blob/a22c77ced456377b101861290ad2d8a5` |
 | shoe-sole | `/_blob/462c48c4b566ef85ee7fa47e7648483c` |
 | pov-feet | `/_blob/53301d8cbc8520c89eb2dc9400da5138` |
+| promo-science | `/_blob/97025ac519a58fb0b123970211cc6820` |
+| promo-privacy | `/_blob/8c8468d9e4883873ad47c013364ae300` |
+| promo-companion | `/_blob/61d0122c40573fa4a13851cb6e7d4435` |

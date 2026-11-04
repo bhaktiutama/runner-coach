@@ -236,6 +236,54 @@ SCREENS.append({
     ],
 })
 
+# --- 1.1 carousel 3 halaman penuh (usulan): keunggulan app, gambar promo-* ---
+# Isi dari layar asli Main: logo, CTA "Buat plan saya", "Sudah punya akun? Masuk", catatan HP.
+# Teks di atas gambar memakai --on-image di atas scrim gelap (tetap gelap di kedua tema).
+_MAIN = open(os.path.join(SRC, 'Main.dc.html'), encoding='utf8').read()
+_LOGO = re.search(r'<svg width="40" height="40".*?</svg>', _MAIN, re.S).group(0).replace('fill="var(--text)"', 'fill="var(--on-image)"')
+_CTA = re.search(r'<a href="OB2-Target\.dc\.html".*?</a>', _MAIN, re.S).group(0)
+_LOCK = re.search(r'<svg width="16" height="16".*?</svg>', _MAIN, re.S).group(0)
+SLIDES = [
+    ('promo-science', '18% 40%', 'BERBASIS RISET', 'Plan dari penelitian, bukan tebakan.',
+     'Setiap latihan punya alasan dan label tingkat bukti. Volume naik bertahap, ada minggu pemulihan.'),
+    ('promo-privacy', '45% 30%', 'PRIVASI', 'Datamu tetap di HP kamu.',
+     'Plan, lari, dan rasa capekmu tidak dikirim ke server. Akun hanya untuk masuk.'),
+    ('promo-companion', '38% 40%', 'TEMAN STRAVA', 'Tetap pakai Strava atau jammu.',
+     'Run Coach cukup bilang hari ini lari apa, berapa lama, dan seberapa santai. Mulai dari 3 hari seminggu.'),
+]
+
+
+def _slide(i):
+    img, pos, kicker, title, body = SLIDES[i]
+    dots = ''.join(
+        f'<span style="width: {24 if j == i else 8}px; height: 8px; border-radius: var(--radius-stadium); background: var(--on-image); opacity: {1 if j == i else 0.45}"></span>'
+        for j in range(len(SLIDES)))
+    return (
+        f'<img src="ds/lintas/imagery/{img}.webp" alt="" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: {pos}">'
+        '<div aria-hidden="true" style="position: absolute; inset: 0 0 auto 0; height: 160px; background: var(--scrim-top)"></div>'
+        '<div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, #161B1F00 38%, #161B1FD9 62%, #161B1F 82%)"></div>'
+        '<div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 64px 20px 0; color: var(--on-image)">'
+        f'<div style="display: flex; align-items: center; gap: 10px">{_LOGO}<span style="font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -0.02em">run coach</span></div>'
+        f'<span style="font-family: var(--font-display); font-size: 13px; font-weight: 700; opacity: 0.85">{i + 1}/{len(SLIDES)}</span></div>'
+        '<div style="position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 0 20px; color: var(--on-image)">'
+        f'<span style="align-self: flex-start; padding: 5px 10px; border-radius: var(--radius-stadium); background: var(--primary); color: var(--on-primary); font-size: 12px; font-weight: 800; letter-spacing: 0.08em">{kicker}</span>'
+        f'<h1 style="margin: 0; font-family: var(--font-display); font-size: 34px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{title}</h1>'
+        f'<p style="margin: 0; font-size: 15px; line-height: 1.45; opacity: 0.88">{body}</p>'
+        f'<div role="img" aria-label="Halaman {i + 1} dari {len(SLIDES)}" style="display: flex; gap: 6px; padding-top: 8px">{dots}</div></div>'
+        '<div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; padding: 20px 20px 32px">'
+        + _CTA +
+        '<a href="OB9-Masuk.dc.html" style="display: flex; align-items: center; justify-content: center; min-height: 44px; font-size: 15px; font-weight: 700; color: var(--on-image); text-decoration: none">Sudah punya akun? Masuk</a>'
+        f'<span style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--on-image); opacity: 0.8">{_LOCK}Data latihanmu tersimpan di HP ini</span></div>'
+    )
+
+
+for _i in range(len(SLIDES)):
+    SCREENS.append({
+        'src': 'Main.dc.html', 'out': f'IMG-1-1c{_i + 1}-carousel', 'title': f'1.1 Carousel {_i + 1}/3: {SLIDES[_i][2].lower()}',
+        'img': SLIDES[_i][0],
+        'edits': [('re', r'(?<=overflow: hidden">).*?(?=\n</div>\n</x-dc>)', '\n' + _slide(_i))],
+    })
+
 
 def build():
     os.makedirs(IMG_DST, exist_ok=True)
