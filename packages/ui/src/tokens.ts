@@ -24,6 +24,7 @@ export const tokens = {
     "lineStrong": "#858C94",
     "primary": "#F26B38",
     "onPrimary": "#242C32",
+    "primaryEdge": "#C4521F",
     "primaryInk": "#C63F0D",
     "accent": "#E9B79D",
     "accentInk": "#AD5527",

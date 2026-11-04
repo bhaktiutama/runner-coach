@@ -34,9 +34,20 @@ export const en: Record<MessageKey, string> = {
   'privacy.webWarning':
     'Data is stored in this browser. Clearing browser data = data lost, so back up to a file regularly.',
 
-  'welcome.title': 'Know what to run, every day.',
-  'welcome.body':
-    'A personal training plan from 5K to the Full Marathon. Adapts to your schedule and how you feel.',
+  'welcome.s1.kicker': 'BACKED BY SCIENCE',
+  'welcome.s1.title': 'Train smart, not just hard.',
+  'welcome.s1.body':
+    'Every session has a reason, based on sports research. You build up slowly, with easy weeks built in.',
+  'welcome.s2.kicker': 'PRIVATE BY DEFAULT',
+  'welcome.s2.title': 'Your runs stay yours.',
+  'welcome.s2.body':
+    'Your plan and runs live on your phone, not on our servers. The account is just for signing in.',
+  'welcome.s3.kicker': "STRAVA'S SIDEKICK",
+  'welcome.s3.title': 'Keep Strava. We plan the runs.',
+  'welcome.s3.body':
+    'You just run. Run Coach tells you what to run today, how long, and how easy. Start with 3 days a week.',
+  'welcome.page': '{n}/{total}',
+  'welcome.goTo': 'Page {n} of {total}',
   'welcome.cta': 'Build my plan',
   'welcome.signIn': 'Have an account? Sign in',
 

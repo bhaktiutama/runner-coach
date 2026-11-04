@@ -14,7 +14,7 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 
 | No | Layar | Ke |
 |----|-------|----|
-| 1.1 | Selamat datang | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> 1.9 |
+| 1.1 | Selamat datang (hanya saat belum ada plan): carousel 3 halaman penuh, digeser manual (UI/UX 13) | "Buat plan saya" -> 1.2; "Sudah punya akun? Masuk" -> 1.9 (ada di setiap halaman) |
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
 | 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1; tombol kembali "Ubah jawaban" -> 1.7 (jawaban tetap tersimpan, plan dibuat ulang) |
 | 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |

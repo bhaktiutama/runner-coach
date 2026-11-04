@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, View, type PressableProps } from 'react-native';
-import { border, color, radius, ring, shadow, size, space, themed, isDark } from '../theme';
+import { border, color, radius, ring, size, space, themed, isDark } from '../theme';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 
@@ -9,6 +9,29 @@ type Base = Omit<PressableProps, 'children' | 'style'> & {
   loading?: boolean;
   testID?: string;
 };
+
+/** Tebal sisi bawah tombol (UI/UX 3, v0.9) dan sisa saat ditekan. */
+const EDGE = space[1];
+const EDGE_PRESSED = border.hairline;
+
+/** Sisi gelap tombol varian `dark`: hitam pekat di terang, krem redup di gelap. */
+const edgeDark = () => (isDark() ? color.lineStrong : color.scrim);
+
+/**
+ * Tombol bertebal (bukan kertas melayang): sisi bawah padat warna lebih gelap + bayangan lembut
+ * pendek + kilau tipis di tepi atas. Ditekan: tombol turun dan sisinya menipis, seperti tombol fisik.
+ */
+function depth(edge: string, pressed: boolean) {
+  const e = pressed ? EDGE_PRESSED : EDGE;
+  return {
+    transform: [{ translateY: EDGE - e }],
+    boxShadow: [
+      `0px ${e}px 0px 0px ${edge}`,
+      `0px ${e + space[1]}px ${space[2]}px -${space[1]}px ${color.scrim}40`,
+      `inset 0px ${border.hairline}px 0px 0px ${color.palette.white}59`,
+    ].join(', '),
+  };
+}
 
 export function PrimaryButton({
   label,
@@ -31,7 +54,7 @@ export function PrimaryButton({
       style={({ pressed }) => [
         styles.primary,
         { backgroundColor: bg, opacity: off ? 0.4 : 1 },
-        pressed ? styles.pressed : styles.raised,
+        depth(variant === 'primary' ? color.primaryEdge : edgeDark(), pressed && !off),
       ]}
     >
       {loading ? (
@@ -119,8 +142,6 @@ const styles = themed(() =>
       justifyContent: 'center',
       paddingHorizontal: space[6],
     },
-    raised: shadow.raised,
-    pressed: { transform: [{ translateY: 2 }] },
     secondary: {
       minHeight: size.buttonSecondary,
       borderRadius: radius.stadium,

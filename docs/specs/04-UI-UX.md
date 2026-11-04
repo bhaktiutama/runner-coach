@@ -34,7 +34,7 @@ Ringkasan isi (nilai lengkap di `tokens.json`):
 | Timer (gelap) | bg #161B1F, teks krem, interval memakai #E0522E |
 | Mode gelap (F-24) | Ikut tema perangkat. Semantik sama, nilai dari `color.dark` + palet: bg #161B1F, surface #242C32, teks krem, `-ink` dicerahkan (primary #F58A5F, status = warna dasarnya), strength #3A444C, bayangan hitam. Isian zona/fase/RPE tidak berubah. Acuan `docs/wireframes/png/dark/`. Kode: `color` dan `themed()` di `packages/ui/src/theme.ts`; jangan simpan warna di konstanta modul |
 | Tipe | Bricolage Grotesque (judul, angka, `tnum`), Plus Jakarta Sans (UI) |
-| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px |
+| Bentuk | Radius kartu 24, stadium untuk tombol/chip, bib 6; bayangan keras 2 px (kartu). Tombol utama bertebal (v0.9): sisi bawah padat 4 px `color.primary-edge` (varian gelap: `scrim`, di mode gelap `line-strong`), bayangan lembut pendek, kilau 1 px di tepi atas; ditekan = turun 3 px dan sisi menipis jadi 1 px |
 | Ukuran | Tombol primary 60, sekunder 48, input 52, area sentuh min 44 |
 | Gerak | 120 / 200 / 320 ms (cincin, garis tren, angka naik 1000 ms); easing `stride` hanya untuk progres; detail di bagian 11 |
 
@@ -201,3 +201,14 @@ Teks langsung di atas gambar memakai `color.on-image` (#FFF9F2, kedua tema) dan 
 | 4.4 Premium | riverside-city-m |
 
 Wireframe: `docs/wireframes/png/imagery/` (+ `dark/`), canvas baris "5. Eksplorasi imagery".
+
+## 13. Selamat datang 1.1: carousel (v0.9, 2026-11-04)
+
+Menggantikan hero tunggal 1.1 (bagian 12). Hanya tampil saat belum ada plan (pertama kali / setelah hapus data).
+
+| Bagian | Isi |
+|---|---|
+| Halaman | 3 halaman penuh, geser horizontal manual (tidak berganti otomatis), titik halaman bisa diketuk (tombol, label "Halaman n dari 3"), penanda `n/3` di kanan atas |
+| Gambar | `promo-science`, `promo-privacy`, `promo-companion` (658 x 732, draft, lisensi B10) selebar layar, fokus horizontal per gambar agar pelari tidak terpotong, memudar ke `bg` antara 36% dan 66% tinggi (ikut tema terang/gelap) |
+| Tetap di setiap halaman | Logo `on-image` di atas, lalu di bawah: titik halaman, "Buat plan saya", "Sudah punya akun? Masuk", catatan "Data latihanmu tersimpan di HP ini" |
+| Teks (`welcome.s1..s3`, ID + EN) | 1 Ada dasarnya / Backed by science: "Latihan pintar, bukan asal capek." 2 Privasi / Private by default: "Data larimu, ya punyamu." 3 Teman Strava / Strava's sidekick: "Strava tetap jalan, kami yang atur menunya." Bahasa santai untuk pelari muda; tanpa klaim mencegah cedera dan tanpa janji sinkron Strava (fase 2) |

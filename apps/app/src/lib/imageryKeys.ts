@@ -11,7 +11,10 @@ export type ImageKey =
   | 'trackOverhead'
   | 'trackAerial'
   | 'shoeSole'
-  | 'povFeet';
+  | 'povFeet'
+  | 'promoScience'
+  | 'promoPrivacy'
+  | 'promoCompanion';
 
 /** Gambar header kartu 2.1 per jenis latihan; strength/core tanpa gambar (belum ada, UI/UX 12). */
 const BY_TYPE: Record<WorkoutType, ImageKey | readonly [ImageKey, ImageKey] | null> = {
