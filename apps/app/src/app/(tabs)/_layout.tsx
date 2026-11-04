@@ -3,14 +3,20 @@ import { Redirect, Tabs } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 import { AppEffects } from '@/components/AppEffects';
 import { TabBar } from '@/components/TabBar';
-import { useActivePlan, useDraft } from '@/data/hooks';
+import { authRequired } from '@/auth/service';
+import { useActivePlan, useDraft, useSession } from '@/data/hooks';
 import { t } from '@/i18n/t';
 
-/** Gerbang: onboarding belum selesai -> lanjut langkah terakhir; belum ada plan -> 1.1. */
+/**
+ * Gerbang: onboarding belum selesai -> lanjut langkah terakhir; belum ada plan -> 1.1; ada plan tapi
+ * belum/tidak lagi masuk (keluar, sesi habis) -> 1.9 (FL-10). Data lokal tetap utuh.
+ */
 export default function TabsLayout() {
   const { draft, isPending } = useDraft();
   const plan = useActivePlan();
-  if (isPending || plan.isPending) {
+  const session = useSession();
+  const needAuth = authRequired;
+  if (isPending || plan.isPending || (needAuth && session.isPending)) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: color.bg }}>
         <ActivityIndicator color={color.primary} />
@@ -19,6 +25,7 @@ export default function TabsLayout() {
   }
   if (draft) return <Redirect href={`/onboarding/${draft.step}`} />;
   if (!plan.data) return <Redirect href="/welcome" />;
+  if (needAuth && !session.data) return <Redirect href="/sign-in" />;
   return (
     <>
       <AppEffects />

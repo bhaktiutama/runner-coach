@@ -95,6 +95,10 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
 - Kartu share. (Konfeti sudah masuk bagian 11.)
 
+## 8b. Baris pengaturan di layar sempit (v0.9, 2026-11-04)
+
+`SettingsRow`: label dan nilai dalam satu baris yang boleh membungkus. Jika keduanya tidak muat (iPhone SE / 13 mini, Ukuran Teks besar), nilai turun ke baris kedua di bawah label, rata kiri, sama seperti teks kedua baris Strength + core. Label tidak pernah dipotong menjadi 2 kolom sempit.
+
 ## 8a. Status hari di kalender 3.1 (v0.9, 2026-11-03)
 
 | Status latihan | Tampilan baris |
@@ -166,7 +170,7 @@ Aturan umum:
 
 ### Dialog konfirmasi (v0.8)
 
-Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).
+Aksi yang merusak atau mengubah status (Keluar, Hapus data di HP, Pulihkan dari file, Ganti target di 4.1) memakai `ConfirmDialog` (`packages/ui`): dialog di tengah layar di atas semua isi, latar `overlay` yang bisa diketuk untuk batal, judul berupa pertanyaan, 1 kalimat penjelas, tombol konfirmasi (merah untuk aksi merusak), tombol Batal. Tidak boleh dirender di dalam isi yang bisa tergulir (pengguna tidak melihatnya). Satu dialog = satu keputusan: Keluar tidak menawarkan hapus data (menu Hapus data di HP sudah ada).
 
 ## 12. Gambar (imagery, v0.9, 2026-11-03)
 

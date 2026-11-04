@@ -41,31 +41,30 @@ export function SettingsRow({
   sub?: string;
 }) {
   const fg = danger ? color.status.behindInk : color.text;
+  const chevron = !right && onPress;
+  // Label dan nilai dalam satu baris yang boleh membungkus: jika tidak muat (iPhone SE/mini, Ukuran
+  // Teks besar), nilai turun ke baris kedua di bawah label, rata kiri (seperti `sub`).
   const content = (
     <>
       {icon ? <Icon name={icon} size={space[5]} color={fg} /> : null}
       <View style={styles.labelCol}>
-        <Text variant="rowRegular" style={{ color: fg }} numberOfLines={2}>
-          {label}
-        </Text>
+        <View style={styles.line}>
+          <Text variant="rowRegular" style={[styles.label, { color: fg }]}>
+            {label}
+          </Text>
+          {value ? (
+            <Text variant="bodySm" color="textMuted" style={styles.value}>
+              {value}
+            </Text>
+          ) : null}
+        </View>
         {sub ? (
           <Text variant="caption" color="textMuted">
             {sub}
           </Text>
         ) : null}
       </View>
-      {value || (!right && onPress) ? (
-        <View style={styles.valueWrap}>
-          {value ? (
-            <Text variant="bodySm" color="textMuted" style={styles.value} numberOfLines={1}>
-              {value}
-            </Text>
-          ) : null}
-          {!right && onPress ? (
-            <Icon name="chevron-right" size={space[4] + space[1] / 2} color={color.textMuted} />
-          ) : null}
-        </View>
-      ) : null}
+      {chevron ? <Icon name="chevron-right" size={space[4] + space[1] / 2} color={color.textMuted} /> : null}
       {right ?? null}
     </>
   );
@@ -187,8 +186,16 @@ const styles = themed(() =>
       paddingVertical: space[2],
     },
     sep: { borderTopWidth: border.hairline, borderTopColor: color.line },
-    valueWrap: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2, maxWidth: '55%' },
-    value: { flexShrink: 1 },
+    line: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      columnGap: space[3],
+      rowGap: border.selected - border.hairline / 2,
+    },
+    label: { flexShrink: 0, maxWidth: '100%' },
+    value: { flexShrink: 0, maxWidth: '100%' },
     switch: {
       width: size.input,
       height: space[8],

@@ -13,7 +13,7 @@ import {
 } from '@run-coach/training-engine';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '0.1.0';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import * as auth from '@/auth/service';
 import { getDb } from '@/db/client';
 import { localDate, localDateOf } from '@/lib/today';
@@ -163,6 +163,15 @@ export function useCompleteSignIn() {
 
 export function useSession() {
   return useQuery({ queryKey: keys.session, queryFn: auth.currentUserId });
+}
+
+/**
+ * Status login selalu segar: cache query tidak pernah basi (staleTime Infinity), jadi setiap
+ * perubahan sesi Auth (masuk, keluar, token habis) langsung menulis ulang `session`. Dipanggil sekali
+ * di root layout; mengembalikan fungsi berhenti berlangganan.
+ */
+export function watchAuth(qc: QueryClient): () => void {
+  return auth.onSessionChange((userId) => qc.setQueryData(keys.session, userId));
 }
 
 export { auth };

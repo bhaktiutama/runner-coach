@@ -156,6 +156,9 @@ export const en: Record<MessageKey, string> = {
   'preview.seeLess': 'Show less',
   'preview.sources': 'See sources',
   'preview.hideSources': 'Hide sources',
+  'preview.signedInTitle': 'Your plan is ready',
+  'preview.signedInNote': "You're signed in. Your plan and runs stay on this phone.",
+  'preview.start': 'Start this plan',
   'preview.accountTitle': 'Create an account to start',
   'preview.accountNote':
     'Your plan and runs are stored on this phone, not on a server. The account is only for signing in.',

@@ -8,6 +8,7 @@ import {
   Icon,
   IconButton,
   PhaseLegend,
+  PrimaryButton,
   radius,
   size,
   space,
@@ -27,7 +28,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CreateAccountButtons, useAuthFlow } from '@/components/AuthPanel';
 import { RationaleList } from '@/components/RationaleList';
-import { useActivePlan, useCompleteSignIn } from '@/data/hooks';
+import { useActivePlan, useCompleteSignIn, useSession } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { HelpHint } from '@/components/HelpHint';
 import { t } from '@/i18n/t';
@@ -38,6 +39,7 @@ import { et } from '@/lib/rationale';
 export default function Preview() {
   const plan = useActivePlan();
   const complete = useCompleteSignIn();
+  const session = useSession();
   const insets = useSafeAreaInsets();
   const [whyOpen, setWhyOpen] = useState(true);
   const flow = useAuthFlow(async (uid) => {
@@ -148,14 +150,26 @@ export default function Preview() {
           style={[styles.sheet, { paddingBottom: Math.max(space.screenBottom, insets.bottom + space[2]) }]}
         >
           <View style={styles.sheetInner}>
-            <Text variant="subheading">{t('preview.accountTitle')}</Text>
+            {/* Sudah masuk (target baru, atau plan pertama setelah 1.9): tidak diminta login lagi. */}
+            <Text variant="subheading">
+              {session.data ? t('preview.signedInTitle') : t('preview.accountTitle')}
+            </Text>
             <View style={styles.note}>
               <Icon name="lock" size={space[4]} color={color.textMuted} />
               <Text variant="note" color="textMuted" style={styles.flex}>
-                {t('preview.accountNote')}
+                {session.data ? t('preview.signedInNote') : t('preview.accountNote')}
               </Text>
             </View>
-            <CreateAccountButtons flow={flow} />
+            {session.data ? (
+              <PrimaryButton
+                label={t('preview.start')}
+                testID="preview-start"
+                loading={complete.isPending}
+                onPress={() => flow.onSignedIn(session.data ?? null)}
+              />
+            ) : (
+              <CreateAccountButtons flow={flow} />
+            )}
           </View>
         </View>
       </ScrollView>
