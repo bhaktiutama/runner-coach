@@ -687,7 +687,6 @@ export const en: Record<MessageKey, string> = {
   'timer.restNext': 'Next: {name}, set {n} of {total}',
   'timer.exerciseBib': 'Exercise {n}/{total}',
   'timer.exerciseHint': 'Tap Set done after each set. Rest is timed automatically.',
-  'timer.exerciseTimedHint': 'This set runs on its own. A sound and vibration mark the end.',
   'timer.cueExercise': '{name}, set {n} of {total}',
   'timer.cueRest': 'Rest {sec} seconds',
 };

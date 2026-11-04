@@ -1,297 +1,226 @@
 # 09 Desain Suara: latihan tanpa melihat layar
 
-Status: **Usulan v0.1 (2026-11-04), belum disetujui pemilik produk.** Kecuali bagian 6 (hitung mundur strength hanya saat istirahat) yang sudah diterapkan, isi dokumen ini belum boleh dibangun sebelum keputusan di bagian 12 diambil. Setelah disetujui, perubahan di bagian 11 dipindah ke PRD, TRD, App Flow, UI/UX dan Schema.
+Status: **Usulan v0.2 (2026-11-04), belum disetujui pemilik produk.** Keputusan pemilik 2026-11-04: perintah suara (mikrofon) tidak dibangun; cukup pelatih suara, dengan alternatif "Bunyi saja"; angka hitung mundur tetap tampil di set berwaktu dan istirahat. Isi dokumen ini belum boleh dibangun sebelum keputusan di bagian 10 diambil. Setelah disetujui, perubahan di bagian 9 dipindah ke PRD, TRD, App Flow, UI/UX dan Schema.
 
 ## Ringkasan
 
-- Dua lapisan: **Pelatih suara** (app bicara, F-25) dan **Perintah suara** (app mendengar perintah pendek, F-26). Keduanya opsional, berjalan di perangkat, tanpa audio atau teks ucapan ke server.
-- Pelatih suara bisa dibangun dulu tanpa dev build (`expo-speech` ada di Expo Go dan web). Perintah suara butuh modul native (`expo-speech-recognition`), jadi butuh dev build iOS/Android dan keputusan pemilik (bagian 12).
-- Di strength, angka hitung mundur di layar hanya muncul saat istirahat. Set berwaktu (plank) dipandu bunyi sekarang dan suara nanti; set repetisi tidak pernah dihitung oleh app.
+- **Pelatih suara (F-25)**, satu fitur dengan dua mode panduan audio: **Suara** (kalimat TTS + bunyi penanda) atau **Bunyi saja** (pola bip sintesis, tanpa kalimat). Tidak ada mikrofon, tidak ada perintah suara.
+- Mode Suara memakai `expo-speech` (ada di Expo Go dan web, tanpa dev build). Mode Bunyi saja tanpa library baru: file WAV pendek yang dibuat oleh skrip dari nada sintesis.
+- Layar tidak berubah: angka hitung mundur tetap ada di set berwaktu (plank), istirahat dan segmen lari. Suara dan bunyi melengkapi layar, tidak menggantikannya.
 
 ## 1. Tujuan dan ukuran berhasil
 
 | # | Tujuan | Ukuran (usulan, belum diukur) |
 |---|--------|-------------------------------|
-| T1 | Satu sesi lari atau strength bisa diselesaikan tanpa melihat layar setelah menekan Mulai | Uji 5 sesi per mode di device: 0 kali perlu melihat layar untuk tahu apa yang harus dilakukan |
-| T2 | Pengguna selalu tahu "sekarang apa, berapa lama lagi, berikutnya apa" | Setiap pergantian segmen/set punya ucapan; perintah "berapa lagi" menjawab < 1 detik |
-| T3 | Perintah suara terasa andal | Akurasi 10 perintah >= 90% di ruangan tenang, >= 80% saat lari di luar (diukur di spike S-V3) |
-| T4 | Tidak mengganggu | Aktivasi palsu <= 1 per 30 menit dengan musik di headset (diukur di S-V3); suara app tidak pernah tumpang tindih dengan dirinya sendiri |
-| T5 | Privasi tetap "data di HP" | Test privasi: tidak ada request jaringan selama sesi dengan perintah suara aktif |
+| T1 | Sesi lari atau strength bisa diikuti tanpa melihat layar setelah Mulai | Uji 5 sesi per mode di device: 0 kali perlu melihat layar untuk tahu kapan mulai, ganti, istirahat dan selesai |
+| T2 | Pengguna tahu "sekarang apa, berapa lama lagi, berikutnya apa" | Mode Suara: setiap pergantian segmen/set punya ucapan. Mode Bunyi saja: setiap jenis momen punya pola bunyi berbeda |
+| T3 | Pola bunyi mudah dibedakan | Uji 5 orang: setelah mendengar contoh sekali, >= 80% momen ditebak benar (usulan, diukur di S-V2) |
+| T4 | Tidak mengganggu | Tidak ada ucapan/bunyi yang tumpang tindih; musik pengguna di-duck saat bicara, bukan dihentikan |
+| T5 | Privasi tetap "data di HP" | Tidak ada izin mikrofon; tidak ada request jaringan karena fitur ini (TTS sistem di perangkat) |
 
-## 2. Prinsip desain suara
+## 2. Prinsip
 
 | # | Prinsip | Artinya di app |
 |---|---------|----------------|
-| P1 | Bertingkat | Getar < bunyi pendek (earcon) < kalimat. Kalimat hanya saat ada informasi baru |
-| P2 | Ringkas, urutan tetap | Pola kalimat: **apa** -> **berapa** -> **target**. Contoh: "Tempo. 14 menit. Pace 6:45 per kilometer." Maks 12 kata per ucapan di mode Ringkas |
-| P3 | Memberi tahu sebelum terjadi | Peringatan sebelum pergantian (1 menit / 10 detik), lalu 3-2-1 berupa bunyi, lalu kata "Mulai" atau "Istirahat" |
-| P4 | Satu suara pada satu waktu | Antrian prioritas; ucapan lama dibuang jika sudah basi (lihat 3.3) |
-| P5 | Mendengar hanya saat perlu | Mikrofon dibuka di jendela yang masuk akal (set repetisi, istirahat, jeda) atau setelah tombol headset; tidak ada wake word yang selalu aktif |
-| P6 | Konfirmasi singkat | Setiap perintah yang dikenali dijawab bunyi "ack" < 300 ms; aksi yang merusak (Akhiri) perlu "ya" |
-| P7 | Layar tetap sumber kebenaran | Semua yang diucapkan juga terlihat di layar; suara tidak membawa informasi yang tidak ada di layar |
-| P8 | Netral dan profesional | Tidak ada pujian berlebihan. Satu kalimat penyemangat hanya di akhir sesi dan di 2 menit terakhir segmen berat (mode Lengkap) |
+| P1 | Bertingkat | Getar < bunyi < kalimat. Kalimat hanya saat ada informasi baru |
+| P2 | Ringkas, urutan tetap | Pola kalimat: **apa** -> **berapa** -> **target**. "Tempo. 14 menit. Pace 6 menit 45 detik per kilometer." |
+| P3 | Memberi tahu sebelum terjadi | Peringatan (1 menit / 10 detik), lalu 3-2-1 berupa bunyi, lalu tanda mulai |
+| P4 | Satu suara pada satu waktu | Antrian prioritas; ucapan basi dibuang (3.3) |
+| P5 | Bunyi punya makna tetap | Arah nada = arah intensitas: naik = kerja dimulai / lebih berat, turun = istirahat / lebih ringan. Pola sama di lari dan strength |
+| P6 | Layar tetap sumber kebenaran | Semua yang diucapkan atau ditandai bunyi juga terlihat di layar, termasuk angka hitung mundur |
+| P7 | Netral dan profesional | Penyemangat hanya 1 kalimat di akhir sesi (dan di 2 menit terakhir segmen berat pada detail Lengkap) |
 
 ## 3. Arsitektur
 
-### 3.1 Komponen
+### 3.1 Modul
 
 | Modul (usulan) | Isi | Murni / native |
 |----------------|-----|----------------|
-| `timer/voiceScript.ts` | Dari `TimerSegment[]` + `Position` + event state machine menghasilkan daftar ucapan berjadwal: `{ at, key, values, priority, kind }`. Teks diambil dari katalog i18n | Murni, unit test |
-| `timer/voiceDirector.ts` | Antrian prioritas, aturan basi, jeda mikrofon saat bicara, pemilihan suara per locale | Murni (adaptor diinjeksi) |
-| `timer/speech.ts` | Adaptor TTS: `expo-speech` (iOS AVSpeechSynthesizer, Android TextToSpeech, web speechSynthesis) | Native |
-| `timer/commands.ts` | Tata bahasa perintah per locale, normalisasi, pencocokan per state timer | Murni, unit test |
-| `timer/listener.ts` | Adaptor pengenal ucapan: `expo-speech-recognition` dengan `requiresOnDeviceRecognition: true`, `contextualStrings` dari tata bahasa | Native, dev build |
-| `packages/ui/format.ts` `speak*` | Format angka untuk diucapkan: "6 menit 45 detik per kilometer", "400 meter", "30 detik" (bukan "6:45 /km" yang dibaca aneh oleh TTS) | Murni, snapshot test |
+| `timer/audioScript.ts` | Dari `TimerSegment[]` + posisi + event state machine menghasilkan daftar momen berjadwal `{ at, moment, key, values, priority }`. Satu daftar untuk kedua mode; mode menentukan apakah momen diputar sebagai kalimat + bunyi atau bunyi saja | Murni, unit test |
+| `timer/audioDirector.ts` | Antrian prioritas, aturan basi, pemilihan suara per locale, fallback ke Bunyi saja | Murni (adaptor diinjeksi) |
+| `timer/speech.ts` | Adaptor TTS `expo-speech` (iOS AVSpeechSynthesizer, Android TextToSpeech, web speechSynthesis) | Native |
+| `timer/cues.ts` (ada) | Diperluas: putar pola bunyi (bagian 5) + getar yang sepadan | Native |
+| `packages/ui/format.ts` `speak*` | Angka untuk diucapkan: "6 menit 45 detik per kilometer", "400 meter", "30 detik" | Murni, snapshot test |
+| `scripts/make-earcons.py` | Membuat WAV dari nada sintesis (Python stdlib `wave` + `math`, tanpa dependensi) | Skrip build, hasil di `assets/sounds/` |
 
-State machine `machine.ts` tidak berubah strukturnya: perintah suara memanggil aksi yang sama dengan tombol (`next`, `pause`, `resume`, `skipGroup`, `end`). Satu-satunya tambahan yang mungkin adalah "tambah istirahat" (bagian 5.2, opsional, perlu keputusan K5).
+State machine `machine.ts` tidak berubah. `upcomingBoundaries` yang sudah ada dipakai sebagai dasar jadwal momen.
 
 ### 3.2 Sesi audio
 
-| Kondisi | iOS | Android | Web |
-|---------|-----|---------|-----|
-| Hanya Pelatih suara | Kategori playback, `duckOthers` saat bicara, `mixWithOthers` di luar ucapan | Audio focus `GAIN_TRANSIENT_MAY_DUCK` saat bicara | speechSynthesis; musik tab lain tidak di-duck |
-| + Perintah suara | `playAndRecord` + `allowBluetoothA2DP` (output tetap A2DP ke headset, mikrofon dari HP) | Mikrofon dibuka per jendela | Nonaktif sampai S-V4 (bagian 9) |
+| | iOS | Android | Web |
+|-|-----|---------|-----|
+| Saat bicara | Kategori playback, `duckOthers` | Audio focus transient may-duck | speechSynthesis (suara `localService`) |
+| Di luar ucapan / bunyi | `mixWithOthers` (seperti sekarang) | Sama | Sama |
 
-Catatan penting: membuka mikrofon headset Bluetooth membuat banyak headset pindah ke profil HFP, kualitas musik turun drastis. Default usulan: mikrofon HP, bukan mikrofon headset. Dampaknya: HP di saku/armband lebih sulit mendengar. Diuji di S-V3.
-
-### 3.3 Antrian ucapan
+### 3.3 Antrian
 
 | Prioritas | Contoh | Aturan |
 |-----------|--------|--------|
-| 1 Kritis | "Mulai", "Istirahat", "Selesai", jawaban perintah | Memotong ucapan prioritas 3 |
-| 2 Transisi | Perkenalan segmen/gerakan, "Berikutnya ..." | Menunggu ucapan yang sedang berjalan |
-| 3 Info | Setengah jalan, sisa waktu berkala, cue teknik | Dibuang jika terlambat > 2 detik dari jadwal atau bertabrakan dengan prioritas 1 |
+| 1 Kritis | 3-2-1, tanda mulai, tanda istirahat, selesai | Tidak pernah ditunda; memotong prioritas 3 |
+| 2 Transisi | Perkenalan segmen/gerakan, "Berikutnya ..." | Dijadwalkan agar selesai >= 1 detik sebelum tick pertama |
+| 3 Info | Setengah jalan, update berkala, cue teknik | Dibuang jika terlambat > 2 detik atau bertabrakan dengan prioritas 1 |
 
-- Earcon 3-2-1 tidak pernah ditunda; ucapan dijadwalkan agar selesai minimal 1 detik sebelum tick pertama. Panjang ucapan diperkirakan dari jumlah suku kata x kecepatan suara (dikalibrasi di S-V1).
-- Mikrofon ditutup selama TTS bicara + 300 ms sesudahnya agar app tidak mendengar dirinya sendiri.
-- Bisu (tombol suara di bar atas, `muted`) mematikan ucapan **dan** earcon; getar tetap.
+Panjang ucapan diperkirakan dari jumlah suku kata x kecepatan suara (dikalibrasi di S-V1). Tombol bisu di bar timer (`muted`) mematikan ucapan dan bunyi; getar tetap.
 
-### 3.4 Earcon (bunyi pendek)
+## 4. Mode Suara: skrip per mode
 
-| Bunyi | Kapan | File |
-|-------|-------|------|
-| `cue` (ada) | Pergantian segmen/set | `assets/sounds/cue.wav` |
-| `done` (ada) | Sesi selesai | `assets/sounds/done.wav` |
-| `tick` (baru) | 3-2-1 sebelum mulai kerja dan sebelum istirahat habis | `assets/sounds/tick.wav` |
-| `ack` (baru) | Perintah dikenali | `assets/sounds/ack.wav` |
-
-Bunyi baru dibuat sendiri (bukan unduhan berlisensi tidak jelas), < 300 ms, dinormalisasi -16 LUFS sama dengan yang ada.
-
-## 4. Skrip suara per mode
-
-Kunci katalog baru di `i18n/id.ts` + `en.ts` dengan awalan `voice.`; contoh di bawah versi ID mode Normal. Angka lewat `speak*` (bagian 3.1).
+Kunci katalog baru `voice.*` di `i18n/id.ts` + `en.ts`. Contoh versi ID detail Normal. Setiap ucapan didahului atau diikuti pola bunyi di bagian 5, jadi mode Suara = mode Bunyi saja + kalimat.
 
 ### 4.1 Lari (2.3)
 
 | Momen | Syarat | Ucapan (Normal) | Ringkas |
 |-------|--------|-----------------|---------|
-| Setelah hitung mundur awal | Selalu | "Segmen 1 dari 4. Pemanasan jalan cepat, 5 menit." | "Pemanasan, 5 menit." |
 | Mulai segmen | Selalu | "Tempo. 14 menit. Pace 6 menit 45 detik per kilometer." | "Tempo, 14 menit." |
 | Setengah jalan | Segmen >= 6 menit | "Setengah jalan. 7 menit lagi." | (tidak) |
 | 1 menit lagi | Segmen >= 3 menit | "1 menit lagi. Berikutnya: jog pemulihan, 2 menit." | "1 menit lagi." |
 | 10 detik lagi | Segmen < 3 menit | "10 detik. Berikutnya: lari, 400 meter." | (tidak) |
-| 3-2-1 | Setiap batas segmen | `tick` x3 | `tick` x3 |
 | Repetisi interval | Interval | "Repetisi 3 dari 6. 2 menit. Pace 5 menit 10 detik." | "Repetisi 3 dari 6." |
-| Berkala | Segmen easy/long >= 20 menit, tiap 10 menit (Lengkap saja) | "20 menit berjalan. 25 menit lagi." | (tidak) |
-| Dijeda | Jeda | "Dijeda." | "Dijeda." |
-| Lanjut | Lanjutkan | "Lanjut. 6 menit lagi di segmen ini." | "Lanjut." |
-| Selesai | finished | "Latihan selesai. 42 menit. Kerja bagus." lalu `done` | "Selesai." |
+| Berkala | Easy/long >= 20 menit, tiap 10 menit (Lengkap) | "20 menit berjalan. 25 menit lagi." | (tidak) |
+| Dijeda / lanjut | Tombol | "Dijeda." / "Lanjut. 6 menit lagi di segmen ini." | "Dijeda." / "Lanjut." |
+| Selesai | finished | "Latihan selesai. 42 menit. Kerja bagus." | "Selesai." |
 
-Pace yang diucapkan adalah **target** dari plan. App tidak memakai GPS (TRD), jadi tidak ada umpan balik "terlalu cepat/lambat"; ini disebut di Panduan agar tidak diharapkan.
+Pace yang diucapkan adalah **target** plan. Tanpa GPS (TRD) tidak ada umpan balik "terlalu cepat/lambat"; disebut di Panduan.
 
 ### 4.2 Drill (2.3b)
 
 | Momen | Ucapan |
 |-------|--------|
-| Gerakan baru | "Drill 2 dari 4: A-skip. 2 kali 20 meter. Lutut tinggi, lengan aktif." (cue teknik pertama saja) |
+| Gerakan baru | "Drill 2 dari 4: A-skip. 2 kali 20 meter. Lutut tinggi, lengan aktif." (cue pertama saja) |
 | Set berikutnya | "Set 2 dari 2." |
-| Menunggu "Lanjut" | Diam. Jika Perintah suara aktif: mikrofon terbuka untuk "lanjut" / "selesai" |
-| Pengingat | Sekali, 60 detik setelah estimasi set lewat tanpa aksi: "Bilang 'lanjut' setelah selesai." (hanya jika Perintah suara aktif) |
+| Menunggu "Lanjut" | Diam (pengguna menekan tombol) |
 
 ### 4.3 Strength (2.3s)
 
 Contoh: Squat 3 x 10, istirahat 60 detik; Plank 2 x 30 detik; Side plank 2 x 20 detik per sisi.
 
-| Momen | Ucapan (Normal) | Layar |
-|-------|-----------------|-------|
-| Gerakan baru, set 1 | "Gerakan 1 dari 5: Squat. 3 set, 10 repetisi. Dada tegak, lutut searah jari kaki." | Animasi, nama, set, cue. **Tanpa angka hitung** |
-| Set repetisi berjalan | Diam. App tidak menghitung repetisi (tidak ada sensor yang andal tanpa kamera). Mikrofon terbuka untuk "selesai" | Tombol "Selesai set" |
-| Pengingat set repetisi | Sekali per set, saat 2 x estimasi set lewat: "Bilang 'selesai' kalau set sudah selesai." (hanya jika Perintah suara aktif) | Sama |
-| "Selesai" / tombol | `ack` + "Istirahat 60 detik." | Layar istirahat dengan **angka hitung mundur** |
-| Istirahat, separuh | Istirahat >= 60 detik: "30 detik." | Angka berjalan |
+| Momen | Ucapan (Normal) | Layar (tidak berubah) |
+|-------|-----------------|-----------------------|
+| Gerakan baru, set 1 | "Gerakan 1 dari 5: Squat. 3 set, 10 repetisi. Dada tegak, lutut searah jari kaki." | Animasi, nama, set, cue |
+| Set repetisi berjalan | Diam. App tidak menghitung repetisi | Tombol "Selesai set" |
+| "Selesai set" ditekan | "Istirahat 60 detik." | Hitung mundur istirahat |
+| Istirahat, separuh | Istirahat >= 60 detik: "30 detik." | Hitung mundur |
 | Istirahat, 10 detik lagi | "Berikutnya: Squat, set 2 dari 3. Siap-siap." | "Berikutnya: ..." |
-| Istirahat habis | `tick` x3 lalu "Mulai." | Kembali ke layar gerakan |
-| Set berwaktu mulai (plank) | "Plank. Set 1 dari 2. 30 detik." `tick` x3 "Mulai." | Tanpa angka hitung |
-| Set berwaktu, separuh | Set >= 20 detik: "15 detik lagi." | Sama |
-| Set berwaktu, akhir | "10 detik." lalu `tick` x3, "Selesai. Istirahat 45 detik." | Ke layar istirahat |
-| Per sisi berwaktu (side plank) | Di tengah: `cue` + "Ganti sisi." (hari ini tidak ada penanda ganti sisi sama sekali: `timedS` = 2 x durasi) | Sama |
-| Per sisi repetisi | Di awal: "10 repetisi per sisi." Tidak ada penanda tengah (app tidak tahu kapan ganti) | Sama |
-| Gerakan terakhir selesai | "Latihan selesai. Kerja bagus." `done` | Ke 2.4 |
+| Istirahat habis | 3-2-1 lalu tanda mulai | Layar gerakan |
+| Set berwaktu mulai | "Plank. Set 1 dari 2. 30 detik." 3-2-1, tanda mulai | Hitung mundur set |
+| Set berwaktu, separuh | Set >= 20 detik: "15 detik lagi." | Hitung mundur |
+| Set berwaktu, akhir | "10 detik." 3-2-1, tanda istirahat, "Istirahat 45 detik." | Ke istirahat |
+| Per sisi berwaktu | Di tengah: tanda ganti sisi + "Ganti sisi." (hari ini belum ada penanda: `timedS` = 2 x durasi) | Hitung mundur berjalan terus |
+| Per sisi repetisi | Di awal: "10 repetisi per sisi." | Sama |
+| Selesai | "Latihan selesai. Kerja bagus." | Ke 2.4 |
 
-### 4.4 Mode verbal
+### 4.4 Detail suara
 
-| Mode | Isi |
-|------|-----|
-| Ringkas | Transisi, 3-2-1, jawaban perintah |
+| Detail | Isi |
+|--------|-----|
+| Ringkas | Transisi, 3-2-1, selesai |
 | Normal (default) | + target pace, peringatan 1 menit / 10 detik, "Berikutnya", cue teknik pertama per gerakan |
-| Lengkap | + update berkala lari panjang, cue teknik di setiap set, 1 kalimat penyemangat di 2 menit terakhir segmen tempo/interval |
+| Lengkap | + update berkala lari panjang, cue teknik tiap set, 1 kalimat penyemangat di 2 menit terakhir tempo/interval |
 
 ### 4.5 Bahasa dan suara
 
 - Bahasa ucapan = locale aktif (F-22). Suara dipilih dari `Speech.getAvailableVoicesAsync()` yang cocok `id-ID` / `en-US`, kualitas tertinggi yang terpasang.
-- Jika suara `id-ID` tidak ada (terjadi di sebagian browser desktop dan HP lama): Pelatih suara jatuh ke earcon saja, 4.1 menampilkan "Suara Bahasa Indonesia tidak terpasang di perangkat ini" + tautan pengaturan TTS (Android). Tidak berpindah diam-diam ke suara bahasa lain.
-- Kecepatan bicara 1.0, bisa diubah 0.8 sampai 1.2 di 4.1 (opsional, keputusan K4).
+- Suara locale tidak ada (sebagian browser desktop, HP lama): otomatis **Bunyi saja**, 4.1 menampilkan "Suara Bahasa Indonesia tidak terpasang di perangkat ini, memakai bunyi". Tidak pindah diam-diam ke suara bahasa lain.
 
-## 5. Perintah suara (F-26)
+## 5. Mode Bunyi saja: bahasa bunyi
 
-### 5.1 Model mendengar
+Pola dibuat dari nada sinus sintesis (dengan envelope 5 ms agar tidak "klik"), dirender ke WAV oleh `scripts/make-earcons.py`. Dua nada dasar: rendah 660 Hz, tinggi 990 Hz (kuinta, mudah dibedakan, terdengar di atas musik). Semua dinormalisasi ke loudness yang sama dengan `cue.wav` yang ada. Frekuensi dan durasi di bawah usulan, dikalibrasi di S-V2.
 
-| Jendela mikrofon terbuka | Alasan |
-|--------------------------|--------|
-| Set repetisi strength, set drill (menunggu "Selesai/Lanjut") | Ini satu-satunya saat tangan pengguna sibuk dan app butuh input |
-| Istirahat strength | "lewati", "berapa lagi", "tambah" |
-| Timer `paused` | "lanjutkan", "akhiri" |
-| Selama segmen lari | **Tidak** terbuka terus. Dibuka 8 detik setelah tombol headset ditekan (S-V2) atau setelah pengguna mengetuk ikon mikrofon. Alasan: napas, angin dan musik saat lari menaikkan aktivasi palsu, dan baterai |
+| Momen | Pola | Getar | Dipakai di |
+|-------|------|-------|-----------|
+| 3-2-1 | 3 x bip pendek rendah (80 ms, jarak 1 detik) | Ringan per bip (sudah ada `countdownTick`) | Sebelum setiap mulai kerja dan akhir istirahat |
+| **Mulai kerja / naik intensitas** | Bip panjang tinggi (400 ms) setelah 3-2-1 (pola start lomba) | Kuat | Mulai set, mulai segmen tempo/interval/lari |
+| **Istirahat / turun intensitas** | Dua nada turun tinggi -> rendah (150 ms + 150 ms) | Sedang | Set selesai, mulai istirahat, mulai jog/jalan pemulihan |
+| Setengah jalan | 1 bip tinggi lembut (volume -6 dB) | Tidak | Segmen >= 6 menit, istirahat >= 60 detik, set berwaktu >= 20 detik |
+| 10 detik / 1 menit lagi | 2 bip pendek tinggi | Ringan | Peringatan sebelum pergantian |
+| Ganti sisi | 3 bip cepat sama nada (60 ms, jarak 80 ms) | Ringan x2 | Set berwaktu per sisi, di tengah |
+| Segmen lari baru, intensitas sama | `cue.wav` yang ada | Sedang | Mis. easy -> easy, repetisi berikutnya setelah 3-2-1 |
+| Sesi selesai | `done.wav` yang ada (nada naik 3) | Sukses | Akhir sesi |
 
-- Indikator: ikon mikrofon kecil di bar atas timer (di sebelah tombol suara) berwarna aktif saat mendengar. iOS juga menampilkan titik oranye sistem.
-- Satu sesi pengenal per jendela; dimulai ulang otomatis jika platform memutus sesi (batas durasi per sesi diuji di S-V3).
-- Hanya hasil `final` yang dieksekusi; maks 3 alternatif transkrip dicocokkan.
+Aturan:
 
-### 5.2 Tata bahasa
+- Satu momen = satu pola; tidak ada dua pola dalam 1 detik kecuali 3-2-1 + tanda mulai (memang satu rangkaian).
+- Pola yang sama dipakai di mode Suara: bunyi lebih dulu, kalimat sesudahnya. Pengguna yang pindah mode tidak perlu belajar ulang.
+- **Belajar bunyi:** topik baru di Panduan 4.7 "Arti bunyi timer" berisi tabel di atas dengan tombol putar per pola (bukan layar baru). Tautan dari 4.1 di bawah pilihan Bunyi saja.
 
-Cocok jika ucapan (setelah huruf kecil + tanpa tanda baca) **sama persis** dengan salah satu frasa, atau frasa berdiri sendiri dalam ucapan <= 4 kata. Ucapan lebih panjang diabaikan (kemungkinan bicara dengan orang atau ikut bernyanyi).
+## 6. Angka hitung mundur
 
-| Maksud | ID | EN | Berlaku di state | Aksi |
-|--------|----|----|------------------|------|
-| Set selesai / lanjut | "selesai", "lanjut", "oke", "sudah" | "done", "next", "finished" | Set repetisi, drill | `next` |
-| Lewati istirahat | "lewati", "mulai", "siap" | "skip", "start", "ready" | Istirahat | `next` |
-| Tambah istirahat 30 detik | "tambah", "tambah waktu" | "more time", "add time" | Istirahat | Baru, perlu K5 |
-| Jeda | "jeda", "tunggu", "pause" | "pause", "wait" | running | `pause` |
-| Lanjutkan | "lanjut", "lanjutkan", "mulai lagi" | "resume", "continue" | paused | `resume` |
-| Berapa lagi | "berapa lagi", "sisa", "waktu" | "time left", "how long" | Semua | Ucapkan sisa segmen + total |
-| Ulangi | "ulangi", "apa", "lagi" | "repeat", "say again" | Semua | Ulangi ucapan terakhir prioritas 1/2 |
-| Lewati gerakan | "lewati gerakan" | "skip exercise" | Strength set | `skipGroup` |
-| Lewati drill | "lewati drill" | "skip drill" | Drill | `skipGroup` |
-| Suara mati / nyala | "diam", "suara mati" / "suara nyala" | "mute" / "unmute" | Semua | `toggleMute` (mikrofon tetap) |
-| Akhiri | "akhiri latihan", lalu "ya" dalam 6 detik | "end workout", lalu "yes" | running, paused | Dialog Akhiri yang sama dengan tombol; "ya" = konfirmasi, diam/"batal" = batal |
-
-- Kata yang sama berarti beda menurut state ("lanjut" = `next` saat set, `resume` saat jeda). Tidak ada perintah yang aktif di state yang tidak relevan.
-- Semua frasa dimasukkan ke `contextualStrings` (iOS) / bias bahasa (Android) agar pengenal condong ke kosakata ini.
-- Jeda antar perintah 1,5 detik (debounce) supaya satu ucapan tidak dieksekusi dua kali.
-- Frasa tidak dikenali: diam. Jika 2 kali gagal dalam 10 detik: sekali per sesi "Coba: selesai, jeda, atau ulangi."
-
-### 5.3 Tombol headset (spike S-V2)
-
-Tombol play/pause di headset (media remote) adalah jalur tanpa mikrofon yang paling andal: 1 tekan = aksi utama di layar (Selesai set / Lewati istirahat / Lanjut), 2 tekan = Jeda/Lanjutkan. Kelayakannya dengan `expo-audio` (kontrol layar kunci / remote command) belum diketahui; jika butuh library tambahan, diusulkan terpisah.
-
-## 6. Hitung mundur strength hanya saat istirahat (sudah diterapkan)
-
-| Layar 2.3s | Sebelum | Sesudah |
-|------------|---------|---------|
-| Set repetisi | Tanpa angka | Tanpa angka (tetap) |
-| Set berwaktu (plank) | Angka `stat` hitung mundur | **Tanpa angka.** Teks "Set ini berjalan otomatis. Bunyi dan getar menandai akhir set." Saat dijeda: label "DIJEDA" |
-| Istirahat | Angka `timer` hitung mundur + "Berikutnya" | Sama (satu-satunya angka hitung di strength) |
-
-Alasan: angka di layar mendorong pengguna menatap HP selama set; dengan desain suara (4.3), waktu set disampaikan lewat "15 detik lagi", "10 detik", 3-2-1 dan "Ganti sisi". Istirahat tetap menampilkan angka karena itu saat pengguna wajar melihat layar. State machine tidak berubah: set berwaktu tetap maju otomatis, notifikasi layar kunci tetap.
-
-Sampai Pelatih suara dibangun, set berwaktu hanya ditandai bunyi + getar di akhir (perilaku F-05 yang ada). Ini kompromi sementara yang perlu diterima pemilik (K1).
+Tetap seperti sekarang (App Flow 3.2, UI/UX 2.3s): angka hitung mundur tampil di segmen lari, set berwaktu strength (plank) dan istirahat. Set repetisi dan drill berbasis jarak tidak punya angka karena tidak berwaktu. Panduan audio mengikuti angka yang sama; tidak ada informasi yang hanya ada di audio atau hanya di layar.
 
 ## 7. Layar terkunci dan latar belakang
 
-Ini bagian tersulit dari "tanpa melihat layar", dan belum terbukti di device (sama dengan S3 di `spikes.md`).
-
 | Platform | Masalah | Rencana |
 |----------|---------|---------|
-| iOS | JS berhenti saat app di latar belakang; TTS terjadwal tidak jalan. Mode latar `audio` hanya menjaga app hidup selama benar-benar memutar audio | S-V1: uji `UIBackgroundModes: audio` + sesi audio aktif selama timer `running`. Jika tidak andal: tetap notifikasi lokal bersuara (yang ada) dengan teks ucapan yang sama, plus anjuran "biarkan layar menyala" (keep-awake + Kunci layar yang sudah ada) |
-| Android | Proses bisa dihentikan di latar belakang | S-V1: uji dengan audio aktif. Foreground service butuh library/plugin baru, diusulkan terpisah bila perlu |
+| iOS | JS berhenti saat app di latar belakang; TTS terjadwal tidak jalan | S-V1: uji `UIBackgroundModes: audio` + sesi audio aktif selama `running`. Jika tidak andal: notifikasi lokal yang sudah ada dengan **bunyi pola** sebagai suara notifikasi (file WAV yang sama) + teks ucapan; anjuran layar tetap menyala dengan Kunci layar (sudah ada) |
+| Android | Proses bisa dihentikan di latar belakang | S-V1 dengan audio aktif; foreground service butuh library baru, diusulkan terpisah bila perlu |
 | Web | Tab tidak aktif menunda timer | Seperti sekarang (TRD 5): hanya saat tab aktif + Wake Lock |
 
-Mode "layar menyala di saku": keep-awake sudah aktif; Kunci layar (gembok) mencegah sentuhan saku. Perintah suara dan tombol headset tetap bekerja saat terkunci sentuh.
+Keuntungan mode Bunyi saja: pola bunyi bisa menjadi suara notifikasi terjadwal, jadi tetap bekerja saat layar terkunci meski JS berhenti. Kalimat TTS tidak bisa.
 
-## 8. Pengaturan, izin, data
+## 8. Pengaturan dan data
 
 ### 8.1 Layar 4.1 (bagian Latihan)
 
 | Baris | Nilai | Default |
 |-------|-------|---------|
-| Pelatih suara | Sakelar | Nyala |
-| Detail suara | Ringkas / Normal / Lengkap | Normal |
-| Perintah suara | Sakelar + 1 kalimat: "Mikrofon hanya dipakai selama timer berjalan dan diproses di HP ini." | Mati |
+| Panduan audio | Suara / Bunyi saja | Suara (Bunyi saja jika suara locale tidak terpasang) |
+| Detail suara | Ringkas / Normal / Lengkap (hanya tampil jika Suara) | Normal |
+| Arti bunyi timer | Tautan ke 4.7 | - |
 
-Tidak ada layar baru. Pertama kali Perintah suara dinyalakan: 1 kalimat penjelasan lalu dialog izin mikrofon (iOS juga izin Speech Recognition), sesuai pola izin notifikasi (TRD 9 aturan 2). Ditolak: sakelar kembali mati + "Buka pengaturan". Perangkat tanpa pengenalan di perangkat untuk locale aktif (`supportsOnDeviceRecognition()` false atau locale tidak ada di `getSupportedLocales()`): sakelar nonaktif dengan keterangan.
-
-Di timer 2.3/2.3s: ikon mikrofon kecil di bar atas (status mendengar, ketuk = buka jendela 8 detik).
+Mematikan semua audio tetap lewat tombol bisu di timer (sudah ada). Tidak ada layar baru, tidak ada izin baru.
 
 ### 8.2 Schema (migrasi v7, lokal)
 
 | Kolom `profile` | Tipe | Isi |
 |-----------------|------|-----|
-| `voice_coach` | int default 1 | 0/1 |
+| `audio_guide` | text default 'voice' | `voice` / `beeps` |
 | `voice_detail` | text default 'normal' | `brief` / `normal` / `full` |
-| `voice_commands` | int default 0 | 0/1 |
 
-Ikut file backup. Tidak ada tabel baru, tidak ada kolom di server.
+Ikut file backup. Tidak ada tabel baru, tidak ada apa pun di server. Analitik paling banyak nilai `audio_guide` lewat sakelar data pemakaian yang ada (PV-d).
 
-## 9. Privasi
+### 8.3 Aksesibilitas
 
-| Aturan | Implementasi | Test |
-|--------|--------------|------|
-| Audio tidak pernah keluar dari HP | `requiresOnDeviceRecognition: true`; jika tidak didukung, fitur mati (tidak ada fallback ke pengenal server) | Test privasi: intercept jaringan selama sesi dengan perintah aktif = 0 request |
-| Tidak menyimpan audio atau transkrip | Transkrip hanya di memori sampai dicocokkan; tidak masuk SQLite, log, Sentry, PostHog | Lint/test: modul `listener.ts` tidak mengimpor logger/analytics |
-| Analitik | Paling banyak hitungan anonim `voice_enabled` (ya/tidak) lewat sakelar data pemakaian yang ada; tanpa isi perintah | Ikut test PV-d |
-| Web | Chrome `SpeechRecognition` secara default memproses di server Google, jadi Perintah suara **mati di web** sampai S-V4 membuktikan mode on-device browser bisa dipaksa. TTS web (`speechSynthesis`) boleh; suara lokal dipilih (`localService: true`) | S-V4 |
-| Notifikasi | Teks cue layar kunci tetap tanpa data kesehatan (TRD 9 aturan 1) | Test yang ada |
+- VoiceOver/TalkBack aktif: ucapan dikirim lewat pengumuman aksesibilitas agar tidak bertabrakan (diuji di S-V1).
+- Pengguna tuli/HOH: angka tetap di layar (bagian 6) dan setiap pola bunyi punya getar sepadan (tabel bagian 5).
 
-## 10. Aksesibilitas
-
-- Jika VoiceOver/TalkBack aktif: ucapan Pelatih suara dikirim lewat pengumuman aksesibilitas agar tidak bertabrakan dengan pembaca layar (diuji di S-V1).
-- Semua informasi suara juga ada di layar (P7); pengguna tuli/HOH tidak kehilangan apa pun kecuali angka hitung set berwaktu (bagian 6). Untuk mereka, getar ringan di 10 detik terakhir dan getar kuat di akhir set (usulan).
-
-## 11. Perubahan spec bila disetujui
+## 9. Perubahan spec bila disetujui
 
 | Dokumen | Perubahan |
 |---------|-----------|
-| 01-PRD | F-25 Pelatih suara (Should), F-26 Perintah suara (Could), layar 2.3, 2.3b, 2.3s, 4.1 |
-| 02-TRD | Library `expo-speech` (versi SDK 58 di npm: 58.0.3) dan `expo-speech-recognition` (komunitas, 58.0.1, butuh dev build). Bagian 5 (latar belakang), bagian 7 target latensi perintah <= 1 detik, bagian 8 katalog `voice.*` |
-| 03-APP-FLOW | 3.2: perintah suara memetakan ke aksi yang sama; dialog Akhiri bisa dikonfirmasi "ya"; aturan "hitung mundur strength hanya saat istirahat" (sudah ditulis) |
-| 04-UI-UX | 2.3s tanpa angka saat set (sudah ditulis); ikon mikrofon di bar timer; baris 4.1 |
-| 05-SCHEMA | Migrasi v7, 3 kolom `profile` (8.2) |
-| 06-PLAN | Milestone V1 sampai V3 (bagian 13) |
-| 08-MONETIZATION | Usulan: Pelatih suara gratis (bagian dari timer F-05 yang gratis); Perintah suara gratis atau Premium = keputusan K3 |
-| Wireframe | 4.1 (3 baris baru), 2.3/2.3s (ikon mikrofon) versi ID/EN, terang/gelap |
+| 01-PRD | F-25 Pelatih suara (Should): mode Suara / Bunyi saja, detail, layar 2.3, 2.3b, 2.3s, 4.1, 4.7 |
+| 02-TRD | Library `expo-speech` (npm, versi SDK 58: 58.0.3). Bagian 5 (latar belakang, bunyi notifikasi), bagian 8 katalog `voice.*` |
+| 03-APP-FLOW | 3.2: momen audio per state (tanpa perubahan state) |
+| 04-UI-UX | Baris 4.1, topik 4.7, tabel bunyi + getar (perluasan G5) |
+| 05-SCHEMA | Migrasi v7, 2 kolom `profile` |
+| 06-PLAN | Milestone V1, V2 (bagian 11) |
+| 08-MONETIZATION | Usulan: gratis, bagian dari timer F-05 yang gratis |
+| Wireframe | 4.1 (baris baru), 4.7 topik bunyi, versi ID/EN, terang/gelap |
 
-## 12. Keputusan pemilik
+## 10. Keputusan pemilik
 
 | # | Pertanyaan | Usulan |
 |---|-----------|--------|
-| K1 | Terima sementara set berwaktu tanpa angka, hanya bunyi di akhir, sampai V1 selesai? | Ya (sudah diterapkan, mudah dibalik) |
-| K2 | Izinkan dev build iOS/Android untuk Perintah suara (CLAUDE.md: tanpa build native sebelum perintah eksplisit) | Ya setelah V1 direview di web |
-| K3 | Perintah suara gratis atau Premium | Gratis di beta, dinilai ulang dengan data pemakaian |
-| K4 | Pengaturan kecepatan bicara | Tidak di V1 |
-| K5 | Perintah "tambah istirahat 30 detik" (perilaku baru di state machine) | Ya, kecil dan sering diminta |
-| K6 | Suara rekaman manusia (lebih natural) vs TTS sistem | TTS sistem: gratis, ikut 2 bahasa, isi dinamis (nama gerakan, pace). Rekaman bisa dipertimbangkan untuk kata tetap ("Mulai", "Istirahat") nanti |
+| K1 | Default Panduan audio: Suara atau Bunyi saja | Suara (lebih jelas untuk pengguna baru); Bunyi saja untuk yang sudah hafal atau mendengar musik |
+| K2 | TTS sistem vs rekaman suara manusia | TTS sistem: gratis, 2 bahasa, isi dinamis (nama gerakan, pace). Rekaman bisa dipertimbangkan nanti untuk kata tetap |
+| K3 | Pengaturan kecepatan bicara | Tidak di V1 |
+| K4 | Nada dasar dan pola di bagian 5 | Setuju sebagai titik awal, final setelah S-V2 |
 
-## 13. Tahapan
+## 11. Tahapan
 
 | Fase | Isi | Branch usulan | Butuh | Selesai jika |
 |------|-----|---------------|-------|--------------|
-| V0 (selesai) | Hitung mundur strength hanya saat istirahat | `claude/zen-ptolemy-4m4k9v` | - | E2E 2.3s lolos; review di preview web |
-| S-V1 | Spike TTS: kualitas suara `id-ID`/`en-US` di iOS, Android, Chrome, Safari; latensi; ducking musik; layar terkunci | `spike/voice-tts` | HP fisik (Expo Go cukup) | Tabel hasil di `spikes.md` |
-| V1 | Pelatih suara: `voiceScript`, `voiceDirector`, `speak*`, earcon `tick`, baris 4.1 (Pelatih suara + Detail), migrasi v7 | `feat/v1-voice-coach` | Persetujuan spec | Unit test skrip per mode (lari, interval, drill, strength repetisi/berwaktu/per sisi), test antrian (tidak tumpang tindih, ucapan basi dibuang), E2E web: ucapan tercatat lewat adaptor palsu |
-| S-V2 | Spike tombol headset | `spike/voice-remote` | HP + headset | Keputusan library |
-| S-V3 | Spike pengenal di perangkat: akurasi 10 perintah ID/EN, lari di luar, musik, mikrofon HP vs headset, batas durasi sesi | `spike/voice-commands` | Dev build (K2) | Angka T3/T4 terukur |
-| V2 | Perintah suara di jendela strength/drill/istirahat/jeda + ikon mikrofon + izin | `feat/v2-voice-commands` | S-V3 lolos | Unit test tata bahasa per state; test privasi jaringan = 0; uji device 5 sesi |
-| V3 | Jendela mikrofon saat lari (tombol headset / ketuk), "tambah istirahat", konfirmasi Akhiri dengan "ya" | `feat/v3-voice-run` | S-V2, K5 | Uji device |
-| S-V4 | Perintah suara di web dengan pemrosesan lokal browser | - | - | Bukti tidak ada audio ke server; jika tidak terbukti, tetap mati di web |
+| S-V1 | Spike TTS: kualitas `id-ID`/`en-US` di iOS, Android, Chrome, Safari; latensi; ducking musik; layar terkunci | `spike/voice-tts` | HP fisik (Expo Go cukup) | Tabel hasil di `spikes.md` |
+| S-V2 | Spike bunyi: `make-earcons.py`, uji beda pola di atas musik, 5 orang (T3) | `spike/earcons` | HP + headset | Pola final |
+| V1 | Bunyi saja: pola bagian 5 di `cues.ts`, `audioScript`/`audioDirector`, bunyi notifikasi layar kunci, ganti sisi, topik 4.7, baris 4.1, migrasi v7 | `feat/v1-audio-beeps` | Persetujuan spec | Unit test jadwal momen per mode (lari, interval, drill, strength repetisi/berwaktu/per sisi); test tidak ada 2 pola dalam 1 detik; E2E web: momen tercatat lewat adaptor palsu |
+| V2 | Suara: `speech.ts`, skrip `voice.*` ID/EN, detail, fallback ke bunyi, `speak*` | `feat/v2-voice-coach` | V1, S-V1 | Unit test skrip + antrian (tidak tumpang tindih, basi dibuang); review di preview web; uji device 5 sesi |
 
-## 14. Risiko
+V1 sengaja Bunyi saja dulu: tanpa library baru, bekerja di layar terkunci lewat notifikasi, dan menjadi dasar pola yang juga dipakai mode Suara.
+
+## 12. Risiko
 
 | Risiko | Dampak | Mitigasi |
 |--------|--------|----------|
-| JS tidak berjalan saat layar terkunci (iOS) | Pelatih suara diam saat HP dikunci | S-V1; fallback notifikasi bersuara + layar menyala dengan Kunci layar |
-| Suara `id-ID` tidak terpasang | Ucapan tidak ada | Earcon saja + petunjuk pasang suara (4.5) |
-| Pengenalan bahasa Indonesia di perangkat tidak tersedia di sebagian Android | Perintah suara tidak bisa dinyalakan | Sakelar nonaktif dengan keterangan; tombol tetap |
-| Aktivasi palsu dari musik/orang lain | Set terlewat | Jendela sempit, ucapan <= 4 kata, debounce, Akhiri perlu "ya". Belum ada "urungkan" untuk Selesai set yang terpicu salah (pertanyaan terbuka) |
-| Headset Bluetooth turun ke HFP | Musik pengguna jelek | Mikrofon HP sebagai default (3.2) |
-| Library komunitas `expo-speech-recognition` berhenti dirawat | Upgrade SDK tersendat | Adaptor tipis `listener.ts`; fitur bisa dimatikan tanpa mengubah timer |
+| JS tidak berjalan saat layar terkunci (iOS) | Kalimat TTS diam saat HP dikunci | Bunyi pola lewat notifikasi terjadwal; layar menyala + Kunci layar |
+| Suara `id-ID` tidak terpasang | Tidak ada kalimat | Otomatis Bunyi saja (4.5) |
+| Pola bunyi tertukar | Pengguna salah momen | Arah nada konsisten (P5), getar sepadan, topik 4.7, uji T3 |
+| Bunyi tenggelam di musik | Momen terlewat | Nada 990 Hz di atas rentang vokal utama, ducking saat bicara, getar |
+| Batas panjang suara notifikasi (iOS maks 30 detik, format tertentu) | Bunyi notifikasi tidak terputar | Semua pola < 1 detik, WAV PCM; diuji di S-V1 |

@@ -83,7 +83,7 @@ Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Ur
 | 7 | Animasi gerakan strength (D8): semua 15 gerakan berupa frame ilustrasi 4x4 (model pria) yang diputar bolak-balik di kotak persegi (2026-11-04). Sisa: versi wanita + pilihan model di app (perlu spec), konfirmasi lisensi gambar AI, review teknik oleh pelatih | `feat/p2-squat-frames` | Review di preview web |
 | 8 | Integrasi Strava, HealthKit, Health Connect + layar 4.2 + panduan HR di 2.2 | `feat/p2-integrations` | Client ID/secret Strava, HP fisik, dev build |
 | 9 | Fase 3: pembelian Premium lewat RevenueCat, trial, restore, `subscription_started` | `feat/p3-premium` | Akun App Store / Play, keputusan harga (08 bagian 6) |
-| 10 | Desain suara (`docs/specs/09-VOICE.md`, usulan): V0 selesai (hitung mundur strength hanya saat istirahat). Berikutnya: keputusan K1 sampai K6, spike S-V1 TTS, lalu V1 Pelatih suara | `feat/v1-voice-coach` | Persetujuan spec, HP fisik, dev build untuk perintah suara (K2) |
+| 10 | Desain suara (`docs/specs/09-VOICE.md`, usulan v0.2): pelatih suara dengan mode Suara (TTS) atau Bunyi saja (pola bip sintesis); tanpa perintah suara; hitung mundur layar tetap. Berikutnya: keputusan K1 sampai K4, spike S-V1 (TTS) dan S-V2 (bunyi), lalu V1 Bunyi saja, V2 Suara | `feat/v1-audio-beeps` | Persetujuan spec, HP fisik |
 
 ## Blocker dan butuh dari pemilik
 
