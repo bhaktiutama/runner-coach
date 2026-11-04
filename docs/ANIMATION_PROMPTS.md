@@ -1,203 +1,102 @@
-# Prompt animasi gerakan strength (Seedance)
+# Prompt ilustrasi gerakan strength (lembar 4x4, pria dan wanita)
 
-Status: Draft v0.1 (2026-11-02). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `apps/app/assets/exercises/README.md`.
-
-> **Jalur aktif (2026-11-03): ilustrasi 3x3, potong, putar bertahap.** Prompt video di dokumen ini (Prompt 2 per gerakan) **tidak dipakai lagi**: hasil video tidak stabil (kisi 3x3 bocor, squat jongkok, perubahan bingkai). Yang dipakai: satu lembar ilustrasi 3x3 per gerakan, dipotong dengan `scripts/slice-keyframes.py` menjadi 9 frame WebP transparan di `apps/app/assets/exercises/`, lalu diputar bertahap oleh `ExerciseAnimation`. Prompt ilustrasi squat ada di bagian "Prompt ilustrasi (jalur aktif)" di bawah. Prompt gambar foto per gerakan di bawahnya masih bisa jadi dasar, tetapi gayanya foto, bukan ilustrasi datar.
-
-## Prompt ilustrasi (jalur aktif)
-
-Gaya: ilustrasi warna datar (cel-shading, outline bersih) supaya mudah dipotong dan ringan. Kamera, ukuran, dan posisi kaki **identik di 9 panel**, karena frame diputar bergantian. Sudut gerakan ditulis dari tinggi paha dan kemiringan badan, bukan kata "bottom" (kata itu membuat model jongkok).
-
-```text
-Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bodyweight parallel squat, drawn as a sheet of nine sequential keyframes.
-
-The man: an Asian man in his late 20s, lean athletic build, short neat black hair, calm neutral face, wearing a teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size.
-
-Layout: ONE square image (1:1) containing a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
-
-Camera (identical in all nine panels): exact side profile, he faces the RIGHT edge of the panel, the camera sees his right side, the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His feet are planted at exactly the same position in every panel and he is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: one perfectly flat solid chroma key green (#00B140), no floor line, no horizon, no scenery, no shadow on the ground.
-
-Keyframes (the thigh angle is measured below horizontal, the torso lean from vertical, the arm angle from hanging straight down). Feet shoulder-width apart, heels flat on the floor in all panels, knees always in line with the toes, back always flat and neutral, head always looking straight ahead.
-Panel 1: standing tall, thighs vertical (90), torso upright (0), arms hanging at his sides (0).
-Panel 2: beginning to sit back, thighs 70, torso leans forward 10, shins lean forward 8, arms raised forward 25.
-Panel 3: thighs 50, torso leans forward 25, shins lean forward 15, arms raised forward 55.
-Panel 4: thighs 25, torso leans forward 35, shins lean forward 20, arms raised forward 85.
-Panel 5: lowest point of the squat: thighs exactly horizontal (0), parallel to the floor, hips level with the knees and clearly above the floor (about 45 cm, like sitting on a chair), torso leans forward 40, shins lean forward 22, arms straight forward at shoulder height (90). This is a half squat: NOT a deep squat, NOT a crouch.
-Panel 6: rising, same pose as panel 4.
-Panel 7: rising, same pose as panel 3.
-Panel 8: rising, same pose as panel 2.
-Panel 9: almost standing, thighs 80, torso leans forward 3, arms 5, so that panel 9 flows smoothly into panel 1 when the nine panels are cycled in a loop.
-```
-
-Prompt negatif:
-
-```text
-photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different face between panels, different clothes between panels, different size between panels, different camera angle between panels, perspective, three-quarter view, front view, back view, scenery, floor line, shadow on the floor, green clothing, deep squat, crouching, hips below the knees, heels lifting, knees caving inward, rounded back, hands touching the floor, extra limbs, distorted hands, distorted feet
-```
-
-Latar boleh transparan atau hijau; hasil akhir harus PNG/WebP transparan sebelum dipotong. Sheet squat yang dipakai app: hasil generator dengan latar transparan (lihat `apps/app/assets/exercises/README.md`).
+Status: Draft v0.2 (2026-11-04). Melengkapi `docs/ANIMATION_PIPELINE.md` dan `apps/app/assets/exercises/README.md`. Dibuat oleh `python3 -I scripts/gen-animation-prompts.py docs/ANIMATION_PROMPTS.md` (ubah data gerakan di skrip itu, jangan edit file ini langsung). Prompt video Seedance dan prompt foto 3x3 versi sebelumnya dihapus (masih ada di riwayat git, commit `a8c35f6`).
 
 ## Ringkasan
 
-- 15 gerakan strength dan core (library `EXERCISES` di `packages/training-engine/src/strength.ts`). Squat sudah punya video (model perempuan), 14 lainnya belum.
-- Tiap gerakan punya **2 prompt** yang disalin apa adanya: (1) prompt gambar, satu lembar 3x3 berisi 9 keyframe, (2) prompt video dari lembar itu.
-- Semua model **laki-laki**, 1:1, latar hijau chroma (#00B140), tanpa bayangan lantai. Latar nanti diganti warna token terang/gelap (lihat README aset).
-- Semua video 5 detik, satu repetisi, awal sama dengan akhir (loop mulus).
+- Tiap gerakan: **satu lembar ilustrasi 4x4 (16 keyframe)** per model, dipotong dengan `scripts/slice-keyframes.py` menjadi 16 WebP transparan, lalu diputar bertahap di app.
+- Dua model: **pria** dan **wanita**, pakaian sama, supaya pengguna nanti bisa memilih. 15 gerakan x 2 = 30 lembar.
+- Panel 1 = posisi awal, panel 16 = posisi akhir (puncak gerakan). Gerakan balik **tidak digambar**: app memutar 1 ke 16 lalu kembali 16 ke 1 (bolak-balik), jadi satu repetisi = 30 langkah dari 16 gambar.
+- Sudut tiap panel ditulis sebagai angka yang naik rata dari panel 1 ke 16, karena kata seperti "bottom" terbukti membuat model jongkok terlalu dalam.
 
 ## Alur per gerakan
 
 | # | Langkah | Yang dilakukan |
 |---|---|---|
-| 0 | Buat card karakter (sekali) | Generate card laki-laki dan perempuan (bagian "Card karakter"), pilih hasil terbaik, simpan. Dipakai sebagai referensi identitas di semua prompt keyframe |
-| 1 | Generate lembar keyframe | Tempel prompt gambar + prompt negatif. Hasil: satu gambar 1:1 berisi 9 panel |
-| 2 | Periksa lembar | Pakai daftar periksa gerakan. Ulangi sampai 9 panel benar dan orangnya sama |
-| 2b | Potong panel 1 | Potong sel kiri atas dari lembar menjadi gambar 1:1 tunggal, tanpa garis putih pemisah dan tanpa bagian panel lain. Lembar 3x3 hanya dipakai untuk memeriksa gerakan, **tidak diunggah ke video** |
-| 3 | Pilih model video | `seedance-2.0-mini-image-to-video` (atau fast atau standard). Panel 1 menjadi frame pertama, jadi tampilan awal terjamin |
-| 4 | Generate video | Unggah **hanya 1 gambar**: panel 1 terpotong. Rasio 1:1, resolusi 720p, durasi 5 dtk. Tempel Prompt 2 |
-| 5 | Periksa video | Gerakan sama dengan keyframe, tampak samping tetap, loop mulus, latar hijau rata |
-| 6 | Kirim ke Claude | Untuk chroma key, pasangan terang/gelap dan pemasangan di app |
-
-Prompt gambar sekitar 500 sampai 700 kata. Jika alat gambar membatasi panjang prompt, ringkas dulu bagian karakter dan latar (tetap sama di semua gerakan), jangan daftar 9 panelnya.
-
-Pengaturan yang disarankan untuk video (model image-to-video):
-
-| Pengaturan | Nilai | Alasan |
-|---|---|---|
-| Model | `seedance-2.0-mini-image-to-video` dulu. Jika gerakan meleset, coba fast atau standard | Mini paling murah untuk uji coba |
-| Gambar | 1 gambar: panel 1 terpotong (frame pertama) | Biaya satu gambar, tanpa risiko kisi |
-| Rasio | 1:1 | Didukung |
-| Resolusi | 720p | Default. 480p terlalu rendah untuk chroma key yang rapi. 1080p hanya di model standard |
-| Durasi | 5 detik | Sama dengan timeline di prompt (rentang yang didukung 4 sampai 15 detik) |
-
-Sumber: dokumentasi EvoLink Seedance 2.0 (model image-to-video: 1 gambar = frame pertama, rasio `1:1`, 480p dan 720p di semua model, 1080p hanya standard, durasi 4 sampai 15 detik). EvoLink tidak punya kolom negative prompt, jadi larangan ditulis di baris `Avoid:` di akhir prompt. Batas panjang prompt yang direkomendasikan 1.000 kata Inggris.
-
-Riwayat masalah: (1) lembar 3x3 diunggah ke model image-to-video: video berisi kisi 3x3 (dianggap frame pertama). (2) Prompt reference-to-video dengan timeline per panel: video berubah bentuk mengikuti foto referensi. (3) Lembar 3x3 utuh sebagai satu-satunya gambar di reference-to-video, dengan teks "hanya panel 1 yang subjek": video tetap menampilkan kisi 3x3. Kesimpulan: model memakai seluruh gambar sebagai isi visual, dan pembagian peran lewat teks tidak cukup. Karena itu hanya panel 1 terpotong yang diunggah; gerakan dijelaskan lewat teks.
+| 0 | Card karakter (sekali per model) | Generate card pria dan wanita (bagian "Card karakter"), simpan yang terbaik. Lampirkan sebagai gambar referensi di setiap prompt gerakan agar wajah dan baju konsisten |
+| 1 | Generate lembar | Tempel prompt pria (atau wanita) + prompt negatif gerakan itu. Resolusi setinggi mungkin (minimal 2048 x 2048, supaya tiap panel sekitar 512 px) |
+| 2 | Periksa lembar | 16 panel berurutan, orang sama, ukuran sama, kaki atau titik tumpu tidak bergeser, panel 16 sesuai "Periksa" |
+| 3 | Jadikan transparan | Latar harus transparan sebelum dipotong. Jika hasil berlatar hijau, hapus latar dulu (garis pemisah putih boleh tetap ada) |
+| 4 | Potong | `python3 -I scripts/slice-keyframes.py lembar.png apps/app/assets/exercises <exercise_id>-m` (atau `-f`). Hasil: 16 file `<exercise_id>-m-1.webp` ... `-16.webp` |
+| 5 | Kirim ke Claude | Untuk pemasangan di app (daftar frame, lama tiap frame, putar bolak-balik) |
 
 ## Aturan bersama
 
 | Hal | Nilai |
 |---|---|
-| Karakter | Laki-laki Indonesia akhir 20-an, 175 cm, atletis ramping, rambut hitam pendek, tanpa jenggot |
-| Pakaian | Kaos atletik slate-blue ketat lengan pendek, celana atletik hitam di atas lutut, sepatu lari abu muda sol putih. Tanpa hijau |
-| Latar | Hijau chroma rata (#00B140), tanpa gradasi, garis lantai, atau bayangan |
-| Kamera | Tetap, tegak lurus bidang gerak. Tampak samping (menghadap kanan frame) untuk semua gerakan kecuali side plank dan Copenhagen plank (tampak depan) |
-| Rasio | 1:1. Di layar app, video menempati kotak persegi di atas teks gerakan |
-| Properti | Hanya bila perlu (bangku, kotak, panel dinding): abu tua matte (#3A3A3C), tanpa logo dan tanpa hijau |
-| Sisi kerja | Gerakan satu sisi memakai anggota badan terdekat kamera (sisi kanan) sebagai sisi kerja. Sisi lain tidak dibuat terpisah (app menyebut "per sisi") |
-| Durasi | 5 detik, satu repetisi. Gerakan tahan (plank, side plank, Copenhagen, bird dog) memuat naik, tahan, turun dalam 5 detik |
+| Gaya | Ilustrasi warna datar (cel-shading, outline gelap rapi, 2 sampai 3 tone per warna), sama dengan lembar squat yang sudah dipakai app |
+| Pria | Asia, akhir 20-an, atletis ramping, rambut hitam pendek rapi |
+| Wanita | Asia, akhir 20-an, atletis ramping, rambut hitam panjang dikuncir tinggi |
+| Pakaian (keduanya) | Kaos atletik teal lengan pendek (tidak crop), celana atletik hitam 10 cm di atas lutut, smartwatch hitam, sepatu lari putih aksen oranye. Tanpa hijau |
+| Latar | Transparan; jika tidak bisa, hijau chroma rata (#00B140). Tanpa garis lantai dan bayangan |
+| Kamera | Ortografis, identik di 16 panel. Tampak samping menghadap kanan, kecuali side plank dan Copenhagen plank (tampak depan) |
+| Properti | Hanya bila perlu (bangku, kotak, panel dinding): abu tua datar (#3A3A3C), tanpa logo |
+| Sisi kerja | Anggota badan terdekat kamera (kanan). Sisi lain tidak dibuat terpisah (app menyebut "per sisi") |
+| Nama file | `<exercise_id>-m-N.webp` (pria), `<exercise_id>-f-N.webp` (wanita), N = 1 sampai 16 |
 
 ## Daftar gerakan
 
-| # | `exercise_id` | Nama di app | Tampak | Properti | Tahan di puncak |
+| # | `exercise_id` | Nama di app | Tampak | Properti | Tahan di panel 16 (usulan) |
 |---|---|---|---|---|---|
-| 1 | `squat` | Squat | samping | - | 0.4 dtk |
-| 2 | `split_squat` | Split squat | samping | - | 0.4 dtk |
-| 3 | `bulgarian_split_squat` | Bulgarian split squat | samping | bangku abu tua 45 cm | 0.4 dtk |
-| 4 | `glute_bridge` | Glute bridge | samping, lantai | - | 1.0 dtk |
-| 5 | `single_leg_glute_bridge` | Glute bridge satu kaki | samping, lantai | - | 1.0 dtk |
-| 6 | `single_leg_deadlift` | Single-leg deadlift | samping | - | 0.4 dtk |
-| 7 | `reverse_lunge` | Reverse lunge | samping | - | 0.4 dtk |
-| 8 | `step_up` | Step-up | samping | kotak abu tua 40 cm | 0.6 dtk |
-| 9 | `calf_raise` | Calf raise | samping | - | 1.0 dtk |
-| 10 | `single_leg_calf_raise` | Single-leg calf raise | samping | panel dinding abu tua (pegangan) | 1.0 dtk |
-| 11 | `plank` | Plank | samping, lantai | - | 2.0 dtk |
-| 12 | `side_plank` | Side plank | depan | - | 2.0 dtk |
-| 13 | `dead_bug` | Dead bug | samping, lantai | - | 0.4 dtk |
-| 14 | `bird_dog` | Bird dog | samping, lantai | - | 2.0 dtk |
-| 15 | `copenhagen_plank` | Copenhagen plank | depan | bangku abu tua 45 cm | 2.0 dtk |
+| 1 | `squat` | Squat | samping | - | 0,4 dtk |
+| 2 | `split_squat` | Split squat | samping | - | 0,4 dtk |
+| 3 | `bulgarian_split_squat` | Bulgarian split squat | samping | bangku 45 cm | 0,4 dtk |
+| 4 | `glute_bridge` | Glute bridge | samping, lantai | - | 1,0 dtk |
+| 5 | `single_leg_glute_bridge` | Glute bridge satu kaki | samping, lantai | - | 1,0 dtk |
+| 6 | `single_leg_deadlift` | Single-leg deadlift | samping | - | 0,4 dtk |
+| 7 | `reverse_lunge` | Reverse lunge | samping | - | 0,4 dtk |
+| 8 | `step_up` | Step-up | samping | kotak 40 cm | 0,6 dtk |
+| 9 | `calf_raise` | Calf raise | samping | - | 1,0 dtk |
+| 10 | `single_leg_calf_raise` | Single-leg calf raise | samping | panel dinding (pegangan) | 1,0 dtk |
+| 11 | `plank` | Plank | samping, lantai | - | 2,0 dtk |
+| 12 | `side_plank` | Side plank | depan, lantai | - | 2,0 dtk |
+| 13 | `dead_bug` | Dead bug | samping, lantai | - | 0,4 dtk |
+| 14 | `bird_dog` | Bird dog | samping, lantai | - | 2,0 dtk |
+| 15 | `copenhagen_plank` | Copenhagen plank | depan, lantai | bangku 45 cm x 100 cm | 2,0 dtk |
 
-Urutan di tabel = urutan pengerjaan yang disarankan: mulai dari squat (ulang versi laki-laki) untuk mengunci tampilan karakter, lalu gerakan berdiri, lantai, dan terakhir yang memakai properti.
+Urutan pengerjaan yang disarankan: squat dulu (pria, lalu wanita) untuk mengunci tampilan kedua karakter, lalu gerakan berdiri, lantai, dan terakhir yang memakai properti.
 
 ## Card karakter (langkah 0)
 
-Buat satu kali per model, sebelum semua keyframe. Hasilnya menjadi referensi identitas: unggah card sebagai gambar referensi di setiap prompt keyframe (kalimat "If a character reference image is attached..." sudah ada di blok karakter). Jika alat hanya menerima satu gambar referensi, pakai gambar tampak samping (prompt B).
+Satu kali per model. Hasilnya dilampirkan sebagai gambar referensi di prompt gerakan (kalimat "If a character reference image is attached..." sudah ada di setiap prompt). Lembar squat pria yang sudah ada di app juga bisa dipakai sebagai referensi pria.
 
-| Hal | Laki-laki | Perempuan |
-|---|---|---|
-| Dipakai untuk | Semua keyframe di dokumen ini | Versi perempuan (belum dibuat prompt keyframe-nya) |
-| Tinggi | 175 cm | 163 cm |
-| Rambut | Hitam pendek rapi | Hitam panjang, kuncir tinggi |
-| Pakaian | Kaos slate-blue lengan pendek, celana hitam di atas lutut, sepatu abu muda | Sama |
-
-Pakaian perempuan sengaja kaos lengan pendek (bukan sports bra seperti video squat sebelumnya) agar seragam dengan laki-laki dan badan tidak terbuka.
-
-### Card Laki-laki
-
-Prompt A: card 2x2 (depan, samping kanan, belakang, wajah)
+### Card Pria
 
 ```text
-Photorealistic studio character reference sheet of ONE person, used as the identity reference for later exercise photos. The person: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) character reference sheet of ONE man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character.
 
-Layout: ONE square image (1:1) with a 2x2 grid of four equal square panels separated by thin solid white lines. No text, no numbers, no labels, no arrows, no frames around the figure.
-Panel 1 (top-left): full body from the front, standing relaxed in a neutral pose, feet hip-width apart, arms hanging with a small gap from the body, looking straight at the camera.
-Panel 2 (top-right): the same person, full body, exact side profile facing the RIGHT edge of the panel (the camera sees the right side of the body), standing relaxed with the arms hanging naturally.
-Panel 3 (bottom-left): the same person, full body from behind, same pose as panel 1.
-Panel 4 (bottom-right): head and shoulders close-up from the front, calm neutral expression, mouth closed, showing the face, the hair and the neckline of the shirt clearly.
+Layout: ONE square image (1:1) split into two equal tall panels side by side, separated by a thin straight white line. No text, no numbers, no labels, no arrows.
+Left panel: full body from the front, standing relaxed, feet hip-width apart, arms hanging at the sides, looking straight ahead.
+Right panel: the same man, full body, exact side profile facing the RIGHT edge of the panel (the camera sees his right side), standing relaxed and tall, arms hanging at the sides.
 
-In panels 1 to 3 the full body from head to shoes is visible with at least 8 percent margin on every side, at the same scale and with the feet at the same position in each panel. The face, hair, body proportions, clothes and colors are exactly identical in all four panels.
-
-Background: a perfectly flat, uniform chroma key green screen (#00B140) in every panel, with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting, identical in all panels. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
+In both panels the whole body from head to shoes is visible, at the same scale, about 85 percent of the panel height, with clear margin. Face, hair, proportions, clothes and colors are identical in both panels. Orthographic camera at chest height. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 ```
 
 Prompt negatif:
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, 3D render, cartoon, illustration, smiling, glasses, hat, accessories
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different face between panels, different clothes between panels, cropped head, cropped feet, green clothing, extra limbs, distorted hands, distorted feet, hat, glasses, jewelry
 ```
 
-Prompt B: satu gambar tampak samping (referensi tunggal)
+### Card Wanita
 
 ```text
-Photorealistic full-body studio photo of ONE person: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing. One square image (1:1) with a single panel and no grid. Exact side profile facing the RIGHT edge of the image (the camera sees the right side of the body), standing relaxed and tall, feet hip-width apart, arms hanging naturally at the sides, eyes looking straight ahead. The whole body from head to shoes is visible, centered, about 85 percent of the image height, with clear margin around it.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) character reference sheet of ONE woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140), with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
+Layout: ONE square image (1:1) split into two equal tall panels side by side, separated by a thin straight white line. No text, no numbers, no labels, no arrows.
+Left panel: full body from the front, standing relaxed, feet hip-width apart, arms hanging at the sides, looking straight ahead.
+Right panel: the same woman, full body, exact side profile facing the RIGHT edge of the panel (the camera sees her right side), standing relaxed and tall, arms hanging at the sides.
+
+In both panels the whole body from head to shoes is visible, at the same scale, about 85 percent of the panel height, with clear margin. Face, hair, proportions, clothes and colors are identical in both panels. Orthographic camera at chest height. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 ```
 
 Prompt negatif:
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, 3D render, cartoon, illustration, smiling, glasses, hat, accessories, front view, three-quarter view, back view
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different face between panels, different clothes between panels, cropped head, cropped feet, green clothing, extra limbs, distorted hands, distorted feet, hat, glasses, jewelry
 ```
 
-### Card Perempuan
-
-Prompt A: card 2x2 (depan, samping kanan, belakang, wajah)
-
-```text
-Photorealistic studio character reference sheet of ONE person, used as the identity reference for later exercise photos. The person: an Indonesian woman in her late 20s, about 163 cm tall, lean athletic build, long black hair tied in a high ponytail, no visible makeup, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing.
-
-Layout: ONE square image (1:1) with a 2x2 grid of four equal square panels separated by thin solid white lines. No text, no numbers, no labels, no arrows, no frames around the figure.
-Panel 1 (top-left): full body from the front, standing relaxed in a neutral pose, feet hip-width apart, arms hanging with a small gap from the body, looking straight at the camera.
-Panel 2 (top-right): the same person, full body, exact side profile facing the RIGHT edge of the panel (the camera sees the right side of the body), standing relaxed with the arms hanging naturally.
-Panel 3 (bottom-left): the same person, full body from behind, same pose as panel 1.
-Panel 4 (bottom-right): head and shoulders close-up from the front, calm neutral expression, mouth closed, showing the face, the hair and the neckline of the shirt clearly.
-
-In panels 1 to 3 the full body from head to shoes is visible with at least 8 percent margin on every side, at the same scale and with the feet at the same position in each panel. The face, hair, body proportions, clothes and colors are exactly identical in all four panels.
-
-Background: a perfectly flat, uniform chroma key green screen (#00B140) in every panel, with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting, identical in all panels. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
-```
-
-Prompt negatif:
-
-```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, 3D render, cartoon, illustration, smiling, glasses, hat, accessories
-```
-
-Prompt B: satu gambar tampak samping (referensi tunggal)
-
-```text
-Photorealistic full-body studio photo of ONE person: an Indonesian woman in her late 20s, about 163 cm tall, lean athletic build, long black hair tied in a high ponytail, no visible makeup, calm neutral expression with the mouth closed, wearing a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles; no hat, no watch, no jewelry, no green clothing. One square image (1:1) with a single panel and no grid. Exact side profile facing the RIGHT edge of the image (the camera sees the right side of the body), standing relaxed and tall, feet hip-width apart, arms hanging naturally at the sides, eyes looking straight ahead. The whole body from head to shoes is visible, centered, about 85 percent of the image height, with clear margin around it.
-
-Background: a perfectly flat, uniform chroma key green screen (#00B140), with no gradient, no vignette, no wrinkles, no floor line and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture, no lens distortion, camera at chest height.
-```
-
-Prompt negatif:
-
-```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, 3D render, cartoon, illustration, smiling, glasses, hat, accessories, front view, three-quarter view, back view
-```
-
-**Periksa card:** satu orang yang sama di semua panel (wajah, rambut, tinggi, baju), tampak samping benar-benar profil menghadap kanan, seluruh badan masuk dengan margin, latar hijau rata tanpa bayangan, tanpa hijau di pakaian. Jika wajah berubah antar panel, ulangi.
+**Periksa card:** orang yang sama di dua panel, tampak samping benar-benar profil menghadap kanan, seluruh badan masuk, tanpa hijau di pakaian.
 
 ---
 
@@ -205,77 +104,77 @@ text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, disto
 
 **Cue di app:** Kaki selebar bahu, dorong pinggul ke belakang, turun sampai paha sejajar lantai. Lutut searah jari kaki.
 
-**Catatan:** Video squat yang sudah ada di app memakai model perempuan. Buat ulang versi laki-laki ini agar semua gerakan konsisten.
-
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`squat-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the bodyweight squat, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bodyweight parallel squat, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His feet stay at exactly the same spot in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Exercise: bodyweight squat. Feet shoulder-width apart, toes turned out about 15 degrees, both feet flat. No prop.
+Setup (all panels): Feet shoulder-width apart, toes turned out slightly, heels flat on the floor, knees always in line with the toes, back always flat and neutral, head looking straight ahead.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall and relaxed, feet shoulder-width apart, legs straight (knees 180 degrees), arms hanging at his sides, torso vertical, eyes looking straight ahead.
-Panel 2: Starting to sit back: hips move back and down, knees bent to about 150 degrees, torso leaning forward about 10 degrees, both arms swinging forward to about 30 degrees from vertical.
-Panel 3: Knees bent to about 125 degrees, hips further back, torso leaning forward about 20 degrees, arms straight and raised to about 60 degrees from vertical.
-Panel 4: Knees bent to about 105 degrees, thighs about 20 degrees above horizontal, torso leaning forward about 30 degrees with a straight back, arms straight at shoulder height pointing forward.
-Panel 5: Bottom position: thighs parallel to the floor (knees about 90 degrees), shins leaning forward slightly, knees stacked over the middle of the feet and pointing the same way as the toes, torso leaning forward about 35 to 40 degrees with a neutral flat back and chest up, heels flat on the floor, arms straight forward at shoulder height, head neutral.
-Panel 6: Rising: same pose as panel 4 (knees about 105 degrees, arms at shoulder height), moving upward.
-Panel 7: Rising: same pose as panel 3 (knees about 125 degrees, arms at about 60 degrees).
-Panel 8: Rising: same pose as panel 2 (knees about 150 degrees, arms at about 30 degrees).
-Panel 9: Identical to panel 1: standing tall, arms at his sides.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): thigh angle is measured above horizontal (90 = vertical when standing, 0 = parallel to the floor); torso and shin lean are measured forward from vertical; arm angle is measured forward from hanging straight down (90 = straight forward at shoulder height).
+Panel 1: start, standing tall, legs straight, arms hanging at his sides: thighs 90, torso lean 0, shin lean 0, arms 0.
+Panel 2: thighs 84, torso lean 3, shin lean 1, arms 6.
+Panel 3: thighs 78, torso lean 5, shin lean 3, arms 12.
+Panel 4: thighs 72, torso lean 8, shin lean 4, arms 18.
+Panel 5: thighs 66, torso lean 11, shin lean 6, arms 24.
+Panel 6: thighs 60, torso lean 13, shin lean 7, arms 30.
+Panel 7: thighs 54, torso lean 16, shin lean 9, arms 36.
+Panel 8: thighs 48, torso lean 19, shin lean 10, arms 42.
+Panel 9: thighs 42, torso lean 21, shin lean 12, arms 48.
+Panel 10: thighs 36, torso lean 24, shin lean 13, arms 54.
+Panel 11: thighs 30, torso lean 27, shin lean 15, arms 60.
+Panel 12: thighs 24, torso lean 29, shin lean 16, arms 66.
+Panel 13: thighs 18, torso lean 32, shin lean 18, arms 72.
+Panel 14: thighs 12, torso lean 35, shin lean 19, arms 78.
+Panel 15: thighs 6, torso lean 37, shin lean 21, arms 84.
+Panel 16: end, thighs 0, torso lean 40, shin lean 22, arms 90. Lowest point: thighs exactly parallel to the floor, hips level with the knees and clearly above the floor (about 45 cm, like sitting on a chair), arms straight forward at shoulder height. A parallel squat, NOT a deep squat, NOT a crouch.
 ```
 
-Prompt negatif:
+### Prompt wanita (`squat-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE bodyweight parallel squat, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her feet stay at exactly the same spot in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): Feet shoulder-width apart, toes turned out slightly, heels flat on the floor, knees always in line with the toes, back always flat and neutral, head looking straight ahead.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): thigh angle is measured above horizontal (90 = vertical when standing, 0 = parallel to the floor); torso and shin lean are measured forward from vertical; arm angle is measured forward from hanging straight down (90 = straight forward at shoulder height).
+Panel 1: start, standing tall, legs straight, arms hanging at her sides: thighs 90, torso lean 0, shin lean 0, arms 0.
+Panel 2: thighs 84, torso lean 3, shin lean 1, arms 6.
+Panel 3: thighs 78, torso lean 5, shin lean 3, arms 12.
+Panel 4: thighs 72, torso lean 8, shin lean 4, arms 18.
+Panel 5: thighs 66, torso lean 11, shin lean 6, arms 24.
+Panel 6: thighs 60, torso lean 13, shin lean 7, arms 30.
+Panel 7: thighs 54, torso lean 16, shin lean 9, arms 36.
+Panel 8: thighs 48, torso lean 19, shin lean 10, arms 42.
+Panel 9: thighs 42, torso lean 21, shin lean 12, arms 48.
+Panel 10: thighs 36, torso lean 24, shin lean 13, arms 54.
+Panel 11: thighs 30, torso lean 27, shin lean 15, arms 60.
+Panel 12: thighs 24, torso lean 29, shin lean 16, arms 66.
+Panel 13: thighs 18, torso lean 32, shin lean 18, arms 72.
+Panel 14: thighs 12, torso lean 35, shin lean 19, arms 78.
+Panel 15: thighs 6, torso lean 37, shin lean 21, arms 84.
+Panel 16: end, thighs 0, torso lean 40, shin lean 22, arms 90. Lowest point: thighs exactly parallel to the floor, hips level with the knees and clearly above the floor (about 45 cm, like sitting on a chair), arms straight forward at shoulder height. A parallel squat, NOT a deep squat, NOT a crouch.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the bodyweight squat. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the bodyweight squat in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: Feet shoulder-width apart, toes turned out about 15 degrees, both feet flat. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He sits back and down slowly with the arms rising straight forward to shoulder height as a counterbalance, pauses briefly at the bottom with the thighs parallel to the floor, then drives up through the heels while the arms lower back to his sides.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall and relaxed, feet shoulder-width apart, legs straight (knees 180 degrees), arms hanging at his sides, torso vertical, eyes looking straight ahead.
-- Midway posture: knees bent to about 125 degrees, hips further back, torso leaning forward about 20 degrees, arms straight and raised to about 60 degrees from vertical.
-- Peak posture: thighs parallel to the floor (knees about 90 degrees), shins leaning forward slightly, knees stacked over the middle of the feet and pointing the same way as the toes, torso leaning forward about 35 to 40 degrees with a neutral flat back and chest up, heels flat on the floor, arms straight forward at shoulder height, head neutral.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- Knees stay in line with the toes and never cave inward.
-- Back stays flat and neutral, chest up, no rounding.
-- Both heels stay flat on the floor, feet do not slide or shuffle.
-- Depth: thighs parallel to the floor, not deeper.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, knees caving inward, rounded back, heels lifting, feet sliding, squatting deeper than parallel, jumping
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, deep squat, crouching, hips below the knees, heels lifting, knees caving inward, rounded back, hands touching the floor
 ```
 
-**Periksa hasil:** Lutut searah jari kaki, paha sejajar lantai di panel 5, punggung rata, tumit menempel, panel 9 sama dengan panel 1.
+**Periksa:** Paha sejajar lantai di panel 16 (tidak lebih dalam), tumit menempel, punggung rata, kaki tidak bergeser. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -283,75 +182,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Satu kaki di depan, satu di belakang. Turunkan lutut belakang lurus ke bawah, badan tetap tegak.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`split_squat-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the split squat (static lunge), shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE split squat (static lunge), drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His feet stay at exactly the same spots in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Exercise: split squat (static lunge). Split stance: the near (right) leg is the FRONT leg, the far (left) leg is the BACK leg, about 90 cm between the feet front to back and about hip-width apart side to side. Front foot flat, back heel raised with the toes on the floor. Both hands on his hips. The feet do not move during the whole repetition. No prop.
+Setup (all panels): Split stance: the near (right) leg is the FRONT leg and the far (left) leg is the BACK leg, about 90 cm between the feet front to back. Front foot flat, back heel raised with the toes on the floor. Both hands on his hips. Torso always vertical, pelvis level. He moves straight down; the feet never move.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall in the split stance, front foot flat, back heel raised, both knees almost straight (about 170 degrees), torso vertical, hands on hips, eyes straight ahead.
-Panel 2: Lowering straight down: front knee about 145 degrees, back knee about 145 degrees, torso still vertical, hips moving straight down (not forward).
-Panel 3: Front knee about 120 degrees, back knee about 115 degrees, torso vertical, back knee about 25 cm above the floor.
-Panel 4: Front knee about 100 degrees, back knee about 95 degrees, front thigh about 15 degrees above horizontal, torso vertical.
-Panel 5: Bottom position: front thigh parallel to the floor (front knee about 90 degrees), front shin vertical with the knee directly above the ankle and not past the toes, back knee about 90 degrees and about 5 cm above the floor, back thigh vertical, torso upright and tall, pelvis level, hands on hips.
-Panel 6: Rising: same pose as panel 4.
-Panel 7: Rising: same pose as panel 3.
-Panel 8: Rising: same pose as panel 2.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): knee angle is the inside angle of the knee joint (180 = straight leg, 90 = right angle); back knee height is measured from the floor.
+Panel 1: start, standing tall in the split stance, both legs almost straight: front knee 170, back knee 170, back knee height 45 cm.
+Panel 2: front knee 165, back knee 165, back knee height 42 cm.
+Panel 3: front knee 159, back knee 159, back knee height 40 cm.
+Panel 4: front knee 154, back knee 154, back knee height 37 cm.
+Panel 5: front knee 149, back knee 149, back knee height 34 cm.
+Panel 6: front knee 143, back knee 143, back knee height 32 cm.
+Panel 7: front knee 138, back knee 138, back knee height 29 cm.
+Panel 8: front knee 133, back knee 133, back knee height 26 cm.
+Panel 9: front knee 127, back knee 127, back knee height 24 cm.
+Panel 10: front knee 122, back knee 122, back knee height 21 cm.
+Panel 11: front knee 117, back knee 117, back knee height 18 cm.
+Panel 12: front knee 111, back knee 111, back knee height 16 cm.
+Panel 13: front knee 106, back knee 106, back knee height 13 cm.
+Panel 14: front knee 101, back knee 101, back knee height 10 cm.
+Panel 15: front knee 95, back knee 95, back knee height 8 cm.
+Panel 16: end, front knee 90, back knee 90, back knee height 5 cm. Lowest point: front thigh parallel to the floor, front shin vertical with the knee directly above the ankle (not past the toes), back thigh vertical, back knee hovering just above the floor without touching it, torso upright.
 ```
 
-Prompt negatif:
+### Prompt wanita (`split_squat-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE split squat (static lunge), drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her feet stay at exactly the same spots in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): Split stance: the near (right) leg is the FRONT leg and the far (left) leg is the BACK leg, about 90 cm between the feet front to back. Front foot flat, back heel raised with the toes on the floor. Both hands on her hips. Torso always vertical, pelvis level. She moves straight down; the feet never move.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): knee angle is the inside angle of the knee joint (180 = straight leg, 90 = right angle); back knee height is measured from the floor.
+Panel 1: start, standing tall in the split stance, both legs almost straight: front knee 170, back knee 170, back knee height 45 cm.
+Panel 2: front knee 165, back knee 165, back knee height 42 cm.
+Panel 3: front knee 159, back knee 159, back knee height 40 cm.
+Panel 4: front knee 154, back knee 154, back knee height 37 cm.
+Panel 5: front knee 149, back knee 149, back knee height 34 cm.
+Panel 6: front knee 143, back knee 143, back knee height 32 cm.
+Panel 7: front knee 138, back knee 138, back knee height 29 cm.
+Panel 8: front knee 133, back knee 133, back knee height 26 cm.
+Panel 9: front knee 127, back knee 127, back knee height 24 cm.
+Panel 10: front knee 122, back knee 122, back knee height 21 cm.
+Panel 11: front knee 117, back knee 117, back knee height 18 cm.
+Panel 12: front knee 111, back knee 111, back knee height 16 cm.
+Panel 13: front knee 106, back knee 106, back knee height 13 cm.
+Panel 14: front knee 101, back knee 101, back knee height 10 cm.
+Panel 15: front knee 95, back knee 95, back knee height 8 cm.
+Panel 16: end, front knee 90, back knee 90, back knee height 5 cm. Lowest point: front thigh parallel to the floor, front shin vertical with the knee directly above the ankle (not past the toes), back thigh vertical, back knee hovering just above the floor without touching it, torso upright.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the split squat (static lunge). Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the split squat (static lunge) in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: Split stance: the near (right) leg is the FRONT leg, the far (left) leg is the BACK leg, about 90 cm between the feet front to back and about hip-width apart side to side. Front foot flat, back heel raised with the toes on the floor. Both hands on his hips. The feet do not move during the whole repetition. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He lowers his hips straight down, the back knee travelling vertically toward the floor, pauses briefly at the bottom, then pushes up through the front heel back to the start, torso upright the whole time.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall in the split stance, front foot flat, back heel raised, both knees almost straight (about 170 degrees), torso vertical, hands on hips, eyes straight ahead.
-- Midway posture: front knee about 120 degrees, back knee about 115 degrees, torso vertical, back knee about 25 cm above the floor.
-- Peak posture: front thigh parallel to the floor (front knee about 90 degrees), front shin vertical with the knee directly above the ankle and not past the toes, back knee about 90 degrees and about 5 cm above the floor, back thigh vertical, torso upright and tall, pelvis level, hands on hips.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- Both feet stay planted in the same place, no stepping.
-- Torso stays upright, no forward lean beyond a few degrees.
-- Front knee stays above the ankle, the front heel stays down.
-- Back knee moves straight down, hips stay level and square to the camera plane.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, feet stepping, torso leaning far forward, front knee past the toes, front heel lifting, back knee touching the floor hard, hips tilting
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, feet stepping, torso leaning forward, front knee past the toes, front heel lifting, back knee touching the floor, hips tilting
 ```
 
-**Periksa hasil:** Lutut belakang turun lurus, badan tegak, lutut depan di atas pergelangan kaki, kaki tidak berpindah, panel 9 = panel 1.
+**Periksa:** Lutut belakang turun lurus ke bawah, badan tegak, lutut depan di atas pergelangan kaki, kaki tidak pindah. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -359,76 +260,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Punggung kaki belakang di kursi atau bangku. Turun pelan sampai paha depan sejajar lantai, dorong lewat tumit depan.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`bulgarian_split_squat-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the Bulgarian split squat, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE Bulgarian split squat, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His front foot and the bench stay at exactly the same spots in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey bench about 45 cm high and 40 cm long stands on the LEFT side of the panel behind him; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Prop: A plain dark grey bench about 45 cm high and 40 cm long, standing on the LEFT side of the panel behind him (the bench is the only prop). Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-Exercise: Bulgarian split squat. The far (left) foot is the REAR foot, with the top of the foot (laces down) resting on the bench behind him. The near (right) leg is the FRONT leg, with the front foot flat on the floor about 75 cm in front of the bench. Both hands on his hips. The front foot does not move during the repetition.
+Setup (all panels): The far (left) foot is the REAR foot: the top of the foot (laces down) rests on the bench behind him. The near (right) leg is the FRONT leg, foot flat on the floor about 75 cm in front of the bench. Both hands on his hips, pelvis level, back flat. The front foot and the rear foot never move.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall, rear foot on the bench, front leg almost straight (about 170 degrees), torso upright, hands on hips, eyes straight ahead.
-Panel 2: Lowering: front knee about 145 degrees, rear knee about 150 degrees, torso upright with at most 5 degrees of forward lean.
-Panel 3: Front knee about 120 degrees, rear knee about 125 degrees, torso upright with a slight forward lean of about 8 degrees.
-Panel 4: Front knee about 100 degrees, front thigh about 15 degrees above horizontal, rear knee about 105 degrees, rear thigh pointing down and back.
-Panel 5: Bottom position: front thigh parallel to the floor (front knee about 90 degrees), front shin nearly vertical with the knee over the ankle, rear knee bent about 100 degrees and pointing down about 15 cm above the floor, rear foot still on the bench, torso upright with a forward lean of about 10 degrees, pelvis level, weight on the front heel.
-Panel 6: Rising: same pose as panel 4.
-Panel 7: Rising: same pose as panel 3.
-Panel 8: Rising: same pose as panel 2.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): knee angle is the inside angle of the knee joint (180 = straight leg); rear knee height is measured from the floor; torso lean is measured forward from vertical.
+Panel 1: start, standing tall, front leg almost straight: front knee 170, rear knee 135, rear knee height 50 cm, torso lean 0.
+Panel 2: front knee 165, rear knee 133, rear knee height 48 cm, torso lean 1.
+Panel 3: front knee 159, rear knee 130, rear knee height 45 cm, torso lean 1.
+Panel 4: front knee 154, rear knee 128, rear knee height 43 cm, torso lean 2.
+Panel 5: front knee 149, rear knee 126, rear knee height 41 cm, torso lean 3.
+Panel 6: front knee 143, rear knee 123, rear knee height 38 cm, torso lean 3.
+Panel 7: front knee 138, rear knee 121, rear knee height 36 cm, torso lean 4.
+Panel 8: front knee 133, rear knee 119, rear knee height 34 cm, torso lean 5.
+Panel 9: front knee 127, rear knee 116, rear knee height 31 cm, torso lean 5.
+Panel 10: front knee 122, rear knee 114, rear knee height 29 cm, torso lean 6.
+Panel 11: front knee 117, rear knee 112, rear knee height 27 cm, torso lean 7.
+Panel 12: front knee 111, rear knee 109, rear knee height 24 cm, torso lean 7.
+Panel 13: front knee 106, rear knee 107, rear knee height 22 cm, torso lean 8.
+Panel 14: front knee 101, rear knee 105, rear knee height 20 cm, torso lean 9.
+Panel 15: front knee 95, rear knee 102, rear knee height 17 cm, torso lean 9.
+Panel 16: end, front knee 90, rear knee 100, rear knee height 15 cm, torso lean 10. Lowest point: front thigh parallel to the floor, front shin nearly vertical with the knee over the ankle, rear knee pointing down and hovering above the floor, rear foot still on the bench, weight on the front heel.
 ```
 
-Prompt negatif:
+### Prompt wanita (`bulgarian_split_squat-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE Bulgarian split squat, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her front foot and the bench stay at exactly the same spots in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey bench about 45 cm high and 40 cm long stands on the LEFT side of the panel behind her; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
+
+Setup (all panels): The far (left) foot is the REAR foot: the top of the foot (laces down) rests on the bench behind her. The near (right) leg is the FRONT leg, foot flat on the floor about 75 cm in front of the bench. Both hands on her hips, pelvis level, back flat. The front foot and the rear foot never move.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): knee angle is the inside angle of the knee joint (180 = straight leg); rear knee height is measured from the floor; torso lean is measured forward from vertical.
+Panel 1: start, standing tall, front leg almost straight: front knee 170, rear knee 135, rear knee height 50 cm, torso lean 0.
+Panel 2: front knee 165, rear knee 133, rear knee height 48 cm, torso lean 1.
+Panel 3: front knee 159, rear knee 130, rear knee height 45 cm, torso lean 1.
+Panel 4: front knee 154, rear knee 128, rear knee height 43 cm, torso lean 2.
+Panel 5: front knee 149, rear knee 126, rear knee height 41 cm, torso lean 3.
+Panel 6: front knee 143, rear knee 123, rear knee height 38 cm, torso lean 3.
+Panel 7: front knee 138, rear knee 121, rear knee height 36 cm, torso lean 4.
+Panel 8: front knee 133, rear knee 119, rear knee height 34 cm, torso lean 5.
+Panel 9: front knee 127, rear knee 116, rear knee height 31 cm, torso lean 5.
+Panel 10: front knee 122, rear knee 114, rear knee height 29 cm, torso lean 6.
+Panel 11: front knee 117, rear knee 112, rear knee height 27 cm, torso lean 7.
+Panel 12: front knee 111, rear knee 109, rear knee height 24 cm, torso lean 7.
+Panel 13: front knee 106, rear knee 107, rear knee height 22 cm, torso lean 8.
+Panel 14: front knee 101, rear knee 105, rear knee height 20 cm, torso lean 9.
+Panel 15: front knee 95, rear knee 102, rear knee height 17 cm, torso lean 9.
+Panel 16: end, front knee 90, rear knee 100, rear knee height 15 cm, torso lean 10. Lowest point: front thigh parallel to the floor, front shin nearly vertical with the knee over the ankle, rear knee pointing down and hovering above the floor, rear foot still on the bench, weight on the front heel.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the Bulgarian split squat. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the Bulgarian split squat in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: The far (left) foot is the REAR foot, with the top of the foot (laces down) resting on the bench behind him. The near (right) leg is the FRONT leg, with the front foot flat on the floor about 75 cm in front of the bench. Both hands on his hips. The front foot does not move during the repetition.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height. Prop: A plain dark grey bench about 45 cm high and 40 cm long, standing on the LEFT side of the frame behind him (the bench is the only prop). Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He lowers slowly and under control until the front thigh is parallel to the floor, pauses briefly, then pushes up through the front heel back to the start, with the rear foot resting on the bench the whole time.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall, rear foot on the bench, front leg almost straight (about 170 degrees), torso upright, hands on hips, eyes straight ahead.
-- Midway posture: front knee about 120 degrees, rear knee about 125 degrees, torso upright with a slight forward lean of about 8 degrees.
-- Peak posture: front thigh parallel to the floor (front knee about 90 degrees), front shin nearly vertical with the knee over the ankle, rear knee bent about 100 degrees and pointing down about 15 cm above the floor, rear foot still on the bench, torso upright with a forward lean of about 10 degrees, pelvis level, weight on the front heel.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The rear foot stays on the bench, the front foot stays planted.
-- Front knee stays above the ankle and tracks over the toes, front heel stays down.
-- Torso stays nearly upright, pelvis stays level.
-- Slow, controlled tempo, no bouncing at the bottom.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, rear foot sliding off the bench, front knee far past the toes, front heel lifting, torso leaning far forward, bouncing, hips twisting
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, rear foot off the bench, front knee past the toes, front heel lifting, rear knee touching the floor, rounded back, torso leaning far forward
 ```
 
-**Periksa hasil:** Kaki belakang tetap di bangku, paha depan sejajar lantai di panel 5, lutut depan di atas tumit, badan hampir tegak.
+**Periksa:** Kaki belakang tetap di bangku, paha depan sejajar lantai di panel 16, lutut depan di atas pergelangan kaki. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -436,75 +338,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Berbaring, lutut ditekuk. Angkat pinggul sampai badan lurus dari bahu ke lutut, tahan 1 detik.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`glute_bridge-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the glute bridge, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile at floor level, he lies with the head toward the LEFT edge of the panel and the feet toward the RIGHT edge, the camera sees his right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. His head, shoulders and feet stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, centered vertically, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the panel and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-Exercise: glute bridge. He lies on his back, knees bent about 90 degrees, feet flat and hip-width apart with the heels about 30 cm from his glutes, arms resting on the floor along his sides with the palms down. The feet do not move.
+Setup (all panels): He lies on his back with both knees bent, feet flat on the floor hip-width apart, heels about 30 cm from the glutes, arms resting on the floor along his sides with the palms down. Head and shoulders stay on the floor; the feet never move.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Lying flat on his back, knees bent about 90 degrees, feet flat, arms along his sides, lower back lying naturally on the floor, head and shoulders on the floor.
-Panel 2: Hips lifting: glutes about 5 cm off the floor, back of the pelvis tilting slightly, shoulders and head on the floor, feet flat.
-Panel 3: Hips about 15 cm off the floor, thighs and torso forming a shallow angle with the floor, shoulders on the floor.
-Panel 4: Hips about 25 cm off the floor, almost at full height, glutes tight.
-Panel 5: Top position: hips fully raised so that shoulders, hips and knees form one straight diagonal line that rises from the shoulders (on the floor) to the knees, the thighs sloping up from the hips to the knees at about 20 to 30 degrees above horizontal, shins vertical, knees about 90 degrees, feet flat directly below the knees, glutes squeezed, ribs down with no arch in the lower back, shoulders and head still on the floor, arms along his sides.
-Panel 6: Lowering: same pose as panel 4.
-Panel 7: Lowering: same pose as panel 3.
-Panel 8: Lowering: same pose as panel 2, glutes just above the floor.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height is the gap between the hips and the floor; thigh angle is measured above horizontal.
+Panel 1: start, lying flat on the back, knees bent, hips resting on the floor: hip height 0 cm, thighs 45.
+Panel 2: hip height 2 cm, thighs 44.
+Panel 3: hip height 4 cm, thighs 42.
+Panel 4: hip height 6 cm, thighs 41.
+Panel 5: hip height 8 cm, thighs 40.
+Panel 6: hip height 10 cm, thighs 38.
+Panel 7: hip height 12 cm, thighs 37.
+Panel 8: hip height 14 cm, thighs 36.
+Panel 9: hip height 16 cm, thighs 34.
+Panel 10: hip height 18 cm, thighs 33.
+Panel 11: hip height 20 cm, thighs 32.
+Panel 12: hip height 22 cm, thighs 30.
+Panel 13: hip height 24 cm, thighs 29.
+Panel 14: hip height 26 cm, thighs 28.
+Panel 15: hip height 28 cm, thighs 26.
+Panel 16: end, hip height 30 cm, thighs 25. Top: shoulders, hips and knees form one straight diagonal line, shins vertical with the feet directly below the knees, glutes squeezed, ribs down, no arch in the lower back.
 ```
 
-Prompt negatif:
+### Prompt wanita (`glute_bridge-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile at floor level, she lies with the head toward the LEFT edge of the panel and the feet toward the RIGHT edge, the camera sees her right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. Her head, shoulders and feet stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, centered vertically, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): She lies on her back with both knees bent, feet flat on the floor hip-width apart, heels about 30 cm from the glutes, arms resting on the floor along her sides with the palms down. Head and shoulders stay on the floor; the feet never move.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height is the gap between the hips and the floor; thigh angle is measured above horizontal.
+Panel 1: start, lying flat on the back, knees bent, hips resting on the floor: hip height 0 cm, thighs 45.
+Panel 2: hip height 2 cm, thighs 44.
+Panel 3: hip height 4 cm, thighs 42.
+Panel 4: hip height 6 cm, thighs 41.
+Panel 5: hip height 8 cm, thighs 40.
+Panel 6: hip height 10 cm, thighs 38.
+Panel 7: hip height 12 cm, thighs 37.
+Panel 8: hip height 14 cm, thighs 36.
+Panel 9: hip height 16 cm, thighs 34.
+Panel 10: hip height 18 cm, thighs 33.
+Panel 11: hip height 20 cm, thighs 32.
+Panel 12: hip height 22 cm, thighs 30.
+Panel 13: hip height 24 cm, thighs 29.
+Panel 14: hip height 26 cm, thighs 28.
+Panel 15: hip height 28 cm, thighs 26.
+Panel 16: end, hip height 30 cm, thighs 25. Top: shoulders, hips and knees form one straight diagonal line, shins vertical with the feet directly below the knees, glutes squeezed, ribs down, no arch in the lower back.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the glute bridge. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the glute bridge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He lies on his back, knees bent about 90 degrees, feet flat and hip-width apart with the heels about 30 cm from his glutes, arms resting on the floor along his sides with the palms down. The feet do not move.
-
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the frame and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He lifts his hips smoothly by pushing through his heels until the body is a straight line from shoulders to knees, holds that top position for one second, then lowers slowly back to the floor.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): lying flat on his back, knees bent about 90 degrees, feet flat, arms along his sides, lower back lying naturally on the floor, head and shoulders on the floor.
-- Midway posture: hips about 15 cm off the floor, thighs and torso forming a shallow angle with the floor, shoulders on the floor.
-- Peak posture: hips fully raised so that shoulders, hips and knees form one straight diagonal line that rises from the shoulders (on the floor) to the knees, the thighs sloping up from the hips to the knees at about 20 to 30 degrees above horizontal, shins vertical, knees about 90 degrees, feet flat directly below the knees, glutes squeezed, ribs down with no arch in the lower back, shoulders and head still on the floor, arms along his sides.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.0 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.0 to 3.0 s: holds the peak posture briefly.
-- 3.0 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The line from shoulders to knees is straight at the top, with no arching of the lower back and no over-extension.
-- Feet stay flat and in place, shoulders and head stay on the floor.
-- Hold the top position for about 1 second.
-- Lower slowly, the glutes just touch the floor before the next repetition.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, arched lower back, hips sagging, feet sliding, heels lifting, neck lifting off the floor, knees falling inward
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, view from above, lower back arching, hips above the shoulder-to-knee line, shoulders lifting off the floor, head lifting, feet sliding, knees falling outward
 ```
 
-**Periksa hasil:** Garis lurus bahu ke lutut di panel 5, punggung bawah tidak melengkung, tumit menempel, tahan 1 detik di puncak.
+**Periksa:** Bahu, pinggul, lutut satu garis di panel 16 (tidak melengkung), bahu dan kepala tetap di lantai. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -512,75 +416,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Seperti glute bridge, satu kaki lurus ke atas. Pinggul tetap rata, tidak miring.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`single_leg_glute_bridge-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the single-leg glute bridge, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE single-leg glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile at floor level, he lies with the head toward the LEFT edge of the panel and the feet toward the RIGHT edge, the camera sees his right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. His head, shoulders and near foot stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, centered vertically, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the panel and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-Exercise: single-leg glute bridge. He lies on his back. The near (right) foot is flat on the floor with the knee bent about 90 degrees: this is the working leg. The far (left) leg is held straight (knee 180 degrees) with its thigh parallel to the near thigh, the foot flexed, hovering in the air and never touching the floor. Arms rest on the floor along his sides, palms down.
+Setup (all panels): He lies on his back. The near (right) foot is flat on the floor with the knee bent: this is the working leg. The far (left) leg is held straight, its thigh parallel to the near thigh, the foot flexed, never touching the floor. Arms rest on the floor along his sides, palms down. Head and shoulders stay on the floor, the near foot never moves, the pelvis stays level without twisting.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Lying flat on his back, near knee bent about 90 degrees with the foot flat, far leg straight (knee 180 degrees) and raised so that it is parallel to the near thigh, pointing diagonally up, arms along his sides.
-Panel 2: Hips lifting: glutes about 5 cm off the floor, far leg still straight and still parallel to the near thigh.
-Panel 3: Hips about 15 cm off the floor, far leg straight, pelvis level (not rotating toward either side).
-Panel 4: Hips about 25 cm off the floor, almost at full height, far leg straight.
-Panel 5: Top position: hips fully raised so that shoulders, hips and the near knee form one straight diagonal line, near shin vertical, near foot flat, far leg straight and held in line with the near thigh (parallel to it, rising at about 20 to 30 degrees above horizontal), pelvis level and square (hips not dropping or twisting), ribs down with no arch in the lower back, shoulders and head on the floor.
-Panel 6: Lowering: same pose as panel 4.
-Panel 7: Lowering: same pose as panel 3.
-Panel 8: Lowering: same pose as panel 2.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height is the gap between the hips and the floor; thigh angle is measured above horizontal.
+Panel 1: start, lying flat on the back, near knee bent, far leg straight in the air, hips resting on the floor: hip height 0 cm, thighs 45.
+Panel 2: hip height 2 cm, thighs 44.
+Panel 3: hip height 4 cm, thighs 42.
+Panel 4: hip height 6 cm, thighs 41.
+Panel 5: hip height 8 cm, thighs 40.
+Panel 6: hip height 10 cm, thighs 38.
+Panel 7: hip height 12 cm, thighs 37.
+Panel 8: hip height 14 cm, thighs 36.
+Panel 9: hip height 16 cm, thighs 34.
+Panel 10: hip height 18 cm, thighs 33.
+Panel 11: hip height 20 cm, thighs 32.
+Panel 12: hip height 22 cm, thighs 30.
+Panel 13: hip height 24 cm, thighs 29.
+Panel 14: hip height 26 cm, thighs 28.
+Panel 15: hip height 28 cm, thighs 26.
+Panel 16: end, hip height 30 cm, thighs 25. Top: shoulders, hips and the near knee form one straight diagonal line, near shin vertical, the straight far leg continues the line of the near thigh, pelvis level and square.
 ```
 
-Prompt negatif:
+### Prompt wanita (`single_leg_glute_bridge-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE single-leg glute bridge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile at floor level, she lies with the head toward the LEFT edge of the panel and the feet toward the RIGHT edge, the camera sees her right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. Her head, shoulders and near foot stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, centered vertically, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): She lies on her back. The near (right) foot is flat on the floor with the knee bent: this is the working leg. The far (left) leg is held straight, its thigh parallel to the near thigh, the foot flexed, never touching the floor. Arms rest on the floor along her sides, palms down. Head and shoulders stay on the floor, the near foot never moves, the pelvis stays level without twisting.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height is the gap between the hips and the floor; thigh angle is measured above horizontal.
+Panel 1: start, lying flat on the back, near knee bent, far leg straight in the air, hips resting on the floor: hip height 0 cm, thighs 45.
+Panel 2: hip height 2 cm, thighs 44.
+Panel 3: hip height 4 cm, thighs 42.
+Panel 4: hip height 6 cm, thighs 41.
+Panel 5: hip height 8 cm, thighs 40.
+Panel 6: hip height 10 cm, thighs 38.
+Panel 7: hip height 12 cm, thighs 37.
+Panel 8: hip height 14 cm, thighs 36.
+Panel 9: hip height 16 cm, thighs 34.
+Panel 10: hip height 18 cm, thighs 33.
+Panel 11: hip height 20 cm, thighs 32.
+Panel 12: hip height 22 cm, thighs 30.
+Panel 13: hip height 24 cm, thighs 29.
+Panel 14: hip height 26 cm, thighs 28.
+Panel 15: hip height 28 cm, thighs 26.
+Panel 16: end, hip height 30 cm, thighs 25. Top: shoulders, hips and the near knee form one straight diagonal line, near shin vertical, the straight far leg continues the line of the near thigh, pelvis level and square.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the single-leg glute bridge. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the single-leg glute bridge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He lies on his back. The near (right) foot is flat on the floor with the knee bent about 90 degrees: this is the working leg. The far (left) leg is held straight (knee 180 degrees) with its thigh parallel to the near thigh, the foot flexed, hovering in the air and never touching the floor. Arms rest on the floor along his sides, palms down.
-
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the frame and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He lifts his hips by pushing through the heel of the near foot only, while the other leg stays straight and parallel to the working thigh, holds the top for one second with level hips, then lowers slowly.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): lying flat on his back, near knee bent about 90 degrees with the foot flat, far leg straight (knee 180 degrees) and raised so that it is parallel to the near thigh, pointing diagonally up, arms along his sides.
-- Midway posture: hips about 15 cm off the floor, far leg straight, pelvis level (not rotating toward either side).
-- Peak posture: hips fully raised so that shoulders, hips and the near knee form one straight diagonal line, near shin vertical, near foot flat, far leg straight and held in line with the near thigh (parallel to it, rising at about 20 to 30 degrees above horizontal), pelvis level and square (hips not dropping or twisting), ribs down with no arch in the lower back, shoulders and head on the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.0 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.0 to 3.0 s: holds the peak posture briefly.
-- 3.0 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- Only the near foot is on the floor, the far leg stays straight and parallel to the working thigh the whole time.
-- Hips stay level at the top, no rotation or dropping of the far hip.
-- No arching of the lower back, shoulders and head stay on the floor.
-- Hold the top for about 1 second, lower slowly.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, far leg bending, hips twisting, far hip dropping, arched lower back, working foot sliding, both feet on the floor
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, view from above, far foot touching the floor, far leg bent, hips dropping on one side, pelvis twisting, lower back arching, shoulders lifting
 ```
 
-**Periksa hasil:** Kaki bebas tetap lurus dan sejajar paha kaki tumpu, pinggul rata di panel 5, hanya kaki dekat yang menapak, tahan 1 detik.
+**Periksa:** Kaki atas tetap lurus dan sejajar paha, pinggul rata, bahu di lantai. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -588,75 +494,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Berdiri satu kaki, badan condong ke depan sambil kaki lain lurus ke belakang. Punggung rata, kembali pelan.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`single_leg_deadlift-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the bodyweight single-leg deadlift, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bodyweight single-leg deadlift, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His standing foot stays at exactly the same spot in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Exercise: bodyweight single-leg deadlift. He stands on the near (right) leg, which is the working leg, with the knee slightly soft (about 170 degrees). The far (left) leg is the free leg: it starts hanging beside the working leg with the toes hovering about 3 cm above the floor, and it swings straight back. Arms hang straight down, no weights. The standing foot does not move.
+Setup (all panels): He stands on the near (right) leg; the standing foot never moves. The far (left) leg is the free leg: it stays straight and swings back as the torso tips forward, so the torso and the free leg move like a seesaw. Arms hang straight down toward the floor. Back flat, hips square, no weights.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall on the near leg, near knee about 170 degrees, free leg straight beside it with the toes hovering above the floor, torso vertical, arms hanging down, eyes straight ahead.
-Panel 2: Hinging forward at the hips: torso leaning about 20 degrees forward, free leg beginning to swing back about 10 degrees, back flat, arms hanging straight down.
-Panel 3: Torso about 40 degrees forward, free leg raised back about 25 degrees, back flat.
-Panel 4: Torso about 60 degrees forward, free leg raised back about 45 degrees, standing knee about 160 degrees, back flat.
-Panel 5: Bottom position: torso and free leg together form one long straight line, almost parallel to the floor (torso about 80 degrees forward from vertical, free leg raised back to the same height as the hips), standing knee softly bent about 155 degrees, back flat and neutral, hips square to the side (pelvis not opened), free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral looking at the floor about 1 meter ahead.
-Panel 6: Returning: same pose as panel 4.
-Panel 7: Returning: same pose as panel 3.
-Panel 8: Returning: same pose as panel 2.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): torso lean is measured forward from vertical; free leg angle is measured backward from hanging straight down; standing knee is the inside angle of the knee joint.
+Panel 1: start, standing tall on the near leg, free leg hanging beside it with the toes just above the floor: torso lean 0, free leg 0, standing knee 170.
+Panel 2: torso lean 5, free leg 5, standing knee 169.
+Panel 3: torso lean 11, free leg 11, standing knee 168.
+Panel 4: torso lean 16, free leg 16, standing knee 167.
+Panel 5: torso lean 21, free leg 21, standing knee 166.
+Panel 6: torso lean 27, free leg 27, standing knee 165.
+Panel 7: torso lean 32, free leg 32, standing knee 164.
+Panel 8: torso lean 37, free leg 37, standing knee 163.
+Panel 9: torso lean 43, free leg 43, standing knee 162.
+Panel 10: torso lean 48, free leg 48, standing knee 161.
+Panel 11: torso lean 53, free leg 53, standing knee 160.
+Panel 12: torso lean 59, free leg 59, standing knee 159.
+Panel 13: torso lean 64, free leg 64, standing knee 158.
+Panel 14: torso lean 69, free leg 69, standing knee 157.
+Panel 15: torso lean 75, free leg 75, standing knee 156.
+Panel 16: end, torso lean 80, free leg 80, standing knee 155. Lowest point: torso and free leg form one long straight line almost parallel to the floor, free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral.
 ```
 
-Prompt negatif:
+### Prompt wanita (`single_leg_deadlift-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE bodyweight single-leg deadlift, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her standing foot stays at exactly the same spot in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): She stands on the near (right) leg; the standing foot never moves. The far (left) leg is the free leg: it stays straight and swings back as the torso tips forward, so the torso and the free leg move like a seesaw. Arms hang straight down toward the floor. Back flat, hips square, no weights.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): torso lean is measured forward from vertical; free leg angle is measured backward from hanging straight down; standing knee is the inside angle of the knee joint.
+Panel 1: start, standing tall on the near leg, free leg hanging beside it with the toes just above the floor: torso lean 0, free leg 0, standing knee 170.
+Panel 2: torso lean 5, free leg 5, standing knee 169.
+Panel 3: torso lean 11, free leg 11, standing knee 168.
+Panel 4: torso lean 16, free leg 16, standing knee 167.
+Panel 5: torso lean 21, free leg 21, standing knee 166.
+Panel 6: torso lean 27, free leg 27, standing knee 165.
+Panel 7: torso lean 32, free leg 32, standing knee 164.
+Panel 8: torso lean 37, free leg 37, standing knee 163.
+Panel 9: torso lean 43, free leg 43, standing knee 162.
+Panel 10: torso lean 48, free leg 48, standing knee 161.
+Panel 11: torso lean 53, free leg 53, standing knee 160.
+Panel 12: torso lean 59, free leg 59, standing knee 159.
+Panel 13: torso lean 64, free leg 64, standing knee 158.
+Panel 14: torso lean 69, free leg 69, standing knee 157.
+Panel 15: torso lean 75, free leg 75, standing knee 156.
+Panel 16: end, torso lean 80, free leg 80, standing knee 155. Lowest point: torso and free leg form one long straight line almost parallel to the floor, free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the bodyweight single-leg deadlift. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the bodyweight single-leg deadlift in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He stands on the near (right) leg, which is the working leg, with the knee slightly soft (about 170 degrees). The far (left) leg is the free leg: it starts hanging beside the working leg with the toes hovering about 3 cm above the floor, and it swings straight back. Arms hang straight down, no weights. The standing foot does not move.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He hinges forward from the hips like a seesaw, the torso lowering as the free leg rises straight back, keeps the back flat, pauses briefly, then returns slowly to standing by squeezing the glute of the standing leg.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall on the near leg, near knee about 170 degrees, free leg straight beside it with the toes hovering above the floor, torso vertical, arms hanging down, eyes straight ahead.
-- Midway posture: torso about 40 degrees forward, free leg raised back about 25 degrees, back flat.
-- Peak posture: torso and free leg together form one long straight line, almost parallel to the floor (torso about 80 degrees forward from vertical, free leg raised back to the same height as the hips), standing knee softly bent about 155 degrees, back flat and neutral, hips square to the side (pelvis not opened), free foot flexed with the toes pointing down, arms hanging straight down from the shoulders, head neutral looking at the floor about 1 meter ahead.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The movement is a hip hinge: the standing knee only softens slightly, it does not squat.
-- Back stays flat, no rounding.
-- Hips stay square, the free leg goes straight back without rotating the pelvis open.
-- The standing foot stays planted, slow controlled tempo, the free foot does not touch the floor.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, rounded back, squatting with the standing knee, hips opening up, free foot touching the floor, standing foot hopping, bouncing
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, rounded back, bent free leg, hips opening to the side, free foot touching the floor, standing foot moving, arms reaching forward, head looking up
 ```
 
-**Periksa hasil:** Punggung rata, kaki bebas dan badan satu garis di panel 5, lutut tumpu hanya sedikit menekuk, pinggul tidak terbuka.
+**Periksa:** Badan dan kaki bebas satu garis lurus di panel 16, punggung rata, lengan menggantung lurus. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -664,75 +572,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Langkah mundur, turunkan lutut belakang hampir ke lantai. Dorong lewat kaki depan untuk berdiri.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`reverse_lunge-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the reverse lunge, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE reverse lunge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His front foot stays at exactly the same spot in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Exercise: reverse lunge. He starts standing with the feet hip-width apart, both hands on his hips. The near (right) leg steps BACK and the far (left) leg stays as the front leg with the foot planted. No prop.
+Setup (all panels): Hands on his hips. The far (left) foot is the FRONT foot and never moves. The near (right) foot steps straight BACK; once it lands only the toes touch the floor and the heel stays raised. Torso always vertical, pelvis level.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall, feet hip-width apart, both legs straight, torso vertical, hands on hips.
-Panel 2: The near foot lifts and steps back about 20 cm, toes touching the floor, hips beginning to lower, torso vertical.
-Panel 3: The near foot is about 50 cm behind, toes on the floor with the heel raised, both knees bent about 130 degrees, torso vertical.
-Panel 4: Lowering: front knee about 110 degrees, back knee about 105 degrees, back knee about 20 cm above the floor.
-Panel 5: Bottom position: front thigh parallel to the floor (front knee about 90 degrees) with the shin vertical and the knee above the ankle, back knee about 90 degrees and almost touching the floor (about 3 cm above it), back heel raised, torso upright, hands on hips, pelvis level.
-Panel 6: Rising: pushing up through the front leg, same pose as panel 4, the back foot begins to leave the floor.
-Panel 7: Rising: same pose as panel 3, the back foot moving forward off the floor.
-Panel 8: Rising: same pose as panel 2, the back foot almost back beside the front foot.
-Panel 9: Identical to panel 1, both feet together at hip width.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): step length is measured from the front heel to the back toes; knee angle is the inside angle of the knee joint; back knee height is measured from the floor.
+Panel 1: start, standing tall, feet hip-width apart side by side, legs straight: step length 0 cm, front knee 175, back knee 175, back knee height 50 cm.
+Panel 2: step length 6 cm, front knee 169, back knee 169, back knee height 47 cm.
+Panel 3: step length 11 cm, front knee 164, back knee 164, back knee height 44 cm.
+Panel 4: step length 17 cm, front knee 158, back knee 158, back knee height 41 cm.
+Panel 5: step length 23 cm, front knee 152, back knee 152, back knee height 37 cm.
+Panel 6: step length 28 cm, front knee 147, back knee 147, back knee height 34 cm.
+Panel 7: step length 34 cm, front knee 141, back knee 141, back knee height 31 cm.
+Panel 8: step length 40 cm, front knee 135, back knee 135, back knee height 28 cm.
+Panel 9: step length 45 cm, front knee 130, back knee 130, back knee height 25 cm.
+Panel 10: step length 51 cm, front knee 124, back knee 124, back knee height 22 cm.
+Panel 11: step length 57 cm, front knee 118, back knee 118, back knee height 19 cm.
+Panel 12: step length 62 cm, front knee 113, back knee 113, back knee height 16 cm.
+Panel 13: step length 68 cm, front knee 107, back knee 107, back knee height 12 cm.
+Panel 14: step length 74 cm, front knee 101, back knee 101, back knee height 9 cm.
+Panel 15: step length 79 cm, front knee 96, back knee 96, back knee height 6 cm.
+Panel 16: end, step length 85 cm, front knee 90, back knee 90, back knee height 3 cm. Lowest point: front thigh parallel to the floor with the shin vertical and the knee above the ankle, back thigh vertical, back knee hovering just above the floor, back heel raised, torso upright.
 ```
 
-Prompt negatif:
+### Prompt wanita (`reverse_lunge-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE reverse lunge, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her front foot stays at exactly the same spot in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): Hands on her hips. The far (left) foot is the FRONT foot and never moves. The near (right) foot steps straight BACK; once it lands only the toes touch the floor and the heel stays raised. Torso always vertical, pelvis level.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): step length is measured from the front heel to the back toes; knee angle is the inside angle of the knee joint; back knee height is measured from the floor.
+Panel 1: start, standing tall, feet hip-width apart side by side, legs straight: step length 0 cm, front knee 175, back knee 175, back knee height 50 cm.
+Panel 2: step length 6 cm, front knee 169, back knee 169, back knee height 47 cm.
+Panel 3: step length 11 cm, front knee 164, back knee 164, back knee height 44 cm.
+Panel 4: step length 17 cm, front knee 158, back knee 158, back knee height 41 cm.
+Panel 5: step length 23 cm, front knee 152, back knee 152, back knee height 37 cm.
+Panel 6: step length 28 cm, front knee 147, back knee 147, back knee height 34 cm.
+Panel 7: step length 34 cm, front knee 141, back knee 141, back knee height 31 cm.
+Panel 8: step length 40 cm, front knee 135, back knee 135, back knee height 28 cm.
+Panel 9: step length 45 cm, front knee 130, back knee 130, back knee height 25 cm.
+Panel 10: step length 51 cm, front knee 124, back knee 124, back knee height 22 cm.
+Panel 11: step length 57 cm, front knee 118, back knee 118, back knee height 19 cm.
+Panel 12: step length 62 cm, front knee 113, back knee 113, back knee height 16 cm.
+Panel 13: step length 68 cm, front knee 107, back knee 107, back knee height 12 cm.
+Panel 14: step length 74 cm, front knee 101, back knee 101, back knee height 9 cm.
+Panel 15: step length 79 cm, front knee 96, back knee 96, back knee height 6 cm.
+Panel 16: end, step length 85 cm, front knee 90, back knee 90, back knee height 3 cm. Lowest point: front thigh parallel to the floor with the shin vertical and the knee above the ankle, back thigh vertical, back knee hovering just above the floor, back heel raised, torso upright.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the reverse lunge. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the reverse lunge in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He starts standing with the feet hip-width apart, both hands on his hips. The near (right) leg steps BACK and the far (left) leg stays as the front leg with the foot planted. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He steps one leg straight back and lowers until the back knee almost touches the floor, pauses briefly, then pushes through the front foot and brings the back foot forward to stand tall again.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall, feet hip-width apart, both legs straight, torso vertical, hands on hips.
-- Midway posture: the near foot is about 50 cm behind, toes on the floor with the heel raised, both knees bent about 130 degrees, torso vertical.
-- Peak posture: front thigh parallel to the floor (front knee about 90 degrees) with the shin vertical and the knee above the ankle, back knee about 90 degrees and almost touching the floor (about 3 cm above it), back heel raised, torso upright, hands on hips, pelvis level.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.4 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.4 to 2.8 s: holds the peak posture briefly.
-- 2.8 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The front foot stays planted and does not move, the front heel stays down.
-- Front knee stays above the ankle, torso stays upright.
-- The back knee lowers almost to the floor but does not rest on it.
-- Stand fully back up, feet hip-width apart, before the next repetition.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, front foot sliding, front knee past the toes, torso leaning far forward, back knee slamming into the floor, wide or crossed stance, hopping
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, front foot moving, torso leaning forward, front knee past the toes, back knee touching the floor, stepping sideways
 ```
 
-**Periksa hasil:** Kaki depan tidak bergeser, lutut belakang hampir menyentuh lantai di panel 5, badan tegak, berdiri tegak di panel 9.
+**Periksa:** Kaki depan tidak pindah, badan tegak, lutut belakang hampir menyentuh lantai di panel 16. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -740,76 +650,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Naik ke anak tangga atau bangku dengan satu kaki, dorong sampai lurus. Turun pelan dengan kaki yang sama.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`step_up-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the step-up, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE step-up onto a box, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. The box and his near foot on the box stay at exactly the same spot in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey box about 40 cm high and 50 cm long stands on the RIGHT side of the panel in front of him; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Prop: A plain dark grey sturdy box about 40 cm high and 50 cm long, placed on the RIGHT side of the panel in front of him (the box is the only prop). Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-Exercise: step-up. The near (right) foot is the working foot, placed flat on top of the box. The far (left) foot is on the floor. Both hands on his hips. He steps up with the near foot and steps down with the same foot leading.
+Setup (all panels): The near (right) foot is the working foot and stays flat on top of the box. The far (left) foot starts flat on the floor behind the box and is lifted as he rises. Hands on his hips, torso upright, pelvis level.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing facing the box, near foot flat on top of the box, far foot flat on the floor about 20 cm behind the box edge, near knee bent about 100 degrees, torso upright, hands on hips.
-Panel 2: Pushing up: weight shifts onto the near foot, far heel lifting, near knee about 120 degrees, torso upright.
-Panel 3: Far foot leaving the floor, near knee about 145 degrees, hips rising straight up over the box.
-Panel 4: Near knee about 165 degrees, far knee lifting forward, hips above the box.
-Panel 5: Top position: standing tall on the box on the near leg with the near knee fully straight (about 180 degrees), the far knee raised to about hip height with the shin hanging down and the foot not touching anything, torso upright, hands on hips, pelvis level.
-Panel 6: Lowering: the far foot reaching down toward the floor, near knee about 145 degrees, same pose as panel 3 but descending.
-Panel 7: Lowering: near knee about 120 degrees, the far foot just above the floor.
-Panel 8: Lowering: the far foot touching the floor lightly in front of the box, near knee about 105 degrees, still on the box.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): near knee is the inside angle of the knee joint; far foot height is measured from the floor; far thigh angle is measured forward from hanging straight down.
+Panel 1: start, the near foot on the box with the knee bent, the far foot flat on the floor behind the box: near knee 100, far foot height 0 cm, far thigh 0.
+Panel 2: near knee 105, far foot height 5 cm, far thigh 6.
+Panel 3: near knee 111, far foot height 9 cm, far thigh 12.
+Panel 4: near knee 116, far foot height 14 cm, far thigh 18.
+Panel 5: near knee 121, far foot height 19 cm, far thigh 24.
+Panel 6: near knee 127, far foot height 23 cm, far thigh 30.
+Panel 7: near knee 132, far foot height 28 cm, far thigh 36.
+Panel 8: near knee 137, far foot height 33 cm, far thigh 42.
+Panel 9: near knee 143, far foot height 37 cm, far thigh 48.
+Panel 10: near knee 148, far foot height 42 cm, far thigh 54.
+Panel 11: near knee 153, far foot height 47 cm, far thigh 60.
+Panel 12: near knee 159, far foot height 51 cm, far thigh 66.
+Panel 13: near knee 164, far foot height 56 cm, far thigh 72.
+Panel 14: near knee 169, far foot height 61 cm, far thigh 78.
+Panel 15: near knee 175, far foot height 65 cm, far thigh 84.
+Panel 16: end, near knee 180, far foot height 70 cm, far thigh 90. Top: standing tall on the box on the straight near leg, far knee raised to hip height with the shin hanging down, the far foot touching nothing.
 ```
 
-Prompt negatif:
+### Prompt wanita (`step_up-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE step-up onto a box, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. The box and her near foot on the box stay at exactly the same spot in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey box about 40 cm high and 50 cm long stands on the RIGHT side of the panel in front of her; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
+
+Setup (all panels): The near (right) foot is the working foot and stays flat on top of the box. The far (left) foot starts flat on the floor behind the box and is lifted as she rises. Hands on her hips, torso upright, pelvis level.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): near knee is the inside angle of the knee joint; far foot height is measured from the floor; far thigh angle is measured forward from hanging straight down.
+Panel 1: start, the near foot on the box with the knee bent, the far foot flat on the floor behind the box: near knee 100, far foot height 0 cm, far thigh 0.
+Panel 2: near knee 105, far foot height 5 cm, far thigh 6.
+Panel 3: near knee 111, far foot height 9 cm, far thigh 12.
+Panel 4: near knee 116, far foot height 14 cm, far thigh 18.
+Panel 5: near knee 121, far foot height 19 cm, far thigh 24.
+Panel 6: near knee 127, far foot height 23 cm, far thigh 30.
+Panel 7: near knee 132, far foot height 28 cm, far thigh 36.
+Panel 8: near knee 137, far foot height 33 cm, far thigh 42.
+Panel 9: near knee 143, far foot height 37 cm, far thigh 48.
+Panel 10: near knee 148, far foot height 42 cm, far thigh 54.
+Panel 11: near knee 153, far foot height 47 cm, far thigh 60.
+Panel 12: near knee 159, far foot height 51 cm, far thigh 66.
+Panel 13: near knee 164, far foot height 56 cm, far thigh 72.
+Panel 14: near knee 169, far foot height 61 cm, far thigh 78.
+Panel 15: near knee 175, far foot height 65 cm, far thigh 84.
+Panel 16: end, near knee 180, far foot height 70 cm, far thigh 90. Top: standing tall on the box on the straight near leg, far knee raised to hip height with the shin hanging down, the far foot touching nothing.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the step-up. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the step-up in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: The near (right) foot is the working foot, placed flat on top of the box. The far (left) foot is on the floor. Both hands on his hips. He steps up with the near foot and steps down with the same foot leading.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height. Prop: A plain dark grey sturdy box about 40 cm high and 50 cm long, placed on the RIGHT side of the frame in front of him (the box is the only prop). Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He drives up through the near foot on the box until the near leg is fully straight and the other knee lifts, pauses briefly standing tall, then lowers slowly and controlled with the same near leg until the other foot touches the floor.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing facing the box, near foot flat on top of the box, far foot flat on the floor about 20 cm behind the box edge, near knee bent about 100 degrees, torso upright, hands on hips.
-- Midway posture: far foot leaving the floor, near knee about 145 degrees, hips rising straight up over the box.
-- Peak posture: standing tall on the box on the near leg with the near knee fully straight (about 180 degrees), the far knee raised to about hip height with the shin hanging down and the foot not touching anything, torso upright, hands on hips, pelvis level.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.0 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.0 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The near foot stays flat on the box and does all the work, the far foot does not push off the floor.
-- Stand fully tall at the top with the near knee straight.
-- Lower slowly with control, no dropping or jumping down.
-- Torso stays upright, pelvis stays level.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, pushing off the floor with the far foot, jumping, dropping down fast, torso leaning far forward, knee caving inward, foot hanging off the box
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, pushing off the back foot, knee caving inward, leaning far forward, near foot moving on the box, jumping
 ```
 
-**Periksa hasil:** Kaki dekat menapak penuh di bangku, lutut lurus di panel 5, turun pelan dengan kaki yang sama, badan tegak.
+**Periksa:** Kaki kerja tetap di kotak, lurus penuh di panel 16, badan tegak. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -817,75 +728,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Berdiri di ujung kaki, naik setinggi mungkin, tahan 1 detik, turun pelan.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`calf_raise-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the standing calf raise, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE standing calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His toes stay at exactly the same spot in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Exercise: standing calf raise. He stands on a flat floor with the feet hip-width apart and parallel, both hands on his hips. No prop.
+Setup (all panels): Feet hip-width apart and parallel, hands on his hips, legs straight, torso tall and vertical. Only the heels and ankles move.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall on both feet flat, legs straight, torso vertical, hands on hips, eyes straight ahead.
-Panel 2: Heels lifting about 3 cm off the floor, knees straight, torso vertical.
-Panel 3: Heels about 7 cm off the floor, weight on the balls of the feet.
-Panel 4: Heels about 11 cm off the floor, ankles strongly extended.
-Panel 5: Top position: rising as high as possible onto the balls of both feet, heels about 15 cm off the floor, ankles fully extended, knees straight (180 degrees), torso tall and vertical, hips stacked over the balls of the feet.
-Panel 6: Lowering: same pose as panel 4.
-Panel 7: Lowering: same pose as panel 3.
-Panel 8: Lowering: same pose as panel 2, heels just above the floor.
-Panel 9: Identical to panel 1, heels on the floor.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): heel height is measured from the floor.
+Panel 1: start, standing tall, both feet flat: heel height 0 cm.
+Panel 2: heel height 1 cm.
+Panel 3: heel height 2 cm.
+Panel 4: heel height 3 cm.
+Panel 5: heel height 4 cm.
+Panel 6: heel height 5 cm.
+Panel 7: heel height 6 cm.
+Panel 8: heel height 7 cm.
+Panel 9: heel height 8 cm.
+Panel 10: heel height 9 cm.
+Panel 11: heel height 10 cm.
+Panel 12: heel height 11 cm.
+Panel 13: heel height 12 cm.
+Panel 14: heel height 13 cm.
+Panel 15: heel height 14 cm.
+Panel 16: end, heel height 15 cm. Top: on the balls of both feet as high as possible, ankles fully extended, knees straight, body tall, hips over the balls of the feet.
 ```
 
-Prompt negatif:
+### Prompt wanita (`calf_raise-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE standing calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her toes stay at exactly the same spot in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): Feet hip-width apart and parallel, hands on her hips, legs straight, torso tall and vertical. Only the heels and ankles move.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): heel height is measured from the floor.
+Panel 1: start, standing tall, both feet flat: heel height 0 cm.
+Panel 2: heel height 1 cm.
+Panel 3: heel height 2 cm.
+Panel 4: heel height 3 cm.
+Panel 5: heel height 4 cm.
+Panel 6: heel height 5 cm.
+Panel 7: heel height 6 cm.
+Panel 8: heel height 7 cm.
+Panel 9: heel height 8 cm.
+Panel 10: heel height 9 cm.
+Panel 11: heel height 10 cm.
+Panel 12: heel height 11 cm.
+Panel 13: heel height 12 cm.
+Panel 14: heel height 13 cm.
+Panel 15: heel height 14 cm.
+Panel 16: end, heel height 15 cm. Top: on the balls of both feet as high as possible, ankles fully extended, knees straight, body tall, hips over the balls of the feet.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the standing calf raise. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the standing calf raise in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He stands on a flat floor with the feet hip-width apart and parallel, both hands on his hips. No prop.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-
-Movement: He rises up onto the balls of his feet as high as he can, holds the top position for one second, then lowers slowly and under control until the heels touch the floor.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall on both feet flat, legs straight, torso vertical, hands on hips, eyes straight ahead.
-- Midway posture: heels about 7 cm off the floor, weight on the balls of the feet.
-- Peak posture: rising as high as possible onto the balls of both feet, heels about 15 cm off the floor, ankles fully extended, knees straight (180 degrees), torso tall and vertical, hips stacked over the balls of the feet.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 1.6 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- Knees stay straight the whole time, no bending.
-- Rise as high as possible, the ankles stay upright (no rolling outward).
-- Hold the top for about 1 second.
-- Lower slowly (the lowering is about twice as long as the rising), the body stays upright, no swaying.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, bending the knees, ankles rolling outward, swaying forward, bouncing, hopping, heels dropping fast
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, bent knees, leaning forward, leaning back, rolling onto the outside of the feet, jumping
 ```
 
-**Periksa hasil:** Lutut lurus, tumit naik setinggi mungkin di panel 5, tahan 1 detik, turun lebih lambat dari naik.
+**Periksa:** Tumit naik bertahap tiap panel, lutut lurus, badan tidak condong. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -893,76 +806,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Seperti calf raise dengan satu kaki. Pegang dinding untuk keseimbangan.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`single_leg_calf_raise-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the single-leg calf raise, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE single-leg calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. His near toes and the wall panel stay at exactly the same spots in every panel. He is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey vertical wall panel about 1.4 m tall stands at the RIGHT edge of the panel in front of him, used only for balance; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
 
-View: exact side profile. He faces the right edge of the panel and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height.
-Prop: A plain dark grey vertical wall panel about 1.4 m tall standing at the RIGHT edge of the panel in front of him, used only for balance. Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-Exercise: single-leg calf raise. He stands on the near (right) leg only, which is the working leg. The far (left) leg is bent about 90 degrees with the foot raised behind him (shin roughly parallel to the floor), not touching the standing leg or the floor. His near hand rests with the fingertips lightly on the wall panel at shoulder height, the arm slightly bent. Only a light touch for balance, no pushing.
+Setup (all panels): He stands on the near (right) leg only. The far (left) knee is bent about 90 degrees with the foot raised behind, touching nothing. The near fingertips rest lightly on the wall panel at shoulder height, for balance only. Standing leg straight, torso tall and vertical.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Standing tall on the near foot flat, far foot raised behind with the knee bent about 90 degrees, near fingertips lightly touching the wall, torso vertical.
-Panel 2: Near heel lifting about 3 cm, near knee straight.
-Panel 3: Near heel about 7 cm off the floor.
-Panel 4: Near heel about 11 cm off the floor.
-Panel 5: Top position: rising as high as possible onto the ball of the near foot, heel about 15 cm off the floor, ankle fully extended, near knee straight (180 degrees), torso tall and vertical, far foot still raised behind, fingertips lightly on the wall.
-Panel 6: Lowering: same pose as panel 4.
-Panel 7: Lowering: same pose as panel 3.
-Panel 8: Lowering: same pose as panel 2, heel just above the floor.
-Panel 9: Identical to panel 1, near heel on the floor.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): heel height is measured from the floor.
+Panel 1: start, standing tall on the near foot flat: near heel height 0 cm.
+Panel 2: near heel height 1 cm.
+Panel 3: near heel height 2 cm.
+Panel 4: near heel height 3 cm.
+Panel 5: near heel height 4 cm.
+Panel 6: near heel height 5 cm.
+Panel 7: near heel height 6 cm.
+Panel 8: near heel height 7 cm.
+Panel 9: near heel height 8 cm.
+Panel 10: near heel height 9 cm.
+Panel 11: near heel height 10 cm.
+Panel 12: near heel height 11 cm.
+Panel 13: near heel height 12 cm.
+Panel 14: near heel height 13 cm.
+Panel 15: near heel height 14 cm.
+Panel 16: end, near heel height 15 cm. Top: on the ball of the near foot as high as possible, ankle fully extended, knee straight, body tall.
 ```
 
-Prompt negatif:
+### Prompt wanita (`single_leg_calf_raise-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE single-leg calf raise, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), the camera is at hip height, orthographic, no perspective, no tilt, no zoom. Her near toes and the wall panel stay at exactly the same spots in every panel. She is the same size in every panel, about 80 percent of the panel height, centered, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey vertical wall panel about 1.4 m tall stands at the RIGHT edge of the panel in front of her, used only for balance; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
+
+Setup (all panels): She stands on the near (right) leg only. The far (left) knee is bent about 90 degrees with the foot raised behind, touching nothing. The near fingertips rest lightly on the wall panel at shoulder height, for balance only. Standing leg straight, torso tall and vertical.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): heel height is measured from the floor.
+Panel 1: start, standing tall on the near foot flat: near heel height 0 cm.
+Panel 2: near heel height 1 cm.
+Panel 3: near heel height 2 cm.
+Panel 4: near heel height 3 cm.
+Panel 5: near heel height 4 cm.
+Panel 6: near heel height 5 cm.
+Panel 7: near heel height 6 cm.
+Panel 8: near heel height 7 cm.
+Panel 9: near heel height 8 cm.
+Panel 10: near heel height 9 cm.
+Panel 11: near heel height 10 cm.
+Panel 12: near heel height 11 cm.
+Panel 13: near heel height 12 cm.
+Panel 14: near heel height 13 cm.
+Panel 15: near heel height 14 cm.
+Panel 16: end, near heel height 15 cm. Top: on the ball of the near foot as high as possible, ankle fully extended, knee straight, body tall.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the single-leg calf raise. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the single-leg calf raise in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He stands on the near (right) leg only, which is the working leg. The far (left) leg is bent about 90 degrees with the foot raised behind him (shin roughly parallel to the floor), not touching the standing leg or the floor. His near hand rests with the fingertips lightly on the wall panel at shoulder height, the arm slightly bent. Only a light touch for balance, no pushing.
-
-View: exact side profile. He faces the right edge of the frame and the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. The camera is at hip height. Prop: A plain dark grey vertical wall panel about 1.4 m tall standing at the RIGHT edge of the frame in front of him, used only for balance. Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He rises up onto the ball of the near foot as high as possible with the other foot held off the floor behind him, holds the top for one second, then lowers slowly and under control, with fingertips lightly on the wall for balance.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): standing tall on the near foot flat, far foot raised behind with the knee bent about 90 degrees, near fingertips lightly touching the wall, torso vertical.
-- Midway posture: near heel about 7 cm off the floor.
-- Peak posture: rising as high as possible onto the ball of the near foot, heel about 15 cm off the floor, ankle fully extended, near knee straight (180 degrees), torso tall and vertical, far foot still raised behind, fingertips lightly on the wall.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 1.6 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- Only the near foot touches the floor, the far foot never touches down.
-- The near knee stays straight, the ankle stays upright, no rolling outward.
-- The hand only touches the wall lightly for balance, it does not pull or push.
-- Hold the top for about 1 second, lower slowly.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, far foot touching the floor, bending the working knee, leaning on the wall, ankle rolling outward, hopping, swaying
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, front view, back view, bent standing knee, far foot touching the floor, leaning on the wall, pushing with the hand, leaning forward
 ```
 
-**Periksa hasil:** Hanya satu kaki menapak, lutut lurus, tumit naik setinggi mungkin di panel 5, tangan hanya menyentuh dinding.
+**Periksa:** Hanya satu kaki di lantai, jari menyentuh dinding ringan, tumit naik bertahap. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -970,75 +884,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Bertumpu lengan bawah dan ujung kaki. Badan lurus dari kepala ke tumit, perut dikencangkan.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`plank-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the forearm plank, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE forearm plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile at low height, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. His forearms and toes stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile at low camera height (about 40 cm above the floor). He faces the right edge of the panel, the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-Exercise: forearm plank. He comes from kneeling on forearms and knees into a full forearm plank, holds it, then lowers back to the knees. The forearms are flat on the floor, parallel and pointing forward, elbows directly below the shoulders.
+Setup (all panels): Forearms flat on the floor, parallel and pointing forward, elbows directly below the shoulders. Toes on the floor. Head neutral, eyes on the floor just ahead of the hands. He lifts from a knee plank into a full plank.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Start: kneeling on the forearms and knees, forearms flat on the floor pointing forward with the elbows directly below the shoulders, thighs vertical, hips just above the knees, back flat, head neutral looking down at the floor.
-Panel 2: Starting to extend: the near knee lifts off the floor and the near foot moves back, hips staying low.
-Panel 3: Both knees lifting: the legs extending backward with the toes on the floor, hips still slightly above the straight line.
-Panel 4: Almost in full plank: legs nearly straight, hips settling into line, toes on the floor.
-Panel 5: Hold position: full forearm plank, forearms flat on the floor with the upper arms vertical and the elbows directly below the shoulders, toes on the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, glutes and abs braced, neck neutral with eyes looking at the floor about 30 cm ahead of the hands.
-Panel 6: Hold position with a tiny breathing movement: identical to panel 5 apart from a very slight rise of the ribcage.
-Panel 7: Lowering: both knees returning toward the floor, same pose as panel 3 in reverse.
-Panel 8: Lowering: knees touching the floor, same pose as panel 2 in reverse.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): knee angle is the inside angle of the knee joint; knee height is measured from the floor.
+Panel 1: start, knee plank: forearms, knees and toes on the floor, body straight from the head to the knees: knees 140, knee height 0 cm.
+Panel 2: knees 143, knee height 1 cm.
+Panel 3: knees 145, knee height 2 cm.
+Panel 4: knees 148, knee height 4 cm.
+Panel 5: knees 151, knee height 5 cm.
+Panel 6: knees 153, knee height 6 cm.
+Panel 7: knees 156, knee height 7 cm.
+Panel 8: knees 159, knee height 8 cm.
+Panel 9: knees 161, knee height 10 cm.
+Panel 10: knees 164, knee height 11 cm.
+Panel 11: knees 167, knee height 12 cm.
+Panel 12: knees 169, knee height 13 cm.
+Panel 13: knees 172, knee height 14 cm.
+Panel 14: knees 175, knee height 16 cm.
+Panel 15: knees 177, knee height 17 cm.
+Panel 16: end, knees 180, knee height 18 cm. Full forearm plank: knees off the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, abs and glutes braced.
 ```
 
-Prompt negatif:
+### Prompt wanita (`plank-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE forearm plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile at low height, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. Her forearms and toes stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): Forearms flat on the floor, parallel and pointing forward, elbows directly below the shoulders. Toes on the floor. Head neutral, eyes on the floor just ahead of the hands. She lifts from a knee plank into a full plank.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): knee angle is the inside angle of the knee joint; knee height is measured from the floor.
+Panel 1: start, knee plank: forearms, knees and toes on the floor, body straight from the head to the knees: knees 140, knee height 0 cm.
+Panel 2: knees 143, knee height 1 cm.
+Panel 3: knees 145, knee height 2 cm.
+Panel 4: knees 148, knee height 4 cm.
+Panel 5: knees 151, knee height 5 cm.
+Panel 6: knees 153, knee height 6 cm.
+Panel 7: knees 156, knee height 7 cm.
+Panel 8: knees 159, knee height 8 cm.
+Panel 9: knees 161, knee height 10 cm.
+Panel 10: knees 164, knee height 11 cm.
+Panel 11: knees 167, knee height 12 cm.
+Panel 12: knees 169, knee height 13 cm.
+Panel 13: knees 172, knee height 14 cm.
+Panel 14: knees 175, knee height 16 cm.
+Panel 15: knees 177, knee height 17 cm.
+Panel 16: end, knees 180, knee height 18 cm. Full forearm plank: knees off the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, abs and glutes braced.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the forearm plank. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the forearm plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He comes from kneeling on forearms and knees into a full forearm plank, holds it, then lowers back to the knees. The forearms are flat on the floor, parallel and pointing forward, elbows directly below the shoulders.
-
-View: exact side profile at low camera height (about 40 cm above the floor). He faces the right edge of the frame, the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He moves from kneeling into a straight forearm plank, holds it steady for about two seconds with only a very slight breathing movement of the ribcage and no other movement, then lowers his knees back to the floor.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): kneeling on the forearms and knees, forearms flat on the floor pointing forward with the elbows directly below the shoulders, thighs vertical, hips just above the knees, back flat, head neutral looking down at the floor.
-- Midway posture: both knees lifting: the legs extending backward with the toes on the floor, hips still slightly above the straight line.
-- Peak posture: full forearm plank, forearms flat on the floor with the upper arms vertical and the elbows directly below the shoulders, toes on the floor, body one straight line from the back of the head to the heels, hips neither sagging nor piking, glutes and abs braced, neck neutral with eyes looking at the floor about 30 cm ahead of the hands.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 1.6 to 3.6 s: holds the peak posture perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- In the plank the body is one straight line from head to heels, hips do not sag and do not rise.
-- Elbows stay directly under the shoulders, forearms stay flat and in place.
-- Neck stays neutral, the eyes look at the floor.
-- During the hold only the breathing moves, the body stays perfectly still.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, sagging hips, raised hips (pike), head dropping, elbows ahead of the shoulders, arched lower back, shaking body, hands clasped overhead
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, view from above, hips sagging, hips piking up, rounded back, head dropping, elbows in front of the shoulders, hands clasped
 ```
 
-**Periksa hasil:** Badan lurus kepala ke tumit di panel 5, siku di bawah bahu, pinggul tidak turun atau naik, panel 9 = panel 1.
+**Periksa:** Panel 16 lurus dari kepala ke tumit, siku di bawah bahu, pinggul tidak turun atau naik. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -1046,75 +962,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Bertumpu satu lengan bawah, badan miring dan lurus. Pinggul jangan turun.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`side_plank-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the side plank, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE side plank on the forearm, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): front view, the camera faces his chest squarely; his body lies horizontally across the panel with the head toward the LEFT edge and the feet toward the RIGHT edge, resting on his right side, orthographic, no perspective, no tilt, no zoom. His right forearm and feet stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: front view, the camera faces his chest squarely at the height of his torso. His body lies horizontally across the panel with his head toward the left edge and his feet toward the right edge, resting on his right side (his right forearm is the supporting arm). There is no mat and no visible floor.
-Exercise: side plank. He lies on his right side with his legs stacked. The right forearm lies flat on the floor with the elbow directly below the right shoulder, perpendicular to his body line and pointing toward the camera. The left arm rests on his left hip. He lifts into a side plank, holds it, then lowers his hips to the floor.
+Setup (all panels): He lies on his right side with the legs straight and stacked. The right forearm lies flat on the floor with the elbow directly below the right shoulder. The left hand rests on the left hip. The chest faces the camera, no rotation.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Start: lying on his right side, hips on the floor, legs straight and stacked, the right forearm flat on the floor with the elbow below the shoulder, left hand resting on the left hip, head in line with the spine.
-Panel 2: Hips starting to lift: the hips about 8 cm off the floor, the legs stacked and straight.
-Panel 3: Hips about 20 cm off the floor, body forming a shallow angle with the floor.
-Panel 4: Hips about 32 cm off the floor, almost a straight line.
-Panel 5: Hold position: full side plank, body one straight line from the head through the hips to the stacked feet, the hips lifted high and not dropping, the right elbow directly below the right shoulder with the forearm flat on the floor, the left hand resting on the left hip, the chest facing the camera (no rotation forward or backward), neck neutral.
-Panel 6: Hold position with a tiny breathing movement: identical to panel 5 apart from a very slight rise of the ribcage.
-Panel 7: Lowering: hips about 20 cm off the floor, same pose as panel 3 in reverse.
-Panel 8: Lowering: hips about 8 cm off the floor, same pose as panel 2 in reverse.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height is the gap between the hips and the floor.
+Panel 1: start, lying on his right side, hips resting on the floor: hip height 0 cm.
+Panel 2: hip height 1 cm.
+Panel 3: hip height 3 cm.
+Panel 4: hip height 4 cm.
+Panel 5: hip height 6 cm.
+Panel 6: hip height 7 cm.
+Panel 7: hip height 9 cm.
+Panel 8: hip height 10 cm.
+Panel 9: hip height 12 cm.
+Panel 10: hip height 13 cm.
+Panel 11: hip height 15 cm.
+Panel 12: hip height 16 cm.
+Panel 13: hip height 18 cm.
+Panel 14: hip height 19 cm.
+Panel 15: hip height 21 cm.
+Panel 16: end, hip height 22 cm. Top: body one straight line from the head through the hips to the stacked feet, hips lifted and not dropping, neck neutral.
 ```
 
-Prompt negatif:
+### Prompt wanita (`side_plank-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE side plank on the forearm, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): front view, the camera faces her chest squarely; her body lies horizontally across the panel with the head toward the LEFT edge and the feet toward the RIGHT edge, resting on her right side, orthographic, no perspective, no tilt, no zoom. Her right forearm and feet stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): She lies on her right side with the legs straight and stacked. The right forearm lies flat on the floor with the elbow directly below the right shoulder. The left hand rests on the left hip. The chest faces the camera, no rotation.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height is the gap between the hips and the floor.
+Panel 1: start, lying on her right side, hips resting on the floor: hip height 0 cm.
+Panel 2: hip height 1 cm.
+Panel 3: hip height 3 cm.
+Panel 4: hip height 4 cm.
+Panel 5: hip height 6 cm.
+Panel 6: hip height 7 cm.
+Panel 7: hip height 9 cm.
+Panel 8: hip height 10 cm.
+Panel 9: hip height 12 cm.
+Panel 10: hip height 13 cm.
+Panel 11: hip height 15 cm.
+Panel 12: hip height 16 cm.
+Panel 13: hip height 18 cm.
+Panel 14: hip height 19 cm.
+Panel 15: hip height 21 cm.
+Panel 16: end, hip height 22 cm. Top: body one straight line from the head through the hips to the stacked feet, hips lifted and not dropping, neck neutral.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the side plank. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the side plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He lies on his right side with his legs stacked. The right forearm lies flat on the floor with the elbow directly below the right shoulder, perpendicular to his body line and pointing toward the camera. The left arm rests on his left hip. He lifts into a side plank, holds it, then lowers his hips to the floor.
-
-View: front view, the camera faces his chest squarely at the height of his torso. His body lies horizontally across the frame with his head toward the left edge and his feet toward the right edge, resting on his right side (his right forearm is the supporting arm). There is no mat and no visible floor.
-
-Movement: He lifts his hips from the floor into a straight side plank supported by the forearm and the side of the feet, holds it steady for about two seconds with only a very slight breathing movement, then lowers his hips back to the floor.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): lying on his right side, hips on the floor, legs straight and stacked, the right forearm flat on the floor with the elbow below the shoulder, left hand resting on the left hip, head in line with the spine.
-- Midway posture: hips about 20 cm off the floor, body forming a shallow angle with the floor.
-- Peak posture: full side plank, body one straight line from the head through the hips to the stacked feet, the hips lifted high and not dropping, the right elbow directly below the right shoulder with the forearm flat on the floor, the left hand resting on the left hip, the chest facing the camera (no rotation forward or backward), neck neutral.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 1.6 to 3.6 s: holds the peak posture perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- In the hold the body is one straight line from head to feet, the hips do not drop or pike.
-- The elbow stays directly below the shoulder, the chest faces the camera, no rolling forward or backward.
-- The legs stay stacked and straight.
-- During the hold only the breathing moves.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, hips dropping, hips piking up, body rolling forward or backward, elbow far from the shoulder, legs bent or apart, head dropping
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, side view from the feet, back view, hips dropping, hips piking, body rotating forward or backward, elbow away from below the shoulder, head dropping
 ```
 
-**Periksa hasil:** Badan lurus dari kepala ke kaki di panel 5, pinggul tinggi, siku di bawah bahu, dada menghadap kamera.
+**Periksa:** Panel 16 lurus dari kepala ke kaki, siku di bawah bahu, dada menghadap kamera. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -1122,75 +1040,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Berbaring, lengan dan lutut ke atas. Turunkan lengan dan kaki yang berlawanan pelan, punggung bawah tetap menempel lantai.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`dead_bug-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the dead bug, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE dead bug, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile at floor level, he lies with the head toward the LEFT edge of the panel and the feet toward the RIGHT edge, the camera sees his right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. His head, shoulders and hips stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, centered vertically, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the panel and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-Exercise: dead bug. He lies on his back in the tabletop position: both arms straight and pointing straight up to the ceiling, both hips and knees bent 90 degrees with the shins parallel to the floor. In this video the NEAR (right) arm and the FAR (left) leg move together. The lower back stays pressed to the floor the whole time.
+Setup (all panels): He lies on his back with the lower back pressed to the floor. The far (left) arm stays pointing straight up to the ceiling and the near (right) leg stays in tabletop (hip and knee bent 90 degrees, shin parallel to the floor). The near (right) arm and the far (left) leg move together. Head and shoulders stay on the floor.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Start: lying on his back, both arms straight up toward the ceiling (vertical), both hips bent 90 degrees and both knees bent 90 degrees with the shins parallel to the floor, lower back flat on the floor, head and shoulders on the floor.
-Panel 2: The near arm begins to lower backward over his head (about 20 degrees from vertical) while the far leg begins to straighten (knee about 120 degrees). The other arm stays vertical and the near leg stays in tabletop.
-Panel 3: The near arm about 45 degrees from vertical, the far leg about 150 degrees at the knee and lowering.
-Panel 4: The near arm about 70 degrees from vertical, the far leg almost straight and about 40 degrees above the floor.
-Panel 5: Bottom position: the near arm straight overhead and hovering about 10 cm above the floor, the far leg fully straight and hovering about 10 cm above the floor, the other arm still vertical and the near leg still in tabletop (hip 90 degrees, knee 90 degrees), the lower back pressed flat to the floor with no arch, ribs down, head and shoulders on the floor.
-Panel 6: Returning: same pose as panel 4.
-Panel 7: Returning: same pose as panel 3.
-Panel 8: Returning: same pose as panel 2.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): near arm angle is measured from vertical toward the head (180 = flat overhead); far knee is the inside angle of the knee joint; far thigh angle is measured from vertical toward the feet (90 = parallel to the floor).
+Panel 1: start, tabletop: both arms straight up, both hips and knees bent 90 degrees: near arm 0, far knee 90, far thigh 0.
+Panel 2: near arm 11, far knee 96, far thigh 5.
+Panel 3: near arm 23, far knee 102, far thigh 11.
+Panel 4: near arm 34, far knee 108, far thigh 16.
+Panel 5: near arm 45, far knee 114, far thigh 21.
+Panel 6: near arm 57, far knee 120, far thigh 27.
+Panel 7: near arm 68, far knee 126, far thigh 32.
+Panel 8: near arm 79, far knee 132, far thigh 37.
+Panel 9: near arm 91, far knee 138, far thigh 43.
+Panel 10: near arm 102, far knee 144, far thigh 48.
+Panel 11: near arm 113, far knee 150, far thigh 53.
+Panel 12: near arm 125, far knee 156, far thigh 59.
+Panel 13: near arm 136, far knee 162, far thigh 64.
+Panel 14: near arm 147, far knee 168, far thigh 69.
+Panel 15: near arm 159, far knee 174, far thigh 75.
+Panel 16: end, near arm 170, far knee 180, far thigh 80. Extended: near arm straight overhead hovering about 10 cm above the floor, far leg straight hovering about 10 cm above the floor, lower back still flat.
 ```
 
-Prompt negatif:
+### Prompt wanita (`dead_bug-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE dead bug, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile at floor level, she lies with the head toward the LEFT edge of the panel and the feet toward the RIGHT edge, the camera sees her right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. Her head, shoulders and hips stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, centered vertically, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): She lies on her back with the lower back pressed to the floor. The far (left) arm stays pointing straight up to the ceiling and the near (right) leg stays in tabletop (hip and knee bent 90 degrees, shin parallel to the floor). The near (right) arm and the far (left) leg move together. Head and shoulders stay on the floor.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): near arm angle is measured from vertical toward the head (180 = flat overhead); far knee is the inside angle of the knee joint; far thigh angle is measured from vertical toward the feet (90 = parallel to the floor).
+Panel 1: start, tabletop: both arms straight up, both hips and knees bent 90 degrees: near arm 0, far knee 90, far thigh 0.
+Panel 2: near arm 11, far knee 96, far thigh 5.
+Panel 3: near arm 23, far knee 102, far thigh 11.
+Panel 4: near arm 34, far knee 108, far thigh 16.
+Panel 5: near arm 45, far knee 114, far thigh 21.
+Panel 6: near arm 57, far knee 120, far thigh 27.
+Panel 7: near arm 68, far knee 126, far thigh 32.
+Panel 8: near arm 79, far knee 132, far thigh 37.
+Panel 9: near arm 91, far knee 138, far thigh 43.
+Panel 10: near arm 102, far knee 144, far thigh 48.
+Panel 11: near arm 113, far knee 150, far thigh 53.
+Panel 12: near arm 125, far knee 156, far thigh 59.
+Panel 13: near arm 136, far knee 162, far thigh 64.
+Panel 14: near arm 147, far knee 168, far thigh 69.
+Panel 15: near arm 159, far knee 174, far thigh 75.
+Panel 16: end, near arm 170, far knee 180, far thigh 80. Extended: near arm straight overhead hovering about 10 cm above the floor, far leg straight hovering about 10 cm above the floor, lower back still flat.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the dead bug. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the dead bug in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He lies on his back in the tabletop position: both arms straight and pointing straight up to the ceiling, both hips and knees bent 90 degrees with the shins parallel to the floor. In this video the NEAR (right) arm and the FAR (left) leg move together. The lower back stays pressed to the floor the whole time.
-
-View: exact side profile at floor level, camera about 30 cm above the floor. He lies with his head toward the left edge of the frame and his feet toward the right edge. The camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He slowly lowers the near arm backward over his head and extends the opposite (far) leg at the same time, both hovering just above the floor, with the lower back pressed flat, then slowly returns both to the tabletop starting position.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): lying on his back, both arms straight up toward the ceiling (vertical), both hips bent 90 degrees and both knees bent 90 degrees with the shins parallel to the floor, lower back flat on the floor, head and shoulders on the floor.
-- Midway posture: the near arm about 45 degrees from vertical, the far leg about 150 degrees at the knee and lowering.
-- Peak posture: the near arm straight overhead and hovering about 10 cm above the floor, the far leg fully straight and hovering about 10 cm above the floor, the other arm still vertical and the near leg still in tabletop (hip 90 degrees, knee 90 degrees), the lower back pressed flat to the floor with no arch, ribs down, head and shoulders on the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 2.2 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 2.2 to 2.6 s: holds the peak posture briefly.
-- 2.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The lower back stays pressed into the floor with no arching at any time.
-- The arm and the opposite leg move together, slowly and with control.
-- The other arm stays vertical and the other leg stays in tabletop.
-- The arm and leg hover above the floor and do not touch it.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, arched lower back, lifting the head, ribs flaring, moving the same-side arm and leg, fast swinging, arm or leg touching the floor
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, view from above, lower back arching, head lifting, arm or leg touching the floor, both legs moving, bent arm
 ```
 
-**Periksa hasil:** Punggung bawah menempel lantai, lengan dan kaki berlawanan turun bersamaan, kaki lain tetap tabletop.
+**Periksa:** Lengan dekat dan kaki jauh yang bergerak, punggung bawah tetap menempel, tidak menyentuh lantai. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -1198,75 +1118,77 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Posisi merangkak. Luruskan lengan dan kaki yang berlawanan, tahan 2 detik, pinggul tetap rata.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`bird_dog-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the bird dog, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE bird dog, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): exact side profile at low height, he faces the RIGHT edge of the panel and the camera sees his right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. His supporting hand and supporting knee stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
 
-View: exact side profile at low camera height (about 40 cm above the floor). He faces the right edge of the panel, the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-Exercise: bird dog. He starts on hands and knees facing the right edge of the panel: hands directly below the shoulders, knees directly below the hips, back flat, head neutral looking at the floor. In this video the NEAR (right) arm and the FAR (left) leg extend together.
+Setup (all panels): On hands and knees: hands directly below the shoulders, knees directly below the hips. The far (left) hand and the near (right) knee stay on the floor. The near (right) arm and the far (left) leg extend together. Back flat and level, hips square, neck neutral.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Start: on hands and knees, hands below the shoulders, knees below the hips, back flat and level, neck neutral, head in line with the spine.
-Panel 2: The near arm begins to reach forward (about 30 degrees above the floor) and the far leg begins to slide back (knee still bent about 120 degrees), hips level.
-Panel 3: The near arm reaching forward at about 20 degrees below horizontal, the far leg about 20 degrees below horizontal and almost straight.
-Panel 4: The near arm almost horizontal, the far leg almost horizontal and straight, hips still level.
-Panel 5: Hold position: the near arm fully extended forward at shoulder height and the far leg fully extended backward at hip height, so the arm, torso and leg form one straight horizontal line from the fingertips to the heel, the far foot flexed, the hips level and square (no rotation), the back flat, the neck neutral with the eyes on the floor, the supporting hand and supporting knee firmly on the floor.
-Panel 6: Returning: same pose as panel 4.
-Panel 7: Returning: same pose as panel 3.
-Panel 8: Returning: same pose as panel 2.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): near arm angle is measured forward from pointing straight down (90 = horizontal at shoulder height); far thigh angle is measured backward from vertical (90 = horizontal at hip height); far knee is the inside angle of the knee joint.
+Panel 1: start, on hands and knees, back flat: near arm 0, far thigh 0, far knee 90.
+Panel 2: near arm 6, far thigh 6, far knee 96.
+Panel 3: near arm 12, far thigh 12, far knee 102.
+Panel 4: near arm 18, far thigh 18, far knee 108.
+Panel 5: near arm 24, far thigh 24, far knee 114.
+Panel 6: near arm 30, far thigh 30, far knee 120.
+Panel 7: near arm 36, far thigh 36, far knee 126.
+Panel 8: near arm 42, far thigh 42, far knee 132.
+Panel 9: near arm 48, far thigh 48, far knee 138.
+Panel 10: near arm 54, far thigh 54, far knee 144.
+Panel 11: near arm 60, far thigh 60, far knee 150.
+Panel 12: near arm 66, far thigh 66, far knee 156.
+Panel 13: near arm 72, far thigh 72, far knee 162.
+Panel 14: near arm 78, far thigh 78, far knee 168.
+Panel 15: near arm 84, far thigh 84, far knee 174.
+Panel 16: end, near arm 90, far thigh 90, far knee 180. Fully extended: near arm straight forward at shoulder height, far leg straight back at hip height, fingertips to heel one straight horizontal line, far foot flexed.
 ```
 
-Prompt negatif:
+### Prompt wanita (`bird_dog-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE bird dog, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): exact side profile at low height, she faces the RIGHT edge of the panel and the camera sees her right side (the right arm and right leg are the near limbs), orthographic, no perspective, no tilt, no zoom. Her supporting hand and supporting knee stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground.
+
+Setup (all panels): On hands and knees: hands directly below the shoulders, knees directly below the hips. The far (left) hand and the near (right) knee stay on the floor. The near (right) arm and the far (left) leg extend together. Back flat and level, hips square, neck neutral.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): near arm angle is measured forward from pointing straight down (90 = horizontal at shoulder height); far thigh angle is measured backward from vertical (90 = horizontal at hip height); far knee is the inside angle of the knee joint.
+Panel 1: start, on hands and knees, back flat: near arm 0, far thigh 0, far knee 90.
+Panel 2: near arm 6, far thigh 6, far knee 96.
+Panel 3: near arm 12, far thigh 12, far knee 102.
+Panel 4: near arm 18, far thigh 18, far knee 108.
+Panel 5: near arm 24, far thigh 24, far knee 114.
+Panel 6: near arm 30, far thigh 30, far knee 120.
+Panel 7: near arm 36, far thigh 36, far knee 126.
+Panel 8: near arm 42, far thigh 42, far knee 132.
+Panel 9: near arm 48, far thigh 48, far knee 138.
+Panel 10: near arm 54, far thigh 54, far knee 144.
+Panel 11: near arm 60, far thigh 60, far knee 150.
+Panel 12: near arm 66, far thigh 66, far knee 156.
+Panel 13: near arm 72, far thigh 72, far knee 162.
+Panel 14: near arm 78, far thigh 78, far knee 168.
+Panel 15: near arm 84, far thigh 84, far knee 174.
+Panel 16: end, near arm 90, far thigh 90, far knee 180. Fully extended: near arm straight forward at shoulder height, far leg straight back at hip height, fingertips to heel one straight horizontal line, far foot flexed.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the bird dog. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the bird dog in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He starts on hands and knees facing the right edge of the frame: hands directly below the shoulders, knees directly below the hips, back flat, head neutral looking at the floor. In this video the NEAR (right) arm and the FAR (left) leg extend together.
-
-View: exact side profile at low camera height (about 40 cm above the floor). He faces the right edge of the frame, the camera sees his right side, so his right arm and right leg are the near limbs and his left arm and left leg are the far limbs. There is no mat and no visible floor.
-
-Movement: He reaches the near arm forward and extends the opposite (far) leg backward until they form one straight horizontal line with the torso, holds that position steady for two seconds with the hips level, then brings the arm and leg back to the hands-and-knees position.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): on hands and knees, hands below the shoulders, knees below the hips, back flat and level, neck neutral, head in line with the spine.
-- Midway posture: the near arm reaching forward at about 20 degrees below horizontal, the far leg about 20 degrees below horizontal and almost straight.
-- Peak posture: the near arm fully extended forward at shoulder height and the far leg fully extended backward at hip height, so the arm, torso and leg form one straight horizontal line from the fingertips to the heel, the far foot flexed, the hips level and square (no rotation), the back flat, the neck neutral with the eyes on the floor, the supporting hand and supporting knee firmly on the floor.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.3 s: stays still, exactly as in the input image.
-- 0.3 to 1.6 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 1.6 to 3.6 s: holds the peak posture briefly.
-- 3.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- The hips and shoulders stay level and square, no rotation or tilting.
-- The back stays flat, no arching and no sagging.
-- The arm and the opposite leg extend to the height of the torso, not higher.
-- Hold the extended position for about 2 seconds, then return slowly.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, arched back, hips rotating or tilting, leg raised higher than the hips, head lifting, sagging back, shaking, same-side arm and leg
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, view from above, back arching, hips rotating, leg raised above hip height, head lifting, rounded back
 ```
 
-**Periksa hasil:** Lengan dan kaki berlawanan satu garis lurus dengan badan di panel 5, pinggul rata, tahan 2 detik.
+**Periksa:** Panel 16 lengan dan kaki satu garis horizontal, pinggul rata, punggung tidak melengkung. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
@@ -1274,83 +1196,86 @@ Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient bac
 
 **Cue di app:** Side plank dengan kaki atas di bangku, kaki bawah menggantung. Mulai dari lutut di bangku jika masih berat.
 
-### Prompt 1: gambar (9 keyframe, 1:1)
+### Prompt pria (`copenhagen_plank-m`)
 
 ```text
-Photorealistic studio photo sheet of one man performing the Copenhagen plank, shown as nine sequential keyframes of ONE repetition.
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE man performing ONE Copenhagen plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
 
-The same man in every panel: an Indonesian man in his late 20s, about 175 cm tall, lean athletic build, short neat black hair, clean-shaven, calm neutral expression with the mouth closed. He wears a fitted short-sleeve slate-blue athletic t-shirt, black athletic shorts that end about 10 cm above the knee, and light grey running shoes with white soles. No hat, no watch, no jewelry, no green clothing. If a character reference image is attached, reproduce exactly that man: same face, hair, build and clothes.
+The man: an Asian man in his late 20s, lean athletic build, short neat black hair, clean-shaven, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt, black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. He is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that man.
 
-Background: a perfectly flat, uniform chroma key green screen (#00B140) filling the entire panel, with no gradient, no vignette, no wrinkles, no floor line, no horizon and no cast shadow on the ground. Soft, even, shadowless studio lighting. Realistic photograph, sharp focus, natural skin texture. The camera is locked off, perfectly perpendicular to the plane of movement, with no lens distortion and no perspective tilt, at the same distance in every panel.
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
 
-Output ONE square image (1:1) that contains a 3x3 grid of nine equal square panels, read left to right and top to bottom, separated by thin solid white lines. Panel 1 is top-left, panel 9 is bottom-right. Each panel is one keyframe of the same exercise, in order. No text, no numbers, no labels, no arrows and no frames around the figure. The figure uses the same scale in all nine panels, fits fully inside its panel with at least 8 percent margin on every side, and the planted foot (or the body, for floor exercises) stays at exactly the same position from panel to panel, so that only the movement changes. Everything else (face, clothes, camera distance, background) is identical in all nine panels.
+Camera (identical in all sixteen panels): front view, the camera faces his chest squarely; his body lies horizontally across the panel with the head toward the LEFT edge and the feet toward the RIGHT edge, resting on his right side, orthographic, no perspective, no tilt, no zoom. His right forearm, the top foot and the bench stay at exactly the same spots in every panel. He is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey bench about 45 cm high and 100 cm long lies along the RIGHT side of the panel and supports the top leg; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
 
-View: front view, the camera faces his chest squarely at the height of his torso. His body lies horizontally across the panel with his head toward the left edge and his feet toward the right edge, resting on his right side (his right forearm is the supporting arm). There is no mat and no visible floor.
-Prop: A plain dark grey bench about 45 cm high and 100 cm long, lying along the RIGHT side of the panel, used as the support for the top leg. Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-Exercise: Copenhagen plank. He lies on his right side. The right forearm is on the floor with the elbow directly below the right shoulder. The TOP leg (left) rests with the inside of the foot and the ankle on top of the bench. The BOTTOM leg (right) is not on the bench and hangs under the top leg. The left arm rests on the left hip. He lifts into the Copenhagen plank, holds it, then lowers back.
+Setup (all panels): He lies on his right side. The right forearm is on the floor with the elbow directly below the right shoulder. The TOP (left) leg rests with the inside of the foot and ankle on the bench. The BOTTOM (right) leg hangs below the top leg. The left hand rests on the left hip. The chest faces the camera.
 
-Keyframes (join them as one smooth movement; panel 9 must be identical to panel 1):
-
-Panel 1: Start: lying on his right side on the floor next to the bench, the right forearm on the floor with the elbow below the shoulder, the top (left) leg straight with the inside of the foot resting on the bench, the bottom (right) leg straight on the floor under the bench, left hand on the left hip.
-Panel 2: Hips starting to lift: hips about 8 cm off the floor, the top leg pressing into the bench.
-Panel 3: Hips about 22 cm off the floor, the bottom leg beginning to lift off the floor.
-Panel 4: Hips about 36 cm off the floor, the bottom leg almost off the floor, body almost straight.
-Panel 5: Hold position: full Copenhagen plank, body one straight line from the head through the hips to the top foot on the bench, the right elbow directly below the right shoulder, the bottom leg lifted off the floor and held straight right under the top leg, the left hand on the left hip, the chest facing the camera, the hips lifted and not dropping, neck neutral.
-Panel 6: Hold position with a tiny breathing movement: identical to panel 5 apart from a very slight rise of the ribcage.
-Panel 7: Lowering: hips about 22 cm off the floor, bottom leg descending, same pose as panel 3 in reverse.
-Panel 8: Lowering: hips about 8 cm off the floor, same pose as panel 2 in reverse.
-Panel 9: Identical to panel 1.
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height and bottom foot height are measured from the floor.
+Panel 1: start, lying on his right side next to the bench, hips and bottom leg on the floor, top foot on the bench: hip height 0 cm, bottom foot height 0 cm.
+Panel 2: hip height 2 cm, bottom foot height 3 cm.
+Panel 3: hip height 4 cm, bottom foot height 5 cm.
+Panel 4: hip height 6 cm, bottom foot height 8 cm.
+Panel 5: hip height 8 cm, bottom foot height 11 cm.
+Panel 6: hip height 10 cm, bottom foot height 13 cm.
+Panel 7: hip height 12 cm, bottom foot height 16 cm.
+Panel 8: hip height 14 cm, bottom foot height 19 cm.
+Panel 9: hip height 16 cm, bottom foot height 21 cm.
+Panel 10: hip height 18 cm, bottom foot height 24 cm.
+Panel 11: hip height 20 cm, bottom foot height 27 cm.
+Panel 12: hip height 22 cm, bottom foot height 29 cm.
+Panel 13: hip height 24 cm, bottom foot height 32 cm.
+Panel 14: hip height 26 cm, bottom foot height 35 cm.
+Panel 15: hip height 28 cm, bottom foot height 37 cm.
+Panel 16: end, hip height 30 cm, bottom foot height 40 cm. Top: body one straight line from the head through the hips to the top foot on the bench, bottom leg lifted and held straight just under the top leg, hips not dropping.
 ```
 
-Prompt negatif:
+### Prompt wanita (`copenhagen_plank-f`)
 
 ```text
-text, numbers, labels, watermark, logo, arrows, extra people, extra limbs, distorted hands, distorted feet, motion blur, shadow on the floor, gradient background, green clothing, cropped head, cropped feet, different clothing between panels, different face between panels, mirrored panels, duplicated panels, 3D render, cartoon, illustration, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
+Clean flat-color vector-style illustration (anime cel-shading, solid color fills, crisp uniform dark outlines, at most 2 to 3 tones per color, no gradients, no textures, no blur, no photorealism) of ONE woman performing ONE Copenhagen plank, drawn as a sheet of sixteen sequential keyframes of the movement in one direction.
+
+The woman: an Asian woman in her late 20s, lean athletic build, long black hair tied in a high ponytail, calm neutral face, wearing a fitted teal short-sleeve athletic t-shirt (not cropped), black athletic shorts ending 10 cm above the knee, a black smartwatch on the wrist, and white running shoes with orange accents. No green anywhere on the character. She is drawn identically in every panel: same face, same hair, same clothes, same proportions, same size. If a character reference image is attached, draw exactly that woman.
+
+Layout: ONE square image (1:1) containing a 4x4 grid of sixteen equal square panels, read left to right and top to bottom (panel 1 top-left, panel 16 bottom-right), separated by thin straight white lines. Nothing crosses the white lines. No text, no numbers, no labels, no arrows, no frames.
+
+Camera (identical in all sixteen panels): front view, the camera faces her chest squarely; her body lies horizontally across the panel with the head toward the LEFT edge and the feet toward the RIGHT edge, resting on her right side, orthographic, no perspective, no tilt, no zoom. Her right forearm, the top foot and the bench stay at exactly the same spots in every panel. She is the same size in every panel, the body about 85 percent of the panel width, with clear margin on every side. Background in every panel: transparent. If transparency is not possible, one perfectly flat solid chroma key green (#00B140). No floor line, no horizon, no scenery, no shadow on the ground. A plain flat dark grey bench about 45 cm high and 100 cm long lies along the RIGHT side of the panel and supports the top leg; it is the only prop. Any prop is a plain flat dark grey (#3A3A3C) shape with no logo, no texture and no green.
+
+Setup (all panels): She lies on her right side. The right forearm is on the floor with the elbow directly below the right shoulder. The TOP (left) leg rests with the inside of the foot and ankle on the bench. The BOTTOM (right) leg hangs below the top leg. The left hand rests on the left hip. The chest faces the camera.
+
+Keyframes: panel 1 is the start position and panel 16 is the end position. Panels 2 to 15 are equal, evenly spaced in-between steps, so each panel changes only a little from the one before. Do not draw the return movement. Measurements (angles in degrees): hip height and bottom foot height are measured from the floor.
+Panel 1: start, lying on her right side next to the bench, hips and bottom leg on the floor, top foot on the bench: hip height 0 cm, bottom foot height 0 cm.
+Panel 2: hip height 2 cm, bottom foot height 3 cm.
+Panel 3: hip height 4 cm, bottom foot height 5 cm.
+Panel 4: hip height 6 cm, bottom foot height 8 cm.
+Panel 5: hip height 8 cm, bottom foot height 11 cm.
+Panel 6: hip height 10 cm, bottom foot height 13 cm.
+Panel 7: hip height 12 cm, bottom foot height 16 cm.
+Panel 8: hip height 14 cm, bottom foot height 19 cm.
+Panel 9: hip height 16 cm, bottom foot height 21 cm.
+Panel 10: hip height 18 cm, bottom foot height 24 cm.
+Panel 11: hip height 20 cm, bottom foot height 27 cm.
+Panel 12: hip height 22 cm, bottom foot height 29 cm.
+Panel 13: hip height 24 cm, bottom foot height 32 cm.
+Panel 14: hip height 26 cm, bottom foot height 35 cm.
+Panel 15: hip height 28 cm, bottom foot height 37 cm.
+Panel 16: end, hip height 30 cm, bottom foot height 40 cm. Top: body one straight line from the head through the hips to the top foot on the bench, bottom leg lifted and held straight just under the top leg, hips not dropping.
 ```
 
-### Prompt 2: video (satu gambar: panel 1 terpotong = frame pertama)
-
-Model `seedance-2.0-*-image-to-video`. Unggah hanya panel 1 yang sudah dipotong (1:1, tanpa garis putih). **Jangan unggah lembar 3x3.**
+### Prompt negatif (pria dan wanita)
 
 ```text
-Image-to-video. The input image is the first frame: the same man in the start posture of the Copenhagen plank. Keep the man, his clothes, the camera framing, his size and position in the frame and the plain green background exactly as in the input image for the whole video, with a single man in the frame. He performs ONE slow, controlled repetition of the Copenhagen plank in a single continuous, fluid, natural motion, like real footage of a person exercising: one steady tempo with gentle slowing at the turning points, no cuts, no morphing, no jumps between poses, no flicker. He ends in exactly the same posture as the first frame, so the video loops seamlessly.
-
-Exercise setup: He lies on his right side. The right forearm is on the floor with the elbow directly below the right shoulder. The TOP leg (left) rests with the inside of the foot and the ankle on top of the bench. The BOTTOM leg (right) is not on the bench and hangs under the top leg. The left arm rests on the left hip. He lifts into the Copenhagen plank, holds it, then lowers back.
-
-View: front view, the camera faces his chest squarely at the height of his torso. His body lies horizontally across the frame with his head toward the left edge and his feet toward the right edge, resting on his right side (his right forearm is the supporting arm). There is no mat and no visible floor. Prop: A plain dark grey bench about 45 cm high and 100 cm long, lying along the RIGHT side of the frame, used as the support for the top leg. Any prop is a plain matte dark grey (#3A3A3C) object with no logo and no green.
-
-Movement: He lifts his hips into a straight Copenhagen plank with the top leg on the bench and the bottom leg hanging in the air under it, holds it steady for two seconds with only a very slight breathing movement, then lowers his hips and bottom leg back to the floor.
-
-Key postures (the movement passes through them smoothly and never stops or snaps to them):
-- Start posture (the input image): lying on his right side on the floor next to the bench, the right forearm on the floor with the elbow below the shoulder, the top (left) leg straight with the inside of the foot resting on the bench, the bottom (right) leg straight on the floor under the bench, left hand on the left hip.
-- Midway posture: hips about 22 cm off the floor, the bottom leg beginning to lift off the floor.
-- Peak posture: full Copenhagen plank, body one straight line from the head through the hips to the top foot on the bench, the right elbow directly below the right shoulder, the bottom leg lifted off the floor and held straight right under the top leg, the left hand on the left hip, the chest facing the camera, the hips lifted and not dropping, neck neutral.
-
-Timeline (5 seconds in total):
-- 0.0 to 0.4 s: stays still, exactly as in the input image.
-- 0.4 to 1.6 s: moves from the start posture to the peak posture in one continuous motion, passing through the midway posture.
-- 1.6 to 3.6 s: holds the peak posture perfectly steady, with only a very slight breathing movement of the ribcage.
-- 3.6 to 5.0 s: returns to the start posture in one continuous motion, passing through the midway posture in reverse, and ends exactly as in the input image.
-
-Technique rules:
-- In the hold the body is one straight line from head to the top foot, the hips do not drop.
-- The elbow stays directly below the shoulder, the chest faces the camera.
-- The bottom leg hangs in the air under the top leg and does not touch the floor or the bench.
-- During the hold only the breathing moves.
-
-Camera and look: square 1:1, 24 fps, a completely static locked-off camera (no pan, zoom, shake or cut). The same flat uniform chroma key green background (#00B140), with no gradient, no floor line, no grid, no white lines and no shadow on the ground, and soft even shadowless lighting that never changes. Same face, slate-blue t-shirt, black shorts and light grey shoes throughout. The full body stays inside the frame with at least 8 percent margin.
-
-Avoid: camera movement, zoom, pan, cut, shake, shadow on the floor, gradient background, green clothing, motion blur, jumping, bouncing, fast or jerky movement, extra limbs, distorted hands, distorted feet, different clothing, different face, text, watermark, logo, extra people, grid, multiple panels, split screen, collage, white lines, multiple copies of the man, morphing, cross-fade, jump between poses, sudden pose change, flicker, changing camera framing, changing scale, changing background, hips dropping, body rolling forward or backward, bottom leg touching the floor, both legs on the bench, elbow far from the shoulder, head dropping
+photograph, photorealistic, 3D render, gradient, texture, blur, text, numbers, labels, arrows, watermark, logo, extra people, different person between panels, different face between panels, different hair between panels, different clothes between panels, different size between panels, different camera angle between panels, panels out of order, perspective, scenery, floor line, shadow on the floor, green clothing, extra limbs, distorted hands, distorted feet, three-quarter view, side view from the feet, back view, hips dropping, top foot sliding off the bench, body rotating, bottom leg bent, elbow away from below the shoulder
 ```
 
-**Periksa hasil:** Kaki atas di bangku, kaki bawah menggantung di panel 5, badan lurus, pinggul tinggi, dada menghadap kamera.
+**Periksa:** Panel 16 lurus dari kepala ke kaki di bangku, kaki bawah terangkat, dada menghadap kamera. Panel 1 sampai 16 berubah sedikit demi sedikit, tidak ada panel yang melompat atau terbalik urutannya.
 
 ---
 
 ## Catatan dan batasan
 
-- Gambar dan video buatan AI bisa melenceng dari gerakan (sudut sendi, tempo, sisi kerja). Periksa tiap hasil dengan daftar periksa dan minta pelatih menilai tekniknya sebelum dipakai.
-- Angka sudut di keyframe adalah patokan teknik umum, bukan standar yang sudah direview pelatih. Aturan engine tetap tunduk pada review D6.
-- Izin pemakaian hasil Seedance untuk app yang dirilis belum dikonfirmasi pemilik produk.
-- Gerakan berbasis properti (bangku, kotak, dinding) dibuat dengan properti abu tua polos supaya mudah dipisahkan dari latar hijau.
-- Setelah video jadi, pembuatan pasangan terang/gelap dan pemasangan di app mengikuti `apps/app/assets/exercises/README.md`.
+- **Pilihan model pria/wanita di app belum ada di spec.** Dokumen ini hanya menyiapkan gambarnya. Fitur pilihan (pengaturan, penyimpanan lokal, teks ID/EN) perlu usulan perubahan `docs/specs/` dulu sesuai CLAUDE.md.
+- App saat ini masih memakai 9 frame squat pria dari lembar 3x3 (`squat-1.webp` ... `squat-9.webp`, diputar 1 ke 9 lalu kembali ke 1). Pemutaran bolak-balik 16 frame perlu perubahan kecil di `ExerciseAnimation`/`frameTiming.ts` saat lembar 4x4 pertama masuk.
+- Angka sudut adalah panduan untuk generator gambar, bukan ukuran biomekanik yang presisi. Generator biasanya tidak menggambar beda 5 sampai 6 derajat dengan tepat; yang penting urutannya naik rata dan panel 16 benar.
+- 16 panel di satu gambar membuat tiap panel lebih kecil daripada 3x3. Jika generator hanya memberi 1024 x 1024, tiap panel sekitar 256 px dan figur akan sedikit buram setelah diperbesar.
+- Skrip potong meluruskan titik tumpu dari tengah dan dasar sepatu. Untuk gerakan yang kakinya berpindah (reverse lunge) atau berbaring, periksa hasil potongan apakah figur bergoyang.
+- Jika gerakan antarpanel masih kasar, frame perantara bisa ditambah dengan FILM (notebook Colab dari sesi sebelumnya), lalu dipasang sebagai frame tambahan.
+- Lisensi atau izin pemakaian gambar hasil AI belum dikonfirmasi pemilik produk.

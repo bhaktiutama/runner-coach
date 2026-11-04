@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Memotong lembar keyframe 3x3 (PNG/WebP transparan) menjadi 9 frame seragam untuk ExerciseAnimation.
+"""Memotong lembar keyframe 3x3 atau 4x4 (PNG/WebP transparan) menjadi 9 atau 16 frame seragam untuk ExerciseAnimation.
 
 Langkah: deteksi garis pemisah, potong tiap sel, bersihkan noise alpha, ambil komponen terbesar (figur),
 luruskan titik tumpu kaki (tengah sepatu + dasar sepatu) ke satu posisi, lalu simpan di kanvas yang sama
 (gabungan semua pose + margin) supaya animasi tidak bergoyang.
 
 Pemakaian: python3 -I scripts/slice-keyframes.py <lembar.webp> <folder-keluaran> <nama> [--size TINGGI_PX]
-Hasil: <folder-keluaran>/<nama>-1.webp ... <nama>-9.webp
+Hasil: <folder-keluaran>/<nama>-1.webp ... <nama>-9.webp (3x3) atau ... <nama>-16.webp (4x4)
 Butuh: Pillow, numpy. Dokumentasi: apps/app/assets/exercises/README.md
 """
 import sys
@@ -82,12 +82,13 @@ def main():
     sheet = Image.open(src).convert("RGBA")
     arr = np.asarray(sheet)
     xs, ys = cells(arr[..., 3].astype(int))
-    if len(xs) != 3 or len(ys) != 3:
-        sys.exit(f"Garis pemisah tidak terdeteksi: {len(xs)} kolom x {len(ys)} baris (butuh 3x3)")
+    n = len(xs)
+    if n != len(ys) or n not in (3, 4):
+        sys.exit(f"Garis pemisah tidak terdeteksi: {len(xs)} kolom x {len(ys)} baris (butuh 3x3 atau 4x4)")
 
     frames = []  # (RGBA array, anchor_x, bottom_y)
-    for r in range(3):
-        for c in range(3):
+    for r in range(n):
+        for c in range(n):
             x0, x1 = xs[c][0] + 4, xs[c][1] - 4
             y0, y1 = ys[r][0] + 4, ys[r][1] - 4
             cell = arr[y0:y1, x0:x1].copy()
@@ -128,7 +129,7 @@ def main():
     for i, b in enumerate(boxes, 1):
         img = Image.fromarray(b[t:bm, lf:rg]).resize(size, Image.LANCZOS)
         img.save(f"{outdir}/{name}-{i}.webp", quality=92, alpha_quality=100, method=6)
-    print(f"{name}: 9 frame, {size[0]}x{size[1]} px, titik tumpu di x={int(left)}")
+    print(f"{name}: {n * n} frame, {size[0]}x{size[1]} px, titik tumpu di x={int(left)}")
 
 
 main()
