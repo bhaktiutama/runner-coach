@@ -35,7 +35,6 @@ type Props = {
     goal: { distance: '5k' | '10k' | 'hm' | 'fm' | 'fitness'; race_date: string | null };
   };
   planTargetM: number;
-  weeks: { startDate: string; phase: string }[];
 };
 
 /**
@@ -43,7 +42,7 @@ type Props = {
  * Digeser per halaman; titik di bawah bisa diketuk. Kartu default dipilih lewat "Jadikan utama"
  * (`profile.today_card`) dan selalu tampil pertama.
  */
-export function TodayCarousel({ today, plan, planTargetM, weeks }: Props) {
+export function TodayCarousel({ today, plan, planTargetM }: Props) {
   const profile = useProfile();
   const update = useUpdateProfile();
   const ahead = useWorkouts(plan.id, today);
@@ -95,7 +94,6 @@ export function TodayCarousel({ today, plan, planTargetM, weeks }: Props) {
             planEnd={plan.end_date}
             planTargetM={planTargetM}
             pin={pin(c)}
-            weeks={weeks}
           />
         );
       case 'long_run': {
