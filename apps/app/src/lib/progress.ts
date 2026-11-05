@@ -199,3 +199,8 @@ export function rpeVerdict(rpe: number, type: string | null): 'below' | 'within'
 export function daysBetween(a: string, b: string) {
   return diffDays(a, b);
 }
+
+/** Rasa beban strength dari RPE (F-21): 1-4 terlalu ringan, 5-7 pas, 8-10 terlalu berat. */
+export function loadFeelFromRpe(rpe: number): 'too_easy' | 'ok' | 'too_hard' {
+  return rpe >= 8 ? 'too_hard' : rpe <= 4 ? 'too_easy' : 'ok';
+}

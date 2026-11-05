@@ -46,9 +46,10 @@ test('strength: kalender, detail 2.2s (animasi frame semua gerakan), timer gerak
   await page.getByTestId('timer-confirm-yes').click();
   await expect(page.getByTestId('screen-finish')).toBeVisible();
   await expect(page.getByTestId('finish-distance')).toHaveCount(0);
-  await page.getByRole('tab', { name: 'Terlalu berat' }).click();
+  // Satu isian: RPE 8+ = terlalu berat (rasa beban diturunkan dari RPE).
+  await expect(page.getByRole('tab', { name: 'Terlalu berat' })).toHaveCount(0);
+  await page.getByTestId('rpe-8').click();
   await expect(page.getByText('Sesi strength berikutnya akan kami ringankan 1 level.')).toBeVisible();
-  await page.getByTestId('rpe-7').click();
   await page.getByTestId('finish-save').click();
   await expect(page.getByTestId('screen-today').or(page.getByTestId('screen-week-summary'))).toBeVisible();
   expect(errors).toEqual([]);

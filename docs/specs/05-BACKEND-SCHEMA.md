@@ -135,7 +135,7 @@ Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is no
 | rpe | int | check 1-10 |
 | tags | text[] default '[]' | Subset dari ('hot','poor_sleep','sore_legs','pain'); layar 2.4 |
 | notes | text null | |
-| load_feel | text null | check in ('too_hard','ok','too_easy'). Sesi strength/core (2.4, F-21). Sejak v6 |
+| load_feel | text null | check in ('too_hard','ok','too_easy'). Sesi strength/core (2.4, F-21). Sejak v6; sejak 2026-11-05 diturunkan dari RPE (1-4 too_easy, 5-7 ok, 8-10 too_hard) |
 
 ### plan_adjustments (F-11, layar 2.5)
 

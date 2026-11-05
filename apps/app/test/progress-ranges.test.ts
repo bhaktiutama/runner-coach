@@ -100,3 +100,17 @@ describe('U3 HP datar', () => {
     expect(isFlat(Math.PI, 0)).toBe(false); // menghadap ke bawah
   });
 });
+
+describe('rasa beban strength dari RPE', () => {
+  it('1-4 ringan, 5-7 pas, 8-10 berat', async () => {
+    const { loadFeelFromRpe } = await import('../src/lib/progress');
+    expect([1, 4, 5, 7, 8, 10].map(loadFeelFromRpe)).toEqual([
+      'too_easy',
+      'too_easy',
+      'ok',
+      'ok',
+      'too_hard',
+      'too_hard',
+    ]);
+  });
+});

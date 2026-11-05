@@ -78,7 +78,6 @@ test('strength: tampilan jarak jauh (U3), ringkasan per gerakan di 2.4 dan 3.4 (
   await page.getByTestId('timer-confirm-yes').click();
   await expect(page.getByTestId('exercise-summary')).toContainText('Squat');
   await expect(page.getByTestId('exercise-summary')).toContainText('2/2 set');
-  await page.getByRole('tab', { name: 'Pas' }).click();
   await page.getByTestId('rpe-6').click();
   await page.getByTestId('finish-save').click();
   await page.getByRole('tab', { name: 'Progres' }).click();

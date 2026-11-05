@@ -5,7 +5,6 @@ import {
   LinkButton,
   PrimaryButton,
   radius,
-  SegmentedControl,
   size,
   space,
   Text,
@@ -18,7 +17,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FeedbackFields } from '@/components/FeedbackFields';
 import { Screen } from '@/components/Screen';
-import type { LoadFeel, Tag } from '@/data/activities';
+import type { Tag } from '@/data/activities';
+import { loadFeelFromRpe } from '@/lib/progress';
 import { useActiveTimer, useDiscardTimer, useSaveActivity, useWorkout } from '@/data/hooks';
 import { t } from '@/i18n/t';
 import { goHome } from '@/lib/nav';
@@ -44,7 +44,6 @@ export default function Finish() {
   const [rpe, setRpe] = useState<number | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [feel, setFeel] = useState<LoadFeel | null>(null);
 
   useEffect(() => {
     if (sum) {
@@ -81,7 +80,8 @@ export default function Finish() {
       segments: encodeResults(sum.results),
       rpe,
       tags,
-      loadFeel: support ? feel : null,
+      // Satu isian: rasa beban strength diturunkan dari RPE (1-4 ringan, 5-7 pas, 8-10 berat).
+      loadFeel: support ? loadFeelFromRpe(rpe) : null,
       clearTimer: true,
     });
     goHome(r.weekDone ? '/week-summary' : '/');
@@ -155,32 +155,17 @@ export default function Finish() {
           </View>
         )}
       </View>
-      {support ? (
-        <View style={styles.feel}>
-          <Text variant="label" color="textMuted">
-            {t('finish.loadFeel')}
-          </Text>
-          <SegmentedControl
-            value={feel ?? ('' as LoadFeel)}
-            onChange={(v) => setFeel(v)}
-            items={[
-              { value: 'too_hard', label: t('finish.loadFeel.too_hard') },
-              { value: 'ok', label: t('finish.loadFeel.ok') },
-              { value: 'too_easy', label: t('finish.loadFeel.too_easy') },
-            ]}
-          />
-          {feel === 'too_hard' ? (
-            <Text variant="caption" color="textMuted">
-              {t('finish.loadFeel.tooHardNote')}
-            </Text>
-          ) : null}
-        </View>
-      ) : (
+      {support ? null : (
         <Text variant="caption" color="textMuted">
           {t('finish.estimate')}
         </Text>
       )}
       <FeedbackFields rpe={rpe} setRpe={setRpe} tags={tags} setTags={setTags} type={w.data.type} />
+      {support && rpe != null && loadFeelFromRpe(rpe) === 'too_hard' ? (
+        <Text variant="caption" color="textMuted" testID="load-feel-note">
+          {t('finish.loadFeel.tooHardNote')}
+        </Text>
+      ) : null}
       {support ? null : (
         <Text variant="caption" color="textMuted">
           {t('finish.watch')}
@@ -206,7 +191,6 @@ const styles = themed(() =>
     head: { gap: space[2], alignItems: 'flex-start' },
     row: { flexDirection: 'row', gap: space[2], alignItems: 'flex-end' },
     avgCol: { gap: space[2] },
-    feel: { gap: space[2] },
     avgBox: { height: size.input, justifyContent: 'center' },
     check: {
       width: size.input,
