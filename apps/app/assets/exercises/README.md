@@ -9,7 +9,7 @@ untuk model wanita), diputar bolak-balik (1 -> 16 -> 1) di web dan native.
 | Sumber | Lembar ilustrasi 4x4 per gerakan (GPT Image 2.5 lewat EvoLink, 2K, latar transparan). Prompt: `docs/ANIMATION_PROMPTS.md` |
 | Format | WebP dengan alpha, 420x420 px, kanvas sama untuk semua frame satu gerakan |
 | Urutan | 1 = posisi awal, 16 = puncak gerakan. Gerakan balik tidak digambar |
-| Latar di app | Selalu `surface-sunken` terang (ilustrasi digambar untuk latar terang) |
+| Latar di app | Tanpa kotak: frame transparan di atas warna layar (terang dan gelap). Outline gelap ilustrasi menjaga figur tetap terbaca di mode gelap |
 | Tempo | `src/components/frameTiming.ts`: 100 ms per frame, awal ditahan 300 ms, puncak per gerakan (`PEAK_HOLD_MS`) |
 | Privasi dan lisensi | Gambar statis di dalam app, tanpa data pengguna. Izin pemakaian gambar AI belum dikonfirmasi pemilik |
 
