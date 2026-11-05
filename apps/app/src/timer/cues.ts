@@ -76,6 +76,11 @@ export function playEarcon(kind: Earcon, muted = false) {
   }
 }
 
+/** Getar saat tahan-layar berhasil (U2). */
+export function holdHaptic() {
+  if (native) void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+}
+
 /** Hitung mundur 3-2-1 sebelum mulai (UI/UX bagian 11, G11). */
 export function countdownTick(muted = false) {
   playEarcon('tick', muted);

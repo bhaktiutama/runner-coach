@@ -3,7 +3,18 @@ import { describe, expect, it } from 'vitest';
 import { migrate } from '../src/db/migrate';
 import { migrations } from '../src/db/migrations';
 import { boundaryEarcon, momentsBetween, segmentMoments } from '../src/timer/earcons';
-import { buildSegments, initialState, next, position, setAuto, start, sync } from '../src/timer/machine';
+import {
+  buildSegments,
+  extend,
+  initialState,
+  next,
+  position,
+  PREP_S,
+  setAuto,
+  start,
+  sync,
+  upcomingBoundaries,
+} from '../src/timer/machine';
 import { createNodeDb } from './node-db';
 
 const T0 = 1_700_000_000_000;
@@ -18,9 +29,9 @@ const strength: Step[] = [
 
 describe('mode otomatis (09-VOICE bagian 6)', () => {
   it('manual: set repetisi tanpa countdown; otomatis: estimasi 3 dtk per repetisi', () => {
-    expect(buildSegments(strength)[0]!.timedS).toBeNull();
+    expect(buildSegments(strength)[1]!.timedS).toBeNull();
     const auto = buildSegments(strength, { auto: true });
-    expect(auto[0]).toMatchObject({ kind: 'exercise', timedS: 30, autoTimed: true });
+    expect(auto[1]).toMatchObject({ kind: 'exercise', timedS: 30, autoTimed: true });
     // Dosis waktu dari plan tidak berubah dan tidak ditandai otomatis.
     const plank = auto.find((x) => x.kind === 'exercise' && x.exercise_id === 'plank')!;
     expect(plank.timedS).toBe(30);
@@ -37,8 +48,8 @@ describe('mode otomatis (09-VOICE bagian 6)', () => {
   it('sesi strength otomatis berjalan sampai selesai tanpa tombol', () => {
     const segs = buildSegments(strength, { auto: true });
     const total = segs.reduce((a, x) => a + (x.timedS ?? 0), 0);
-    // 30 + 60 + 30 + 60 (istirahat sesudah gerakan) + 30 + 45 + 30 + 45 + 40
-    expect(total).toBe(370);
+    // 5 (siap-siap) + 30 + 60 + 30 + 60 (istirahat sesudah gerakan) + 30 + 45 + 30 + 45 + 40
+    expect(total).toBe(375);
     const st = sync(start(initialState('w', true), T0), segs, s(total + 1));
     expect(st.status).toBe('finished');
   });
@@ -47,30 +58,69 @@ describe('mode otomatis (09-VOICE bagian 6)', () => {
     const manual = buildSegments(strength);
     const auto = buildSegments(strength, { auto: true });
     let st = start(initialState('w', false), T0);
-    st = sync(st, manual, s(100)); // masih di set 1 squat (manual)
-    expect(st.index).toBe(0);
+    st = sync(st, manual, s(100)); // siap-siap selesai, masih di set 1 squat (manual)
+    expect(st.index).toBe(1);
     st = setAuto(st, s(100), true, true);
     expect(st.auto).toBe(true);
     expect(position(st, auto, s(110)).remainingS).toBe(20);
-    expect(sync(st, auto, s(131)).index).toBe(1);
+    expect(sync(st, auto, s(131)).index).toBe(2);
     // Kembali manual di istirahat (segmen tidak berubah) = hitungan tidak diulang.
     st = sync(st, auto, s(140));
     const before = st.segStartActiveMs;
     st = setAuto(st, s(140), false, false);
     expect(st.segStartActiveMs).toBe(before);
-    expect(next(st, manual, s(141)).index).toBe(2);
+    expect(next(st, manual, s(141)).index).toBe(3);
+  });
+});
+
+describe('U4 siap-siap dan U1 +15 dtk (09-VOICE bagian 13)', () => {
+  it('siap-siap hanya sebelum gerakan yang tidak didahului istirahat', () => {
+    const steps: Step[] = [
+      { kind: 'exercise', exercise_id: 'squat', sets: 2, reps: 10, rest_s: 0 },
+      { kind: 'exercise', exercise_id: 'plank', sets: 1, duration_s: 30, rest_s: 0 },
+      { kind: 'exercise', exercise_id: 'glute_bridge', sets: 1, reps: 10, rest_s: 30 },
+    ];
+    const kinds = buildSegments(steps).map((x) => (x.kind === 'rest' ? (x.prep ? 'prep' : 'rest') : x.kind));
+    // Awal sesi, lalu tiap gerakan baru tanpa istirahat; antar set gerakan yang sama tidak.
+    expect(kinds).toEqual(['prep', 'exercise', 'exercise', 'prep', 'exercise', 'prep', 'exercise']);
+    const segs = buildSegments(strength);
+    expect(segs.filter((x) => x.kind === 'rest' && x.prep)).toHaveLength(1);
+    expect(segs[0]).toMatchObject({ timedS: PREP_S, group: 1 });
+  });
+
+  it('+15 dtk menambah sisa istirahat, juga jadwal notifikasi; segmen berikut kembali normal', () => {
+    const segs = buildSegments(strength, { auto: true });
+    let st = sync(start(initialState('w', true), T0), segs, s(36)); // 5 + 30 -> istirahat 60
+    expect(segs[st.index]!.kind).toBe('rest');
+    st = extend(st, segs, s(40));
+    expect(position(st, segs, s(40)).remainingS).toBe(60 - 5 + 15);
+    expect(upcomingBoundaries(st, segs, s(40))[0]!.at).toBe(s(35 + 75));
+    st = sync(st, segs, s(35 + 75));
+    expect(segs[st.index]!.kind).toBe('exercise');
+    expect(st.extendS).toBe(0);
+    expect(position(st, segs, s(111)).remainingS).toBe(29);
+  });
+
+  it('+15 dtk tidak berlaku di set manual', () => {
+    const segs = buildSegments(strength);
+    const st = sync(start(initialState('w'), T0), segs, s(10));
+    expect(extend(st, segs, s(10)).extendS ?? 0).toBe(0);
   });
 });
 
 describe('bahasa bunyi (09-VOICE bagian 5)', () => {
   const segs = buildSegments(strength, { auto: true });
-  const [squat1, rest1] = [segs[0]!, segs[1]!];
+  const [prep, squat1, rest1] = [segs[0]!, segs[1]!, segs[2]!];
   const sidePlank = segs[segs.length - 1]!;
 
   it('nada naik saat kerja mulai, turun saat istirahat, selesai di akhir', () => {
     expect(boundaryEarcon(null, squat1)).toBe('go');
+    expect(boundaryEarcon(null, prep)).toBe('segment');
+    expect(boundaryEarcon(prep, squat1)).toBe('go');
     expect(boundaryEarcon(squat1, rest1)).toBe('rest');
-    expect(boundaryEarcon(rest1, segs[2]!)).toBe('go');
+    expect(boundaryEarcon(rest1, segs[3]!)).toBe('go');
+    // 3-2-1 juga di siap-siap 5 dtk.
+    expect(segmentMoments(prep).map((m) => m.earcon)).toEqual(['tick', 'tick', 'tick']);
     expect(boundaryEarcon(sidePlank, null)).toBe('finish');
   });
 

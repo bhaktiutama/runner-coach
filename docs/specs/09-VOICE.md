@@ -250,15 +250,16 @@ Prinsip: timer dibaca dari jarak 1 sampai 2 meter (HP di lantai atau di saku), s
 | Layar istirahat | Cincin lavender (warna zona recovery) + angka `timer`, kartu **Berikutnya** dengan animasi kecil gerakan berikutnya + set + dosis | Istirahat dipakai untuk bersiap: pengguna melihat gerakan berikutnya sebelum mulai |
 | Warna fase | Kerja = oranye (primary), istirahat = lavender | Sama dengan arah nada (naik = kerja, turun = istirahat) |
 | Layar pendek (< 700 px, mis. iPhone SE) | Animasi kecil di samping nama; cincin dan angka istirahat mengecil; isi bisa digulir di atas footer | Angka waktu harus terlihat tanpa gulir |
-| Footer | Satu tombol utama (Selesai set / Lanjut / Lewati istirahat), Jeda dan Lewati gerakan sebagai teks | Satu aksi jelas; dalam mode otomatis tombol ini opsional |
+| Footer | Satu tombol utama (Selesai set / Lanjut / Lewati istirahat / Mulai sekarang), Jeda dan Lewati gerakan sebagai teks | Satu aksi jelas; dalam mode otomatis tombol ini opsional |
+| U1 "+15 dtk" (2026-11-05) | Pil di bawah cincin istirahat (tidak di Siap-siap). Tiap ketukan menambah 15 dtk ke segmen sekarang (`extend`, `extendS` di state, kembali 0 saat segmen berganti); jadwal notifikasi ikut bergeser | Pengguna yang belum pulih tidak perlu Jeda |
+| U2 Tahan layar (2026-11-05) | Tahan di mana saja di layar set strength/drill 0,5 dtk = Selesai set / Lanjut, dengan getar sedang; isi meredup sedikit selama ditekan. Ketukan biasa dan gulir tidak memicu. Hanya saat `running` dan tidak dikunci. Tombol tetap ada untuk pembaca layar | Tidak perlu membidik tombol dengan tangan berkeringat |
+| U4 Siap-siap (2026-11-05) | Segmen `rest` 5 dtk (`prep`) sebelum gerakan yang tidak didahului istirahat: awal sesi strength dan gerakan sesudah gerakan tanpa `rest_s`. Tidak di antara set gerakan yang sama. Layar = layar istirahat dengan bib "Siap-siap", kartu Berikutnya, tombol "Mulai sekarang", 3-2-1 lalu bunyi mulai | Gerakan baru tidak langsung jalan; pengguna sempat melihat gerakan dan posisi awal |
+| Gradasi cincin/bar (2026-11-05) | Cincin lari, istirahat, Siap-siap, dan bar set bergradasi satu tone: ekor = warna zona dicampur cream 45%, kepala = dicampur charcoal 12% (`toneRamp`, `TrackRing gradient`, `ToneBar` di `packages/ui`). Gradasi mengikuti lintasan (48 potongan), kepala selalu tone paling pekat | Arah gerak terbaca; tetap di tone zona sehingga warna fase tidak tertukar |
 
-### 13.2 Usulan berikutnya (belum dibangun, perlu persetujuan)
+### 13.2 Usulan berikutnya (belum dibangun, perlu persetujuan; U1, U2, U4 sudah dibangun, lihat 13.1)
 
 | # | Usulan | Manfaat | Biaya |
 |---|--------|---------|-------|
-| U1 | "+15 dtk" di layar istirahat | Pengguna yang belum pulih tidak perlu Jeda | Kecil: perpanjangan per segmen di state machine |
-| U2 | Ketuk di mana saja di layar set = Selesai set (dengan getar), tombol tetap ada | Tidak perlu membidik tombol dengan tangan berkeringat | Kecil; perlu cegah ketuk tidak sengaja (tahan 0,5 dtk) |
 | U3 | Mode "lihat dari jauh" otomatis saat HP mendatar (angka 2x lebih besar, animasi disembunyikan) | Plank / push-up dengan HP di lantai | Sedang: sensor orientasi (`expo-sensors`, library baru) |
-| U4 | Layar "Siap-siap" 5 dtk sebelum gerakan baru jika tidak ada istirahat sebelumnya | Gerakan pertama tidak langsung jalan | Kecil |
 | U5 | Live Activity (iOS) / notifikasi berjalan (Android) berisi angka + gerakan | Informasi di layar kunci | Besar: modul native |
 | U6 | Ringkasan per gerakan di 2.4 (set selesai, dilewati, waktu nyata vs estimasi) | Umpan balik untuk kalibrasi estimasi (K5) | Sedang |

@@ -12,6 +12,7 @@ import {
   size,
   space,
   Text,
+  ToneBar,
   TrackRing,
   ZoomIn,
   themed,
@@ -19,7 +20,7 @@ import {
 import { formatClock, formatDuration, formatPaceValue } from '@run-coach/ui/format';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ExerciseAnimation } from '@/components/ExerciseAnimation';
@@ -28,12 +29,14 @@ import { t } from '@/i18n/t';
 import { getPermission, notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
 import { intensitySegments } from '@/lib/workoutView';
-import { countdownTick, requestWakeLock } from '@/timer/cues';
+import { countdownTick, holdHaptic, requestWakeLock } from '@/timer/cues';
 import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
 import { plannedS } from '@/timer/machine';
 import { useTimer } from '@/timer/useTimer';
 
 const dark = color.dark;
+/** Lama tahan untuk Selesai set (U2). */
+const HOLD_MS = 500;
 
 /** 2.3 Timer (gelap) + 2.3b segmen drill + 2.3s mode gerakan strength. */
 export default function TimerScreen() {
@@ -217,7 +220,9 @@ export default function TimerScreen() {
         <View style={styles.inner}>
           {top}
           <ScrollView style={styles.flex} contentContainerStyle={styles.scroll}>
-            <DrillView tm={tm} paused={paused} />
+            <HoldToFinish enabled={!locked && running} onDone={tm.next}>
+              <DrillView tm={tm} paused={paused} />
+            </HoldToFinish>
           </ScrollView>
         </View>
         <View style={styles.drillFooter}>
@@ -254,14 +259,16 @@ export default function TimerScreen() {
         <View style={styles.inner}>
           {top}
           <ScrollView style={styles.flex} contentContainerStyle={styles.scroll}>
-            <StrengthView tm={tm} paused={paused} />
+            <HoldToFinish enabled={seg.kind === 'exercise' && !locked && running} onDone={tm.next}>
+              <StrengthView tm={tm} paused={paused} locked={locked} />
+            </HoldToFinish>
           </ScrollView>
         </View>
         <View style={styles.drillFooter}>
           {seg.kind === 'rest' ? (
             <PrimaryButton
-              label={t('timer.skipRest')}
-              icon="skip"
+              label={seg.prep ? t('timer.startNow') : t('timer.skipRest')}
+              icon={seg.prep ? 'play' : 'skip'}
               onPress={tm.next}
               disabled={locked}
               testID="rest-skip"
@@ -331,6 +338,7 @@ export default function TimerScreen() {
                 stroke={space[3] + border.selected - border.hairline / 2}
                 progress={seg?.timedS ? pos.elapsedInSegS / seg.timedS : 0}
                 motion="linear"
+                gradient
                 color={ringColor}
                 trackColor={dark.surfaceSunken}
               >
@@ -569,11 +577,15 @@ function DrillView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: bo
       </View>
       <Text variant="controlSm" color="darkTextMuted">
         {t('timer.drillHintNext', {
-          hint: seg.autoTimed
-            ? t('timer.drillAutoHint', { time: formatDuration(seg.timedS ?? 0) })
-            : seg.timedS != null
-              ? ''
-              : t('timer.drillHint'),
+          hint:
+            seg.timedS == null
+              ? t('timer.drillHint')
+              : [
+                  seg.autoTimed ? t('timer.drillAutoHint', { time: formatDuration(seg.timedS) }) : '',
+                  t('timer.holdHintDrill'),
+                ]
+                  .filter(Boolean)
+                  .join(' '),
           next: nextLabel,
         })}
       </Text>
@@ -586,7 +598,15 @@ function DrillView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: bo
  * (hitung mundur saat berwaktu/otomatis, hitung naik saat manual), cue. Istirahat: cincin hitung mundur
  * + pratinjau gerakan berikutnya.
  */
-function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: boolean }) {
+function StrengthView({
+  tm,
+  paused,
+  locked,
+}: {
+  tm: ReturnType<typeof useTimer>;
+  paused: boolean;
+  locked: boolean;
+}) {
   const pos = tm.position!;
   const seg = pos.segment;
   const { width, height } = useWindowDimensions();
@@ -612,11 +632,12 @@ function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused:
           stroke={space[3]}
           progress={seg.timedS ? pos.elapsedInSegS / seg.timedS : 0}
           motion="linear"
+          gradient
           color={color.zone.recovery}
           trackColor={dark.surfaceSunken}
         >
           <View style={styles.ringCol}>
-            <BibTag label={t('timer.restBib')} zone="recovery" />
+            <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
             {paused ? (
               <Text variant="statusCaps" style={{ color: color.status.attention }}>
                 {t('timer.paused')}
@@ -635,6 +656,21 @@ function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused:
             </Text>
           </View>
         </TrackRing>
+        {!seg.prep ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('timer.extendLabel')}
+            onPress={tm.extend}
+            disabled={locked}
+            testID="rest-extend"
+            style={[styles.extendPill, { opacity: locked ? 0.4 : 1 }]}
+          >
+            <Icon name="plus" size={size.iconSm} color={dark.text} />
+            <Text variant="controlStrong" color="darkText">
+              {t('timer.extend')}
+            </Text>
+          </Pressable>
+        ) : null}
         {nxt && nxt.kind === 'exercise' ? (
           <View style={styles.nextCard} testID="rest-next">
             <View style={styles.nextAnim}>
@@ -662,11 +698,14 @@ function StrengthView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused:
     .filter(Boolean);
   const timed = seg.timedS != null;
   const shown = timed ? (pos.remainingS ?? 0) : pos.elapsedInSegS;
-  const hint = seg.autoTimed
-    ? t('timer.exerciseAutoHint', { time: formatDuration(seg.timedS ?? 0) })
-    : timed
-      ? null
-      : t('timer.exerciseHint');
+  const hint = !timed
+    ? t('timer.exerciseHint')
+    : [
+        seg.autoTimed ? t('timer.exerciseAutoHint', { time: formatDuration(seg.timedS ?? 0) }) : '',
+        t('timer.holdHint'),
+      ]
+        .filter(Boolean)
+        .join(' ');
   return (
     <View style={styles.drill} testID="timer-exercise">
       <SessionBar tm={tm} />
@@ -745,9 +784,7 @@ function SetClock(p: {
         </Text>
       </View>
       {p.timed ? (
-        <View style={styles.setBar} accessibilityRole="progressbar">
-          <View style={[styles.setBarFill, { width: `${Math.round(frac * 100)}%` }]} />
-        </View>
+        <ToneBar progress={frac} color={color.primary} trackColor={dark.surfaceSunken} height={space[2]} />
       ) : null}
     </View>
   );
@@ -781,6 +818,44 @@ function SessionBar({ tm }: { tm: ReturnType<typeof useTimer> }) {
         );
       })}
     </View>
+  );
+}
+
+/**
+ * U2: tahan di mana saja di layar set 0,5 dtk = Selesai set / Lanjut, dengan getar. Ketukan biasa dan
+ * gulir tidak memicu apa pun. Isi di dalamnya tetap bisa dibaca pembaca layar (tombol tetap ada di footer).
+ */
+function HoldToFinish({
+  enabled,
+  onDone,
+  children,
+}: {
+  enabled: boolean;
+  onDone: () => void;
+  children: ReactNode;
+}) {
+  const [holding, setHolding] = useState(false);
+  return (
+    <Pressable
+      // Tanpa `disabled`: di web itu menandai semua isi (termasuk tombol +15 dtk) sebagai nonaktif.
+      accessible={false}
+      delayLongPress={HOLD_MS}
+      onPressIn={enabled ? () => setHolding(true) : undefined}
+      onPressOut={() => setHolding(false)}
+      onLongPress={
+        enabled
+          ? () => {
+              setHolding(false);
+              holdHaptic();
+              onDone();
+            }
+          : undefined
+      }
+      style={[styles.flex, holding && styles.holding]}
+      testID="hold-to-finish"
+    >
+      {children}
+    </Pressable>
   );
 }
 
@@ -980,13 +1055,6 @@ const styles = themed(() =>
     setClock: { gap: space[2], alignSelf: 'stretch' },
     setClockRow: { flexDirection: 'row', alignItems: 'baseline', gap: space[3], flexWrap: 'wrap' },
     tnum: { fontVariant: ['tabular-nums'] },
-    setBar: {
-      height: space[2],
-      borderRadius: radius.stadium,
-      backgroundColor: dark.surfaceSunken,
-      overflow: 'hidden',
-    },
-    setBarFill: { height: '100%', borderRadius: radius.stadium, backgroundColor: color.primary },
     segFill: { height: '100%', borderRadius: radius.stadium },
     clip: { overflow: 'hidden' },
     nextCard: {
@@ -997,6 +1065,16 @@ const styles = themed(() =>
       backgroundColor: dark.surface,
       borderRadius: radius.md,
       padding: space[3],
+    },
+    holding: { opacity: 0.85 },
+    extendPill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[1] + space[1] / 2,
+      minHeight: size.touchMin,
+      paddingHorizontal: space[4],
+      borderRadius: radius.stadium,
+      backgroundColor: dark.surface,
     },
     nextAnim: { width: space[10] + space[6] },
     center: { alignItems: 'center', alignSelf: 'stretch' },

@@ -16,6 +16,8 @@ export type TimerSegment = FlatSegment & {
   timedS: number | null;
   /** Set berwaktu karena mode otomatis (durasi = estimasi), bukan dosis waktu dari plan. */
   autoTimed?: boolean;
+  /** Jeda "Siap-siap" sebelum gerakan yang tidak didahului istirahat (09-VOICE 13, U4). */
+  prep?: boolean;
 };
 
 export type SegmentResult = { index: number; activeS: number; skipped: boolean };
@@ -39,7 +41,21 @@ export type TimerState = {
   muted: boolean;
   /** Mode otomatis (09-VOICE bagian 6): set repetisi dan drill jarak memakai estimasi waktu dan maju sendiri. */
   auto?: boolean;
+  /** Detik tambahan untuk segmen sekarang ("+15 dtk" di istirahat, U1). Kembali 0 saat segmen berganti. */
+  extendS?: number;
 };
+
+/** Lama "Siap-siap" sebelum gerakan baru tanpa istirahat sebelumnya (U4). */
+export const PREP_S = 5;
+/** Tambahan per ketukan "+15 dtk" (U1). */
+export const EXTEND_S = 15;
+
+/** Detik berwaktu segmen `i` termasuk perpanjangan jika itu segmen sekarang. */
+export function timedAt(s: TimerState, segs: TimerSegment[], i: number): number | null {
+  const t = segs[i]?.timedS;
+  if (t == null) return null;
+  return i === s.index ? t + (s.extendS ?? 0) : t;
+}
 
 export type BuildOptions = { auto?: boolean };
 
@@ -56,6 +72,10 @@ export function buildSegments(steps: Step[], opts: BuildOptions = {}): TimerSegm
     // Strength (F-21): 1 gerakan = 1 grup; istirahat sesudah set terakhir jika masih ada gerakan berikutnya.
     if (top.kind === 'exercise' && top.rest_s > 0 && i < lastExercise)
       flat.push({ kind: 'rest', duration_s: top.rest_s });
+    // U4: gerakan baru yang tidak didahului istirahat (awal sesi, atau gerakan sebelumnya tanpa rest_s).
+    if (top.kind === 'exercise' && out[out.length - 1]?.kind !== 'rest') {
+      out.push({ kind: 'rest', duration_s: PREP_S, group, timedS: PREP_S, prep: true });
+    }
     for (const seg of flat) {
       const timed = timedOf(seg);
       const autoS = timed == null && opts.auto ? autoOf(seg) : null;
@@ -117,14 +137,16 @@ export function sync(s: TimerState, segs: TimerSegment[], now: number): TimerSta
   while (st.status === 'running') {
     const seg = segs[st.index];
     if (!seg) return finish(st, now);
-    if (seg.timedS == null) return st;
-    const endAt = st.segStartActiveMs + seg.timedS * 1000;
+    const timed = timedAt(st, segs, st.index);
+    if (timed == null) return st;
+    const endAt = st.segStartActiveMs + timed * 1000;
     if (act < endAt) return st;
     st = {
       ...st,
-      results: [...st.results, { index: st.index, activeS: seg.timedS, skipped: false }],
+      results: [...st.results, { index: st.index, activeS: timed, skipped: false }],
       index: st.index + 1,
       segStartActiveMs: endAt,
+      extendS: 0,
     };
     if (st.index >= segs.length) return finish(st, st.startedAt! + st.pausedMs + endAt);
   }
@@ -163,6 +185,7 @@ export function next(s: TimerState, segs: TimerSegment[], now: number, skipped =
     ],
     index: cur.index + 1,
     segStartActiveMs: act,
+    extendS: 0,
   };
   return st.index >= segs.length ? finish(st, now) : st;
 }
@@ -182,6 +205,13 @@ export function end(s: TimerState, segs: TimerSegment[], now: number): TimerStat
     return cur.status === 'idle' ? finish(cur, now) : cur;
   const at = cur.pausedAt ?? now;
   return { ...cur, status: 'finished', finishedAt: at, pausedAt: null };
+}
+
+/** "+15 dtk": perpanjang segmen berwaktu yang sedang berjalan (U1). */
+export function extend(s: TimerState, segs: TimerSegment[], now: number, sec = EXTEND_S): TimerState {
+  const cur = sync(s, segs, now);
+  if ((cur.status !== 'running' && cur.status !== 'paused') || segs[cur.index]?.timedS == null) return cur;
+  return { ...cur, extendS: (cur.extendS ?? 0) + sec };
 }
 
 export type Position = {
@@ -210,7 +240,9 @@ export function plannedS(seg: TimerSegment): number {
 export function position(s: TimerState, segs: TimerSegment[], now: number): Position {
   const st = sync(s, segs, now);
   const act = activeMs(st, now);
-  const seg = segs[st.index] ?? null;
+  const base = segs[st.index] ?? null;
+  // Segmen sekarang dengan durasi efektif (termasuk perpanjangan), agar layar dan bunyi memakai angka yang sama.
+  const seg = base && st.extendS ? { ...base, timedS: timedAt(st, segs, st.index) } : base;
   const elapsedInSeg = Math.max(0, (act - st.segStartActiveMs) / 1000);
   return {
     index: st.index,
@@ -239,9 +271,9 @@ export function upcomingBoundaries(
   const out: { at: number; nextIndex: number }[] = [];
   let t = st.segStartActiveMs;
   for (let i = st.index; i < segs.length; i++) {
-    const seg = segs[i]!;
-    if (seg.timedS == null) break; // berhenti di drill/gerakan manual
-    t += seg.timedS * 1000;
+    const timed = timedAt(st, segs, i);
+    if (timed == null) break; // berhenti di drill/gerakan manual
+    t += timed * 1000;
     out.push({ at: st.startedAt + st.pausedMs + t, nextIndex: i + 1 });
   }
   return out;

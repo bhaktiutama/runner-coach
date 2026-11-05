@@ -175,6 +175,8 @@ export function useTimer(workout: Workout | null | undefined, autoDefault = true
     next: () => apply((s, n) => M.next(s, segs, n)),
     skip: () => apply((s, n) => M.next(s, segs, n, true)),
     skipGroup: () => apply((s, n) => M.skipGroup(s, segs, n)),
+    /** "+15 dtk" di istirahat (U1). */
+    extend: () => apply((s, n) => M.extend(s, segs, n)),
     end: () => apply((s, n) => M.end(s, segs, n)),
     toggleMute: () => apply((s) => ({ ...s, muted: !s.muted })),
   };

@@ -19,6 +19,7 @@ function rank(seg: TimerSegment): number {
 /** Bunyi saat masuk segmen `next` dari `prev` (null = awal sesi). Nada naik = kerja, turun = istirahat. */
 export function boundaryEarcon(prev: TimerSegment | null, next: TimerSegment | null): Earcon {
   if (!next) return 'finish';
+  if (next.kind === 'rest' && next.prep) return prev ? 'rest' : 'segment';
   if (!prev) return 'go';
   if (next.kind === 'rest') return 'rest';
   if (next.kind === 'exercise') return 'go';
@@ -39,7 +40,7 @@ export function segmentMoments(seg: TimerSegment): Moment[] {
   const T = seg.timedS;
   if (T == null || T < 4) return [];
   const out: Moment[] = [];
-  if (T >= 8) for (const r of [3, 2, 1]) out.push({ atS: T - r, earcon: 'tick' });
+  if (T >= 5) for (const r of [3, 2, 1]) out.push({ atS: T - r, earcon: 'tick' });
   const run = isRunSegment(seg);
   const warnAt = run ? (T >= 180 ? T - 60 : T >= 30 ? T - 10 : null) : T >= 30 ? T - 10 : null;
   if (warnAt != null) out.push({ atS: warnAt, earcon: 'warning' });

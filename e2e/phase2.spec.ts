@@ -96,6 +96,48 @@ test('strength mode otomatis: angka tiap set, maju sendiri tanpa tombol, bisa ga
   expect(errors).toEqual([]);
 });
 
+test('strength: siap-siap sebelum gerakan, tahan layar = selesai set, +15 dtk istirahat', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await onboard(page, { strength: true });
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  await page
+    .getByText(/Strength/)
+    .first()
+    .click();
+  await page.getByTestId('screen-detail').getByTestId('start').click();
+  // U4: gerakan pertama didahului "Siap-siap" dengan pratinjau gerakan.
+  await expect(async () => {
+    await page.clock.runFor(1000);
+    await expect(page.getByTestId('timer-rest')).toContainText(/siap-siap/i, { timeout: 200 });
+  }).toPass({ timeout: 15_000 });
+  await expect(page.getByTestId('rest-next')).toContainText('Set 1 dari');
+  await expect(page.getByTestId('rest-extend')).toHaveCount(0);
+  await page.getByTestId('rest-skip').click();
+  await expect(page.getByTestId('timer-exercise')).toBeVisible();
+  // U2: tahan layar 0,5 dtk = Selesai set; ketuk biasa tidak.
+  const body = page.getByTestId('timer-exercise');
+  await body.click();
+  await expect(body).toBeVisible();
+  await body.hover();
+  await page.mouse.down();
+  await page.clock.runFor(700);
+  await page.mouse.up();
+  await expect(page.getByTestId('timer-rest')).toContainText(/istirahat/i);
+  // U1: +15 dtk menambah sisa istirahat.
+  const secs = async () => {
+    const [m, sec] = ((await page.getByTestId('timer-remaining').textContent()) ?? '0:0').split(':');
+    return Number(m) * 60 + Number(sec);
+  };
+  const before = await secs();
+  await page.getByTestId('rest-extend').click();
+  await expect.poll(secs).toBeGreaterThanOrEqual(before + 14);
+  expect(errors).toEqual([]);
+});
+
 test('sakelar strength di Profil menambah sesi ke plan', async ({ page }) => {
   await onboard(page);
   await page.getByRole('tab', { name: 'Plan' }).click();
