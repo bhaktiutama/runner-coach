@@ -224,6 +224,15 @@ export const id = {
   'today.planFinished': 'Plan selesai. Buat plan baru dari Profil.',
   'today.paused': 'Plan dijeda',
   'today.raceDay': 'Hari race! Semoga lancar.',
+  'today.countdownRace': 'Menuju race {distance}',
+  'today.countdownDays': 'hari',
+  'today.countdownHours': 'jam',
+  'today.countdownRaceSub': '{km} terkumpul di plan ini',
+  'today.countdownRaceDate': '{date} · 0{hour}.00',
+  'today.countdownPlan': 'Plan kamu',
+  'today.countdownPlanEnd': 'Selesai {date}',
+  'today.countdownPlanSub': '{km} dari target {target} di plan ini',
+  'strength.moreMoves': '{list} +{n}',
   'today.webWarning':
     'Data tersimpan di browser ini. Menghapus data browser = data hilang. Rutin backup ke file.',
 

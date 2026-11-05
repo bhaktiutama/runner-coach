@@ -114,3 +114,11 @@ describe('rasa beban strength dari RPE', () => {
     ]);
   });
 });
+
+describe('hitung mundur race (2.1)', () => {
+  it('hari + jam sampai pukul 06.00 hari race; null jika sudah lewat', async () => {
+    const { countdownTo } = await import('../src/lib/progress');
+    expect(countdownTo('2026-11-10', new Date(2026, 10, 5, 8, 0))).toEqual({ days: 4, hours: 22 });
+    expect(countdownTo('2026-11-05', new Date(2026, 10, 5, 7, 0))).toBeNull();
+  });
+});

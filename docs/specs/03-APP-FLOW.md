@@ -18,7 +18,7 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
 | 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1; tombol kembali "Ubah jawaban" -> 1.7 (jawaban tetap tersimpan, plan dibuat ulang) |
 | 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |
-| 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6. Kartu kedua strength (F-21): "Mulai strength" -> 2.3s, "Lihat detail" -> 2.2s, terkunci -> 4.4 |
+| 2.1 | Hari ini (tab) | Kartu hitung mundur di atas (race: hari + jam ke pukul 06.00 hari race, jarak terkumpul; tanpa tanggal race: sisa hari plan + jarak dari target plan). Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6. Kartu kedua strength (F-21): "Mulai strength" -> 2.3s, "Lihat detail" -> 2.2s, terkunci -> 4.4 |
 | 2.2 | Detail latihan | Mulai -> 2.3; Pindah hari -> 3.2; Ganti jadi easy |
 | 2.2s | Detail strength (F-21) | Daftar gerakan (tempat animasi kosong, dosis, cue, istirahat), "Kenapa latihan ini?". Mulai -> 2.3s; Pindah hari -> 3.2. Terkunci (paywall aktif): "Buka dengan Premium" -> 4.4 |
 | 2.3s | Timer: mode gerakan (F-21) | Gerakan repetisi: "Selesai set"; gerakan berwaktu: hitung mundur; istirahat: hitung mundur + "Lewati istirahat". Akhiri / selesai -> 2.4 |

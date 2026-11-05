@@ -25,6 +25,7 @@ import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
+import { CountdownCard } from '@/components/CountdownCard';
 import { StrengthCard, WorkoutCard } from '@/components/WorkoutCard';
 import {
   useActivePlan,
@@ -101,6 +102,16 @@ export default function Today() {
           <StatusChip tone="neutral" label={t('today.week', { n: wIdx, total: params.weeks?.length ?? 0 })} />
         ) : null}
       </View>
+      {!paused && !raceDay ? (
+        <CountdownCard
+          today={today}
+          distance={plan.data.goal.distance}
+          raceDate={plan.data.goal.race_date}
+          planStart={plan.data.start_date}
+          planEnd={plan.data.end_date}
+          planTargetM={(params.weeks ?? []).reduce((s, w) => s + w.volumeM, 0)}
+        />
+      ) : null}
       {backupDue(meta.data, plan.data.start_date, today) ? (
         <Card variant="outline" testID="backup-card" style={styles.backup}>
           <Text variant="row">

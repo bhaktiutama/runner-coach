@@ -227,6 +227,15 @@ export const en: Record<MessageKey, string> = {
   'today.planFinished': 'Plan finished. Build a new plan from Profile.',
   'today.paused': 'Plan paused',
   'today.raceDay': 'Race day! Have a great run.',
+  'today.countdownRace': 'To your {distance} race',
+  'today.countdownDays': 'days',
+  'today.countdownHours': 'hours',
+  'today.countdownRaceSub': '{km} logged in this plan',
+  'today.countdownRaceDate': '{date} · 0{hour}:00',
+  'today.countdownPlan': 'Your plan',
+  'today.countdownPlanEnd': 'Ends {date}',
+  'today.countdownPlanSub': '{km} of {target} in this plan',
+  'strength.moreMoves': '{list} +{n}',
   'today.webWarning':
     'Data is stored in this browser. Clearing browser data = data lost. Back up to a file regularly.',
 
