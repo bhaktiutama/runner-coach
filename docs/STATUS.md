@@ -84,6 +84,7 @@ Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Ur
 | 8 | Integrasi Strava, HealthKit, Health Connect + layar 4.2 + panduan HR di 2.2 | `feat/p2-integrations` | Client ID/secret Strava, HP fisik, dev build |
 | 9 | Fase 3: pembelian Premium lewat RevenueCat, trial, restore, `subscription_started` | `feat/p3-premium` | Akun App Store / Play, keputusan harga (08 bagian 6) |
 | 10 | Desain suara + timer (`docs/specs/09-VOICE.md` v0.3). **Selesai 2026-11-05:** bunyi penanda baru (nada sintesis) di timer, angka waktu di setiap set, mode otomatis (bawaan, sakelar 4.1, pil di timer), UI 2.3s baru (bar sesi, kartu Berikutnya, layar pendek), migrasi v7; U1 +15 dtk, U2 tahan layar, U4 Siap-siap, gradasi cincin/bar; U3 jarak jauh (expo-sensors), U5 status layar kunci (notifikasi, tanpa Live Activity iOS), U6 per gerakan; review 3.4/2.5/2.1/3.3 (2026-11-05). Berikutnya: uji di HP fisik (bunyi saat layar terkunci, bunyi di atas musik), keputusan K1 sampai K5, Live Activity iOS (native, butuh perintah build), lalu mode Suara (TTS) | `claude/zen-ptolemy-4m4k9v` | Review di preview web, HP fisik |
+| 11 | Listing toko (ASO): strategi + hipotesis H1 sampai H7 dan copy EN + rencana 8 screenshot selesai sebagai draft (2026-11-05, `docs/store/`). Berikutnya: cek nama D5, kebijakan privasi, gambar resolusi tinggi berlisensi, buat screenshot dari build EN, usulan prompt rating (A1) ke spec, listing ID | `claude/quirky-meitner-8okbat` | Review copy, keputusan D5 |
 
 ## Blocker dan butuh dari pemilik
 
