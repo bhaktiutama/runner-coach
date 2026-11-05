@@ -123,18 +123,18 @@ Contoh: Squat 3 x 10, istirahat 60 detik; Plank 2 x 30 detik; Side plank 2 x 20 
 
 ## 5. Mode Bunyi saja: bahasa bunyi
 
-Pola dibuat dari nada sinus sintesis (dengan envelope 5 ms agar tidak "klik"), dirender ke WAV oleh `scripts/make-earcons.py`. Dua nada dasar: rendah 660 Hz, tinggi 990 Hz (kuinta, mudah dibedakan, terdengar di atas musik). Semua dinormalisasi ke loudness yang sama dengan `cue.wav` yang ada. Frekuensi dan durasi di bawah usulan, dikalibrasi di S-V2.
+Pola dibuat dari nada sintesis bergaya kaca/marimba (sinus + partial yang cepat meredup, attack 4 ms, decay eksponensial, gema ruang kecil; tanpa gelombang kotak), nada dari tangga A mayor pentatonik (A5 880 Hz, C#6, E6 1318 Hz, A6), dirender ke WAV 44,1 kHz oleh `scripts/make-earcons.py`. Contoh v0.1 untuk review: `docs/audio/earcons/` (`index.html` = halaman dengar). Frekuensi di tabel bawah mengikuti contoh ini. Semua dinormalisasi ke puncak -3 sampai -10 dBFS sesuai peran. Frekuensi dan durasi masih usulan, dikalibrasi di S-V2.
 
 | Momen | Pola | Getar | Dipakai di |
 |-------|------|-------|-----------|
-| 3-2-1 | 3 x bip pendek rendah (80 ms, jarak 1 detik) | Ringan per bip (sudah ada `countdownTick`) | Sebelum setiap mulai kerja dan akhir istirahat |
-| **Mulai kerja / naik intensitas** | Bip panjang tinggi (400 ms) setelah 3-2-1 (pola start lomba) | Kuat | Mulai set, mulai segmen tempo/interval/lari |
-| **Istirahat / turun intensitas** | Dua nada turun tinggi -> rendah (150 ms + 150 ms) | Sedang | Set selesai, mulai istirahat, mulai jog/jalan pemulihan |
-| Setengah jalan | 1 bip tinggi lembut (volume -6 dB) | Tidak | Segmen >= 6 menit, istirahat >= 60 detik, set berwaktu >= 20 detik |
-| 10 detik / 1 menit lagi | 2 bip pendek tinggi | Ringan | Peringatan sebelum pergantian |
-| Ganti sisi | 3 bip cepat sama nada (60 ms, jarak 80 ms) | Ringan x2 | Set berwaktu per sisi, di tengah |
-| Segmen lari baru, intensitas sama | `cue.wav` yang ada | Sedang | Mis. easy -> easy, repetisi berikutnya setelah 3-2-1 |
-| Sesi selesai | `done.wav` yang ada (nada naik 3) | Sukses | Akhir sesi |
+| 3-2-1 | 3 x ketukan kaca pendek E6 (jarak 1 detik) | Ringan per bip (sudah ada `countdownTick`) | Sebelum setiap mulai kerja dan akhir istirahat |
+| **Mulai kerja / naik intensitas** | Naik A5, E6, A6 setelah 3-2-1 | Kuat | Mulai set, mulai segmen tempo/interval/lari |
+| **Istirahat / turun intensitas** | Turun E6, C#6, A5, timbre lebih hangat | Sedang | Set selesai, mulai istirahat, mulai jog/jalan pemulihan |
+| Setengah jalan | 1 denting lembut C#6 | Tidak | Segmen >= 6 menit, istirahat >= 60 detik, set berwaktu >= 20 detik |
+| 10 detik / 1 menit lagi | 2 ketukan cepat E6 | Ringan | Peringatan sebelum pergantian |
+| Ganti sisi | 3 nada marimba A5, E6, A5 | Ringan x2 | Set berwaktu per sisi, di tengah |
+| Segmen lari baru, intensitas sama | Dyad marimba A5 + C#6 (ganti `cue.wav`) | Sedang | Mis. easy -> easy, repetisi berikutnya setelah 3-2-1 |
+| Sesi selesai | Arpeggio naik A5, C#6, E6, A6 (ganti `done.wav`) | Sukses | Akhir sesi |
 
 Aturan:
 
