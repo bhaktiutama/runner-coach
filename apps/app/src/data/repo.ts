@@ -64,6 +64,7 @@ const PROFILE_KEYS = [
   'disclaimer_accepted_at',
   'strength_opt_in',
   'timer_auto',
+  'today_card',
 ] as const;
 
 export async function updateProfile(db: Db, patch: Partial<ProfileRow>): Promise<void> {

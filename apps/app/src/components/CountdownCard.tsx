@@ -1,7 +1,7 @@
 import { addDays, diffDays, type EngineMessageKey } from '@run-coach/training-engine';
 import { Card, color, space, Text, themed, ToneBar } from '@run-coach/ui';
 import { formatDateLong, formatDistance, formatNumber } from '@run-coach/ui/format';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useActivityDistance } from '@/data/hooks';
 import { t } from '@/i18n/t';
@@ -16,13 +16,15 @@ type Props = {
   planEnd: string;
   /** Total volume target semua minggu plan (meter). */
   planTargetM: number;
+  /** Tombol "Jadikan utama" / chip "Utama" dari carousel. */
+  pin?: ReactNode;
 };
 
 /**
  * 2.1 (review 2026-11-05): hitung mundur hari + jam ke race. Tanpa tanggal race (Bugar, atau race
  * belum ditentukan): sisa hari plan + jarak yang sudah dikumpulkan dari target plan.
  */
-export function CountdownCard({ today, distance, raceDate, planStart, planEnd, planTargetM }: Props) {
+export function CountdownCard({ today, distance, raceDate, planStart, planEnd, planTargetM, pin }: Props) {
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60_000);
@@ -57,9 +59,12 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
           trackColor={color.surfaceSunken}
           height={space[2]}
         />
-        <Text variant="caption" color="textMuted">
-          {t('today.countdownRaceSub', { km: formatDistance(doneM) })}
-        </Text>
+        <View style={styles.foot}>
+          <Text variant="caption" color="textMuted" style={styles.flex}>
+            {t('today.countdownRaceSub', { km: formatDistance(doneM) })}
+          </Text>
+          {pin}
+        </View>
       </Card>
     );
   }
@@ -83,9 +88,12 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
         trackColor={color.surfaceSunken}
         height={space[2]}
       />
-      <Text variant="caption" color="textMuted">
-        {t('today.countdownPlanSub', { km: formatDistance(doneM), target: formatDistance(planTargetM) })}
-      </Text>
+      <View style={styles.foot}>
+        <Text variant="caption" color="textMuted" style={styles.flex}>
+          {t('today.countdownPlanSub', { km: formatDistance(doneM), target: formatDistance(planTargetM) })}
+        </Text>
+        {pin}
+      </View>
     </Card>
   );
 }
@@ -103,7 +111,8 @@ function Unit({ value, label }: { value: number; label: string }) {
 
 const styles = themed(() =>
   StyleSheet.create({
-    card: { gap: space[3], padding: space[4] },
+    card: { gap: space[3], padding: space[4], flex: 1 },
+    foot: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     flex: { flex: 1, gap: space[1] },
     nums: { flexDirection: 'row', gap: space[4] },

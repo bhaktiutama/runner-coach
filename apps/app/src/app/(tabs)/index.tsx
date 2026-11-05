@@ -25,7 +25,7 @@ import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
-import { CountdownCard } from '@/components/CountdownCard';
+import { TodayCarousel } from '@/components/TodayCarousel';
 import { StrengthCard, WorkoutCard } from '@/components/WorkoutCard';
 import {
   useActivePlan,
@@ -103,12 +103,9 @@ export default function Today() {
         ) : null}
       </View>
       {!paused && !raceDay ? (
-        <CountdownCard
+        <TodayCarousel
           today={today}
-          distance={plan.data.goal.distance}
-          raceDate={plan.data.goal.race_date}
-          planStart={plan.data.start_date}
-          planEnd={plan.data.end_date}
+          plan={plan.data}
           planTargetM={(params.weeks ?? []).reduce((s, w) => s + w.volumeM, 0)}
         />
       ) : null}

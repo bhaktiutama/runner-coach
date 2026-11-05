@@ -86,3 +86,24 @@ test('strength: tampilan jarak jauh (U3), ringkasan per gerakan di 2.4 dan 3.4 (
   await expect(page.getByTestId('exercise-summary')).toContainText('2/2 set');
   expect(errors).toEqual([]);
 });
+
+test('Today: kartu geser (hitung mundur, long run, rekor, streak) dan pilihan kartu utama tersimpan', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await restoreSeed(page);
+  await expect(page.getByTestId('countdown-race')).toBeVisible();
+  await expect(page.getByTestId('card-default-countdown')).toBeVisible();
+  await page.getByTestId('card-dot-long_run').click();
+  await expect(page.getByTestId('card-long_run')).toContainText('Long run');
+  await page.getByTestId('card-dot-records').click();
+  await expect(page.getByTestId('card-records')).toContainText('Terjauh');
+  await page.getByTestId('card-dot-streak').click();
+  await page.getByTestId('card-pin-streak').click();
+  await expect(page.getByTestId('card-default-streak')).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId('screen-today')).toBeVisible();
+  await expect(page.getByTestId('card-default-streak')).toBeVisible();
+  expect(errors).toEqual([]);
+});
