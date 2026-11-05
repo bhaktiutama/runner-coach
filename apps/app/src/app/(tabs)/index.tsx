@@ -107,6 +107,7 @@ export default function Today() {
           today={today}
           plan={plan.data}
           planTargetM={(params.weeks ?? []).reduce((s, w) => s + w.volumeM, 0)}
+          weeks={params.weeks ?? []}
         />
       ) : null}
       {backupDue(meta.data, plan.data.start_date, today) ? (
