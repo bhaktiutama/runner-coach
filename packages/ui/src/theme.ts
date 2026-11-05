@@ -40,6 +40,25 @@ const darkColor: ColorPalette = {
   overlay: d.overlay,
 };
 
+/** Campur dua warna hex `#RRGGBB` (t = 0 -> a, 1 -> b). Untuk turunan tone dari token, bukan warna baru. */
+export function mixHex(a: string, b: string, t: number): string {
+  const pa = parseInt(a.slice(1, 7), 16);
+  const pb = parseInt(b.slice(1, 7), 16);
+  const ch = (sh: number) =>
+    Math.round(((pa >> sh) & 255) * (1 - t) + ((pb >> sh) & 255) * t)
+      .toString(16)
+      .padStart(2, '0');
+  return `#${ch(16)}${ch(8)}${ch(0)}`;
+}
+
+/**
+ * Gradasi satu tone untuk cincin/bar timer: ekor lebih terang (dicampur cream), kepala sedikit lebih
+ * dalam (dicampur charcoal). Tetap di sekitar warna zona; semua turunan dari token palet.
+ */
+export function toneRamp(base: string): [string, string] {
+  return [mixHex(base, p.cream, 0.45), mixHex(base, p.charcoal, 0.12)];
+}
+
 let scheme: ColorScheme = 'light';
 const palettes: Record<ColorScheme, ColorPalette> = { light: lightColor, dark: darkColor };
 

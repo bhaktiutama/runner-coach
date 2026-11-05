@@ -138,8 +138,13 @@ Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, m
 | Kartu strength 2.1 | Di bawah kartu lari (atau kartu Istirahat). Lebih ringkas: bib + jumlah gerakan, menit besar, 1 kalimat, "Mulai strength", "Lihat detail". Terkunci: tombol "Buka dengan Premium" |
 | Tempat animasi | `ExerciseAnimation`: kotak `surface-sunken` (gelap: `dark.surface-sunken`) dengan garis putus-putus 2.5 px `line-strong`, ikon `strength` + "Animasi gerakan menyusul". Tinggi 120 (timer) / 88 (daftar 2.2s). Gerakan yang punya frame (semua 15): tanpa kotak dan tanpa warna latar sendiri (frame transparan langsung di atas warna layar, terang maupun gelap), area persegi lebar penuh maksimal 240, di tengah. Frame diputar bolak-balik (awal -> puncak -> awal; 100 ms per frame, awal ditahan 300 ms, puncak ditahan 0,4 sampai 2 dtk sesuai gerakan), label aksesibilitas "Animasi gerakan {nama}", reduce motion diam di frame puncak. Layar tidak berubah (D8) |
 | 2.2s | Kartu per gerakan: tempat animasi, "n. Nama" + dosis (`3 x 8x / sisi`, `2 x 30 dtk`), cue `body-sm`, istirahat `caption`. Tanpa grafik intensitas dan tanpa pilihan panduan intensitas |
-| 2.3s | Gelap seperti 2.3b: tempat animasi, bib "Gerakan n/N", nama `drill-name`, "Set x dari y · dosis" `set`, lajur set, angka hitung mundur `stat` untuk gerakan berwaktu, cue. Istirahat: bib recovery + angka `timer` di tengah + "Berikutnya: ...". Footer: tombol utama (Selesai set / Lanjut / Lewati istirahat) + Jeda dan Lewati gerakan sebagai teks |
-| 2.4 untuk strength | Tanpa kolom jarak dan pace. SegmentedControl "Bebannya terasa" (Terlalu berat / Pas / Terlalu ringan) di atas RPE |
+| 2.3s | Gelap seperti 2.3b. Bar atas: Akhiri, pil Otomatis/Manual, bisu (tanpa "Segmen x dari y"). Bar sesi (lajur per gerakan). Set: animasi, bib "Gerakan n/N", nama `drill-name`, "Set x dari y · dosis" `set`, lajur set, angka `numberXl` (hitung mundur saat berwaktu/otomatis, hitung naik saat manual) + bar progres set `primary`, cue, petunjuk mode. Istirahat: cincin `zone.recovery` bergradasi + angka `timer` + pil "+15 dtk" + kartu "Berikutnya" (animasi kecil, nama, set, dosis). "Siap-siap" (5 dtk sebelum gerakan tanpa istirahat): layar istirahat dengan bib "Siap-siap", tanpa "+15 dtk", tombol "Mulai sekarang". Tahan layar set 0,5 dtk = Selesai set. Cincin timer (2.3, 2.3s) dan bar set bergradasi satu tone (`TrackRing gradient`, `ToneBar`). Layar < 700 px: animasi di samping nama, angka istirahat `numberXl`. Footer: tombol utama (Selesai set / Lewati istirahat) + Jeda dan Lewati gerakan sebagai teks. Detail `09-VOICE.md` bagian 13 |
+| 2.4 untuk strength | Tanpa kolom jarak dan pace. Daftar "Per gerakan" (U6: ikon selesai/dilewati, nama, "Kerja 1:15 · rencana 1:00", "2/2 set"). Tanpa isian "Bebannya terasa": rasa beban diturunkan dari RPE (8-10 = terlalu berat, catatan "Sesi strength berikutnya akan kami ringankan 1 level" di bawah RPE) |
+| 3.4 Detail aktivitas | Hero bergambar (gambar tipe 2.1; strength = track-side), tombol kembali + pil sumber (Dari timer / Dicatat manual). Judul = LaneMark zona + nama tipe (tanpa bib). Tanggal di bawah judul. Stat 3 kolom dalam satu kartu surface, dipisah garis tipis (4 nilai = 2 x 2); kolom < 100 px memakai `numberSm`. Catatan perkiraan jarak/pace untuk sumber timer. Lari: Segmen vs target. Strength: Per gerakan (U6) |
+| 2.1 latihan satu segmen | Tanpa bar intensitas dan baris segmen (mengulang nama tipe); diganti 1 baris rasa usaha (`timer.feel.*`) |
+| 2.5 tombol usulan | Bertumpuk lebar penuh ("Oke, terapkan" gelap, "Tetap plan awal" terang) agar label EN tidak terpotong |
+| 3.3 rentang | Baris total di bawah judul kartu volume. Plan: batang per minggu plan berwarna fase, minggu depan bergaris luar, sumbu "M1..", angka di atas batang disembunyikan jika > 10 batang. Semua: per bulan jika > 16 minggu. Baris "Ringkasan minggu ini" (ikon trofi) di atas kartu volume |
+| 2.3s jarak jauh (U3) | HP datar menghadap ke atas >= 0,8 dtk, atau ketuk angka: bib, nama, angka `timer` ~30% lebar layar, bar progres tebal. Ketuk = kembali |
 | 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
 | 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
 | Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |
@@ -154,13 +159,13 @@ Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua
 | G2 | Konfeti kecil, 16 potongan, warna palet | 2.5 hanya jika semua latihan minggu itu tuntas | Sekali putar saat layar tampil, `slow` 320 ms, memudar di akhir. Tata letak deterministik (tanpa acak) | `Confetti`, `confettiPieces` |
 | G3 | (dibatalkan) Animasi centang "Selesai" di kartu latihan | | Kartu Selesai kembali statis seperti semula (keputusan pemilik produk 2026-11-01) | |
 | G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
-| G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
+| G5 | Bunyi penanda + getar: pergantian segmen (naik = kerja, turun = istirahat), 3-2-1, peringatan, setengah jalan, ganti sisi, jeda/lanjut, selesai | Timer 2.3, 2.3b, 2.3s | `09-VOICE.md` bagian 5; bunyi dari `scripts/make-earcons.py`. Bisu = getar saja. Getar tidak ada di web | `playEarcon`, `earcons.ts` |
 | G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |
 | G7 | Batang volume tumbuh dari dasar bergantian (jeda 70 ms, `slow` + `stride`), angkanya naik dari 0; garis tren tergambar kiri ke kanan (`ring`, setelah jeda 320 ms) | Progres 3.3 (juga dipakai grafik 1.8 jika `animate`) | Diputar setiap tab Progres terlihat. Angka naik tanpa melewati nilai akhir (easing `standard`) | `BarChart` dan `LineTrend` (`animate`) |
 | G8 | Tujuh lajur "Minggu ini" muncul membesar + fade in bergantian (jeda 80 ms, `base` + `stride`); angka km minggu ini naik dari 0 (`ring`) | Hari ini 2.1 | **Sekali per sesi app** (saat Today pertama terlihat), bukan setiap membuka tab | `LaneWeek` (`animate`), `useAnimatedNumber` |
 | G9 | Tombol RPE terpilih membesar 0.9 ke 1.12 lalu 1 | 2.4, 2.6 | `base` + `fast`, `stride`. Tidak ada saat pilihan awal | `RpePicker` |
 | G10 | Knob sakelar bergeser halus, bukan loncat | Semua `Switch` (mis. 4.1, 4.5) | `base` + `standard` | `Switch` |
-| G11 | Angka hitung mundur 3-2-1 mengecil dari 1.5x sambil fade in; getar ringan per angka | Timer 2.3 | `slow` + `standard`. Getar hanya di iOS/Android (`countdownTick`) | `ZoomIn`, `cues.ts` |
+| G11 | Angka hitung mundur 3-2-1 mengecil dari 1.5x sambil fade in; bunyi tick + getar ringan per angka | Timer 2.3 | `slow` + `standard`. Getar hanya di iOS/Android (`countdownTick`) | `ZoomIn`, `cues.ts` |
 
 Aturan umum:
 - **Kurangi gerakan**: semua G1, G2, G6 sampai G11 berhenti (nilai langsung ke akhir; konfeti tidak dirender). Dibaca dari setelan OS (web: `prefers-reduced-motion`) lewat `useReducedMotion`.
@@ -193,7 +198,7 @@ Teks langsung di atas gambar memakai `color.on-image` (#FFF9F2, kedua tema) dan 
 | 2.1 strides | track-overhead |
 | 2.1 long | road-sunrise-f / -m (bergantian per tanggal) |
 | 2.1 istirahat (`RestCard`, garis kiri recovery dihapus) | track-aerial |
-| 2.1 strength / core | Tanpa gambar (belum ada) |
+| 2.1 strength / core | Tanpa gambar (belum ada); 3.4 strength memakai track-side |
 | 2.4 Selesai | shoe-sole |
 | 2.5 Ringkasan minggu | track-overhead |
 | 2.6 Catat lari manual | pov-feet |

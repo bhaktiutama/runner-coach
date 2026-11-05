@@ -146,6 +146,19 @@ export default function ProfileTab() {
           }
         />
         <SettingsRow
+          label={t('profile.timerAuto')}
+          sub={t('profile.timerAutoSub')}
+          testID="row-timer-auto"
+          right={
+            <Switch
+              label={t('profile.timerAuto')}
+              value={profile.data.timer_auto !== 0}
+              onChange={(on) => update.mutate({ timer_auto: on ? 1 : 0 })}
+              testID="timer-auto-switch"
+            />
+          }
+        />
+        <SettingsRow
           label={t('profile.pause')}
           danger
           value={p.status === 'paused' ? t('profile.paused') : t('profile.pauseValue')}

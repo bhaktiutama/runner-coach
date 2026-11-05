@@ -22,6 +22,89 @@ export function rangeStart(
   return mondayOf(firstActivity && firstActivity < planStart ? firstActivity : planStart);
 }
 
+/** Batang grafik volume 3.3 untuk satu rentang (F-07). `outline` = target plan yang belum dijalani. */
+export type VolumeBar = {
+  key: string;
+  start: string;
+  distanceM: number;
+  phase: 'base' | 'build' | 'peak' | 'taper' | 'return';
+  outline: boolean;
+  current: boolean;
+  /** Nomor minggu plan (rentang Plan) atau null. */
+  week: number | null;
+};
+
+/**
+ * Rentang Plan: satu batang per minggu plan dari minggu 1 sampai minggu terakhir. Minggu yang sudah
+ * lewat dan minggu ini = jarak nyata, berwarna fase; minggu depan = target volume plan (garis luar).
+ */
+type PlanWeek = { weekIndex: number; phase: string; startDate: string; volumeM: number };
+const PHASES = new Set(['base', 'build', 'peak', 'taper', 'return']);
+
+export function planBars(weeks: PlanWeek[], acts: DatedActivity[], today: string): VolumeBar[] {
+  const thisMonday = mondayOf(today);
+  return weeks.map((w) => {
+    const m = mondayOf(w.startDate);
+    const future = m > thisMonday;
+    const end = addDays(m, 6);
+    const actual = acts
+      .filter((a) => a.date >= m && a.date <= end)
+      .reduce((x, a) => x + (a.distance_m ?? 0), 0);
+    return {
+      key: m,
+      start: m,
+      distanceM: future ? w.volumeM : actual,
+      phase: (PHASES.has(w.phase) ? w.phase : 'base') as VolumeBar['phase'],
+      outline: future,
+      current: m === thisMonday,
+      week: w.weekIndex,
+    };
+  });
+}
+
+/** Rentang Semua: per bulan jika lebih dari 16 minggu, selain itu per minggu. */
+export function historyBars(acts: DatedActivity[], from: string, today: string): VolumeBar[] {
+  const weekly = weeklyVolume(acts, from, today);
+  if (weekly.length <= 16) {
+    return weekly.map((w) => ({
+      key: w.weekStart,
+      start: w.weekStart,
+      distanceM: w.distanceM,
+      phase: 'build',
+      outline: w.current,
+      current: w.current,
+      week: null,
+    }));
+  }
+  const out: VolumeBar[] = [];
+  const nowMonth = today.slice(0, 7);
+  for (let m = from.slice(0, 7); m <= nowMonth;) {
+    const d = acts.filter((a) => a.date.startsWith(m)).reduce((x, a) => x + (a.distance_m ?? 0), 0);
+    out.push({
+      key: m,
+      start: `${m}-01`,
+      distanceM: d,
+      phase: 'build',
+      outline: false,
+      current: m === nowMonth,
+      week: null,
+    });
+    const [y, mo] = m.split('-').map(Number) as [number, number];
+    m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`;
+  }
+  return out;
+}
+
+/** Total rentang: jarak, waktu, jumlah aktivitas (dari `from` sampai hari ini). */
+export function rangeTotals(acts: DatedActivity[], from: string, today: string) {
+  const xs = acts.filter((a) => a.date >= from && a.date <= today);
+  return {
+    distanceM: xs.reduce((s, a) => s + (a.distance_m ?? 0), 0),
+    durationS: xs.reduce((s, a) => s + a.duration_s, 0),
+    count: xs.length,
+  };
+}
+
 export type WeekBar = { weekStart: string; distanceM: number; current: boolean };
 
 export function weeklyVolume(acts: DatedActivity[], from: string, today: string): WeekBar[] {
@@ -115,4 +198,9 @@ export function rpeVerdict(rpe: number, type: string | null): 'below' | 'within'
 
 export function daysBetween(a: string, b: string) {
   return diffDays(a, b);
+}
+
+/** Rasa beban strength dari RPE (F-21): 1-4 terlalu ringan, 5-7 pas, 8-10 terlalu berat. */
+export function loadFeelFromRpe(rpe: number): 'too_easy' | 'ok' | 'too_hard' {
+  return rpe >= 8 ? 'too_hard' : rpe <= 4 ? 'too_easy' : 'ok';
 }

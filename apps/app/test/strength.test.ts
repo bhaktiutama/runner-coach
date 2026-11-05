@@ -149,15 +149,17 @@ describe('timer mode gerakan (2.3s)', () => {
     expect(segs[segs.length - 1]!.group).toBe(exercises);
     expect(segs[segs.length - 1]!.kind).toBe('exercise');
     const sets = segs.filter((x) => x.kind === 'exercise').length;
-    expect(segs.filter((x) => x.kind === 'rest').length).toBe(sets - 1);
+    // + 1 "Siap-siap" (U4) sebelum gerakan pertama.
+    expect(segs.filter((x) => x.kind === 'rest' && !x.prep).length).toBe(sets - 1);
+    expect(segs[0]).toMatchObject({ kind: 'rest', prep: true });
   });
 
   it('repetisi = manual (Selesai set), plank = hitung mundur, istirahat otomatis berjalan', () => {
-    const squat = segs[0]!;
+    const squat = segs[1]!;
     expect(squat.kind === 'exercise' && squat.timedS).toBeNull();
     const plank = segs.find((x) => x.kind === 'exercise' && x.exercise_id === 'plank')!;
     expect(plank.timedS).toBe(30);
-    let st = start(initialState('w'), T0);
+    let st = sync(start(initialState('w'), T0), segs, T0 + 5_000); // siap-siap 5 dtk
     st = next(st, segs, T0 + 30_000); // set 1 squat selesai
     expect(segs[st.index]!.kind).toBe('rest');
     const restS = segs[st.index]!.timedS!;

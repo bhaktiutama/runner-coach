@@ -139,6 +139,18 @@ export function formatPercent(ratio: number, locale = activeLocale): string {
   return new Intl.NumberFormat(locale, { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
 }
 
+/** Jam dinding dari epoch ms: "07:32" (U5, notifikasi status timer). */
+export function formatTimeOfDay(epochMs: number, locale = activeLocale): string {
+  return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit', hour12: false }).format(
+    new Date(epochMs),
+  );
+}
+
+/** Bulan singkat untuk sumbu grafik: "Okt". */
+export function formatMonthShort(date: string, locale = activeLocale): string {
+  return new Intl.DateTimeFormat(locale, { month: 'short', timeZone: 'UTC' }).format(parseLocalDate(date));
+}
+
 /** "Januari 2027". */
 export function formatMonthYear(year: number, month0: number, locale = activeLocale): string {
   return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(

@@ -1,6 +1,6 @@
 # 05. Data Schema (lokal) + Backend
 
-Status: Draft v0.4 (2026-10-30, migrasi v6 fase 2) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
+Status: Draft v0.5 (2026-11-05, migrasi v7 timer otomatis) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
 
 ## Ringkasan
 
@@ -61,6 +61,7 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | health_flag | boolean default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |
 | disclaimer_accepted_at | timestamptz | Dari centang di 1.7 |
 | strength_opt_in | boolean default false | F-21: plan memuat strength + core (1.6, 4.1). Sejak v6 |
+| timer_auto | boolean default true | Timer maju otomatis: set repetisi dan drill jarak memakai estimasi waktu (4.1, `09-VOICE.md` bagian 6). Sejak v7 |
 
 ### goals
 
@@ -121,7 +122,7 @@ Index: `(date)`. Gabung 2 latihan (3.2): latihan tujuan di-update, latihan yang 
 | distance_m | int null | |
 | duration_s | int | check > 0 |
 | avg_hr | int null | |
-| segments | json null | Hasil per segmen dari timer (3.4 "Segmen vs target") |
+| segments | json null | Hasil per segmen dari timer (3.4 "Segmen vs target", U6). Sejak 2026-11-05 `{ v: 2, results }` (indeks memakai segmen "Siap-siap"); array polos = format lama tanpa "Siap-siap" |
 | splits | json null | Split per km (3.4) |
 
 Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is not null`.
@@ -134,7 +135,7 @@ Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is no
 | rpe | int | check 1-10 |
 | tags | text[] default '[]' | Subset dari ('hot','poor_sleep','sore_legs','pain'); layar 2.4 |
 | notes | text null | |
-| load_feel | text null | check in ('too_hard','ok','too_easy'). Sesi strength/core (2.4, F-21). Sejak v6 |
+| load_feel | text null | check in ('too_hard','ok','too_easy'). Sesi strength/core (2.4, F-21). Sejak v6; sejak 2026-11-05 diturunkan dari RPE (1-4 too_easy, 5-7 ok, 8-10 too_hard) |
 
 ### plan_adjustments (F-11, layar 2.5)
 

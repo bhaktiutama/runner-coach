@@ -25,11 +25,11 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 2.3 | Timer (gelap) | Selesai / Akhiri -> 2.4 |
 | 2.3b | Timer: segmen drill | "Lanjut" per set; set terakhir -> segmen berikut |
 | 2.4 | Selesai + RPE | Simpan -> 2.5 (jika latihan terakhir minggu itu) atau 2.1 |
-| 2.5 | Ringkasan minggu + adaptasi | 2.1 atau 3.1 |
+| 2.5 | Ringkasan minggu + adaptasi | Tutup -> layar sebelumnya (3.3) atau 2.1 |
 | 2.6 | Catat lari (manual) | Simpan -> 2.1 (atau 2.5 jika latihan terakhir minggu itu) |
 | 3.1 | Kalender plan (tab) | Tap latihan -> 2.2 atau 3.2 |
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
-| 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
+| 3.3 | Progres (tab) | Tap aktivitas -> 3.4; "Ringkasan minggu ini" -> 2.5 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
 | 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
 | 4.2 | Integrasi | Fase 2 (ditunda: butuh kredensial Strava + HP fisik) |
@@ -187,9 +187,9 @@ Tampilan status di 3.1: completed = centang di lingkaran warna zona, missed/skip
 
 Saat `paused`: notifikasi terjadwal dibatalkan, dijadwalkan ulang saat `running`.
 
-Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen di "Segmen x dari y". Set berbasis repetisi tidak memakai countdown ("Selesai set"); set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
+Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen ("Gerakan n/N"). Set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Set berbasis repetisi: mode otomatis (bawaan, `profile.timer_auto`) = countdown dari estimasi 3 dtk per repetisi dan maju otomatis, "Selesai set" mengakhiri lebih cepat; mode manual = hitung naik, maju dengan "Selesai set". Mode bisa diganti di tengah sesi (pil di bar atas); hitungan set yang sedang berjalan dimulai ulang. Gerakan yang tidak didahului istirahat (termasuk gerakan pertama) diawali "Siap-siap" 5 dtk ("Mulai sekarang" untuk melewati). Istirahat bisa ditambah "+15 dtk" berkali-kali. Tahan layar set 0,5 dtk = "Selesai set" / "Lanjut". Detail: `09-VOICE.md` bagian 6 dan 13. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
 
-Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS, jadi segmen ini tidak memakai countdown. Layar menampilkan nama gerakan, set ke-berapa, dan cue; pengguna menekan "Lanjut" setiap set selesai. Dosis berbasis waktu tetap memakai countdown.
+Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS. Mode otomatis: countdown 60 dtk per set (termasuk kembali ke awal) dan maju sendiri; mode manual: hitung naik dan pengguna menekan "Lanjut" setiap set selesai. Layar menampilkan nama gerakan, set ke-berapa, dan cue. Dosis berbasis waktu tetap memakai countdown.
 
 ### 3.3 Status plan
 

@@ -250,7 +250,10 @@ export function BarChart({
   const labelH = space[4];
   return (
     <View
-      style={[styles.bars, { height: area, gap: height ? space[2] : space[1] + space[1] / 2 }]}
+      style={[
+        styles.bars,
+        { height: area, gap: bars.length > 10 ? space[1] : height ? space[2] : space[1] + space[1] / 2 },
+      ]}
       accessibilityRole="image"
     >
       {bars.map((b, i) => (

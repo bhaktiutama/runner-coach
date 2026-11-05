@@ -14,6 +14,10 @@ export type TimerSegment = FlatSegment & {
   group: number;
   /** Detik untuk countdown; null = manual (drill/gerakan berbasis jarak/repetisi, tekan Lanjut). */
   timedS: number | null;
+  /** Set berwaktu karena mode otomatis (durasi = estimasi), bukan dosis waktu dari plan. */
+  autoTimed?: boolean;
+  /** Jeda "Siap-siap" sebelum gerakan yang tidak didahului istirahat (09-VOICE 13, U4). */
+  prep?: boolean;
 };
 
 export type SegmentResult = { index: number; activeS: number; skipped: boolean };
@@ -35,9 +39,31 @@ export type TimerState = {
   results: SegmentResult[];
   finishedAt: number | null;
   muted: boolean;
+  /** Mode otomatis (09-VOICE bagian 6): set repetisi dan drill jarak memakai estimasi waktu dan maju sendiri. */
+  auto?: boolean;
+  /** Detik tambahan untuk segmen sekarang ("+15 dtk" di istirahat, U1). Kembali 0 saat segmen berganti. */
+  extendS?: number;
 };
 
-export function buildSegments(steps: Step[]): TimerSegment[] {
+/** Lama "Siap-siap" sebelum gerakan baru tanpa istirahat sebelumnya (U4). */
+export const PREP_S = 5;
+/** Tambahan per ketukan "+15 dtk" (U1). */
+export const EXTEND_S = 15;
+
+/** Detik berwaktu segmen `i` termasuk perpanjangan jika itu segmen sekarang. */
+export function timedAt(s: TimerState, segs: TimerSegment[], i: number): number | null {
+  const t = segs[i]?.timedS;
+  if (t == null) return null;
+  return i === s.index ? t + (s.extendS ?? 0) : t;
+}
+
+export type BuildOptions = {
+  auto?: boolean;
+  /** false = tanpa segmen "Siap-siap" (hasil timer lama yang disimpan sebelum U4). Default true. */
+  prep?: boolean;
+};
+
+export function buildSegments(steps: Step[], opts: BuildOptions = {}): TimerSegment[] {
   const out: TimerSegment[] = [];
   let group = 0;
   let prevDrill = false;
@@ -50,7 +76,17 @@ export function buildSegments(steps: Step[]): TimerSegment[] {
     // Strength (F-21): 1 gerakan = 1 grup; istirahat sesudah set terakhir jika masih ada gerakan berikutnya.
     if (top.kind === 'exercise' && top.rest_s > 0 && i < lastExercise)
       flat.push({ kind: 'rest', duration_s: top.rest_s });
-    for (const seg of flat) out.push({ ...seg, group, timedS: timedOf(seg) });
+    // U4: gerakan baru yang tidak didahului istirahat (awal sesi, atau gerakan sebelumnya tanpa rest_s).
+    if (opts.prep !== false && top.kind === 'exercise' && out[out.length - 1]?.kind !== 'rest') {
+      out.push({ kind: 'rest', duration_s: PREP_S, group, timedS: PREP_S, prep: true });
+    }
+    for (const seg of flat) {
+      const timed = timedOf(seg);
+      const autoS = timed == null && opts.auto ? autoOf(seg) : null;
+      out.push(
+        autoS != null ? { ...seg, group, timedS: autoS, autoTimed: true } : { ...seg, group, timedS: timed },
+      );
+    }
   });
   return out;
 }
@@ -61,7 +97,21 @@ function timedOf(seg: FlatSegment): number | null {
   return seg.duration_s;
 }
 
-export function initialState(workoutId: string): TimerState {
+/** Estimasi waktu set manual untuk mode otomatis: repetisi x REP_S (kedua sisi), drill jarak = DRILL_SET_S. */
+function autoOf(seg: FlatSegment): number | null {
+  if (seg.kind === 'exercise' || seg.kind === 'drill')
+    return seg.estimate_s > 0 ? seg.estimate_s : DRILL_SET_S;
+  return null;
+}
+
+/** Ganti mode otomatis/manual. Segmen sekarang dimulai ulang hitungannya agar tidak langsung lompat. */
+export function setAuto(s: TimerState, now: number, auto: boolean, segmentChanges: boolean): TimerState {
+  if (!!s.auto === auto) return s;
+  if (!segmentChanges || (s.status !== 'running' && s.status !== 'paused')) return { ...s, auto };
+  return { ...s, auto, segStartActiveMs: activeMs(s, now) };
+}
+
+export function initialState(workoutId: string, auto = false): TimerState {
   return {
     workoutId,
     status: 'idle',
@@ -73,6 +123,7 @@ export function initialState(workoutId: string): TimerState {
     results: [],
     finishedAt: null,
     muted: false,
+    auto,
   };
 }
 
@@ -90,14 +141,16 @@ export function sync(s: TimerState, segs: TimerSegment[], now: number): TimerSta
   while (st.status === 'running') {
     const seg = segs[st.index];
     if (!seg) return finish(st, now);
-    if (seg.timedS == null) return st;
-    const endAt = st.segStartActiveMs + seg.timedS * 1000;
+    const timed = timedAt(st, segs, st.index);
+    if (timed == null) return st;
+    const endAt = st.segStartActiveMs + timed * 1000;
     if (act < endAt) return st;
     st = {
       ...st,
-      results: [...st.results, { index: st.index, activeS: seg.timedS, skipped: false }],
+      results: [...st.results, { index: st.index, activeS: timed, skipped: false }],
       index: st.index + 1,
       segStartActiveMs: endAt,
+      extendS: 0,
     };
     if (st.index >= segs.length) return finish(st, st.startedAt! + st.pausedMs + endAt);
   }
@@ -136,6 +189,7 @@ export function next(s: TimerState, segs: TimerSegment[], now: number, skipped =
     ],
     index: cur.index + 1,
     segStartActiveMs: act,
+    extendS: 0,
   };
   return st.index >= segs.length ? finish(st, now) : st;
 }
@@ -155,6 +209,13 @@ export function end(s: TimerState, segs: TimerSegment[], now: number): TimerStat
     return cur.status === 'idle' ? finish(cur, now) : cur;
   const at = cur.pausedAt ?? now;
   return { ...cur, status: 'finished', finishedAt: at, pausedAt: null };
+}
+
+/** "+15 dtk": perpanjang segmen berwaktu yang sedang berjalan (U1). */
+export function extend(s: TimerState, segs: TimerSegment[], now: number, sec = EXTEND_S): TimerState {
+  const cur = sync(s, segs, now);
+  if ((cur.status !== 'running' && cur.status !== 'paused') || segs[cur.index]?.timedS == null) return cur;
+  return { ...cur, extendS: (cur.extendS ?? 0) + sec };
 }
 
 export type Position = {
@@ -183,7 +244,9 @@ export function plannedS(seg: TimerSegment): number {
 export function position(s: TimerState, segs: TimerSegment[], now: number): Position {
   const st = sync(s, segs, now);
   const act = activeMs(st, now);
-  const seg = segs[st.index] ?? null;
+  const base = segs[st.index] ?? null;
+  // Segmen sekarang dengan durasi efektif (termasuk perpanjangan), agar layar dan bunyi memakai angka yang sama.
+  const seg = base && st.extendS ? { ...base, timedS: timedAt(st, segs, st.index) } : base;
   const elapsedInSeg = Math.max(0, (act - st.segStartActiveMs) / 1000);
   return {
     index: st.index,
@@ -212,9 +275,9 @@ export function upcomingBoundaries(
   const out: { at: number; nextIndex: number }[] = [];
   let t = st.segStartActiveMs;
   for (let i = st.index; i < segs.length; i++) {
-    const seg = segs[i]!;
-    if (seg.timedS == null) break; // berhenti di drill/gerakan manual
-    t += seg.timedS * 1000;
+    const timed = timedAt(st, segs, i);
+    if (timed == null) break; // berhenti di drill/gerakan manual
+    t += timed * 1000;
     out.push({ at: st.startedAt + st.pausedMs + t, nextIndex: i + 1 });
   }
   return out;
@@ -258,4 +321,53 @@ export function summary(s: TimerState, segs: TimerSegment[], now: number): Timer
     segmentsTotal: groups,
     results: st.results,
   };
+}
+
+/** Format `activities.segments` (Schema 2): `{ v: 2, results }`. Array polos = format lama tanpa "Siap-siap". */
+export function encodeResults(results: SegmentResult[]): { v: 2; results: SegmentResult[] } {
+  return { v: 2, results };
+}
+
+export function decodeResults(json: string | null): { results: SegmentResult[]; prep: boolean } {
+  if (!json) return { results: [], prep: true };
+  const x = JSON.parse(json) as SegmentResult[] | { v: number; results: SegmentResult[] };
+  return Array.isArray(x) ? { results: x, prep: false } : { results: x.results ?? [], prep: true };
+}
+
+/** U6: ringkasan per gerakan strength dari hasil timer. */
+export type ExerciseSummary = {
+  exerciseId: string;
+  sets: number;
+  setsDone: number;
+  /** Detik kerja nyata (tanpa istirahat). */
+  activeS: number;
+  /** Detik rencana: dosis waktu atau estimasi repetisi. */
+  plannedS: number;
+  skipped: boolean;
+};
+
+export function exerciseSummary(segs: TimerSegment[], results: SegmentResult[]): ExerciseSummary[] {
+  const byIndex = new Map(results.map((r) => [r.index, r]));
+  const out = new Map<number, ExerciseSummary>();
+  segs.forEach((seg, i) => {
+    if (seg.kind !== 'exercise') return;
+    const cur =
+      out.get(seg.group) ??
+      ({
+        exerciseId: seg.exercise_id,
+        sets: seg.sets,
+        setsDone: 0,
+        activeS: 0,
+        plannedS: 0,
+        skipped: false,
+      } as ExerciseSummary);
+    cur.plannedS += seg.estimate_s;
+    const r = byIndex.get(i);
+    if (r && !r.skipped) {
+      cur.setsDone += 1;
+      cur.activeS += r.activeS;
+    } else cur.skipped = true;
+    out.set(seg.group, cur);
+  });
+  return [...out.values()];
 }
