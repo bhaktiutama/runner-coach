@@ -97,6 +97,7 @@ test('Today: kartu geser (hitung mundur, long run, rekor, streak) dan pilihan ka
   await expect(page.getByTestId('card-default-countdown')).toBeVisible();
   await page.getByTestId('card-dot-long_run').click();
   await expect(page.getByTestId('card-long_run')).toContainText('Long run');
+  await expect(page.getByTestId('card-pin-long_run')).toBeVisible();
   await page.getByTestId('card-dot-records').click();
   await expect(page.getByTestId('card-records')).toContainText('Terjauh');
   await page.getByTestId('card-dot-streak').click();

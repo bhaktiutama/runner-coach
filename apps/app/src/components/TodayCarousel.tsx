@@ -22,7 +22,7 @@ import { useActivities, useProfile, useUpdateProfile, useWorkouts, useWorkoutSta
 import type { PlanRow } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
 import { cardOrder, nextLongRun, planRecords, weekStreak, type TodayCard } from '@/lib/todayCards';
-import { CountdownCard } from './CountdownCard';
+import { CARD_H, CountdownCard } from './CountdownCard';
 
 type Props = {
   today: string;
@@ -54,26 +54,28 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
     setPage(0);
   }, [def]);
 
-  const pin = (c: TodayCard) =>
-    c === def ? (
-      <View style={styles.chip} testID={`card-default-${c}`}>
-        <Icon name="check" size={space[3] + space[1]} color={color.success} strokeWidth={3} />
-        <Text variant="captionStrong" color="success">
-          {t('today.card.default')}
-        </Text>
-      </View>
-    ) : (
+  // Ikon pin: terisi warna (lingkaran tipis) = kartu utama; garis pudar = ketuk untuk jadikan utama.
+  const pin = (c: TodayCard) => {
+    const on = c === def;
+    return (
       <Pressable
         accessibilityRole="button"
+        accessibilityState={{ selected: on }}
+        accessibilityLabel={on ? t('today.card.default') : t('today.card.makeDefault')}
+        disabled={on}
         onPress={() => update.mutate({ today_card: c })}
-        style={styles.pinBtn}
-        testID={`card-pin-${c}`}
+        style={[styles.pin, on && styles.pinOn]}
+        testID={on ? `card-default-${c}` : `card-pin-${c}`}
       >
-        <Text variant="captionStrong" color="primaryInk">
-          {t('today.card.makeDefault')}
-        </Text>
+        <Icon
+          name="pin"
+          size={space[4]}
+          color={on ? color.primaryInk : color.textMuted}
+          strokeWidth={on ? 2.5 : 2}
+        />
       </Pressable>
     );
+  };
 
   const body = (c: TodayCard): ReactNode => {
     switch (c) {
@@ -196,9 +198,12 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
     }
   };
 
+  // Halaman = lebar konten + GAP; kartu diberi jarak GAP/2 di kiri-kanan agar tidak menempel saat digeser,
+  // dan ScrollView melebar GAP/2 ke luar sehingga tepi kartu tetap sejajar dengan isi layar lain.
+  const pageW = w + GAP;
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!w) return;
-    setPage(Math.round(e.nativeEvent.contentOffset.x / w));
+    setPage(Math.round(e.nativeEvent.contentOffset.x / pageW));
   };
 
   return (
@@ -211,17 +216,19 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
           showsHorizontalScrollIndicator={false}
           onScroll={onScroll}
           scrollEventThrottle={32}
-          style={styles.scroller}
-          contentContainerStyle={styles.track}
+          style={[styles.scroller, { width: pageW }]}
         >
           {order.map((c) => (
-            <View key={c} style={[styles.page, { width: w }]}>
+            <View key={c} style={[styles.page, { width: pageW }]}>
               {body(c)}
             </View>
           ))}
         </ScrollView>
-      ) : null}
-      <View style={styles.dots} accessibilityRole="tablist">
+      ) : (
+        <View style={styles.placeholder} />
+      )}
+      {/* Titik penanda di dalam kartu (bagian bawah), bukan di bawah carousel. */}
+      <View style={styles.dots} accessibilityRole="tablist" pointerEvents="box-none">
         {order.map((c, i) => (
           <Pressable
             key={c}
@@ -229,7 +236,7 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
             accessibilityState={{ selected: i === page }}
             accessibilityLabel={t(`today.card.name.${c}` as MessageKey)}
             onPress={() => {
-              ref.current?.scrollTo({ x: i * w, animated: true });
+              ref.current?.scrollTo({ x: i * pageW, animated: true });
               setPage(i);
             }}
             style={styles.dotHit}
@@ -280,14 +287,16 @@ function Big({ value, label }: { value: string; label: string }) {
   );
 }
 
+/** Jarak antar kartu saat digeser. */
+const GAP = space[4];
+
 const styles = themed(() =>
   StyleSheet.create({
     flex: { flex: 1 },
-    scroller: { overflow: 'visible' },
-    // Ruang atas/bawah agar bayangan kartu tidak terpotong oleh ScrollView.
-    page: { paddingVertical: space[1], alignSelf: 'stretch', flexDirection: 'column' },
-    track: { alignItems: 'stretch' },
-    card: { gap: space[3], padding: space[4], flex: 1 },
+    scroller: { marginHorizontal: -GAP / 2, overflow: 'visible' },
+    page: { paddingHorizontal: GAP / 2, paddingVertical: space[1] },
+    placeholder: { height: CARD_H + space[2] },
+    card: { gap: space[3], padding: space[4], paddingBottom: space[6], height: CARD_H },
     row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     big: { alignItems: 'center', minWidth: space[10] },
     recs: { flexDirection: 'row', gap: space[2] },
@@ -300,16 +309,31 @@ const styles = themed(() =>
       backgroundColor: color.line,
     },
     weekOpen: { backgroundColor: color.surface, borderWidth: border.selected, borderColor: color.success },
-    chip: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
-    pinBtn: { minHeight: size.touchMin / 1.5, justifyContent: 'center' },
-    dots: { flexDirection: 'row', justifyContent: 'center', marginTop: space[1] },
-    dotHit: {
-      width: size.touchMin / 1.5,
-      height: size.touchMin / 1.5,
+    pin: {
+      width: size.touchMin * 0.75,
+      height: size.touchMin * 0.75,
+      marginVertical: -space[2],
+      marginRight: -space[2],
+      borderRadius: radius.stadium,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    dot: { width: space[2], height: space[2], borderRadius: radius.stadium, backgroundColor: color.line },
-    dotOn: { width: space[5], backgroundColor: color.text },
+    pinOn: { backgroundColor: color.surfaceSunken },
+    dots: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: space[1] + space[2],
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    dotHit: { width: space[5], height: space[4], alignItems: 'center', justifyContent: 'center' },
+    dot: {
+      width: space[2] - border.selected,
+      height: space[2] - border.selected,
+      borderRadius: radius.stadium,
+      backgroundColor: color.line,
+    },
+    dotOn: { width: space[4], backgroundColor: color.textMuted },
   }),
 );

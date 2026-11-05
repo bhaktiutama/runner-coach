@@ -8,6 +8,9 @@ import { t } from '@/i18n/t';
 import { countdownTo, RACE_START_HOUR } from '@/lib/progress';
 import { et } from '@/lib/rationale';
 
+/** Tinggi kartu geser tetap: semua kartu sama tinggi, layar tidak bergeser saat kartu utama diganti. */
+export const CARD_H = space[10] * 4 + space[3];
+
 type Props = {
   today: string;
   distance: '5k' | '10k' | 'hm' | 'fm' | 'fitness';
@@ -40,11 +43,14 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
     return (
       <Card style={styles.card} testID="countdown-race">
         <View style={styles.row}>
+          <Text variant="captionStrong" color="textMuted" style={styles.flex}>
+            {t('today.countdownRace', { distance: dist })}
+          </Text>
+          {pin}
+        </View>
+        <View style={styles.row}>
           <View style={styles.flex}>
-            <Text variant="captionStrong" color="textMuted">
-              {t('today.countdownRace', { distance: dist })}
-            </Text>
-            <Text variant="controlSm" color="textMuted">
+            <Text variant="row">
               {t('today.countdownRaceDate', { date: formatDateLong(raceDate!), hour: RACE_START_HOUR })}
             </Text>
           </View>
@@ -59,12 +65,9 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
           trackColor={color.surfaceSunken}
           height={space[2]}
         />
-        <View style={styles.foot}>
-          <Text variant="caption" color="textMuted" style={styles.flex}>
-            {t('today.countdownRaceSub', { km: formatDistance(doneM) })}
-          </Text>
-          {pin}
-        </View>
+        <Text variant="caption" color="textMuted">
+          {t('today.countdownRaceSub', { km: formatDistance(doneM) })}
+        </Text>
       </Card>
     );
   }
@@ -72,13 +75,14 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
   return (
     <Card style={styles.card} testID="countdown-plan">
       <View style={styles.row}>
+        <Text variant="captionStrong" color="textMuted" style={styles.flex}>
+          {t('today.countdownPlan')}
+        </Text>
+        {pin}
+      </View>
+      <View style={styles.row}>
         <View style={styles.flex}>
-          <Text variant="captionStrong" color="textMuted">
-            {t('today.countdownPlan')}
-          </Text>
-          <Text variant="controlSm" color="textMuted">
-            {t('today.countdownPlanEnd', { date: formatDateLong(planEnd) })}
-          </Text>
+          <Text variant="row">{t('today.countdownPlanEnd', { date: formatDateLong(planEnd) })}</Text>
         </View>
         <Unit value={left} label={t('today.countdownDays')} />
       </View>
@@ -88,12 +92,9 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
         trackColor={color.surfaceSunken}
         height={space[2]}
       />
-      <View style={styles.foot}>
-        <Text variant="caption" color="textMuted" style={styles.flex}>
-          {t('today.countdownPlanSub', { km: formatDistance(doneM), target: formatDistance(planTargetM) })}
-        </Text>
-        {pin}
-      </View>
+      <Text variant="caption" color="textMuted">
+        {t('today.countdownPlanSub', { km: formatDistance(doneM), target: formatDistance(planTargetM) })}
+      </Text>
     </Card>
   );
 }
@@ -111,8 +112,7 @@ function Unit({ value, label }: { value: number; label: string }) {
 
 const styles = themed(() =>
   StyleSheet.create({
-    card: { gap: space[3], padding: space[4], flex: 1 },
-    foot: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    card: { gap: space[2], padding: space[4], paddingBottom: space[6], height: CARD_H },
     row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     flex: { flex: 1, gap: space[1] },
     nums: { flexDirection: 'row', gap: space[4] },
