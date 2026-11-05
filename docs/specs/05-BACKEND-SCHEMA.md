@@ -1,6 +1,6 @@
 # 05. Data Schema (lokal) + Backend
 
-Status: Draft v0.4 (2026-10-30, migrasi v6 fase 2) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
+Status: Draft v0.5 (2026-11-05, migrasi v7 timer otomatis) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
 
 ## Ringkasan
 
@@ -61,6 +61,7 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | health_flag | boolean default false | Ada jawaban "Ya" di 1.7; jawaban tidak disimpan |
 | disclaimer_accepted_at | timestamptz | Dari centang di 1.7 |
 | strength_opt_in | boolean default false | F-21: plan memuat strength + core (1.6, 4.1). Sejak v6 |
+| timer_auto | boolean default true | Timer maju otomatis: set repetisi dan drill jarak memakai estimasi waktu (4.1, `09-VOICE.md` bagian 6). Sejak v7 |
 
 ### goals
 

@@ -23,6 +23,8 @@ export type ProfileRow = {
   disclaimer_accepted_at: string | null;
   /** F-21: 1 = plan memuat strength + core. */
   strength_opt_in: number;
+  /** 1 = timer maju otomatis (set repetisi/drill memakai estimasi waktu). Sejak v7 */
+  timer_auto: number;
 };
 
 export type GoalRow = {

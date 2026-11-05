@@ -188,6 +188,13 @@ ALTER TABLE workout_feedback ADD COLUMN load_feel TEXT NULL CHECK (load_feel IN 
 UPDATE profile SET locale = 'system' WHERE NOT EXISTS (SELECT 1 FROM goals);
 `,
   },
+  {
+    // Timer mode otomatis (09-VOICE bagian 6): set repetisi dan drill jarak maju sendiri memakai estimasi waktu.
+    version: 7,
+    sql: `
+ALTER TABLE profile ADD COLUMN timer_auto INTEGER NOT NULL DEFAULT 1 CHECK (timer_auto IN (0, 1));
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = migrations[migrations.length - 1]!.version;

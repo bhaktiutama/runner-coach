@@ -6,7 +6,8 @@ attack halus 4 ms, decay eksponensial, reverb ruang kecil. Tanpa gelombang kotak
 (bunyi "HP jadul"). Nada diambil dari tangga A mayor pentatonik agar rangkaian
 bunyi terdengar harmonis satu sama lain.
 
-Pakai: python3 scripts/make-earcons.py [folder_keluaran]
+Pakai: python3 scripts/make-earcons.py [folder_keluaran] [--app]
+App: python3 scripts/make-earcons.py apps/app/assets/sounds --app
 Default keluaran: docs/audio/earcons/ (contoh untuk review, belum dipakai app).
 Butuh: numpy.
 """
@@ -157,9 +158,11 @@ def write(path, x):
 
 
 if __name__ == "__main__":
-    out = Path(sys.argv[1] if len(sys.argv) > 1 else "docs/audio/earcons")
+    # --app: hanya bunyi satuan (tanpa rangkaian contoh), untuk apps/app/assets/sounds
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    out = Path(args[0] if args else "docs/audio/earcons")
     out.mkdir(parents=True, exist_ok=True)
     s = sounds()
-    for name, x in {**s, **demos(s)}.items():
+    for name, x in ({**s} if "--app" in sys.argv else {**s, **demos(s)}).items():
         write(out / f"{name}.wav", x)
         print(f"{name}.wav  {len(x) / SR:.2f} s")

@@ -1,10 +1,23 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 import * as Haptics from 'expo-haptics';
+import type { Earcon } from './earcons';
 
-// Suara + getar di setiap pergantian segmen selama app aktif (F-05).
+// Bunyi penanda + getar timer (F-05, 09-VOICE bagian 5). Bunyi dibuat oleh scripts/make-earcons.py.
 
-let cue: AudioPlayer | null = null;
-let done: AudioPlayer | null = null;
+const SOURCES: Record<Earcon, number> = {
+  tick: require('../../assets/sounds/tick.wav'),
+  go: require('../../assets/sounds/go.wav'),
+  rest: require('../../assets/sounds/rest.wav'),
+  halfway: require('../../assets/sounds/halfway.wav'),
+  warning: require('../../assets/sounds/warning.wav'),
+  switch: require('../../assets/sounds/switch.wav'),
+  segment: require('../../assets/sounds/segment.wav'),
+  finish: require('../../assets/sounds/finish.wav'),
+  pause: require('../../assets/sounds/pause.wav'),
+  resume: require('../../assets/sounds/resume.wav'),
+};
+
+let players: Partial<Record<Earcon, AudioPlayer>> = {};
 
 export async function prepareCues(): Promise<void> {
   try {
@@ -16,35 +29,61 @@ export async function prepareCues(): Promise<void> {
   } catch {
     /* web / tidak didukung */
   }
-  cue ??= createAudioPlayer(require('../../assets/sounds/cue.wav'));
-  done ??= createAudioPlayer(require('../../assets/sounds/done.wav'));
+  for (const k of Object.keys(SOURCES) as Earcon[]) {
+    try {
+      players[k] ??= createAudioPlayer(SOURCES[k]);
+    } catch {
+      /* audio tidak tersedia */
+    }
+  }
 }
 
-export function playCue(kind: 'segment' | 'finish') {
-  const p = kind === 'finish' ? done : cue;
+const native = process.env.EXPO_OS !== 'web';
+
+/** Getar yang sepadan dengan bunyi (tetap jalan saat bisu). Tidak ada di web. */
+function haptic(kind: Earcon) {
+  if (!native) return;
+  const I = Haptics.ImpactFeedbackStyle;
+  switch (kind) {
+    case 'finish':
+      return void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    case 'go':
+      return void Haptics.impactAsync(I.Heavy);
+    case 'rest':
+    case 'segment':
+    case 'switch':
+      return void Haptics.impactAsync(I.Medium);
+    case 'tick':
+    case 'warning':
+    case 'pause':
+    case 'resume':
+      return void Haptics.impactAsync(I.Light);
+    case 'halfway':
+      return;
+  }
+}
+
+/** Putar bunyi penanda; saat `muted` hanya getar. */
+export function playEarcon(kind: Earcon, muted = false) {
+  haptic(kind);
+  if (muted) return;
+  const p = players[kind];
   try {
     p?.seekTo(0);
     p?.play();
   } catch {
     /* audio tidak tersedia */
   }
-  if (process.env.EXPO_OS !== 'web') {
-    void Haptics.notificationAsync(
-      kind === 'finish' ? Haptics.NotificationFeedbackType.Success : Haptics.NotificationFeedbackType.Warning,
-    );
-  }
 }
 
-/** Getar ringan tiap angka hitung mundur 3-2-1 (UI/UX bagian 11, G10). Tidak ada di web. */
-export function countdownTick() {
-  if (process.env.EXPO_OS !== 'web') void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+/** Hitung mundur 3-2-1 sebelum mulai (UI/UX bagian 11, G11). */
+export function countdownTick(muted = false) {
+  playEarcon('tick', muted);
 }
 
 export function releaseCues() {
-  cue?.release();
-  done?.release();
-  cue = null;
-  done = null;
+  for (const p of Object.values(players)) p?.release();
+  players = {};
 }
 
 /** Web: Wake Lock API jika tersedia (TRD 5). */

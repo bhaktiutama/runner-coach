@@ -1,12 +1,12 @@
 # 09 Desain Suara: latihan tanpa melihat layar
 
-Status: **Usulan v0.2 (2026-11-04), belum disetujui pemilik produk.** Keputusan pemilik 2026-11-04: perintah suara (mikrofon) tidak dibangun; cukup pelatih suara, dengan alternatif "Bunyi saja"; angka hitung mundur tetap tampil di set berwaktu dan istirahat. Isi dokumen ini belum boleh dibangun sebelum keputusan di bagian 10 diambil. Setelah disetujui, perubahan di bagian 9 dipindah ke PRD, TRD, App Flow, UI/UX dan Schema.
+Status: **v0.3 (2026-11-05).** Keputusan pemilik 2026-11-04: perintah suara (mikrofon) tidak dibangun; cukup pelatih suara, dengan alternatif "Bunyi saja". Keputusan 2026-11-05: angka waktu di setiap set, bunyi baru dipasang, mode otomatis (tanpa menekan tombol), suara manusia/TTS belum. **Sudah dibangun:** bagian 5 (bunyi, tanpa topik 4.7) dan bagian 6 (angka waktu + mode otomatis + UI 2.3s/2.3b, bagian 13). Sisanya (mode Suara, pilihan Panduan audio, bunyi notifikasi layar kunci) belum boleh dibangun sebelum keputusan di bagian 10 diambil. Setelah disetujui, perubahan di bagian 9 dipindah ke PRD, TRD, App Flow, UI/UX dan Schema.
 
 ## Ringkasan
 
 - **Pelatih suara (F-25)**, satu fitur dengan dua mode panduan audio: **Suara** (kalimat TTS + bunyi penanda) atau **Bunyi saja** (pola bip sintesis, tanpa kalimat). Tidak ada mikrofon, tidak ada perintah suara.
 - Mode Suara memakai `expo-speech` (ada di Expo Go dan web, tanpa dev build). Mode Bunyi saja tanpa library baru: file WAV pendek yang dibuat oleh skrip dari nada sintesis.
-- Layar tidak berubah: angka hitung mundur tetap ada di set berwaktu (plank), istirahat dan segmen lari. Suara dan bunyi melengkapi layar, tidak menggantikannya.
+- Setiap set punya angka waktu. **Mode otomatis** (bawaan) membuat set repetisi dan drill jarak berwaktu dari estimasi, jadi sesi berjalan dari awal sampai selesai tanpa menekan tombol. Suara dan bunyi melengkapi layar, tidak menggantikannya.
 
 ## 1. Tujuan dan ukuran berhasil
 
@@ -142,9 +142,19 @@ Aturan:
 - Pola yang sama dipakai di mode Suara: bunyi lebih dulu, kalimat sesudahnya. Pengguna yang pindah mode tidak perlu belajar ulang.
 - **Belajar bunyi:** topik baru di Panduan 4.7 "Arti bunyi timer" berisi tabel di atas dengan tombol putar per pola (bukan layar baru). Tautan dari 4.1 di bawah pilihan Bunyi saja.
 
-## 6. Angka hitung mundur
+## 6. Angka waktu dan mode otomatis (dibangun 2026-11-05)
 
-Tetap seperti sekarang (App Flow 3.2, UI/UX 2.3s): angka hitung mundur tampil di segmen lari, set berwaktu strength (plank) dan istirahat. Set repetisi dan drill berbasis jarak tidak punya angka karena tidak berwaktu. Panduan audio mengikuti angka yang sama; tidak ada informasi yang hanya ada di audio atau hanya di layar.
+| Set / segmen | Mode otomatis (bawaan) | Mode manual |
+|--------------|------------------------|-------------|
+| Segmen lari, istirahat | Hitung mundur, maju sendiri | Sama |
+| Set berwaktu dari plan (plank) | Hitung mundur, maju sendiri | Sama |
+| Set repetisi strength | Hitung mundur dari estimasi `reps x REP_S` (3 dtk per repetisi, 2x jika per sisi), maju sendiri. "Selesai set" tetap bisa ditekan lebih cepat | Hitung naik ("waktu set ini"), maju dengan "Selesai set" |
+| Drill jarak (2.3b) | Hitung mundur `DRILL_SET_S` (60 dtk per set, termasuk kembali ke awal), maju sendiri | Hitung naik, maju dengan "Lanjut" |
+
+- Bawaan dari `profile.timer_auto` (4.1 "Timer otomatis", migrasi v7, default nyala). Bisa diganti di tengah sesi lewat pil **Otomatis / Manual** di bar atas timer; pil hanya tampil jika latihan punya set tanpa dosis waktu. Mode tersimpan di state timer (`auto`), jadi lanjut-setelah-ditutup memakai mode yang sama.
+- Ganti mode di tengah set: hitungan set itu dimulai dari 0 agar tidak langsung lompat (`setAuto`); segmen yang sudah berwaktu (istirahat, plank) tidak diulang.
+- Estimasi 3 dtk per repetisi adalah usulan (tempo terkontrol 2 turun, 1 naik), belum divalidasi pelatih. Jika terlalu cepat/lambat, pengguna menekan Selesai set atau Jeda; angka per gerakan bisa dibuat beda nanti (keputusan K5).
+- Bunyi: momen (3-2-1, peringatan, setengah jalan, ganti sisi) dihitung murni di `timer/earcons.ts`, diputar di `useTimer` saat detik melewati momen. Lompatan > 2 dtk (app dari latar belakang) tidak membunyikan momen basi.
 
 ## 7. Layar terkunci dan latar belakang
 
@@ -168,7 +178,7 @@ Keuntungan mode Bunyi saja: pola bunyi bisa menjadi suara notifikasi terjadwal, 
 
 Mematikan semua audio tetap lewat tombol bisu di timer (sudah ada). Tidak ada layar baru, tidak ada izin baru.
 
-### 8.2 Schema (migrasi v7, lokal)
+### 8.2 Schema (migrasi v8, lokal; v7 dipakai `timer_auto`)
 
 | Kolom `profile` | Tipe | Isi |
 |-----------------|------|-----|
@@ -190,7 +200,7 @@ Ikut file backup. Tidak ada tabel baru, tidak ada apa pun di server. Analitik pa
 | 02-TRD | Library `expo-speech` (npm, versi SDK 58: 58.0.3). Bagian 5 (latar belakang, bunyi notifikasi), bagian 8 katalog `voice.*` |
 | 03-APP-FLOW | 3.2: momen audio per state (tanpa perubahan state) |
 | 04-UI-UX | Baris 4.1, topik 4.7, tabel bunyi + getar (perluasan G5) |
-| 05-SCHEMA | Migrasi v7, 2 kolom `profile` |
+| 05-SCHEMA | Migrasi v8, 2 kolom `profile` (v7 = `timer_auto`, sudah) |
 | 06-PLAN | Milestone V1, V2 (bagian 11) |
 | 08-MONETIZATION | Usulan: gratis, bagian dari timer F-05 yang gratis |
 | Wireframe | 4.1 (baris baru), 4.7 topik bunyi, versi ID/EN, terang/gelap |
@@ -203,6 +213,7 @@ Ikut file backup. Tidak ada tabel baru, tidak ada apa pun di server. Analitik pa
 | K2 | TTS sistem vs rekaman suara manusia | TTS sistem: gratis, 2 bahasa, isi dinamis (nama gerakan, pace). Rekaman bisa dipertimbangkan nanti untuk kata tetap |
 | K3 | Pengaturan kecepatan bicara | Tidak di V1 |
 | K4 | Nada dasar dan pola di bagian 5 | Setuju sebagai titik awal, final setelah S-V2 |
+| K5 | Estimasi waktu per repetisi: satu angka (3 dtk) atau per gerakan (mis. push-up 2 dtk, split squat 4 dtk) | Satu angka dulu; per gerakan setelah review pelatih |
 
 ## 11. Tahapan
 
@@ -210,7 +221,7 @@ Ikut file backup. Tidak ada tabel baru, tidak ada apa pun di server. Analitik pa
 |------|-----|---------------|-------|--------------|
 | S-V1 | Spike TTS: kualitas `id-ID`/`en-US` di iOS, Android, Chrome, Safari; latensi; ducking musik; layar terkunci | `spike/voice-tts` | HP fisik (Expo Go cukup) | Tabel hasil di `spikes.md` |
 | S-V2 | Spike bunyi: `make-earcons.py`, uji beda pola di atas musik, 5 orang (T3) | `spike/earcons` | HP + headset | Pola final |
-| V1 | Bunyi saja: pola bagian 5 di `cues.ts`, `audioScript`/`audioDirector`, bunyi notifikasi layar kunci, ganti sisi, topik 4.7, baris 4.1, migrasi v7 | `feat/v1-audio-beeps` | Persetujuan spec | Unit test jadwal momen per mode (lari, interval, drill, strength repetisi/berwaktu/per sisi); test tidak ada 2 pola dalam 1 detik; E2E web: momen tercatat lewat adaptor palsu |
+| V1 | Bunyi saja. **Sebagian selesai 2026-11-05:** pola bagian 5 di `cues.ts` + `earcons.ts`, ganti sisi, angka waktu tiap set, mode otomatis, migrasi v7 (`timer_auto`). Belum: bunyi notifikasi layar kunci (butuh build native), topik 4.7, pilihan Panduan audio | `feat/v1-audio-beeps` | Persetujuan spec | Unit test jadwal momen per mode (lari, interval, drill, strength repetisi/berwaktu/per sisi); test tidak ada 2 pola dalam 1 detik; E2E web: momen tercatat lewat adaptor palsu |
 | V2 | Suara: `speech.ts`, skrip `voice.*` ID/EN, detail, fallback ke bunyi, `speak*` | `feat/v2-voice-coach` | V1, S-V1 | Unit test skrip + antrian (tidak tumpang tindih, basi dibuang); review di preview web; uji device 5 sesi |
 
 V1 sengaja Bunyi saja dulu: tanpa library baru, bekerja di layar terkunci lewat notifikasi, dan menjadi dasar pola yang juga dipakai mode Suara.
@@ -224,3 +235,30 @@ V1 sengaja Bunyi saja dulu: tanpa library baru, bekerja di layar terkunci lewat 
 | Pola bunyi tertukar | Pengguna salah momen | Arah nada konsisten (P5), getar sepadan, topik 4.7, uji T3 |
 | Bunyi tenggelam di musik | Momen terlewat | Nada 990 Hz di atas rentang vokal utama, ducking saat bicara, getar |
 | Batas panjang suara notifikasi (iOS maks 30 detik, format tertentu) | Bunyi notifikasi tidak terputar | Semua pola < 1 detik, WAV PCM; diuji di S-V1 |
+
+## 13. UI/UX timer (inti app)
+
+Prinsip: timer dibaca dari jarak 1 sampai 2 meter (HP di lantai atau di saku), sambil terengah, sering tanpa melihat. Jadi satu angka besar, satu warna per fase, satu tombol utama, dan bunyi untuk setiap pergantian.
+
+### 13.1 Sudah dibangun (2.3s, 2.3b)
+
+| Elemen | Keputusan | Alasan |
+|--------|-----------|--------|
+| Bar atas | Akhiri, pil Otomatis/Manual, bisu. Teks "Segmen x dari y" dihapus di strength | Posisi sudah ada di bib "Gerakan n/N" dan bar sesi; bar atas jadi lega di layar 320 px |
+| Bar sesi | Satu lajur per gerakan, terisi sesuai waktu rencana yang lewat (termasuk istirahat) | Jawaban "masih berapa lama" tanpa membaca angka |
+| Layar set | Animasi, nama, "Set x dari y · dosis", lajur set, **angka `numberXl`** + bar progres set (oranye), cue, petunjuk mode | Angka jadi elemen terbesar kedua sesudah animasi; bar progres terbaca dari jauh |
+| Layar istirahat | Cincin lavender (warna zona recovery) + angka `timer`, kartu **Berikutnya** dengan animasi kecil gerakan berikutnya + set + dosis | Istirahat dipakai untuk bersiap: pengguna melihat gerakan berikutnya sebelum mulai |
+| Warna fase | Kerja = oranye (primary), istirahat = lavender | Sama dengan arah nada (naik = kerja, turun = istirahat) |
+| Layar pendek (< 700 px, mis. iPhone SE) | Animasi kecil di samping nama; cincin dan angka istirahat mengecil; isi bisa digulir di atas footer | Angka waktu harus terlihat tanpa gulir |
+| Footer | Satu tombol utama (Selesai set / Lanjut / Lewati istirahat), Jeda dan Lewati gerakan sebagai teks | Satu aksi jelas; dalam mode otomatis tombol ini opsional |
+
+### 13.2 Usulan berikutnya (belum dibangun, perlu persetujuan)
+
+| # | Usulan | Manfaat | Biaya |
+|---|--------|---------|-------|
+| U1 | "+15 dtk" di layar istirahat | Pengguna yang belum pulih tidak perlu Jeda | Kecil: perpanjangan per segmen di state machine |
+| U2 | Ketuk di mana saja di layar set = Selesai set (dengan getar), tombol tetap ada | Tidak perlu membidik tombol dengan tangan berkeringat | Kecil; perlu cegah ketuk tidak sengaja (tahan 0,5 dtk) |
+| U3 | Mode "lihat dari jauh" otomatis saat HP mendatar (angka 2x lebih besar, animasi disembunyikan) | Plank / push-up dengan HP di lantai | Sedang: sensor orientasi (`expo-sensors`, library baru) |
+| U4 | Layar "Siap-siap" 5 dtk sebelum gerakan baru jika tidak ada istirahat sebelumnya | Gerakan pertama tidak langsung jalan | Kecil |
+| U5 | Live Activity (iOS) / notifikasi berjalan (Android) berisi angka + gerakan | Informasi di layar kunci | Besar: modul native |
+| U6 | Ringkasan per gerakan di 2.4 (set selesai, dilewati, waktu nyata vs estimasi) | Umpan balik untuk kalibrasi estimasi (K5) | Sedang |

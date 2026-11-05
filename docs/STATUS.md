@@ -83,7 +83,7 @@ Branch baru dari `development`, format `feat/<milestone>-<nama>` (CLAUDE.md). Ur
 | 7 | Animasi gerakan strength (D8): semua 15 gerakan berupa frame ilustrasi 4x4 (model pria) yang diputar bolak-balik di kotak persegi (2026-11-04). Sisa: versi wanita + pilihan model di app (perlu spec), konfirmasi lisensi gambar AI, review teknik oleh pelatih | `feat/p2-squat-frames` | Review di preview web |
 | 8 | Integrasi Strava, HealthKit, Health Connect + layar 4.2 + panduan HR di 2.2 | `feat/p2-integrations` | Client ID/secret Strava, HP fisik, dev build |
 | 9 | Fase 3: pembelian Premium lewat RevenueCat, trial, restore, `subscription_started` | `feat/p3-premium` | Akun App Store / Play, keputusan harga (08 bagian 6) |
-| 10 | Desain suara (`docs/specs/09-VOICE.md`, usulan v0.2): pelatih suara dengan mode Suara (TTS) atau Bunyi saja (pola bip sintesis); tanpa perintah suara; hitung mundur layar tetap. Berikutnya: keputusan K1 sampai K4, spike S-V1 (TTS) dan S-V2 (bunyi), lalu V1 Bunyi saja, V2 Suara | `feat/v1-audio-beeps` | Persetujuan spec, HP fisik |
+| 10 | Desain suara + timer (`docs/specs/09-VOICE.md` v0.3). **Selesai 2026-11-05:** bunyi penanda baru (nada sintesis) di timer, angka waktu di setiap set, mode otomatis (bawaan, sakelar 4.1, pil di timer), UI 2.3s baru (bar sesi, kartu Berikutnya, layar pendek), migrasi v7. Berikutnya: uji di HP fisik (bunyi saat layar terkunci, bunyi di atas musik), keputusan K1 sampai K5, usulan UI U1 sampai U6, lalu mode Suara (TTS) | `claude/zen-ptolemy-4m4k9v` | Review di preview web, HP fisik |
 
 ## Blocker dan butuh dari pemilik
 

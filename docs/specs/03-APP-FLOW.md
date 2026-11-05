@@ -187,9 +187,9 @@ Tampilan status di 3.1: completed = centang di lingkaran warna zona, missed/skip
 
 Saat `paused`: notifikasi terjadwal dibatalkan, dijadwalkan ulang saat `running`.
 
-Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen di "Segmen x dari y". Set berbasis repetisi tidak memakai countdown ("Selesai set"); set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
+Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen ("Gerakan n/N"). Set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Set berbasis repetisi: mode otomatis (bawaan, `profile.timer_auto`) = countdown dari estimasi 3 dtk per repetisi dan maju otomatis, "Selesai set" mengakhiri lebih cepat; mode manual = hitung naik, maju dengan "Selesai set". Mode bisa diganti di tengah sesi (pil di bar atas); hitungan set yang sedang berjalan dimulai ulang. Detail: `09-VOICE.md` bagian 6. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
 
-Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS, jadi segmen ini tidak memakai countdown. Layar menampilkan nama gerakan, set ke-berapa, dan cue; pengguna menekan "Lanjut" setiap set selesai. Dosis berbasis waktu tetap memakai countdown.
+Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS. Mode otomatis: countdown 60 dtk per set (termasuk kembali ke awal) dan maju sendiri; mode manual: hitung naik dan pengguna menekan "Lanjut" setiap set selesai. Layar menampilkan nama gerakan, set ke-berapa, dan cue. Dosis berbasis waktu tetap memakai countdown.
 
 ### 3.3 Status plan
 

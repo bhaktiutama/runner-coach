@@ -14,6 +14,8 @@ export type TimerSegment = FlatSegment & {
   group: number;
   /** Detik untuk countdown; null = manual (drill/gerakan berbasis jarak/repetisi, tekan Lanjut). */
   timedS: number | null;
+  /** Set berwaktu karena mode otomatis (durasi = estimasi), bukan dosis waktu dari plan. */
+  autoTimed?: boolean;
 };
 
 export type SegmentResult = { index: number; activeS: number; skipped: boolean };
@@ -35,9 +37,13 @@ export type TimerState = {
   results: SegmentResult[];
   finishedAt: number | null;
   muted: boolean;
+  /** Mode otomatis (09-VOICE bagian 6): set repetisi dan drill jarak memakai estimasi waktu dan maju sendiri. */
+  auto?: boolean;
 };
 
-export function buildSegments(steps: Step[]): TimerSegment[] {
+export type BuildOptions = { auto?: boolean };
+
+export function buildSegments(steps: Step[], opts: BuildOptions = {}): TimerSegment[] {
   const out: TimerSegment[] = [];
   let group = 0;
   let prevDrill = false;
@@ -50,7 +56,13 @@ export function buildSegments(steps: Step[]): TimerSegment[] {
     // Strength (F-21): 1 gerakan = 1 grup; istirahat sesudah set terakhir jika masih ada gerakan berikutnya.
     if (top.kind === 'exercise' && top.rest_s > 0 && i < lastExercise)
       flat.push({ kind: 'rest', duration_s: top.rest_s });
-    for (const seg of flat) out.push({ ...seg, group, timedS: timedOf(seg) });
+    for (const seg of flat) {
+      const timed = timedOf(seg);
+      const autoS = timed == null && opts.auto ? autoOf(seg) : null;
+      out.push(
+        autoS != null ? { ...seg, group, timedS: autoS, autoTimed: true } : { ...seg, group, timedS: timed },
+      );
+    }
   });
   return out;
 }
@@ -61,7 +73,21 @@ function timedOf(seg: FlatSegment): number | null {
   return seg.duration_s;
 }
 
-export function initialState(workoutId: string): TimerState {
+/** Estimasi waktu set manual untuk mode otomatis: repetisi x REP_S (kedua sisi), drill jarak = DRILL_SET_S. */
+function autoOf(seg: FlatSegment): number | null {
+  if (seg.kind === 'exercise' || seg.kind === 'drill')
+    return seg.estimate_s > 0 ? seg.estimate_s : DRILL_SET_S;
+  return null;
+}
+
+/** Ganti mode otomatis/manual. Segmen sekarang dimulai ulang hitungannya agar tidak langsung lompat. */
+export function setAuto(s: TimerState, now: number, auto: boolean, segmentChanges: boolean): TimerState {
+  if (!!s.auto === auto) return s;
+  if (!segmentChanges || (s.status !== 'running' && s.status !== 'paused')) return { ...s, auto };
+  return { ...s, auto, segStartActiveMs: activeMs(s, now) };
+}
+
+export function initialState(workoutId: string, auto = false): TimerState {
   return {
     workoutId,
     status: 'idle',
@@ -73,6 +99,7 @@ export function initialState(workoutId: string): TimerState {
     results: [],
     finishedAt: null,
     muted: false,
+    auto,
   };
 }
 

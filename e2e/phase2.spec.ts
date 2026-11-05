@@ -54,6 +54,48 @@ test('strength: kalender, detail 2.2s (animasi frame semua gerakan), timer gerak
   expect(errors).toEqual([]);
 });
 
+test('strength mode otomatis: angka tiap set, maju sendiri tanpa tombol, bisa ganti manual', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await onboard(page, { strength: true });
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  await page
+    .getByText(/Strength/)
+    .first()
+    .click();
+  await page.getByTestId('screen-detail').getByTestId('start').click();
+  await expect(async () => {
+    await page.clock.runFor(1000);
+    await expect(page.getByTestId('timer-exercise')).toBeVisible({ timeout: 200 });
+  }).toPass({ timeout: 15_000 });
+  // Bawaan otomatis: set repetisi punya hitung mundur dan bar sesi.
+  await expect(page.getByTestId('timer-auto')).toContainText('Otomatis');
+  await expect(page.getByTestId('session-bar')).toBeVisible();
+  const clock = page.getByTestId('timer-remaining');
+  await expect(clock).toHaveText(/^\d+:\d\d$/);
+  const first = await clock.textContent();
+  await page.clock.runFor(2000);
+  await expect(clock).not.toHaveText(first ?? '');
+  // Tanpa menekan tombol: set habis -> istirahat (cincin + pratinjau gerakan berikutnya).
+  await expect(async () => {
+    await page.clock.runFor(5000);
+    await expect(page.getByTestId('timer-rest')).toBeVisible({ timeout: 200 });
+  }).toPass({ timeout: 20_000 });
+  await expect(page.getByTestId('rest-next')).toContainText('Set 2 dari');
+  await expect(async () => {
+    await page.clock.runFor(5000);
+    await expect(page.getByTestId('timer-exercise')).toContainText('Set 2 dari', { timeout: 200 });
+  }).toPass({ timeout: 30_000 });
+  // Ganti ke manual: angka menjadi hitung naik ("waktu set ini").
+  await page.getByTestId('timer-auto').click();
+  await expect(page.getByTestId('timer-auto')).toContainText('Manual');
+  await expect(page.getByTestId('timer-exercise')).toContainText('waktu set ini');
+  expect(errors).toEqual([]);
+});
+
 test('sakelar strength di Profil menambah sesi ke plan', async ({ page }) => {
   await onboard(page);
   await page.getByRole('tab', { name: 'Plan' }).click();
