@@ -204,3 +204,16 @@ export function daysBetween(a: string, b: string) {
 export function loadFeelFromRpe(rpe: number): 'too_easy' | 'ok' | 'too_hard' {
   return rpe >= 8 ? 'too_hard' : rpe <= 4 ? 'too_easy' : 'ok';
 }
+
+/** Jam mulai race yang diasumsikan (tanggal race tidak punya jam); umum untuk race pagi. */
+export const RACE_START_HOUR = 6;
+
+/** Murni: hari + jam tersisa sampai `raceDate` pukul RACE_START_HOUR waktu lokal perangkat. */
+export function countdownTo(raceDate: string, now: Date): { days: number; hours: number } | null {
+  const [y, m, d] = raceDate.split('-').map(Number) as [number, number, number];
+  const start = new Date(y, m - 1, d, RACE_START_HOUR, 0, 0);
+  const ms = start.getTime() - now.getTime();
+  if (ms <= 0) return null;
+  const h = Math.floor(ms / 3_600_000);
+  return { days: Math.floor(h / 24), hours: h % 24 };
+}

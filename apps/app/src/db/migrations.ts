@@ -195,6 +195,13 @@ UPDATE profile SET locale = 'system' WHERE NOT EXISTS (SELECT 1 FROM goals);
 ALTER TABLE profile ADD COLUMN timer_auto INTEGER NOT NULL DEFAULT 1 CHECK (timer_auto IN (0, 1));
 `,
   },
+  {
+    // Kartu geser 2.1: kartu yang tampil pertama (dipilih lewat "Jadikan utama").
+    version: 8,
+    sql: `
+ALTER TABLE profile ADD COLUMN today_card TEXT NOT NULL DEFAULT 'countdown' CHECK (today_card IN ('countdown', 'long_run', 'records', 'streak'));
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = migrations[migrations.length - 1]!.version;

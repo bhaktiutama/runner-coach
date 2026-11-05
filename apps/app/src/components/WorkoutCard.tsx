@@ -20,7 +20,7 @@ import { t } from '@/i18n/t';
 import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { workoutImage } from '@/lib/imagery';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
-import { FEEL_KEY } from '@/timer/labels';
+import { exerciseName, FEEL_KEY } from '@/timer/labels';
 
 type Props = { workout: Workout; onStart?: () => void; onDetails?: () => void; startLabel?: string };
 
@@ -57,24 +57,25 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
           {status}
         </View>
       )}
-      <View style={styles.big}>
-        <Text variant="numberLg" testID="workout-minutes">
-          {String(minutesOf(workout.steps))}
-        </Text>
-        <Text variant="heading" color="textMuted">
-          {t('today.minutes')}
-        </Text>
-      </View>
-      {/* Satu segmen saja: bar + baris akan mengulang nama tipe ("Easy, Easy, Easy"); tampilkan rasa usaha. */}
-      {rows.length <= 1 ? (
-        zone in FEEL_KEY ? (
-          <Text variant="bodySm" color="textMuted" testID="workout-feel">
-            {t(FEEL_KEY[zone as keyof typeof FEEL_KEY])}
+      <View style={styles.bigGroup}>
+        <View style={styles.big}>
+          <Text variant="numberLg" testID="workout-minutes">
+            {String(minutesOf(workout.steps))}
           </Text>
-        ) : null
-      ) : (
-        <SegmentBar segments={intensitySegments(workout.steps)} />
-      )}
+          <Text variant="heading" color="textMuted">
+            {t('today.minutes')}
+          </Text>
+        </View>
+        {/* Satu segmen saja: bar + baris akan mengulang nama tipe ("Easy, Easy, Easy"); tampilkan rasa usaha. */}
+        {rows.length <= 1 ? (
+          zone in FEEL_KEY ? (
+            <Text variant="bodySm" color="textMuted" testID="workout-feel">
+              {t(FEEL_KEY[zone as keyof typeof FEEL_KEY])}
+            </Text>
+          ) : null
+        ) : null}
+      </View>
+      {rows.length > 1 ? <SegmentBar segments={intensitySegments(workout.steps)} /> : null}
       <View style={[styles.rows, rows.length <= 1 && styles.hidden]}>
         {(rows.length > 1 ? rows : []).map((r) => (
           <View key={r.key} style={styles.row}>
@@ -130,16 +131,22 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
           </Text>
         )}
       </View>
-      <View style={styles.big}>
-        <Text variant="numberLg" testID="strength-minutes">
-          {String(minutesOf(workout.steps))}
-        </Text>
-        <Text variant="heading" color="textMuted">
-          {t('today.minutes')}
+      <View style={styles.bigGroup}>
+        <View style={styles.big}>
+          <Text variant="numberLg" testID="strength-minutes">
+            {String(minutesOf(workout.steps))}
+          </Text>
+          <Text variant="heading" color="textMuted">
+            {t('today.minutes')}
+          </Text>
+        </View>
+        <Text variant="bodySm" color="textMuted">
+          {t('strength.cardBody')}
         </Text>
       </View>
-      <Text variant="bodySm" color="textMuted">
-        {t('strength.cardBody')}
+      {/* Daftar gerakan singkat: isi yang berguna, bukan ruang kosong. */}
+      <Text variant="controlStrong" numberOfLines={2} testID="strength-moves">
+        {exerciseList(workout)}
       </Text>
       {done ? null : locked ? (
         <PrimaryButton
@@ -174,6 +181,7 @@ const styles = themed(() =>
       paddingVertical: space[1],
     },
     big: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
+    bigGroup: { gap: space[1] },
     rows: { gap: space[2] + space[1] / 2 },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: space[3] },
     label: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
@@ -181,3 +189,10 @@ const styles = themed(() =>
     detail: { marginTop: -space[2] },
   }),
 );
+
+/** "Squat · Glute bridge · Reverse lunge +3" */
+function exerciseList(w: Workout): string {
+  const ids = w.steps.flatMap((s) => (s.kind === 'exercise' ? [s.exercise_id] : []));
+  const head = ids.slice(0, 3).map(exerciseName).join(' · ');
+  return ids.length > 3 ? t('strength.moreMoves', { list: head, n: ids.length - 3 }) : head;
+}
