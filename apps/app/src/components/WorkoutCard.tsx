@@ -20,6 +20,7 @@ import { t } from '@/i18n/t';
 import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { workoutImage } from '@/lib/imagery';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
+import { FEEL_KEY } from '@/timer/labels';
 
 type Props = { workout: Workout; onStart?: () => void; onDetails?: () => void; startLabel?: string };
 
@@ -64,9 +65,18 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
           {t('today.minutes')}
         </Text>
       </View>
-      <SegmentBar segments={intensitySegments(workout.steps)} />
-      <View style={styles.rows}>
-        {rows.map((r) => (
+      {/* Satu segmen saja: bar + baris akan mengulang nama tipe ("Easy, Easy, Easy"); tampilkan rasa usaha. */}
+      {rows.length <= 1 ? (
+        zone in FEEL_KEY ? (
+          <Text variant="bodySm" color="textMuted" testID="workout-feel">
+            {t(FEEL_KEY[zone as keyof typeof FEEL_KEY])}
+          </Text>
+        ) : null
+      ) : (
+        <SegmentBar segments={intensitySegments(workout.steps)} />
+      )}
+      <View style={[styles.rows, rows.length <= 1 && styles.hidden]}>
+        {(rows.length > 1 ? rows : []).map((r) => (
           <View key={r.key} style={styles.row}>
             <View style={styles.label}>
               <LaneMark zone={r.zone} drill={r.drill} />
@@ -152,6 +162,7 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
 
 const styles = themed(() =>
   StyleSheet.create({
+    hidden: { display: 'none' },
     strength: { borderLeftWidth: space[2], borderLeftColor: color.zone.strength },
     card: { gap: space[4] },
     head: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },

@@ -57,7 +57,11 @@ export function timedAt(s: TimerState, segs: TimerSegment[], i: number): number 
   return i === s.index ? t + (s.extendS ?? 0) : t;
 }
 
-export type BuildOptions = { auto?: boolean };
+export type BuildOptions = {
+  auto?: boolean;
+  /** false = tanpa segmen "Siap-siap" (hasil timer lama yang disimpan sebelum U4). Default true. */
+  prep?: boolean;
+};
 
 export function buildSegments(steps: Step[], opts: BuildOptions = {}): TimerSegment[] {
   const out: TimerSegment[] = [];
@@ -73,7 +77,7 @@ export function buildSegments(steps: Step[], opts: BuildOptions = {}): TimerSegm
     if (top.kind === 'exercise' && top.rest_s > 0 && i < lastExercise)
       flat.push({ kind: 'rest', duration_s: top.rest_s });
     // U4: gerakan baru yang tidak didahului istirahat (awal sesi, atau gerakan sebelumnya tanpa rest_s).
-    if (top.kind === 'exercise' && out[out.length - 1]?.kind !== 'rest') {
+    if (opts.prep !== false && top.kind === 'exercise' && out[out.length - 1]?.kind !== 'rest') {
       out.push({ kind: 'rest', duration_s: PREP_S, group, timedS: PREP_S, prep: true });
     }
     for (const seg of flat) {
@@ -317,4 +321,53 @@ export function summary(s: TimerState, segs: TimerSegment[], now: number): Timer
     segmentsTotal: groups,
     results: st.results,
   };
+}
+
+/** Format `activities.segments` (Schema 2): `{ v: 2, results }`. Array polos = format lama tanpa "Siap-siap". */
+export function encodeResults(results: SegmentResult[]): { v: 2; results: SegmentResult[] } {
+  return { v: 2, results };
+}
+
+export function decodeResults(json: string | null): { results: SegmentResult[]; prep: boolean } {
+  if (!json) return { results: [], prep: true };
+  const x = JSON.parse(json) as SegmentResult[] | { v: number; results: SegmentResult[] };
+  return Array.isArray(x) ? { results: x, prep: false } : { results: x.results ?? [], prep: true };
+}
+
+/** U6: ringkasan per gerakan strength dari hasil timer. */
+export type ExerciseSummary = {
+  exerciseId: string;
+  sets: number;
+  setsDone: number;
+  /** Detik kerja nyata (tanpa istirahat). */
+  activeS: number;
+  /** Detik rencana: dosis waktu atau estimasi repetisi. */
+  plannedS: number;
+  skipped: boolean;
+};
+
+export function exerciseSummary(segs: TimerSegment[], results: SegmentResult[]): ExerciseSummary[] {
+  const byIndex = new Map(results.map((r) => [r.index, r]));
+  const out = new Map<number, ExerciseSummary>();
+  segs.forEach((seg, i) => {
+    if (seg.kind !== 'exercise') return;
+    const cur =
+      out.get(seg.group) ??
+      ({
+        exerciseId: seg.exercise_id,
+        sets: seg.sets,
+        setsDone: 0,
+        activeS: 0,
+        plannedS: 0,
+        skipped: false,
+      } as ExerciseSummary);
+    cur.plannedS += seg.estimate_s;
+    const r = byIndex.get(i);
+    if (r && !r.skipped) {
+      cur.setsDone += 1;
+      cur.activeS += r.activeS;
+    } else cur.skipped = true;
+    out.set(seg.group, cur);
+  });
+  return [...out.values()];
 }

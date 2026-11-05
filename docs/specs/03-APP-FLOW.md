@@ -25,11 +25,11 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 2.3 | Timer (gelap) | Selesai / Akhiri -> 2.4 |
 | 2.3b | Timer: segmen drill | "Lanjut" per set; set terakhir -> segmen berikut |
 | 2.4 | Selesai + RPE | Simpan -> 2.5 (jika latihan terakhir minggu itu) atau 2.1 |
-| 2.5 | Ringkasan minggu + adaptasi | 2.1 atau 3.1 |
+| 2.5 | Ringkasan minggu + adaptasi | Tutup -> layar sebelumnya (3.3) atau 2.1 |
 | 2.6 | Catat lari (manual) | Simpan -> 2.1 (atau 2.5 jika latihan terakhir minggu itu) |
 | 3.1 | Kalender plan (tab) | Tap latihan -> 2.2 atau 3.2 |
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
-| 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
+| 3.3 | Progres (tab) | Tap aktivitas -> 3.4; "Ringkasan minggu ini" -> 2.5 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
 | 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
 | 4.2 | Integrasi | Fase 2 (ditunda: butuh kredensial Strava + HP fisik) |

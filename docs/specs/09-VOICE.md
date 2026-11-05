@@ -256,10 +256,18 @@ Prinsip: timer dibaca dari jarak 1 sampai 2 meter (HP di lantai atau di saku), s
 | U4 Siap-siap (2026-11-05) | Segmen `rest` 5 dtk (`prep`) sebelum gerakan yang tidak didahului istirahat: awal sesi strength dan gerakan sesudah gerakan tanpa `rest_s`. Tidak di antara set gerakan yang sama. Layar = layar istirahat dengan bib "Siap-siap", kartu Berikutnya, tombol "Mulai sekarang", 3-2-1 lalu bunyi mulai | Gerakan baru tidak langsung jalan; pengguna sempat melihat gerakan dan posisi awal |
 | Gradasi cincin/bar (2026-11-05) | Cincin lari, istirahat, Siap-siap, dan bar set bergradasi satu tone: ekor = warna zona dicampur cream 45%, kepala = dicampur charcoal 12% (`toneRamp`, `TrackRing gradient`, `ToneBar` di `packages/ui`). Gradasi mengikuti lintasan (48 potongan), kepala selalu tone paling pekat | Arah gerak terbaca; tetap di tone zona sehingga warna fase tidak tertukar |
 
-### 13.2 Usulan berikutnya (belum dibangun, perlu persetujuan; U1, U2, U4 sudah dibangun, lihat 13.1)
+### 13.2 Dibangun 2026-11-05 (U3, U5, U6)
 
-| # | Usulan | Manfaat | Biaya |
-|---|--------|---------|-------|
-| U3 | Mode "lihat dari jauh" otomatis saat HP mendatar (angka 2x lebih besar, animasi disembunyikan) | Plank / push-up dengan HP di lantai | Sedang: sensor orientasi (`expo-sensors`, library baru) |
-| U5 | Live Activity (iOS) / notifikasi berjalan (Android) berisi angka + gerakan | Informasi di layar kunci | Besar: modul native |
-| U6 | Ringkasan per gerakan di 2.4 (set selesai, dilewati, waktu nyata vs estimasi) | Umpan balik untuk kalibrasi estimasi (K5) | Sedang |
+| # | Keputusan | Batas |
+|---|-----------|-------|
+| U3 Jarak jauh | `expo-sensors` DeviceMotion: HP datar menghadap ke atas (beta dan gamma < 0,35 rad) selama 0,8 dtk -> tampilan jarak jauh di set, istirahat, Siap-siap dan drill: bib, nama, angka ~30% lebar layar, bar progres tebal. Ketuk angka = paksa nyala/mati sampai posisi HP berubah. Hanya saat timer berjalan/dijeda | Web desktop tanpa sensor: hanya lewat ketuk. Safari iOS butuh izin sensor, tidak diminta (ketuk tetap jalan) |
+| U5 Layar kunci | Satu notifikasi status yang diperbarui (identifier tetap) saat segmen, status atau perpanjangan berubah: judul = cue segmen ("Squat, set 1 dari 2"), isi = "Selesai pukul 07:32" / "Dijeda" / "Tekan Selesai set setelah selesai". Android: kanal prioritas rendah tanpa suara, sticky (notifikasi berjalan). iOS: notifikasi pasif. Hilang saat selesai/keluar timer. Isi tanpa data kesehatan (TRD 9 aturan 1) | **Live Activity iOS dan hitungan per detik di layar kunci belum**: butuh widget extension native + dev build (perlu perintah pemilik). Belum diuji di HP fisik |
+| U6 Per gerakan | `exerciseSummary`: per gerakan set selesai dari total, waktu kerja nyata vs rencana (tanpa istirahat), dilewati. Tampil di 2.4 dan 3.4 (`ExerciseSummaryList`). `activities.segments` kini `{ v: 2, results }`; array lama dibaca tanpa segmen Siap-siap | Estimasi rencana = `estimate_s` (3 dtk/repetisi), lihat K5 |
+
+## 14. Progress: tiga rentang (2026-11-05)
+
+Sebelumnya grafik selalu `weeks.slice(-8)`, sehingga untuk plan < 8 minggu tanpa riwayat lama ketiga rentang identik. Sekarang: 8 mgg = 8 minggu terakhir; Plan = semua minggu plan (nyata + target bergaris luar, warna fase, sumbu M1..); Semua = sejak aktivitas pertama, per bulan jika > 16 minggu. Baris total dan daftar aktivitas mengikuti rentang. Jika belum ada aktivitas sebelum plan, Semua dan Plan tetap mirip untuk data yang sudah lewat, tetapi Plan menampilkan target ke depan.
+
+## 15. Kalori (keputusan: tidak ditampilkan)
+
+Perkiraan kalori yang layak (MET x berat badan x durasi) butuh berat badan. App sengaja tidak mengumpulkan data tubuh (R4, privasi), dan tanpa berat badan app harus memakai berat bawaan: dengan 70 kg, angkanya +40% untuk orang 50 kg dan -30% untuk orang 100 kg (energi sebanding berat badan). Untuk strength, MET bodyweight juga sangat bervariasi menurut tempo. Angka kalori yang tidak akurat mendorong keputusan makan yang salah, jadi 3.4 menampilkan yang terukur: durasi, gerakan dan set selesai, waktu kerja per gerakan, RPE dan rasa beban. Bisa ditinjau ulang jika kelak ada integrasi HealthKit/Health Connect yang menyediakan energi aktif dari jam tangan.

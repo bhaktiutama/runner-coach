@@ -122,7 +122,7 @@ Index: `(date)`. Gabung 2 latihan (3.2): latihan tujuan di-update, latihan yang 
 | distance_m | int null | |
 | duration_s | int | check > 0 |
 | avg_hr | int null | |
-| segments | json null | Hasil per segmen dari timer (3.4 "Segmen vs target") |
+| segments | json null | Hasil per segmen dari timer (3.4 "Segmen vs target", U6). Sejak 2026-11-05 `{ v: 2, results }` (indeks memakai segmen "Siap-siap"); array polos = format lama tanpa "Siap-siap" |
 | splits | json null | Split per km (3.4) |
 
 Index: `(started_at desc)`. Unik: `(source, external_id) where external_id is not null`.

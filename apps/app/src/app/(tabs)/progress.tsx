@@ -1,4 +1,4 @@
-import type { EngineMessageKey } from '@run-coach/training-engine';
+import { addDays, mondayOf, type EngineMessageKey } from '@run-coach/training-engine';
 import {
   BarChart,
   Card,
@@ -21,7 +21,9 @@ import {
   formatDayMonthNumeric,
   formatDistance,
   formatDuration,
+  formatMonthShort,
   formatNumber,
+  formatTotalDuration,
   formatPace,
   formatPaceValue,
   formatPercent,
@@ -36,7 +38,18 @@ import { Screen } from '@/components/Screen';
 import { useActivePlan, useActivities, useToday, useWorkoutStatuses } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
-import { adherence, easyPaceTrend, rangeStart, weeklyVolume, type Range } from '@/lib/progress';
+import {
+  adherence,
+  easyPaceTrend,
+  historyBars,
+  planBars,
+  rangeStart,
+  rangeTotals,
+  weeklyVolume,
+  type Range,
+  type VolumeBar,
+} from '@/lib/progress';
+import { weekIndexOf } from '@/lib/planView';
 import { et } from '@/lib/rationale';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { IMAGES } from '@/lib/imagery';
@@ -49,6 +62,7 @@ export default function ProgressTab() {
   const all = useActivities();
   const statuses = useWorkoutStatuses(plan.data?.id);
   const [range, setRange] = useState<Range>('8w');
+  const [showAll, setShowAll] = useState(false);
   const { width } = useWindowDimensions();
   if (!plan.data) return null;
   const acts = all.data ?? [];
@@ -61,10 +75,43 @@ export default function ProgressTab() {
   const params = planParams(plan.data);
   const pred = params.prediction;
   const g = plan.data.goal;
-  const recent = acts.slice(0, 5);
+  // Daftar aktivitas mengikuti rentang; 5 teratas, sisanya lewat "Tampilkan semua".
+  const inRange = acts.filter((a) => a.date >= from);
+  const recent = showAll ? inRange : inRange.slice(0, 5);
+  const totals = rangeTotals(acts, from, today);
+  const monday = mondayOf(today);
+  const weekAll = (statuses.data ?? []).filter((w) => w.date >= monday && w.date <= addDays(monday, 6));
+  const weekDone = weekAll.filter((w) => w.status === 'completed').length;
+  const weekIdx = weekIndexOf(params, today) ?? 1;
+  const planTotalM = (params.weeks ?? []).reduce((s, w) => s + w.volumeM, 0);
   const chartW = Math.min(width, size.contentMax) - space.screenX * 2 - space[4] * 2;
 
-  const shown = weeks.slice(-8);
+  // Tiap rentang punya grafik sendiri (09-VOICE bagian 14): 8 mgg = 8 minggu terakhir; Plan = semua
+  // minggu plan (nyata + target ke depan berwarna fase); Semua = sejak aktivitas pertama (per bulan jika panjang).
+  const shown: VolumeBar[] =
+    range === 'plan'
+      ? planBars(params.weeks ?? [], acts, today)
+      : range === 'all'
+        ? historyBars(acts, from, today)
+        : weeks.slice(-8).map((w, i, xs) => ({
+            key: w.weekStart,
+            start: w.weekStart,
+            distanceM: w.distanceM,
+            phase: !w.current && i >= xs.length - 3 ? 'peak' : w.current ? 'peak' : 'base',
+            outline: w.current,
+            current: w.current,
+            week: null,
+          }));
+  const monthly = range === 'all' && shown.length > 0 && shown[0]!.key.length === 7;
+  const dense = shown.length > 10;
+  const every = Math.ceil(shown.length / 8);
+  const axisLabel = (b: VolumeBar, i: number) => {
+    if (dense && i % every !== 0 && !b.current) return '';
+    if (b.current) return monthly ? formatMonthShort(b.start) : t('progress.thisWeek');
+    if (monthly) return formatMonthShort(b.start);
+    if (b.week != null) return t('progress.weekShort', { n: b.week });
+    return formatDayMonthNumeric(b.start);
+  };
   return (
     <Screen testID="screen-progress" gap="progress">
       <View style={styles.head}>
@@ -77,7 +124,7 @@ export default function ProgressTab() {
                 key={r}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: on }}
-                onPress={() => setRange(r)}
+                onPress={() => (setRange(r), setShowAll(false))}
                 style={[styles.segItem, on && styles.segOn]}
               >
                 <Text variant="controlSmStrong" color={on ? 'text' : 'textMuted'}>
@@ -88,6 +135,22 @@ export default function ProgressTab() {
           })}
         </View>
       </View>
+      {/* Jalan masuk ke 2.5 selain sesudah latihan terakhir minggu itu. */}
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => router.push('/week-summary')}
+        style={styles.item}
+        testID="open-week-summary"
+      >
+        <Icon name="trophy" size={space[5]} />
+        <View style={styles.flex}>
+          <Text variant="row">{t('progress.weekSummary')}</Text>
+          <Text variant="caption" color="textMuted">
+            {t('progress.weekSummarySub', { n: weekIdx, done: weekDone, total: weekAll.length })}
+          </Text>
+        </View>
+        <Icon name="chevron-right" size={space[5]} />
+      </Pressable>
       <Card style={styles.cardVol}>
         <View style={styles.row}>
           <View style={styles.hintRow}>
@@ -98,7 +161,20 @@ export default function ProgressTab() {
             {t('progress.km')}
           </Text>
         </View>
-        {shown.every((w) => w.distanceM === 0) ? (
+        <Text variant="caption" color="textMuted" testID="range-totals">
+          {range === 'plan'
+            ? t('progress.totalsPlan', {
+                km: formatDistance(totals.distanceM),
+                target: formatDistance(planTotalM),
+                n: totals.count,
+              })
+            : t('progress.totals', {
+                km: formatDistance(totals.distanceM),
+                time: formatTotalDuration(totals.durationS),
+                n: totals.count,
+              })}
+        </Text>
+        {range !== 'plan' && shown.every((w) => w.distanceM === 0) ? (
           <>
             {/* UI/UX 12: keadaan belum ada aktivitas memakai gambar track-aerial. */}
             <ImageHeader source={IMAGES.trackAerial} style={styles.emptyImage} />
@@ -109,23 +185,43 @@ export default function ProgressTab() {
         ) : (
           <>
             <BarChart
-              key={`bars-${focused ? 'on' : 'off'}`}
+              key={`bars-${range}-${focused ? 'on' : 'off'}`}
               animate
               height={space[10] * 2 + space[4]}
-              bars={shown.map((w, i) => ({
+              bars={shown.map((w) => ({
                 value: w.distanceM,
-                label: formatNumber(Math.round(w.distanceM / 1000)),
-                phase: !w.current && i >= shown.length - 3 ? 'peak' : w.current ? 'peak' : 'base',
-                outline: w.current,
+                // Banyak batang: angka di atas batang disembunyikan agar tidak bertumpuk.
+                label: dense ? '' : formatNumber(Math.round(w.distanceM / 1000)),
+                phase: w.phase,
+                outline: w.outline,
               }))}
             />
-            <View style={styles.xAxis}>
-              {shown.map((w) => (
-                <Text key={w.weekStart} variant="axisSm" color="textMuted" align="center" style={styles.flex}>
-                  {w.current ? t('progress.thisWeek') : formatDayMonthNumeric(w.weekStart)}
-                </Text>
-              ))}
+            {/* Banyak batang: label ditaruh absolut di tengah kolomnya agar tidak terpotong ("M..."). */}
+            <View style={dense ? styles.xAxisAbs : styles.xAxis} testID={`volume-axis-${range}`}>
+              {shown.map((w, i) =>
+                dense ? (
+                  axisLabel(w, i) ? (
+                    <View
+                      key={w.key}
+                      style={[styles.axisTick, { left: `${((i + 0.5) / shown.length) * 100}%` }]}
+                    >
+                      <Text variant="axisSm" color="textMuted" align="center" numberOfLines={1}>
+                        {axisLabel(w, i)}
+                      </Text>
+                    </View>
+                  ) : null
+                ) : (
+                  <Text key={w.key} variant="axisSm" color="textMuted" align="center" style={styles.flex}>
+                    {axisLabel(w, i)}
+                  </Text>
+                ),
+              )}
             </View>
+            {range === 'plan' ? (
+              <Text variant="caption" color="textMuted">
+                {t('progress.planLegend')}
+              </Text>
+            ) : null}
           </>
         )}
       </Card>
@@ -252,6 +348,18 @@ export default function ProgressTab() {
             <Icon name="chevron-right" size={space[5]} />
           </Pressable>
         ))}
+        {!showAll && inRange.length > 5 ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setShowAll(true)}
+            style={styles.more}
+            testID="progress-show-all"
+          >
+            <Text variant="controlStrong" color="primaryInk">
+              {t('progress.showAll', { n: inRange.length })}
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     </Screen>
   );
@@ -281,6 +389,9 @@ const styles = themed(() =>
     cardVol: { padding: space[4], gap: space[2] + space[1] / 2 },
     cardPace: { padding: space[4], gap: space[2] },
     xAxis: { flexDirection: 'row', gap: space[2] },
+    xAxisAbs: { height: space[4], position: 'relative' },
+    axisTick: { position: 'absolute', top: 0, width: space[8], marginLeft: -space[4] },
+    more: { minHeight: size.touchMin, justifyContent: 'center', alignItems: 'center' },
     paceDelta: { fontFamily: fontFiles.display700, color: color.success },
     pair: { flexDirection: 'row', gap: space[2] },
     small: { flex: 1, padding: space[3] + space[1] / 2, gap: space[1] },

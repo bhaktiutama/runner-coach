@@ -5,7 +5,8 @@ import { getDb } from '@/db/client';
 import * as repo from '@/data/repo';
 import type { Workout } from '@/data/rows';
 import { t } from '@/i18n/t';
-import { cancelTimerCues, scheduleTimerCues } from '@/lib/notifications';
+import { cancelTimerCues, clearTimerStatus, scheduleTimerCues, showTimerStatus } from '@/lib/notifications';
+import { formatTimeOfDay } from '@run-coach/ui/format';
 import { track } from '@/lib/analytics';
 import { cueText } from './labels';
 import * as M from './machine';
@@ -128,6 +129,25 @@ export function useTimer(workout: Workout | null | undefined, autoDefault = true
   useEffect(() => {
     if (synced?.status === 'finished') void cancelTimerCues();
   }, [synced?.status]);
+
+  // U5: status di layar kunci, diperbarui saat segmen/status/perpanjangan berubah (bukan tiap detik:
+  // isinya jam selesai, jadi tetap benar tanpa diperbarui).
+  const statusKey = synced ? `${synced.status}:${synced.index}:${synced.extendS ?? 0}:${synced.auto}` : '';
+  useEffect(() => {
+    if (!synced || !pos) return;
+    if (synced.status !== 'running' && synced.status !== 'paused') return void clearTimerStatus();
+    const seg = pos.segment;
+    if (!seg) return;
+    const title = t('timer.statusTitle', { name: cueText(seg) });
+    const body =
+      synced.status === 'paused'
+        ? t('timer.statusPaused')
+        : pos.remainingS != null
+          ? t('timer.statusUntil', { time: formatTimeOfDay(Date.now() + pos.remainingS * 1000) })
+          : t('timer.statusManual');
+    void showTimerStatus(title, body, t('timer.statusChannel'));
+  }, [statusKey]);
+  useEffect(() => () => void clearTimerStatus(), []);
 
   return {
     segs,

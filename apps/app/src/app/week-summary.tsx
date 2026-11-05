@@ -16,6 +16,7 @@ import {
 } from '@run-coach/ui';
 import { formatDistance, formatTotalDuration } from '@run-coach/ui/format';
 import { useMemo, useState } from 'react';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
 import {
@@ -82,7 +83,11 @@ export default function WeekSummary() {
 
   return (
     <Screen testID="screen-week" hero={{ source: IMAGES.trackOverhead, keepFirst: true }}>
-      <IconButton icon="close" label={t('week.close')} onPress={() => goHome()} />
+      <IconButton
+        icon="close"
+        label={t('week.close')}
+        onPress={() => (router.canGoBack() ? router.back() : goHome())}
+      />
       <View style={styles.center}>
         <View>
           <TrackRing
@@ -159,7 +164,8 @@ export default function WeekSummary() {
                   })}
                 </TextColorContext.Provider>
               </View>
-              <View style={styles.pair}>
+              {/* Tombol bertumpuk lebar penuh: label panjang (EN "Keep the original plan") tidak terpotong. */}
+              <View style={styles.actions}>
                 <Pressable
                   accessibilityRole="button"
                   testID="apply"
@@ -218,9 +224,11 @@ const styles = themed(() =>
     adjustHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     changes: { backgroundColor: color.surface, borderRadius: radius.md, padding: space[3], gap: space[2] },
     changeRow: { flexDirection: 'row', justifyContent: 'space-between' },
+    actions: { gap: space[2] },
     btn: {
-      flex: 1,
-      height: size.buttonSecondary,
+      alignSelf: 'stretch',
+      minHeight: size.buttonSecondary,
+      paddingHorizontal: space[4],
       borderRadius: radius.stadium,
       alignItems: 'center',
       justifyContent: 'center',

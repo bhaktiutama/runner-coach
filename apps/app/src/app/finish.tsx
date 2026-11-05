@@ -24,7 +24,8 @@ import { t } from '@/i18n/t';
 import { goHome } from '@/lib/nav';
 import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { typeName } from '@/lib/workoutView';
-import { buildSegments, summary, type TimerState } from '@/timer/machine';
+import { buildSegments, encodeResults, exerciseSummary, summary, type TimerState } from '@/timer/machine';
+import { ExerciseSummaryList } from '@/components/ExerciseSummaryList';
 import { IMAGES } from '@/lib/imagery';
 
 /** 2.4 Selesai + RPE. Data dari timer yang baru selesai (app_meta.active_timer). */
@@ -77,7 +78,7 @@ export default function Finish() {
       startedAt,
       distanceM: distM,
       durationS: durS,
-      segments: sum.results,
+      segments: encodeResults(sum.results),
       rpe,
       tags,
       loadFeel: support ? feel : null,
@@ -112,6 +113,14 @@ export default function Finish() {
           {t('finish.segments', { done: sum.segmentsDone, total: sum.segmentsTotal })}
         </Text>
       </View>
+      {support ? (
+        <View style={styles.section}>
+          <Text variant="label" color="textMuted">
+            {t('summary.perExercise')}
+          </Text>
+          <ExerciseSummaryList items={exerciseSummary(buildSegments(w.data.steps), sum.results)} />
+        </View>
+      ) : null}
       <View style={styles.row}>
         <View style={styles.flex}>
           <TextField
@@ -192,6 +201,7 @@ export default function Finish() {
 
 const styles = themed(() =>
   StyleSheet.create({
+    section: { gap: space[2] },
     flex: { flex: 1 },
     head: { gap: space[2], alignItems: 'flex-start' },
     row: { flexDirection: 'row', gap: space[2], alignItems: 'flex-end' },

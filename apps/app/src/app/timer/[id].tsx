@@ -32,6 +32,7 @@ import { intensitySegments } from '@/lib/workoutView';
 import { countdownTick, holdHaptic, requestWakeLock } from '@/timer/cues';
 import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
 import { plannedS } from '@/timer/machine';
+import { useFlat } from '@/timer/useFlat';
 import { useTimer } from '@/timer/useTimer';
 
 const dark = color.dark;
@@ -51,6 +52,12 @@ export default function TimerScreen() {
   const [confirm, setConfirm] = useState(false);
   const [locked, setLocked] = useState(false);
   const [askPerm, setAskPerm] = useState<boolean | null>(null);
+  // U3: HP datar menghadap ke atas -> tampilan jarak jauh. Ketuk angka = paksa nyala/mati sampai posisi HP berubah.
+  const flat = useFlat(tm.state?.status === 'running' || tm.state?.status === 'paused');
+  const [farOverride, setFarOverride] = useState<boolean | null>(null);
+  useEffect(() => setFarOverride(null), [flat]);
+  const far = farOverride ?? flat;
+  const toggleFar = () => setFarOverride(!far);
 
   // Layar tetap menyala selama timer (native: keep-awake, web: Wake Lock).
   useEffect(() => {
@@ -221,7 +228,7 @@ export default function TimerScreen() {
           {top}
           <ScrollView style={styles.flex} contentContainerStyle={styles.scroll}>
             <HoldToFinish enabled={!locked && running} onDone={tm.next}>
-              <DrillView tm={tm} paused={paused} />
+              <DrillView tm={tm} paused={paused} far={far} onToggleFar={toggleFar} />
             </HoldToFinish>
           </ScrollView>
         </View>
@@ -260,7 +267,7 @@ export default function TimerScreen() {
           {top}
           <ScrollView style={styles.flex} contentContainerStyle={styles.scroll}>
             <HoldToFinish enabled={seg.kind === 'exercise' && !locked && running} onDone={tm.next}>
-              <StrengthView tm={tm} paused={paused} locked={locked} />
+              <StrengthView tm={tm} paused={paused} locked={locked} far={far} onToggleFar={toggleFar} />
             </HoldToFinish>
           </ScrollView>
         </View>
@@ -508,7 +515,17 @@ function Confirm({ onYes, onNo }: { onYes: () => void; onNo: () => void }) {
 }
 
 /** 2.3b segmen drill (wireframe TimerDrill). */
-function DrillView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: boolean }) {
+function DrillView({
+  tm,
+  paused,
+  far,
+  onToggleFar,
+}: {
+  tm: ReturnType<typeof useTimer>;
+  paused: boolean;
+  far: boolean;
+  onToggleFar: () => void;
+}) {
   const pos = tm.position!;
   const seg = pos.segment;
   if (!seg || seg.kind !== 'drill') return null;
@@ -536,6 +553,22 @@ function DrillView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: bo
     .split('. ')
     .map((c) => c.replace(/\.$/, ''))
     .filter(Boolean);
+  const drillTimed = seg.timedS != null;
+  if (far) {
+    return (
+      <FarView
+        bib={t('timer.drillBib', { n: exIdx, total: exercises.length })}
+        zone="easy"
+        title={et(`drill.${seg.exercise_id}.name` as EngineMessageKey)}
+        sub={t('timer.drillSet', { n: seg.set, total: seg.sets })}
+        value={drillTimed ? (pos.remainingS ?? 0) : pos.elapsedInSegS}
+        frac={drillTimed && seg.timedS ? pos.elapsedInSegS / seg.timedS : null}
+        tint={color.primary}
+        paused={paused}
+        onPress={onToggleFar}
+      />
+    );
+  }
   return (
     <View style={styles.drill} testID="timer-drill">
       <View style={styles.drillHead}>
@@ -564,6 +597,7 @@ function DrillView({ tm, paused }: { tm: ReturnType<typeof useTimer>; paused: bo
         total={seg.timedS}
         elapsed={pos.elapsedInSegS}
         paused={paused}
+        onPress={onToggleFar}
       />
       <View style={styles.cues}>
         {cues.map((c) => (
@@ -602,10 +636,14 @@ function StrengthView({
   tm,
   paused,
   locked,
+  far,
+  onToggleFar,
 }: {
   tm: ReturnType<typeof useTimer>;
   paused: boolean;
   locked: boolean;
+  far: boolean;
+  onToggleFar: () => void;
 }) {
   const pos = tm.position!;
   const seg = pos.segment;
@@ -621,6 +659,33 @@ function StrengthView({
       s.reps != null ? t('strength.reps', { n: s.reps }) : t('strength.seconds', { n: s.duration_s ?? 0 });
     return s.per_side ? t('strength.perSide', { dose: d }) : d;
   };
+  if (far) {
+    const rest = seg.kind === 'rest';
+    const target = rest ? nxt : seg;
+    return (
+      <FarView
+        bib={
+          rest
+            ? seg.prep
+              ? t('timer.prepBib')
+              : t('timer.restBib')
+            : t('timer.exerciseBib', { n: exIdx, total: groups.length })
+        }
+        zone={rest ? 'recovery' : 'strength'}
+        title={target && target.kind === 'exercise' ? exerciseName(target.exercise_id) : ''}
+        sub={
+          target && target.kind === 'exercise'
+            ? `${rest ? `${t('timer.restNextLabel')} · ` : ''}${t('timer.drillSet', { n: target.set, total: target.sets })}`
+            : null
+        }
+        value={seg.timedS != null ? (pos.remainingS ?? 0) : pos.elapsedInSegS}
+        frac={seg.timedS ? pos.elapsedInSegS / seg.timedS : null}
+        tint={rest ? color.zone.recovery : color.primary}
+        paused={paused}
+        onPress={onToggleFar}
+      />
+    );
+  }
   if (seg.kind === 'rest') {
     const ringW = Math.min(width - space.screenX * 2, size.contentMax / 2, height * (short ? 0.34 : 0.42));
     return (
@@ -735,7 +800,14 @@ function StrengthView({
           </View>
         </View>
       </View>
-      <SetClock value={shown} timed={timed} total={seg.timedS} elapsed={pos.elapsedInSegS} paused={paused} />
+      <SetClock
+        value={shown}
+        timed={timed}
+        total={seg.timedS}
+        elapsed={pos.elapsedInSegS}
+        paused={paused}
+        onPress={onToggleFar}
+      />
       <View style={styles.cues}>
         {cues.map((c) => (
           <View key={c} style={styles.cueRow}>
@@ -762,10 +834,17 @@ function SetClock(p: {
   total: number | null;
   elapsed: number;
   paused: boolean;
+  onPress: () => void;
 }) {
   const frac = p.timed && p.total ? Math.min(1, p.elapsed / p.total) : 0;
   return (
-    <View style={styles.setClock}>
+    <Pressable
+      style={styles.setClock}
+      onPress={p.onPress}
+      accessibilityRole="button"
+      accessibilityLabel={t('timer.farOn')}
+      testID="set-clock"
+    >
       <View style={styles.setClockRow}>
         <Text
           variant="numberXl"
@@ -786,7 +865,64 @@ function SetClock(p: {
       {p.timed ? (
         <ToneBar progress={frac} color={color.primary} trackColor={dark.surfaceSunken} height={space[2]} />
       ) : null}
-    </View>
+    </Pressable>
+  );
+}
+
+/**
+ * U3 tampilan jarak jauh (HP di lantai): bib, nama, angka raksasa (~30% lebar layar) + bar progres.
+ * Ketuk di mana saja = kembali ke tampilan biasa.
+ */
+function FarView(p: {
+  bib: string;
+  zone: 'strength' | 'recovery' | 'easy';
+  title: string;
+  sub: string | null;
+  value: number;
+  frac: number | null;
+  tint: string;
+  paused: boolean;
+  onPress: () => void;
+}) {
+  const { width } = useWindowDimensions();
+  const big = Math.round(Math.min(width, size.contentMax) * 0.3);
+  return (
+    <Pressable
+      onPress={p.onPress}
+      accessibilityRole="button"
+      accessibilityLabel={t('timer.farOff')}
+      style={styles.far}
+      testID="timer-far"
+    >
+      <BibTag label={p.bib} zone={p.zone} />
+      {p.title ? (
+        <Text variant="drillName" color="darkText" align="center">
+          {p.title}
+        </Text>
+      ) : null}
+      {p.sub ? (
+        <Text variant="set" color="darkTextMuted" align="center">
+          {p.sub}
+        </Text>
+      ) : null}
+      <Text
+        variant="timer"
+        color="darkText"
+        numberOfLines={1}
+        style={[styles.tnum, { fontSize: big, lineHeight: big }, p.paused && styles.blink]}
+        testID="timer-remaining"
+      >
+        {formatClock(p.value)}
+      </Text>
+      {p.paused ? (
+        <Text variant="statusCaps" style={{ color: color.status.attention }}>
+          {t('timer.paused')}
+        </Text>
+      ) : null}
+      {p.frac != null ? (
+        <ToneBar progress={p.frac} color={p.tint} trackColor={dark.surfaceSunken} height={space[3]} />
+      ) : null}
+    </Pressable>
   );
 }
 
@@ -1067,6 +1203,7 @@ const styles = themed(() =>
       padding: space[3],
     },
     holding: { opacity: 0.85 },
+    far: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: space[4], alignSelf: 'stretch' },
     extendPill: {
       flexDirection: 'row',
       alignItems: 'center',
