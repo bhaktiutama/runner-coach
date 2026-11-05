@@ -319,7 +319,8 @@ function Shell({
         </Text>
         {pin}
       </View>
-      {children}
+      {/* Isi + visual dikelompokkan di tengah ruang sisa: jarak atas dan bawah seimbang. */}
+      <View style={styles.body}>{children}</View>
     </Card>
   );
 }
@@ -348,6 +349,7 @@ const styles = themed(() =>
     placeholder: { height: CARD_H + space[2] },
     card: { gap: space[3], padding: space[4], paddingBottom: space[6] + space[1], height: CARD_H },
     row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    body: { flex: 1, justifyContent: 'center', gap: space[3] },
     big: { alignItems: 'center', minWidth: space[10] },
     recs: { flexDirection: 'row', gap: space[2] },
     rec: { flex: 1, minWidth: 0, gap: space[1] / 2 },
@@ -358,7 +360,7 @@ const styles = themed(() =>
       borderRadius: radius.stadium,
       backgroundColor: color.line,
     },
-    days: { flexDirection: 'row', gap: space[1] + space[1] / 2, marginTop: 'auto' },
+    days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
     dayCol: { flex: 1, alignItems: 'center', gap: space[1] },
     dayBar: {
       alignSelf: 'stretch',
@@ -377,7 +379,7 @@ const styles = themed(() =>
       justifyContent: 'flex-end',
     },
     weekFill: { width: '100%' },
-    totals: { flexDirection: 'row', gap: space[2], marginTop: 'auto' },
+    totals: { flexDirection: 'row', gap: space[2] },
     totChip: {
       paddingHorizontal: space[2] + space[1] / 2,
       paddingVertical: space[1],

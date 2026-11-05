@@ -9,7 +9,7 @@ import { countdownTo, RACE_START_HOUR } from '@/lib/progress';
 import { et } from '@/lib/rationale';
 
 /** Tinggi kartu geser tetap: semua kartu sama tinggi, layar tidak bergeser saat kartu utama diganti. */
-export const CARD_H = space[10] * 4 + space[5];
+export const CARD_H = space[10] * 4 + space[2];
 
 type Props = {
   today: string;
@@ -48,26 +48,29 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
           </Text>
           {pin}
         </View>
-        <View style={styles.row}>
-          <View style={styles.flex}>
-            <Text variant="row">
-              {t('today.countdownRaceDate', { date: formatDateLong(raceDate!), hour: RACE_START_HOUR })}
-            </Text>
+        {/* Isi di tengah ruang antara judul dan titik penanda: jarak atas-bawah seimbang. */}
+        <View style={styles.body}>
+          <View style={styles.row}>
+            <View style={styles.flex}>
+              <Text variant="row">
+                {t('today.countdownRaceDate', { date: formatDateLong(raceDate!), hour: RACE_START_HOUR })}
+              </Text>
+            </View>
+            <View style={styles.nums}>
+              <Unit value={race.days} label={t('today.countdownDays')} />
+              <Unit value={race.hours} label={t('today.countdownHours')} />
+            </View>
           </View>
-          <View style={styles.nums}>
-            <Unit value={race.days} label={t('today.countdownDays')} />
-            <Unit value={race.hours} label={t('today.countdownHours')} />
-          </View>
+          <ToneBar
+            progress={elapsed}
+            color={color.primary}
+            trackColor={color.surfaceSunken}
+            height={space[2]}
+          />
+          <Text variant="caption" color="textMuted">
+            {t('today.countdownRaceSub', { km: formatDistance(doneM) })}
+          </Text>
         </View>
-        <ToneBar
-          progress={elapsed}
-          color={color.primary}
-          trackColor={color.surfaceSunken}
-          height={space[2]}
-        />
-        <Text variant="caption" color="textMuted">
-          {t('today.countdownRaceSub', { km: formatDistance(doneM) })}
-        </Text>
       </Card>
     );
   }
@@ -80,21 +83,24 @@ export function CountdownCard({ today, distance, raceDate, planStart, planEnd, p
         </Text>
         {pin}
       </View>
-      <View style={styles.row}>
-        <View style={styles.flex}>
-          <Text variant="row">{t('today.countdownPlanEnd', { date: formatDateLong(planEnd) })}</Text>
+      {/* Isi di tengah ruang antara judul dan titik penanda: jarak atas-bawah seimbang. */}
+      <View style={styles.body}>
+        <View style={styles.row}>
+          <View style={styles.flex}>
+            <Text variant="row">{t('today.countdownPlanEnd', { date: formatDateLong(planEnd) })}</Text>
+          </View>
+          <Unit value={left} label={t('today.countdownDays')} />
         </View>
-        <Unit value={left} label={t('today.countdownDays')} />
+        <ToneBar
+          progress={planTargetM ? doneM / planTargetM : elapsed}
+          color={color.success}
+          trackColor={color.surfaceSunken}
+          height={space[2]}
+        />
+        <Text variant="caption" color="textMuted">
+          {t('today.countdownPlanSub', { km: formatDistance(doneM), target: formatDistance(planTargetM) })}
+        </Text>
       </View>
-      <ToneBar
-        progress={planTargetM ? doneM / planTargetM : elapsed}
-        color={color.success}
-        trackColor={color.surfaceSunken}
-        height={space[2]}
-      />
-      <Text variant="caption" color="textMuted">
-        {t('today.countdownPlanSub', { km: formatDistance(doneM), target: formatDistance(planTargetM) })}
-      </Text>
     </Card>
   );
 }
@@ -115,6 +121,7 @@ const styles = themed(() =>
     card: { gap: space[2], padding: space[4], paddingBottom: space[6] + space[1], height: CARD_H },
     row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     flex: { flex: 1, gap: space[1] },
+    body: { flex: 1, justifyContent: 'center', gap: space[2] },
     nums: { flexDirection: 'row', gap: space[4] },
     unit: { alignItems: 'center', minWidth: space[10] },
   }),
