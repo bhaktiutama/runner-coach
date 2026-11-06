@@ -700,7 +700,11 @@ export const tokens = {
     "iconSm": 22,
     "hero": 300,
     "heroTall": 480,
-    "cardImage": 150
+    "cardImage": 150,
+    "spotSm": 32,
+    "spotMd": 40,
+    "spotLg": 56,
+    "spotXl": 96
   },
   "border": {
     "hairline": 1,

@@ -11,6 +11,7 @@ import {
   radius,
   size,
   space,
+  SpotIcon,
   Text,
   ToneBar,
   TrackRing,
@@ -28,6 +29,7 @@ import { useProfile, useWorkout } from '@/data/hooks';
 import { t } from '@/i18n/t';
 import { getPermission, notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
+import { useSpotIcons } from '@/lib/spot';
 import { intensitySegments } from '@/lib/workoutView';
 import { countdownTick, holdHaptic, requestWakeLock } from '@/timer/cues';
 import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
@@ -650,6 +652,7 @@ function StrengthView({
   const { width, height } = useWindowDimensions();
   // Layar pendek (mis. iPhone SE): animasi dan cincin mengecil agar angka waktu tetap terlihat tanpa gulir.
   const short = height < 700;
+  const icons = useSpotIcons();
   if (!seg || (seg.kind !== 'exercise' && seg.kind !== 'rest')) return null;
   const groups = [...new Set(tm.segs.filter((s) => s.kind === 'exercise').map((s) => s.group))];
   const exIdx = groups.indexOf(seg.group) + 1;
@@ -702,7 +705,17 @@ function StrengthView({
           trackColor={dark.surfaceSunken}
         >
           <View style={styles.ringCol}>
-            <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
+            {icons ? (
+              // UI/UX 14: ikon istirahat / siap-siap di kiri bib; tinggi baris tetap setinggi bib.
+              <View style={styles.bibSpotRow}>
+                <View style={styles.bibSpot}>
+                  <SpotIcon name={seg.prep ? 'get-ready' : 'rest'} size={size.spotSm} testID="spot-rest" />
+                </View>
+                <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
+              </View>
+            ) : (
+              <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
+            )}
             {paused ? (
               <Text variant="statusCaps" style={{ color: color.status.attention }}>
                 {t('timer.paused')}
@@ -1193,6 +1206,8 @@ const styles = themed(() =>
     tnum: { fontVariant: ['tabular-nums'] },
     segFill: { height: '100%', borderRadius: radius.stadium },
     clip: { overflow: 'hidden' },
+    bibSpotRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    bibSpot: { marginVertical: -space[1] },
     nextCard: {
       flexDirection: 'row',
       alignItems: 'center',

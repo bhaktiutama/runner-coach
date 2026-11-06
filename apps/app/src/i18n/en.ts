@@ -679,6 +679,9 @@ export const en: Record<MessageKey, string> = {
   'profile.timerAuto': 'Auto timer',
   'profile.timerAutoSub':
     'Rep sets and drills move on by themselves using an estimated time, no tapping needed. You can switch it in the timer.',
+  'profile.spotIcons': 'Illustrated icons',
+  'profile.spotIconsSub':
+    'Colour icons on workout cards, plan, progress and summaries. Turn off for a plain look.',
   'profile.premium': 'Premium',
   'profile.premiumActive': 'Active',
   'profile.premiumTry': 'Try free for 14 days',

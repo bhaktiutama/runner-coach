@@ -179,7 +179,7 @@ p {{ margin: 0; max-width: 64ch; }}
   <section class="notes">
     <h2>Catatan sebelum implementasi</h2>
     <ul>
-      <li>Belum dipasang di app. File SVG ada di <code>docs/design-system/assets/spot-icons-draft/</code>, dibuat dari <code>_build/spot_icons.py</code>.</li>
+      <li>Belum dipasang di app. File SVG ada di <code>docs/design-system/assets/spot-icons/</code>, dibuat dari <code>_build/spot_icons.py</code>.</li>
       <li>Semua warna dari token Lintas. Mode gelap: ubin pastel tetap, ubin strength memakai <code>zone-strength</code> gelap.</li>
       <li>Wajah di RPE selalu disertai teks dan angka, jadi tidak bergantung pada warna atau ekspresi saja.</li>
       <li>Perlu keputusan: ikon mana yang dipakai dan di layar mana, lalu update spec 04-UI-UX (komponen baru <code>SpotIcon</code>) sebelum dipasang.</li>

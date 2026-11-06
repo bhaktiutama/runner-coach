@@ -10,6 +10,7 @@ import {
   shadow,
   size,
   space,
+  SpotIcon,
   Text,
   themed,
 } from '@run-coach/ui';
@@ -24,6 +25,7 @@ import { localDateOf } from '@/lib/today';
 import { segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { buildSegments, decodeResults, exerciseSummary } from '@/timer/machine';
 import { ExerciseSummaryList } from '@/components/ExerciseSummaryList';
+import { feelSpot, TYPE_SPOT, useSpotIcons } from '@/lib/spot';
 import { IMAGES, workoutImage } from '@/lib/imagery';
 
 /** 3.4 Detail aktivitas (F-14). Split per km hanya jika ada data (fase 2); tidak dikarang. */
@@ -32,6 +34,7 @@ export default function ActivityDetail() {
   const a = useActivity(id);
   const tz = useProfile().data?.timezone ?? 'Asia/Jakarta';
   const { width } = useWindowDimensions();
+  const icons = useSpotIcons();
   const back = () => (router.canGoBack() ? router.back() : router.replace('/progress'));
   if (a.isPending) return <Screen>{null}</Screen>;
   if (!a.data) {
@@ -111,7 +114,15 @@ export default function ActivityDetail() {
       </View>
       <View style={styles.head}>
         <View style={styles.titleRow}>
-          <LaneMark zone={x.workout_type ? TYPE_ZONE[x.workout_type] : 'easy'} tall />
+          {icons ? (
+            <SpotIcon
+              name={x.workout_type ? TYPE_SPOT[x.workout_type] : 'easy'}
+              size={size.spotMd}
+              testID="spot-title"
+            />
+          ) : (
+            <LaneMark zone={x.workout_type ? TYPE_ZONE[x.workout_type] : 'easy'} tall />
+          )}
           <Text variant="title" style={styles.flexShrink} testID="activity-title">
             {x.workout_type ? typeName(x.workout_type) : t('progress.extraRun')}
           </Text>
@@ -185,9 +196,16 @@ export default function ActivityDetail() {
       ) : null}
       {x.rpe ? (
         <View style={styles.rpe}>
-          <Text variant="controlStrong" color="textMuted">
-            {t('activity.rpe')}
-          </Text>
+          <View style={styles.titleRow}>
+            {icons ? (
+              <View style={styles.rowSpot}>
+                <SpotIcon name={feelSpot(x.rpe)} size={size.spotSm} />
+              </View>
+            ) : null}
+            <Text variant="controlStrong" color="textMuted">
+              {t('activity.rpe')}
+            </Text>
+          </View>
           <Text variant="row">
             {t('activity.rpeValue', {
               rpe: x.rpe,
@@ -261,6 +279,7 @@ const styles = themed(() =>
       alignItems: 'center',
       gap: space[2] + border.selected - border.hairline / 2,
     },
+    rowSpot: { marginVertical: -space[1] - space[1] / 2 },
     grid: { gap: space[2] },
     gridRow: { flexDirection: 'row', gap: space[2] },
     statCard: { backgroundColor: color.surface, borderRadius: radius.md, ...shadow.card },

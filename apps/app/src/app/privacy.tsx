@@ -11,7 +11,9 @@ import {
   SecondaryButton,
   SettingsGroup,
   SettingsRow,
+  size,
   space,
+  SpotIcon,
   Switch,
   Text,
   themed,
@@ -29,6 +31,7 @@ import { setAnalyticsEnabled, track } from '@/lib/analytics';
 import { startFresh } from '@/lib/nav';
 import { et } from '@/lib/rationale';
 import { localDateOf } from '@/lib/today';
+import { useSpotIcons } from '@/lib/spot';
 
 type Sheet = null | 'signout' | 'wipe' | { file: BackupFile; summary: BackupSummary };
 
@@ -38,6 +41,7 @@ export default function Privacy() {
   const session = useSession();
   const today = useToday();
   const a = usePrivacyActions();
+  const icons = useSpotIcons();
   const [sheet, setSheet] = useState<Sheet>(null);
   const [msg, setMsg] = useState<{ tone: 'ok' | 'danger'; text: string } | null>(null);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/profile'));
@@ -83,7 +87,11 @@ export default function Privacy() {
       </View>
       <View style={styles.hero}>
         <View style={styles.heroHead}>
-          <Logo variant="mark" dark={!isDark()} height={space[8] + space[1]} />
+          {icons ? (
+            <SpotIcon name="privacy" size={size.spotMd} testID="spot-privacy" />
+          ) : (
+            <Logo variant="mark" dark={!isDark()} height={space[8] + space[1]} />
+          )}
           <Text variant="stat" style={[styles.flex, { color: color.bg }]}>
             {t('privacy.heroTitle')}
           </Text>

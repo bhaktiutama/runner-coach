@@ -27,6 +27,8 @@ export type ProfileRow = {
   timer_auto: number;
   /** Kartu 2.1 yang tampil pertama. Sejak v8 */
   today_card: 'countdown' | 'long_run' | 'records' | 'streak';
+  /** 1 = ikon spot berwarna tampil di kartu/daftar. Sejak v9 */
+  spot_icons: number;
 };
 
 export type GoalRow = {

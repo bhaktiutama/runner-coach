@@ -12,6 +12,7 @@ import {
   shadow,
   size,
   space,
+  SpotIcon,
   Text,
   themed,
   TrackRing,
@@ -35,6 +36,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
+import { TYPE_SPOT, useSpotIcons } from '@/lib/spot';
 import { useActivePlan, useActivities, useToday, useWorkoutStatuses } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
@@ -64,6 +66,7 @@ export default function ProgressTab() {
   const [range, setRange] = useState<Range>('8w');
   const [showAll, setShowAll] = useState(false);
   const { width } = useWindowDimensions();
+  const icons = useSpotIcons();
   if (!plan.data) return null;
   const acts = all.data ?? [];
   const first = acts.length ? acts[acts.length - 1]!.date : null;
@@ -142,7 +145,7 @@ export default function ProgressTab() {
         style={styles.item}
         testID="open-week-summary"
       >
-        <Icon name="trophy" size={space[5]} />
+        {icons ? <SpotIcon name="week-done" size={size.spotSm} /> : <Icon name="trophy" size={space[5]} />}
         <View style={styles.flex}>
           <Text variant="row">{t('progress.weekSummary')}</Text>
           <Text variant="caption" color="textMuted">
@@ -323,9 +326,18 @@ export default function ProgressTab() {
           {t('progress.recent')}
         </Text>
         {recent.length === 0 ? (
-          <Text variant="bodySm" color="textMuted">
-            {t('progress.empty')}
-          </Text>
+          icons ? (
+            <View style={styles.emptyRow} testID="recent-empty">
+              <SpotIcon name="empty" size={size.spotMd} testID="spot-empty" />
+              <Text variant="bodySm" color="textMuted" style={styles.flex}>
+                {t('progress.empty')}
+              </Text>
+            </View>
+          ) : (
+            <Text variant="bodySm" color="textMuted">
+              {t('progress.empty')}
+            </Text>
+          )
         ) : null}
         {recent.map((a) => (
           <Pressable
@@ -334,7 +346,11 @@ export default function ProgressTab() {
             testID={`activity-${a.id}`}
             style={styles.item}
           >
-            <LaneMark zone={a.workout_type ? TYPE_ZONE[a.workout_type] : 'easy'} stretch />
+            {icons ? (
+              <SpotIcon name={a.workout_type ? TYPE_SPOT[a.workout_type] : 'easy'} size={size.spotSm} />
+            ) : (
+              <LaneMark zone={a.workout_type ? TYPE_ZONE[a.workout_type] : 'easy'} stretch />
+            )}
             <View style={styles.flex}>
               <Text variant="row">{a.workout_type ? typeName(a.workout_type) : t('progress.extraRun')}</Text>
               <Text variant="caption" color="textMuted">
@@ -367,6 +383,7 @@ export default function ProgressTab() {
 
 const styles = themed(() =>
   StyleSheet.create({
+    emptyRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     emptyImage: { marginTop: 0, marginHorizontal: 0, borderRadius: radius.md },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     shrink: { flexShrink: 1 },

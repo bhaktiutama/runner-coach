@@ -19,6 +19,7 @@ import { useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
+import { StatLabel } from '@/components/StatLabel';
 import {
   useActivePlan,
   useActivities,
@@ -120,18 +121,14 @@ export default function WeekSummary() {
       </View>
       <View style={styles.pair}>
         <View style={styles.stat}>
-          <Text variant="captionStrong" color="textMuted">
-            {t('week.distance')}
-          </Text>
+          <StatLabel label={t('week.distance')} spot="distance" />
           <Text variant="statLg">{formatDistance(stats.dist)}</Text>
           <Text variant="captionStrong" color={delta >= 0 ? 'success' : 'textMuted'}>
             {t('week.vsLast', { delta: `${delta >= 0 ? '+' : '-'}${formatDistance(Math.abs(delta))}` })}
           </Text>
         </View>
         <View style={styles.stat}>
-          <Text variant="captionStrong" color="textMuted">
-            {t('week.time')}
-          </Text>
+          <StatLabel label={t('week.time')} spot="get-ready" />
           <Text variant="statLg">{formatTotalDuration(stats.time)}</Text>
           <Text variant="caption" color="textMuted">
             {t('week.target', { time: formatTotalDuration(target) })}

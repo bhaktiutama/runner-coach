@@ -676,6 +676,9 @@ export const id = {
   'profile.timerAuto': 'Timer otomatis',
   'profile.timerAutoSub':
     'Set repetisi dan drill maju sendiri memakai perkiraan waktu, tanpa menekan tombol. Bisa diganti di timer.',
+  'profile.spotIcons': 'Ikon ilustrasi',
+  'profile.spotIconsSub':
+    'Ikon berwarna di kartu latihan, plan, progres dan ringkasan. Matikan untuk tampilan polos.',
   'profile.premium': 'Premium',
   'profile.premiumActive': 'Aktif',
   'profile.premiumTry': 'Coba gratis 14 hari',

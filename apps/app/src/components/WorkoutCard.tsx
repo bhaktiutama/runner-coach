@@ -9,11 +9,14 @@ import {
   LinkButton,
   PrimaryButton,
   SegmentBar,
+  size,
   space,
+  SpotIcon,
   Text,
   themed,
 } from '@run-coach/ui';
 import { router } from 'expo-router';
+import type React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { flattenSteps, isRunSegment } from '@run-coach/training-engine';
 import { formatPaceValue } from '@run-coach/ui/format';
@@ -24,6 +27,7 @@ import { isLocked, useEntitlement } from '@/lib/entitlement';
 import { workoutImage } from '@/lib/imagery';
 import { approxKm, intensitySegments, minutesOf, segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { exerciseName, FEEL_KEY } from '@/timer/labels';
+import { TYPE_SPOT, useSpotIcons } from '@/lib/spot';
 
 type Props = { workout: Workout; onStart?: () => void; onDetails?: () => void; startLabel?: string };
 
@@ -35,6 +39,7 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
   const pace = mainPace(workout);
   const done = workout.status === 'completed';
   const image = workoutImage(workout.type, workout.date);
+  const icons = useSpotIcons();
   const bib = <BibTag label={typeName(workout.type)} zone={zone} />;
   const status = done ? (
     <View style={styles.done}>
@@ -58,7 +63,9 @@ export function WorkoutCard({ workout, onStart, onDetails, startLabel }: Props) 
         </ImageHeader>
       ) : (
         <View style={styles.head}>
-          {bib}
+          <TypeHead type={workout.type} on={icons}>
+            {bib}
+          </TypeHead>
           {status}
         </View>
       )}
@@ -134,10 +141,13 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   const locked = isLocked(workout, ent);
   const done = workout.status === 'completed';
   const n = workout.steps.filter((s) => s.kind === 'exercise').length;
+  const icons = useSpotIcons();
   return (
     <Card style={[styles.card, styles.strength]} testID="strength-card">
       <View style={styles.head}>
-        <BibTag label={typeName(workout.type)} zone="strength" />
+        <TypeHead type={workout.type} on={icons}>
+          <BibTag label={typeName(workout.type)} zone="strength" />
+        </TypeHead>
         {done ? (
           <View style={styles.done}>
             <Icon name="check" size={space[4]} color={color.success} />
@@ -187,8 +197,23 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   );
 }
 
+/** Ikon spot jenis latihan di kiri bib (UI/UX 14). Margin negatif: tinggi baris tetap setinggi bib. */
+function TypeHead({ type, on, children }: { type: Workout['type']; on: boolean; children: React.ReactNode }) {
+  if (!on) return <>{children}</>;
+  return (
+    <View style={styles.typeHead}>
+      <View style={styles.spot}>
+        <SpotIcon name={TYPE_SPOT[type]} size={size.spotMd} testID={`spot-${TYPE_SPOT[type]}`} />
+      </View>
+      {children}
+    </View>
+  );
+}
+
 const styles = themed(() =>
   StyleSheet.create({
+    typeHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+    spot: { marginVertical: -space[1] - space[1] / 2 },
     hidden: { display: 'none' },
     strength: { borderLeftWidth: space[2], borderLeftColor: color.zone.strength },
     card: { gap: space[4] },

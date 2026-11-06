@@ -1,11 +1,12 @@
 import type { WorkoutType } from '@run-coach/training-engine';
-import { InfoBox, RpePicker, space, TagChips, Text, themed } from '@run-coach/ui';
+import { InfoBox, RpePicker, size, space, SpotIcon, TagChips, Text, themed } from '@run-coach/ui';
 import { StyleSheet, View } from 'react-native';
 import { TAGS, type Tag } from '@/data/activities';
 import { HelpHint } from '@/components/HelpHint';
 import { t, type MessageKey } from '@/i18n/t';
 import { rpeVerdict } from '@/lib/progress';
 import { typeName } from '@/lib/workoutView';
+import { feelSpot, useSpotIcons } from '@/lib/spot';
 
 /** Label RPE: "6 / 10: Sesuai target tempo" jika di rentang target tipe latihan, selain itu deskripsi skala. */
 export function rpeLabel(rpe: number, type: WorkoutType | null): string {
@@ -32,6 +33,7 @@ export function FeedbackFields({
   type: WorkoutType | null;
   showTags?: boolean;
 }) {
+  const icons = useSpotIcons();
   return (
     <>
       <View style={styles.block}>
@@ -44,7 +46,15 @@ export function FeedbackFields({
           onChange={setRpe}
           labels={[t('rpe.scale.low'), t('rpe.scale.mid'), t('rpe.scale.high')]}
         />
-        {rpe ? (
+        {rpe && icons ? (
+          // UI/UX 14: wajah rasa (1-4, 5-7, 8-10) di kiri label; angka tetap tertulis.
+          <View style={styles.feelRow}>
+            <SpotIcon name={feelSpot(rpe)} size={size.spotSm} testID={`spot-${feelSpot(rpe)}`} />
+            <Text variant="row" testID="rpe-verdict" style={styles.flex}>
+              {rpeLabel(rpe, type)}
+            </Text>
+          </View>
+        ) : rpe ? (
           <Text variant="row" testID="rpe-verdict">
             {rpeLabel(rpe, type)}
           </Text>
@@ -71,5 +81,7 @@ const styles = themed(() =>
   StyleSheet.create({
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     block: { gap: space[2] + space[1] / 2 },
+    feelRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+    flex: { flex: 1 },
   }),
 );

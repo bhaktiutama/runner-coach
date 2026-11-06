@@ -202,6 +202,19 @@ export default function ProfileTab() {
           testID="row-language"
         />
         <SettingsRow icon="distance" label={t('profile.unit')} value={t('profile.unitValue')} />
+        <SettingsRow
+          label={t('profile.spotIcons')}
+          sub={t('profile.spotIconsSub')}
+          testID="row-spot-icons"
+          right={
+            <Switch
+              label={t('profile.spotIcons')}
+              value={profile.data.spot_icons !== 0}
+              onChange={(on) => update.mutate({ spot_icons: on ? 1 : 0 })}
+              testID="spot-icons-switch"
+            />
+          }
+        />
       </SettingsGroup>
       {/* Ganti target = dialog di tengah layar, sama dengan aksi lain yang mengubah status (UI/UX dialog). */}
       <ConfirmDialog

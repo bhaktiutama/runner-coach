@@ -18,6 +18,7 @@ import {
   shadow,
   size,
   space,
+  SpotIcon,
   Text,
   weekdayShortName,
   type PhaseKey,
@@ -35,6 +36,7 @@ import { t } from '@/i18n/t';
 import { weekIndexOf } from '@/lib/planView';
 import { et } from '@/lib/rationale';
 import { approxKm, hasDrill, minutesOf, TYPE_ZONE, typeName } from '@/lib/workoutView';
+import { TYPE_SPOT, useSpotIcons } from '@/lib/spot';
 
 /** 3.1 Kalender plan. Tata letak = wireframe Plan (jarak antarblok 16). */
 export default function PlanTab() {
@@ -49,6 +51,7 @@ export default function PlanTab() {
   const from = wk?.startDate ?? mondayOf(today);
   const to = addDays(from, 6);
   const ws = useWorkouts(plan.data?.id, from, to);
+  const icons = useSpotIcons();
   if (!plan.data || !params) return null;
   const g = plan.data.goal;
   const workouts = ws.data ?? [];
@@ -136,7 +139,16 @@ export default function PlanTab() {
                 </Text>
                 <Text variant="subheading">{String(Number(date.slice(8)))}</Text>
               </View>
-              {w ? <LaneMark zone={TYPE_ZONE[w.type]} stretch /> : <View style={styles.restMark} />}
+              {icons ? (
+                // UI/UX 14: ikon jenis latihan menggantikan garis warna; terlewat = pudar.
+                <View style={struck ? styles.dim : null}>
+                  <SpotIcon name={w ? TYPE_SPOT[w.type] : 'rest-day'} size={size.spotSm} />
+                </View>
+              ) : w ? (
+                <LaneMark zone={TYPE_ZONE[w.type]} stretch />
+              ) : (
+                <View style={styles.restMark} />
+              )}
               <View style={styles.body}>
                 <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
                   {w ? typeName(w.type) : t('plan.rest')}
@@ -222,6 +234,7 @@ const styles = themed(() =>
       backgroundColor: color.surfaceSunken,
     },
     strike: { textDecorationLine: 'line-through' },
+    dim: { opacity: 0.45 },
     doneMark: {
       width: space[6],
       height: space[6],

@@ -10,7 +10,8 @@ import math
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-OUT = ROOT / "spot-icons-draft"
+OUT = ROOT / "spot-icons"
+APP_JSON = ROOT.parents[2] / "packages" / "ui" / "src" / "spot-icons.json"
 
 # Token -> (hex terang, hex gelap). Ubin pastel tetap sama di mode gelap; hanya ubin charcoal berubah.
 HEX = {
@@ -255,6 +256,8 @@ def colors(tile, ink, acc, cheek, mode):
     def v(name):
         if mode == "file":
             return HEX[name][0]
+        if mode == "app":
+            return f"${name}$"  # diganti warna token oleh <SpotIcon> (packages/ui)
         return f"var(--si-{name})"
 
     acc2 = "charcoal" if acc == "white" else acc
@@ -269,6 +272,18 @@ def fill(markup, cmap):
     for key in sorted(cmap, key=len, reverse=True):
         markup = markup.replace("{" + key + "}", cmap[key])
     return markup
+
+
+def inner_markup(name, mode):
+    if name in ICONS:
+        _, _, tile, ink, acc, cheek, body = ICONS[name]
+        cmap = colors(tile, ink, acc, cheek, mode)
+        inner = f'<rect width="48" height="48" rx="14" fill="{cmap["t"]}"/>' + fill(body, cmap)
+    else:
+        _, _, tile, body = BADGES[name]
+        cmap = colors(tile, "charcoal", "orange", "coral", mode)
+        inner = fill(badge_frame(tile) + body, cmap)
+    return thin(inner)
 
 
 def svg(name, mode="file", size=48):
@@ -293,4 +308,9 @@ if __name__ == "__main__":
     OUT.mkdir(exist_ok=True)
     for n in ALL:
         (OUT / f"{n}.svg").write_text(svg(n) + "\n")
-    print(len(ALL), "ikon ->", OUT)
+    import json
+
+    # Untuk app: isi SVG dengan placeholder $warna$, nama berurutan agar diff stabil.
+    data = {n: inner_markup(n, "app") for n in sorted(ALL)}
+    APP_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    print(len(ALL), "ikon ->", OUT, "dan", APP_JSON)

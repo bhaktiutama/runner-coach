@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.6 (2026-11-03) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
+Status: Draft v0.7 (2026-11-06, ikon spot bagian 14) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
@@ -62,6 +62,7 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | BarChart, LineTrend, TrackRing | 1.8, 3.3 |
 | PrimaryButton, SecondaryButton, SegmentedControl, TabBar | Semua |
 | Icon (`name`, `size`, `color`) dari `assets/icons/icons.json` | Semua |
+| SpotIcon (`name`, `size`) dari `spot-icons.json` (bagian 14) | 2.1, 2.4, 2.3s, 2.5, 3.1, 3.3, 3.4, 4.5 |
 | Logo (mark / horizontal) | 1.1, web |
 
 ## 4. Aset
@@ -73,6 +74,7 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 | Logo mark + wordmark "run coach" | 1.1, header web |
 | `icon.png`, `adaptive-icon.png` (+ monochrome), `splash-icon.png`, `favicon.png` | `app.json`: icon, adaptiveIcon (latar #F26B38), splash (latar #F5F4F2), web.favicon |
 | 40 ikon garis 24 px | Komponen Icon; tab bar: today, plan, progress, profile |
+| 27 ikon spot berwarna 48 grid (`assets/spot-icons/`) | Komponen SpotIcon, bagian 14 |
 | Karakter animasi gerakan | Belum ada (D8). MVP pakai teks + SVG prototipe |
 
 ## 5. Layout & breakpoint
@@ -220,3 +222,31 @@ Menggantikan hero tunggal 1.1 (bagian 12). Hanya tampil saat belum ada plan (per
 | Gambar | `promo-science`, `promo-privacy`, `promo-companion` (658 x 732, draft, lisensi B10) selebar layar, fokus horizontal per gambar agar pelari tidak terpotong, memudar ke `bg` antara 36% dan 66% tinggi (ikut tema terang/gelap) |
 | Tetap di setiap halaman | Logo `on-image` di atas, lalu di bawah: titik halaman, "Buat plan saya", "Sudah punya akun? Masuk", catatan "Data latihanmu tersimpan di HP ini" |
 | Teks (`welcome.s1..s3`, ID + EN) | 1 Ada dasarnya / Backed by science: "Latihan pintar, bukan asal capek." 2 Privasi / Private by default: "Data larimu, ya punyamu." 3 Teman Strava / Strava's sidekick: "Strava tetap jalan, kami yang atur menunya." Bahasa santai untuk pelari muda; tanpa klaim mencegah cedera dan tanpa janji sinkron Strava (fase 2) |
+
+## 14. Ikon spot (v1.0, 2026-11-06)
+
+Ikon berwarna kecil yang memberi wajah pada konten (bukan pengganti ikon garis untuk navigasi dan tombol). Desain: `docs/design-system/assets/spot-icons/` (`index.html` = set ikon, `wireframe.html` = penempatan), dibuat oleh `_build/spot_icons.py`.
+
+| Aturan | Isi |
+|---|---|
+| Bentuk | Ubin persegi 48 grid radius 14, garis 1.75 ujung bulat, tinta charcoal (krem di ubin strength), satu aksen oranye. Wajah titik hanya di benda yang punya rasa |
+| Warna | Semua dari token: ubin latihan = skala panas zona (easy peach, long, tempo oranye, interval bara, recovery lavender, strength charcoal); ubin status = mint, sand, coral, lavender. Mode gelap: ubin pastel tetap, ubin strength memakai `dark.zone-strength` |
+| Ukuran (token `size`) | `spot-sm` 32 (baris daftar, label stat, rasa RPE), `spot-md` 40 (kepala kartu, judul 3.4, privasi), `spot-lg` 56 (2.4 selesai), `spot-xl` 96 (cadangan ilustrasi kosong) |
+| Aksesibilitas | Dekoratif: selalu bersama teks, disembunyikan dari pembaca layar. Wajah RPE tidak menggantikan angka |
+| Tata letak | Struktur, tombol dan kartu tidak berubah. Di baris yang tingginya tetap (kepala kartu geser, bib, label stat, baris RPE), ikon memakai margin negatif sehingga tinggi baris sama dengan mode tanpa ikon |
+| Sakelar | Profil 4.1 "Ikon ilustrasi" (`profile.spot_icons`, bawaan nyala). Mati = tampilan sebelumnya persis (garis warna `LaneMark`, centang 2.4, logo di 4.5) |
+
+| Layar | Penempatan | Saat mati |
+|---|---|---|
+| 2.1 kartu latihan tanpa gambar, kartu strength | Ikon jenis latihan `spot-md` di kiri bib | Bib saja |
+| 2.1 kartu geser | Ikon kartu `spot-sm` di kiri judul: race-day / finish (sisa plan), next-long, records, streak | Judul saja |
+| 2.4, 2.6 | 2.4: bendera `spot-lg` menggantikan lingkaran centang. RPE: wajah `spot-sm` di kiri label (1-4 ringan, 5-7 pas, 8-10 berat) | Centang, label saja |
+| 2.3s istirahat / siap-siap | `spot-sm` di kiri bib di dalam cincin | Bib saja |
+| 2.5 | Ikon `spot-sm` kecil di kanan label stat (jarak, waktu) | Label saja |
+| 3.1 | Ikon jenis latihan `spot-sm` menggantikan garis warna; hari istirahat = bulan; terlewat = pudar | Garis warna |
+| 3.3 | Baris "Ringkasan minggu ini" = week-done; aktivitas terakhir = ikon jenis; belum ada aktivitas = sepatu tidur | Trophy garis, garis warna, teks saja |
+| 3.4 | Ikon jenis `spot-md` di kiri judul; wajah RPE di baris Rasa | Garis warna tinggi |
+| 4.5 | Ikon privasi `spot-md` di hero | Logo mark |
+
+Belum dipakai: badge pencapaian (5K pertama, plan tuntas, minggu beruntun) menunggu fitur pencapaian di spec; kartu 2.1 dengan gambar header tidak diberi ikon (gambar sudah menjadi visual).
+

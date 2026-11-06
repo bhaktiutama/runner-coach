@@ -1,4 +1,15 @@
-import { border, Card, color, Icon, radius, size, space, Text, themed } from '@run-coach/ui';
+import {
+  border,
+  Card,
+  color,
+  Icon,
+  radius,
+  size,
+  space,
+  type SpotIconName,
+  Text,
+  themed,
+} from '@run-coach/ui';
 import {
   formatDateLong,
   formatDayMonth,
@@ -27,7 +38,7 @@ import { t, type MessageKey } from '@/i18n/t';
 import { addDays } from '@run-coach/training-engine';
 import { rangeTotals } from '@/lib/progress';
 import { cardOrder, nextLongRun, planRecords, weekStreak, type TodayCard } from '@/lib/todayCards';
-import { CARD_H, CountdownCard } from './CountdownCard';
+import { CARD_H, CardHead, CountdownCard } from './CountdownCard';
 
 type Props = {
   today: string;
@@ -99,7 +110,7 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
       case 'long_run': {
         const lr = nextLongRun(ahead.data ?? [], today);
         return (
-          <Shell title={t('today.card.longRun')} pin={pin(c)} testID="card-long_run">
+          <Shell title={t('today.card.longRun')} spot="next-long" pin={pin(c)} testID="card-long_run">
             {lr ? (
               <Pressable onPress={() => router.push(`/workout/${lr.id}`)} style={styles.row}>
                 <View style={styles.flex}>
@@ -173,7 +184,7 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
           ],
         ];
         return (
-          <Shell title={t('today.card.records')} pin={pin(c)} testID="card-records">
+          <Shell title={t('today.card.records')} spot="records" pin={pin(c)} testID="card-records">
             {r.longest || r.longestTime ? (
               <View style={styles.recs}>
                 {items.map(([k, v, d]) => (
@@ -212,7 +223,7 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
       case 'streak': {
         const s = weekStreak(statuses.data ?? [], today);
         return (
-          <Shell title={t('today.card.streak')} pin={pin(c)} testID="card-streak">
+          <Shell title={t('today.card.streak')} spot="streak" pin={pin(c)} testID="card-streak">
             <View style={styles.row}>
               <Text variant="row" style={styles.flex}>
                 {s.current > 0 ? t('today.card.streakNow', { n: s.current }) : t('today.card.streakZero')}
@@ -302,23 +313,20 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
 
 function Shell({
   title,
+  spot,
   pin,
   children,
   testID,
 }: {
   title: string;
+  spot: SpotIconName;
   pin: ReactNode;
   children: ReactNode;
   testID: string;
 }) {
   return (
     <Card style={styles.card} testID={testID}>
-      <View style={styles.row}>
-        <Text variant="captionStrong" color="textMuted" style={styles.flex}>
-          {title}
-        </Text>
-        {pin}
-      </View>
+      <CardHead title={title} spot={spot} pin={pin} />
       {/* Isi + visual dikelompokkan di tengah ruang sisa: jarak atas dan bawah seimbang. */}
       <View style={styles.body}>{children}</View>
     </Card>

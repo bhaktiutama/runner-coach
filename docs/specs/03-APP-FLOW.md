@@ -31,7 +31,7 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
 | 3.3 | Progres (tab) | Tap aktivitas -> 3.4; "Ringkasan minggu ini" -> 2.5 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
-| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
+| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); sakelar Ikon ilustrasi (`profile.spot_icons`, UI/UX 14, langsung berlaku di semua layar); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
 | 4.2 | Integrasi | Fase 2 (ditunda: butuh kredensial Strava + HP fisik) |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
 | 4.4 | Premium (F-23) | Fase 2: layar tanpa pembelian (tombol nonaktif). Kembali -> layar asal. Pembelian Fase 3 (`08-MONETIZATION.md`) |
