@@ -8,7 +8,9 @@ import {
   radius,
   ScreenTitle,
   SegmentedControl,
+  size,
   space,
+  SpotIcon,
   Text,
   TextColorContext,
   themed,
@@ -22,6 +24,7 @@ import { useActivePlan, usePlanOps, useToday } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
 import { track } from '@/lib/analytics';
 import { goHome } from '@/lib/nav';
+import { useSpotIcons } from '@/lib/spot';
 
 const REASONS = ['injury', 'sick', 'busy'] as const;
 const DUR = [
@@ -38,6 +41,7 @@ export default function Pause() {
   const ops = usePlanOps();
   const today = useToday();
   const [reason, setReason] = useState<(typeof REASONS)[number]>('injury');
+  const icons = useSpotIcons();
   const [dur, setDur] = useState<string>('7');
   const [parts, setParts] = useState<MessageKey[]>([]);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/profile'));
@@ -114,12 +118,19 @@ export default function Pause() {
       </View>
       {reason === 'injury' ? (
         <View style={styles.group}>
-          <Text variant="label" color="textMuted">
-            {t('pause.bodyPart')}{' '}
-            <Text variant="note" color="textMuted">
-              {t('pause.bodyPartNote')}
+          <View style={styles.labelRow}>
+            {icons ? (
+              <View style={styles.labelSpot}>
+                <SpotIcon name="injury" size={size.spotSm} testID="spot-injury" />
+              </View>
+            ) : null}
+            <Text variant="label" color="textMuted" style={styles.flex}>
+              {t('pause.bodyPart')}{' '}
+              <Text variant="note" color="textMuted">
+                {t('pause.bodyPartNote')}
+              </Text>
             </Text>
-          </Text>
+          </View>
           <View style={styles.wrap}>
             {PARTS.map((k) => (
               <Chip
@@ -149,6 +160,9 @@ const styles = themed(() =>
     group: { gap: space[2] + border.selected - border.hairline / 2 },
     row: { flexDirection: 'row', gap: space[2] },
     wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+    labelRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    labelSpot: { marginVertical: -space[2] },
+    flex: { flex: 1 },
     returnBox: {
       gap: space[1] + space[1] / 2,
       padding: space[4],

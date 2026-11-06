@@ -62,7 +62,7 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | BarChart, LineTrend, TrackRing | 1.8, 3.3 |
 | PrimaryButton, SecondaryButton, SegmentedControl, TabBar | Semua |
 | Icon (`name`, `size`, `color`) dari `assets/icons/icons.json` | Semua |
-| SpotIcon (`name`, `size`) dari `spot-icons.json` (bagian 14) | 2.1, 2.4, 2.3s, 2.5, 3.1, 3.3, 3.4, 4.5 |
+| SpotIcon (`name`, `size`) dari `spot-icons.json` (bagian 14) | 2.1, 2.3, 2.3s, 2.4, 2.5, 3.1, 3.3, 3.4, 4.3, 4.5 |
 | Logo (mark / horizontal) | 1.1, web |
 
 ## 4. Aset
@@ -247,6 +247,9 @@ Ikon berwarna kecil yang memberi wajah pada konten (bukan pengganti ikon garis u
 | 3.3 | Baris "Ringkasan minggu ini" = week-done; aktivitas terakhir = ikon jenis; belum ada aktivitas = sepatu tidur | Trophy garis, garis warna, teks saja |
 | 3.4 | Ikon jenis `spot-md` di kiri judul; wajah RPE di baris Rasa | Garis warna tinggi |
 | 4.5 | Ikon privasi `spot-md` di hero | Logo mark |
+| 2.3 izin notifikasi | Ikon bunyi `spot-lg` | Ikon lonceng garis |
+| 4.3 Jeda plan (alasan Cedera) | Ikon cedera `spot-sm` di kiri label "Bagian yang nyeri" | Label saja |
+| 3.3 Pencapaian (F-28) | Kartu 3 badge `spot-lg` sebelum Aktivitas terakhir: 5K pertama, 4 minggu beruntun, plan tuntas; belum didapat = pudar 35% + kemajuan (km, minggu, latihan) | Kartu tidak tampil |
 
-Belum dipakai: badge pencapaian (5K pertama, plan tuntas, minggu beruntun) menunggu fitur pencapaian di spec; kartu 2.1 dengan gambar header tidak diberi ikon (gambar sudah menjadi visual).
+Semua 27 ikon terpakai. Kartu 2.1 dengan gambar header tidak diberi ikon (gambar sudah menjadi visual).
 

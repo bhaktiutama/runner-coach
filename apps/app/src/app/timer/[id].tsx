@@ -54,6 +54,7 @@ export default function TimerScreen() {
   const [confirm, setConfirm] = useState(false);
   const [locked, setLocked] = useState(false);
   const [askPerm, setAskPerm] = useState<boolean | null>(null);
+  const icons = useSpotIcons();
   // U3: HP datar menghadap ke atas -> tampilan jarak jauh. Ketuk angka = paksa nyala/mati sampai posisi HP berubah.
   const flat = useFlat(tm.state?.status === 'running' || tm.state?.status === 'paused');
   const [farOverride, setFarOverride] = useState<boolean | null>(null);
@@ -153,7 +154,11 @@ export default function TimerScreen() {
   if (askPerm) {
     return (
       <View style={[styles.root, bg, styles.centerCol]} testID="timer-perm">
-        <Icon name="bell" color={dark.text} size={size.touchMin} />
+        {icons ? (
+          <SpotIcon name="sound" size={size.spotLg} testID="spot-sound" />
+        ) : (
+          <Icon name="bell" color={dark.text} size={size.touchMin} />
+        )}
         <Text variant="title" color="darkText" align="center">
           {t('timer.permTitle')}
         </Text>

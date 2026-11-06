@@ -37,6 +37,8 @@ import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { TYPE_SPOT, useSpotIcons } from '@/lib/spot';
+import { achievements } from '@/lib/achievements';
+import { AchievementsCard } from '@/components/AchievementsCard';
 import { useActivePlan, useActivities, useToday, useWorkoutStatuses } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
@@ -321,6 +323,16 @@ export default function ProgressTab() {
           )}
         </Card>
       </View>
+      {icons ? (
+        <AchievementsCard
+          items={achievements({
+            acts: all.data ?? [],
+            statuses: statuses.data ?? [],
+            today,
+            planEnd: plan.data.end_date,
+          })}
+        />
+      ) : null}
       <View style={styles.recent}>
         <Text variant="label" color="textMuted">
           {t('progress.recent')}

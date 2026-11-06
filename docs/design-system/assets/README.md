@@ -62,7 +62,7 @@ node _build/render.js <folder-svg> <folder-png> app-icon.svg:icon.png:1024 ...
 | Karakter animasi latihan | Menunggu | Sumber yang diminta: polyfork.dev/characters. Situs belum bisa diakses dari container (domain belum diizinkan di network policy). Dari deskripsi publik, Polyfork berisi aset **3D low-poly** (GLB / ES module untuk three.js). Ini berbeda dengan `ANIMATION_PIPELINE.md` yang memakai **2D tampak samping + Rive**. Perlu keputusan sebelum dipakai, lihat bagian berikut |
 | Lisensi aset Polyfork | Belum dicek | Wajib dibaca sebelum aset masuk repo (komersial? atribusi?) |
 | Ilustrasi kosong / error / onboarding | Belum | Bisa dari karakter yang sama supaya konsisten |
-| Badge pencapaian (minggu tuntas, rekor) | Desain ada (`spot-icons/badge-*.svg`) | Belum dipakai: perlu fitur pencapaian di spec |
+| Badge pencapaian (minggu tuntas, rekor) | Dipakai (`spot-icons/badge-*.svg`) | Kartu Pencapaian 3.3 (F-28) |
 | Screenshot store, feature graphic | Fase rilis (M7) | Dibuat dari layar final |
 
 ### Karakter: 2D (Rive) atau 3D (Polyfork)?

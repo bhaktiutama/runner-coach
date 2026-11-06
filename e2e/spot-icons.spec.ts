@@ -18,9 +18,21 @@ test('ikon spot tampil bawaan dan sakelar Profil mengembalikan tampilan tanpa ik
   await page.getByRole('tab', { name: 'Progres' }).click();
   await expect(page.getByTestId('open-week-summary')).toBeVisible();
   if (shots) await page.screenshot({ path: `${shots}/progress-on.png`, fullPage: true });
+  // F-28: kartu Pencapaian dengan tiga badge.
+  const achv = page.getByTestId('achievements');
+  await achv.scrollIntoViewIfNeeded();
+  await expect(achv.locator('[data-testid^="achv-"]')).toHaveCount(3);
+  if (shots) await achv.screenshot({ path: `${shots}/achievements.png` });
   await page.locator('[data-testid^="activity-"]').first().click();
   await expect(page.getByTestId('spot-title')).toBeVisible();
   if (shots) await page.screenshot({ path: `${shots}/activity-on.png`, fullPage: true });
+  await page.goBack();
+
+  // 4.3 Jeda plan, alasan Cedera: ikon cedera di label bagian yang nyeri.
+  await page.getByRole('tab', { name: 'Profil' }).click();
+  await page.getByTestId('row-pause').click();
+  await expect(page.getByTestId('spot-injury')).toBeVisible();
+  if (shots) await page.screenshot({ path: `${shots}/pause-on.png`, fullPage: true });
   await page.goBack();
 
   await page.getByRole('tab', { name: 'Profil' }).click();
@@ -36,4 +48,6 @@ test('ikon spot tampil bawaan dan sakelar Profil mengembalikan tampilan tanpa ik
   await expect(page.getByTestId('screen-plan')).toBeVisible();
   await expect(page.locator('[data-testid="screen-plan"] svg')).not.toHaveCount(0);
   if (shots) await page.screenshot({ path: `${shots}/plan-off.png`, fullPage: true });
+  await page.getByRole('tab', { name: 'Progres' }).click();
+  await expect(page.getByTestId('achievements')).toHaveCount(0);
 });
