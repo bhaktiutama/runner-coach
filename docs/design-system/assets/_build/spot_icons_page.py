@@ -5,193 +5,289 @@ import html
 import spot_icons as si
 
 GROUPS = [
-    ("latihan", "Jenis latihan", "Kartu latihan di Today dan Plan, hero detail aktivitas. Warna ubin mengikuti skala panas zona, jadi warna tetap punya arti."),
-    ("today", "Kartu Today", "Kepala tiap kartu carousel: race, long run berikutnya, rekor, streak."),
-    ("rasa", "Rasa setelah latihan", "Layar Selesai: tiga pilihan RPE (1-4, 5-7, 8-10) sebagai wajah, angka tetap tertulis."),
-    ("timer", "Timer", "Siap-siap, istirahat, pengaturan bunyi penanda, layar selesai."),
-    ("progress", "Progress, profil, keadaan kosong", "Ringkasan minggu, total jarak, privasi data, layar tanpa aktivitas, catatan cedera."),
-    ("badge", "Badge pencapaian", "Bentuk stadium tegak dengan pita. Muncul di ringkasan minggu dan profil (sebelumnya tercatat 'Belum ada')."),
+    ("latihan", "Jenis latihan", "Warna ubin = skala panas zona, jadi warna tetap punya arti."),
+    ("latihan2", "Jenis latihan tambahan", "Untuk jenis yang sekarang masih meminjam ikon lain (progression, run-walk, strides, core)."),
+    ("today", "Kartu Today", "Kepala kartu geser 2.1."),
+    ("rasa", "Rasa setelah latihan", "Wajah RPE: 1-4 ringan, 5-7 pas, 8-10 berat. Angka tetap tertulis."),
+    ("catatan", "Catatan latihan", "Tag di 2.4 / 2.6: cuaca panas, kurang tidur, kaki pegal (ada nyeri memakai ikon cedera)."),
+    ("timer", "Timer", "Siap-siap, istirahat, bunyi penanda, selesai."),
+    ("target", "Target", "Pilihan target 1.2 dan baris Target di Profil."),
+    ("fase", "Fase plan", "Base, Build, Peak, Taper. Warna ubin = token fase."),
+    ("progress", "Progres, privasi, keadaan kosong", "Ringkasan minggu, total jarak, data di HP, belum ada aktivitas, cedera."),
+    ("jeda", "Jeda plan", "Alasan jeda 4.3 (cedera memakai ikon cedera)."),
+    ("setelan", "Pengaturan dan onboarding", "Pengingat, backup, bahasa, panduan, Premium, zona, detak jantung, integrasi, cek kesehatan, hari latihan."),
+    ("badge", "Badge pencapaian", "Kartu Pencapaian di Progres (F-28)."),
 ]
 
 USE = {
-    "easy": "Easy, run-walk", "long": "Long run", "tempo": "Tempo, threshold", "interval": "Interval",
+    "easy": "Easy run", "long": "Long run", "tempo": "Tempo, threshold", "interval": "Interval",
     "recovery": "Recovery, jalan", "strength": "Strength, core", "drill": "Drill, strides", "rest-day": "Hari tanpa latihan",
     "race-day": "Hitung mundur race", "next-long": "Long run berikutnya", "records": "Rekor plan", "streak": "Minggu beruntun",
     "feel-easy": "Terlalu ringan", "feel-ok": "Pas", "feel-hard": "Terlalu berat",
     "get-ready": "Siap-siap 5 dtk", "rest": "Istirahat, +15 dtk", "sound": "Bunyi penanda", "finish": "Latihan selesai",
     "week-done": "Minggu tuntas", "distance": "Total km", "privacy": "Data di perangkat", "empty": "Belum ada aktivitas",
     "injury": "Cedera, nyeri", "badge-5k": "5K pertama", "badge-plan": "Plan tuntas", "badge-streak": "4 minggu beruntun",
+    **{k: v[1] for k, v in si.NEXT.items()},
 }
 
+# Tempat ikon sudah dipakai di app (layar).
+IN_APP = {
+    "easy": "2.1 · 3.1 · 3.3 · 3.4", "long": "2.1 · 3.1 · 3.3 · 3.4", "tempo": "2.1 · 3.1 · 3.3 · 3.4",
+    "interval": "2.1 · 3.1 · 3.3 · 3.4", "recovery": "3.1 · 3.3 · 3.4", "strength": "2.1 · 3.1 · 3.3 · 3.4",
+    "drill": "3.1 · 3.3 (strides)", "rest-day": "3.1", "race-day": "2.1 kartu geser", "next-long": "2.1 kartu geser",
+    "records": "2.1 kartu geser", "streak": "2.1 kartu geser", "feel-easy": "2.4 · 2.6 · 3.4", "feel-ok": "2.4 · 2.6 · 3.4",
+    "feel-hard": "2.4 · 2.6 · 3.4", "get-ready": "2.3s · 2.5", "rest": "2.3s", "sound": "2.3 izin notifikasi",
+    "finish": "2.4 · 2.1 (sisa plan)", "week-done": "3.3", "distance": "2.5", "privacy": "4.5", "empty": "3.3",
+    "injury": "4.3", "badge-5k": "3.3 Pencapaian", "badge-plan": "3.3 Pencapaian", "badge-streak": "3.3 Pencapaian",
+}
 
-def ic(name, size=56):
+# Usulan penempatan untuk ikon baru: (layar, isi, prioritas).
+IDEAS = {
+    "progression": ("2.1 · 3.1 · 3.3 · 3.4", "Ganti ikon pinjaman (sekarang easy) lewat TYPE_SPOT", "Tinggi"),
+    "strides": ("2.1 · 3.1 · 3.3 · 3.4", "Ganti ikon pinjaman (sekarang drill)", "Tinggi"),
+    "run-walk": ("2.1 · 3.1 · 3.3 · 3.4", "Ganti ikon pinjaman (sekarang recovery)", "Tinggi"),
+    "core": ("2.1 · 3.1 · 3.3 · 3.4", "Bedakan core dari strength", "Tinggi"),
+    "tag-hot": ("2.4 · 2.6 · 3.4", "Ikon kecil di chip tag dan baris catatan detail aktivitas", "Sedang"),
+    "tag-sleep": ("2.4 · 2.6 · 3.4", "Sama, chip Kurang tidur", "Sedang"),
+    "tag-sore": ("2.4 · 2.6 · 3.4", "Sama, chip Kaki pegal (Ada nyeri = ikon cedera)", "Sedang"),
+    "goal-5k": ("1.2 · 4.1", "Kartu pilihan target dan baris Target di Profil", "Sedang"),
+    "goal-10k": ("1.2 · 4.1", "Sama", "Sedang"),
+    "goal-hm": ("1.2 · 4.1", "Sama", "Sedang"),
+    "goal-fm": ("1.2 · 4.1", "Sama", "Sedang"),
+    "goal-fitness": ("1.2 · 4.1", "Sama, target Bugar", "Sedang"),
+    "phase-base": ("3.1 · 1.8 · 2.5", "Di samping nama minggu (\"Minggu 3 · Base\") dan legenda fase", "Sedang"),
+    "phase-build": ("3.1 · 1.8 · 2.5", "Sama", "Sedang"),
+    "phase-peak": ("3.1 · 1.8 · 2.5", "Sama", "Sedang"),
+    "phase-taper": ("3.1 · 1.8 · 2.5", "Sama; juga kartu \"minggu taper\" di 2.1", "Sedang"),
+    "pause-sick": ("4.3", "Chip alasan Sakit (Cedera = ikon cedera)", "Sedang"),
+    "pause-busy": ("4.3", "Chip alasan Sibuk / libur", "Sedang"),
+    "backup": ("2.1 · 4.5", "Kartu pengingat backup di Hari ini dan bagian Backup di 4.5", "Sedang"),
+    "reminder": ("1.6 · 4.1", "Baris pengingat latihan", "Rendah"),
+    "days": ("1.6 · 4.1", "Judul pilih hari latihan, baris Hari di Profil", "Rendah"),
+    "health": ("1.7", "Kepala layar cek kesehatan", "Rendah"),
+    "language": ("4.8", "Kepala layar Bahasa", "Rendah"),
+    "guide": ("4.7", "Kepala layar Panduan & istilah", "Rendah"),
+    "premium": ("4.4 · 2.1", "Hero Premium dan kartu strength terkunci", "Rendah"),
+    "zones": ("Zona pace · 1.8", "Kepala layar zona dan bagian zona di preview plan", "Rendah"),
+    "heart-rate": ("2.2 · 4.2", "Panduan detak jantung (fase 2)", "Rendah, fase 2"),
+    "integration": ("4.2", "Layar integrasi Strava / Health (fase 2)", "Rendah, fase 2"),
+}
+
+# Ide tambahan untuk ikon yang sudah ada.
+MORE = [
+    ("week-done", "2.1 kartu \"Minggu ini\"", "Ikon kecil di kepala kartu lajur minggu"),
+    ("records", "3.3 kartu Prediksi", "Ikon di label prediksi race"),
+    ("distance", "2.6 Catat lari manual", "Kepala layar, menggantikan ruang kosong di atas form"),
+    ("finish", "1.3 Tanggal race", "Ikon di samping tanggal yang dipilih"),
+    ("badge-5k", "2.5 Ringkasan minggu", "Badge yang baru didapat minggu ini tampil besar di bawah oval 4/4"),
+]
+
+
+def ic(name, size=64):
     return si.svg(name, "html", size)
 
 
-def tile_grid(group):
-    names = [n for n, (g, _) in si.ALL.items() if g == group]
-    cells = []
-    for n in names:
-        cells.append(
-            f'<figure class="cell">{ic(n, 64)}<figcaption><b>{html.escape(USE[n])}</b><code>{n}</code></figcaption></figure>'
-        )
-    return "".join(cells)
+def cell(n):
+    new = n in si.NEXT
+    status = (f'<span class="pill new">Baru</span>' if new else f'<span class="pill on">Di app</span>')
+    where = IDEAS[n][0] if new else IN_APP.get(n, "")
+    return (f'<figure class="cell" data-kind="{"new" if new else "app"}"><div class="ico">{ic(n)}</div>'
+            f'<figcaption><b>{html.escape(USE[n])}</b>{status}<small>{html.escape(where)}</small><code>{n}</code></figcaption></figure>')
 
 
-sections = []
-for gid, title, note in GROUPS:
-    sections.append(
-        f'<section class="group" id="g-{gid}"><header><h2>{title}</h2><p>{note}</p></header>'
-        f'<div class="grid">{tile_grid(gid)}</div></section>'
-    )
+sections = "".join(
+    f'<section class="group" data-group="{gid}"><header><h2>{t}</h2><p>{note}</p></header>'
+    f'<div class="grid">{"".join(cell(n) for n, (g, _) in si.ALL.items() if g == gid)}</div></section>'
+    for gid, t, note in GROUPS
+)
+
+idea_rows = "".join(
+    f'<tr><td class="ti">{ic(n, 32)}</td><td><b>{html.escape(USE[n])}</b><br><code>{n}</code></td>'
+    f'<td>{html.escape(w)}</td><td>{html.escape(what)}</td><td><span class="prio p{prio.split(",")[0].lower()}">{html.escape(prio)}</span></td></tr>'
+    for n, (w, what, prio) in sorted(IDEAS.items(), key=lambda kv: ["Tinggi", "Sedang", "Rendah"].index(kv[1][2].split(",")[0]))
+)
+more_rows = "".join(
+    f'<tr><td class="ti">{ic(n, 32)}</td><td><code>{n}</code></td><td>{html.escape(w)}</td><td>{html.escape(what)}</td></tr>'
+    for n, w, what in MORE
+)
 
 ladder = "".join(
-    f'<div class="rung"><div class="row">{"".join(ic(n, sz) for n in ["easy","streak","feel-ok","get-ready","privacy","badge-5k"])}</div><span>{sz} px</span></div>'
+    f'<div class="rung"><div class="row">{"".join(ic(n, sz) for n in ["easy", "streak", "feel-ok", "goal-10k", "phase-peak", "reminder", "badge-5k"])}</div><span>{sz} px</span></div>'
     for sz in (64, 48, 40, 32)
 )
+
+n_app = len(si.APP)
+n_new = len(si.NEXT)
 
 page = f"""<title>Ikon Spot Run Coach</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Tata letak: lembar spesimen per kelompok fitur, lalu tangga ukuran dan contoh di layar app. Token = design system Lintas. */
+/* Tata letak: katalog ikon per fitur dengan filter dan ukuran, lalu tabel ide penempatan. Token = design system Lintas. */
 :root {{
   --bg: #F5F4F2; --surface: #FFFFFF; --sunken: #EAE8E5; --text: #242C32; --muted: #5E6670; --line: #DDDAD6;
-  --primary: #F26B38; --primary-ink: #C63F0D;
+  --primary: #F26B38; --primary-ink: #C63F0D; --ok: #247F60; --ok-bg: #D4F3E8; --new-bg: #FCE3D8;
   --si-charcoal: #242C32; --si-cream: #FFF9F2; --si-white: #FFFFFF; --si-orange: #F26B38; --si-peach: #E9B79D;
   --si-long: #D9946F; --si-interval: #B4361A; --si-mint: #70D6B3; --si-sand: #F2C66D; --si-coral: #FF806E;
   --si-lavender: #A6B8FF; --si-sunken: #EAE8E5; --si-strength: #242C32;
   --f-display: "Bricolage Grotesque", system-ui, sans-serif;
   --f-ui: "Plus Jakarta Sans", system-ui, sans-serif;
+  --ico: 64px;
 }}
 @media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{
   --bg: #161B1F; --surface: #242C32; --sunken: #1D2328; --text: #FFF9F2; --muted: #A9B0B7; --line: #343D44;
-  --primary-ink: #F58A5F; --si-strength: #3A444C; --si-sunken: #343D44; color-scheme: dark; }} }}
+  --primary-ink: #F58A5F; --ok: #70D6B3; --ok-bg: #1F3A31; --new-bg: #4A2A1D; --si-strength: #3A444C; color-scheme: dark; }} }}
 :root[data-theme="dark"] {{
   --bg: #161B1F; --surface: #242C32; --sunken: #1D2328; --text: #FFF9F2; --muted: #A9B0B7; --line: #343D44;
-  --primary-ink: #F58A5F; --si-strength: #3A444C; --si-sunken: #343D44; color-scheme: dark; }}
+  --primary-ink: #F58A5F; --ok: #70D6B3; --ok-bg: #1F3A31; --new-bg: #4A2A1D; --si-strength: #3A444C; color-scheme: dark; }}
 * {{ box-sizing: border-box; }}
 body {{ background: var(--bg); color: var(--text); font-family: var(--f-ui); font-size: 15px; line-height: 1.5; }}
-.wrap {{ max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 64px; display: grid; gap: 48px; }}
+.wrap {{ max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 72px; display: grid; gap: 40px; }}
 h1, h2, h3 {{ font-family: var(--f-display); text-wrap: balance; margin: 0; }}
-h1 {{ font-size: clamp(30px, 5vw, 44px); font-weight: 800; letter-spacing: -0.01em; line-height: 1.1; }}
-h2 {{ font-size: 22px; font-weight: 800; }}
-h3 {{ font-size: 16px; font-weight: 700; font-family: var(--f-ui); }}
-p {{ margin: 0; max-width: 64ch; }}
-.muted, header p {{ color: var(--muted); }}
-.intro {{ display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: end; }}
-.intro .hero {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; justify-items: center; }}
-.intro .hero svg {{ width: 100%; height: auto; max-width: 96px; }}
-.eyebrow {{ font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary-ink); }}
-.lede {{ display: grid; gap: 12px; }}
-.rules {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }}
-.rule {{ background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 4px; }}
-.rule b {{ font-family: var(--f-display); font-size: 18px; font-variant-numeric: tabular-nums; }}
+h1 {{ font-size: clamp(30px, 5vw, 46px); font-weight: 800; line-height: 1.08; }}
+h2 {{ font-size: 21px; font-weight: 800; }}
+p {{ margin: 0; max-width: 66ch; }}
+code {{ font-size: 11px; color: var(--muted); }}
+header p, .muted {{ color: var(--muted); }}
+.eyebrow {{ font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--primary-ink); }}
+.intro {{ display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 32px; align-items: center; }}
+.lede {{ display: grid; gap: 14px; }}
+.stats {{ display: flex; flex-wrap: wrap; gap: 10px; }}
+.stat {{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; display: grid; }}
+.stat b {{ font-family: var(--f-display); font-size: 26px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }}
+.stat span {{ font-size: 12px; color: var(--muted); }}
+.mosaic {{ display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }}
+.mosaic svg {{ width: 100%; height: auto; display: block; }}
+.rules {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }}
+.rule {{ background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 2px; }}
+.rule b {{ font-family: var(--f-display); font-size: 17px; }}
 .rule span {{ color: var(--muted); font-size: 13px; }}
-.group {{ display: grid; gap: 16px; }}
-.group header {{ display: grid; gap: 4px; border-top: 1px solid var(--line); padding-top: 20px; }}
-.grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 12px; }}
-.cell {{ margin: 0; background: var(--surface); border-radius: 18px; padding: 18px 12px 14px; display: grid; justify-items: center; gap: 10px; text-align: center; }}
-.cell figcaption {{ display: grid; gap: 2px; font-size: 13px; }}
-.cell code {{ font-size: 11px; color: var(--muted); }}
+.bar {{ position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }}
+body::before {{ content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }}
+.seg {{ display: inline-flex; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }}
+.seg button {{ font: inherit; font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; }}
+.seg button[aria-pressed="true"] {{ background: var(--text); color: var(--bg); }}
+.seg button:focus-visible {{ outline: 3px solid var(--primary); outline-offset: 2px; }}
+.group {{ display: grid; gap: 14px; }}
+.group header {{ display: grid; gap: 2px; padding-top: 8px; }}
+.grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }}
+.cell {{ margin: 0; background: var(--surface); border-radius: 18px; padding: 18px 12px 14px; display: grid; justify-items: center; gap: 10px; text-align: center; align-content: start; }}
+.ico svg {{ width: var(--ico); height: var(--ico); display: block; }}
+.cell figcaption {{ display: grid; gap: 4px; justify-items: center; font-size: 13px; }}
+.cell small {{ font-size: 11px; color: var(--muted); line-height: 1.3; }}
+.pill {{ font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; border-radius: 999px; padding: 2px 8px; }}
+.pill.on {{ background: var(--ok-bg); color: var(--ok); }}
+.pill.new {{ background: var(--new-bg); color: var(--primary-ink); }}
+body[data-filter="app"] .cell[data-kind="new"], body[data-filter="new"] .cell[data-kind="app"] {{ display: none; }}
+.group.empty {{ display: none; }}
 .ladder {{ display: grid; gap: 12px; background: var(--surface); border-radius: 20px; padding: 20px; overflow-x: auto; }}
 .rung {{ display: flex; align-items: center; gap: 16px; }}
 .rung .row {{ display: flex; gap: 12px; align-items: center; }}
-.rung span {{ font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }}
-.demo {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }}
-.phone {{ background: var(--bg); border: 1px solid var(--line); border-radius: 28px; padding: 16px; display: grid; gap: 12px; align-content: start; }}
-.phone > h3 {{ font-size: 13px; color: var(--muted); font-weight: 600; }}
-.card {{ background: var(--surface); border-radius: 18px; padding: 14px; display: flex; gap: 12px; align-items: center; }}
-.card .txt {{ display: grid; gap: 2px; min-width: 0; flex: 1; }}
-.card .t1 {{ font-weight: 700; }}
-.card .t2 {{ font-size: 13px; color: var(--muted); }}
-.num {{ font-family: var(--f-display); font-weight: 800; font-variant-numeric: tabular-nums; }}
-.card .num {{ font-size: 16px; }}
-.big {{ display: grid; gap: 10px; }}
-.big .count {{ display: flex; gap: 16px; align-items: baseline; }}
-.big .count .num {{ font-size: 36px; line-height: 1; }}
-.big .count small {{ color: var(--muted); font-size: 13px; }}
-.feel {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }}
-.feel button {{ font: inherit; color: var(--text); background: var(--surface); border: 2px solid transparent; border-radius: 16px; padding: 12px 4px; display: grid; justify-items: center; gap: 6px; cursor: pointer; }}
-.feel button[aria-pressed="true"] {{ border-color: var(--text); }}
-.feel button:focus-visible {{ outline: 3px solid var(--primary); outline-offset: 2px; }}
-.feel span {{ font-size: 12px; font-weight: 600; }}
-.feel small {{ font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }}
-.badges {{ display: flex; gap: 12px; }}
-.notes {{ display: grid; gap: 8px; }}
-.notes ul {{ margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 72ch; }}
-@media (max-width: 720px) {{ .intro {{ grid-template-columns: minmax(0, 1fr); }} }}
+.rung span {{ font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }}
+.tbl {{ background: var(--surface); border-radius: 20px; padding: 6px 14px; overflow-x: auto; }}
+table {{ width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }}
+th, td {{ text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }}
+tr:last-child td {{ border-bottom: 0; }}
+th {{ font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }}
+td.ti {{ width: 44px; line-height: 0; }}
+.prio {{ font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }}
+.ptinggi {{ background: var(--new-bg); color: var(--primary-ink); }}
+.psedang {{ background: var(--sunken); color: var(--text); }}
+.prendah {{ background: transparent; color: var(--muted); border: 1px solid var(--line); }}
+.notes ul {{ margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 74ch; }}
+@media (max-width: 760px) {{ .intro {{ grid-template-columns: minmax(0, 1fr); }} .mosaic {{ grid-template-columns: repeat(4, 1fr); }} }}
 </style>
 <div class="wrap">
   <section class="intro">
     <div class="lede">
-      <span class="eyebrow">Usulan desain, belum di app</span>
+      <span class="eyebrow">Design system Lintas · ikon spot</span>
       <h1>Ikon spot Run Coach</h1>
-      <p>27 ikon berwarna untuk menempel di fitur: jenis latihan, kartu Today, rasa setelah latihan, timer, progress dan badge. Ikon garis 24 px yang sudah ada tetap dipakai untuk navigasi dan tombol; ikon spot ini untuk memberi wajah pada konten.</p>
+      <p>Ikon berwarna yang memberi wajah pada konten: jenis latihan, kartu Today, rasa setelah latihan, timer, progres dan pencapaian. {n_app} ikon sudah dipakai di app; {n_new} ikon baru di halaman ini masih usulan.</p>
+      <div class="stats">
+        <div class="stat"><b>{n_app + n_new}</b><span>ikon total</span></div>
+        <div class="stat"><b>{n_app}</b><span>di app</span></div>
+        <div class="stat"><b>{n_new}</b><span>baru, usulan</span></div>
+        <div class="stat"><b>{len(GROUPS)}</b><span>kelompok fitur</span></div>
+      </div>
     </div>
-    <div class="hero">{ic("easy", 96)}{ic("streak", 96)}{ic("feel-ok", 96)}{ic("strength", 96)}</div>
+    <div class="mosaic">{"".join(ic(n, 80) for n in ["easy", "streak", "feel-ok", "strength", "goal-10k", "phase-peak", "tag-hot", "reminder", "rest-day", "records", "premium", "badge-5k"])}</div>
   </section>
 
   <section class="rules" aria-label="Aturan bentuk">
-    <div class="rule"><b>48 px grid</b><span>Ubin persegi radius 14, tampil 32 sampai 64 px</span></div>
-    <div class="rule"><b>Garis 1.75</b><span>Tipis dan luwes, ujung bulat, tinta charcoal (krem di ubin gelap)</span></div>
-    <div class="rule"><b>1 aksen</b><span>Oranye primary untuk satu bagian saja: sol, nyala, pita</span></div>
-    <div class="rule"><b>Wajah titik</b><span>Dua titik + senyum, hanya di ikon yang punya rasa (sepatu, nyala, stopwatch, RPE)</span></div>
-    <div class="rule"><b>Warna = arti</b><span>Ubin latihan = skala panas zona; ubin status = mint, sand, coral, lavender</span></div>
+    <div class="rule"><b>48 grid</b><span>Ubin radius 14; tampil 32 sampai 64 px (96 px untuk ilustrasi)</span></div>
+    <div class="rule"><b>Garis 1.75</b><span>Ujung bulat, tinta charcoal (krem di ubin gelap)</span></div>
+    <div class="rule"><b>1 aksen</b><span>Oranye primary untuk satu bagian saja</span></div>
+    <div class="rule"><b>Wajah titik</b><span>Hanya di benda yang punya rasa</span></div>
+    <div class="rule"><b>Warna = arti</b><span>Latihan = skala panas zona, fase = token fase, status = mint/sand/coral/lavender</span></div>
   </section>
 
-  {"".join(sections)}
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Tampilkan">
+      <button type="button" data-f="all" aria-pressed="true">Semua {n_app + n_new}</button>
+      <button type="button" data-f="app" aria-pressed="false">Di app {n_app}</button>
+      <button type="button" data-f="new" aria-pressed="false">Baru {n_new}</button>
+    </div>
+    <div class="seg" role="group" aria-label="Ukuran ikon">
+      <button type="button" data-s="32" aria-pressed="false">32</button>
+      <button type="button" data-s="48" aria-pressed="false">48</button>
+      <button type="button" data-s="64" aria-pressed="true">64 px</button>
+    </div>
+  </div>
+
+  {sections}
 
   <section class="group">
-    <header><h2>Tangga ukuran</h2><p>Wajah dan detail masih terbaca di 32 px. Di bawah 32 px pakai ikon garis 24 px.</p></header>
+    <header><h2>Tangga ukuran</h2><p>Detail dan wajah masih terbaca di 32 px. Di bawah 32 px pakai ikon garis 24 px.</p></header>
     <div class="ladder">{ladder}</div>
   </section>
 
-  <section class="group">
-    <header><h2>Contoh di layar</h2><p>Mockup kasar untuk melihat proporsi, bukan desain layar final.</p></header>
-    <div class="demo">
-      <div class="phone">
-        <h3>Today: kartu latihan</h3>
-        <div class="card">{ic("easy", 44)}<div class="txt"><span class="t1">Easy run</span><span class="t2">40 menit, santai bisa ngobrol</span></div><span class="num">6:45</span></div>
-        <div class="card">{ic("strength", 44)}<div class="txt"><span class="t1">Strength</span><span class="t2">Squat, plank, glute bridge</span></div><span class="num">25'</span></div>
-        <div class="card">{ic("rest-day", 44)}<div class="txt"><span class="t1">Hari istirahat</span><span class="t2">Besok tempo 30 menit</span></div></div>
-      </div>
-      <div class="phone">
-        <h3>Today: kartu carousel</h3>
-        <div class="card big"><div style="display:flex;gap:12px;align-items:center">{ic("race-day", 44)}<div class="txt"><span class="t1">Jakarta 10K</span><span class="t2">Min 14 Des · 06.00</span></div></div>
-          <div class="count"><span class="num">37</span><small>hari</small><span class="num">18</span><small>jam</small></div></div>
-        <div class="card">{ic("streak", 44)}<div class="txt"><span class="t1">5 minggu beruntun</span><span class="t2">Minggu ini 2 dari 4 latihan</span></div></div>
-      </div>
-      <div class="phone">
-        <h3>Selesai: bagaimana rasanya?</h3>
-        <div class="feel" role="group" aria-label="Rasa latihan">
-          <button type="button" id="feel-1" aria-pressed="false">{ic("feel-easy", 44)}<span>Terlalu ringan</span><small>RPE 1-4</small></button>
-          <button type="button" id="feel-2" aria-pressed="true">{ic("feel-ok", 44)}<span>Pas</span><small>RPE 5-7</small></button>
-          <button type="button" id="feel-3" aria-pressed="false">{ic("feel-hard", 44)}<span>Terlalu berat</span><small>RPE 8-10</small></button>
-        </div>
-        <h3>Ringkasan minggu: badge</h3>
-        <div class="badges">{ic("badge-5k", 56)}{ic("badge-plan", 56)}{ic("badge-streak", 56)}</div>
-      </div>
-    </div>
+  <section class="group" id="ide">
+    <header><h2>Ide penempatan ikon baru</h2><p>Diurutkan dari dampak terbesar. Prioritas tinggi = ganti ikon pinjaman, cukup ubah satu pemetaan tanpa menyentuh tata letak.</p></header>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Ikon</th><th>Layar</th><th>Di mana</th><th>Prioritas</th></tr></thead>
+      <tbody>{idea_rows}</tbody>
+    </table></div>
   </section>
 
-  <section class="notes">
-    <h2>Catatan sebelum implementasi</h2>
+  <section class="group">
+    <header><h2>Tempat lain untuk ikon yang sudah ada</h2><p>Ikon di app yang bisa dipakai di satu layar lagi.</p></header>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Ikon</th><th>Layar</th><th>Di mana</th></tr></thead>
+      <tbody>{more_rows}</tbody>
+    </table></div>
+  </section>
+
+  <section class="notes group">
+    <h2>Catatan</h2>
     <ul>
-      <li>Belum dipasang di app. File SVG ada di <code>docs/design-system/assets/spot-icons/</code>, dibuat dari <code>_build/spot_icons.py</code>.</li>
+      <li>File SVG di <code>docs/design-system/assets/spot-icons/</code>, dibuat dari <code>_build/spot_icons.py</code>. Ikon baru belum masuk <code>spot-icons.json</code> app.</li>
       <li>Semua warna dari token Lintas. Mode gelap: ubin pastel tetap, ubin strength memakai <code>zone-strength</code> gelap.</li>
-      <li>Wajah di RPE selalu disertai teks dan angka, jadi tidak bergantung pada warna atau ekspresi saja.</li>
-      <li>Perlu keputusan: ikon mana yang dipakai dan di layar mana, lalu update spec 04-UI-UX (komponen baru <code>SpotIcon</code>) sebelum dipasang.</li>
+      <li>Angka di ikon target digambar sebagai garis (tanpa font), jadi tampil sama di semua perangkat.</li>
+      <li>Pengaturan dan chip memakai komponen yang sudah ada; ikon spot di sana mengubah gaya baris, jadi perlu keputusan dulu.</li>
     </ul>
   </section>
 </div>
 <script>
-document.querySelectorAll('.feel button').forEach(b => b.addEventListener('click', () => {{
-  document.querySelectorAll('.feel button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-}}));
+const fBtns = document.querySelectorAll('[data-f]'), sBtns = document.querySelectorAll('[data-s]');
+function filter(f) {{
+  document.body.dataset.filter = f;
+  fBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.f === f)));
+  document.querySelectorAll('.group[data-group]').forEach((g) => {{
+    const any = [...g.querySelectorAll('.cell')].some((c) => f === 'all' || c.dataset.kind === f);
+    g.classList.toggle('empty', !any);
+  }});
+}}
+function size(s) {{
+  document.documentElement.style.setProperty('--ico', s + 'px');
+  sBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.s === s)));
+}}
+fBtns.forEach((b) => b.addEventListener('click', () => filter(b.dataset.f)));
+sBtns.forEach((b) => b.addEventListener('click', () => size(b.dataset.s)));
+filter('all');
 </script>
 """
 
-(si.OUT / "index.html").write_text(page)
-print("ok", si.OUT / "index.html")
+if __name__ == "__main__":
+    (si.OUT / "index.html").write_text(page)
+    print("ok", si.OUT / "index.html")

@@ -230,6 +230,162 @@ ICONS = {
 }
 
 # F. Badge pencapaian: bentuk stadium tegak (bahasa bentuk lintasan) + pita.
+# ---------- Set berikutnya (draft, belum di app; tidak ditulis ke spot-icons.json) ----------
+
+DIGITS = {
+    "0": "M3 0c-2 0-3 2.2-3 5s1 5 3 5 3-2.2 3-5-1-5-3-5z",
+    "1": "M1 2l2.2-2v10",
+    "2": "M0 2.6a3 2.6 0 0 1 6 0c0 2.4-6 4.4-6 7.4h6",
+    "4": "M4.6 10V0L0 7h6",
+    "5": "M5.6 0H1.2L.7 4.2c.8-.5 1.6-.7 2.4-.7a3.1 3.1 0 0 1 0 6.5c-1.4 0-2.5-.6-3.1-1.5",
+    "K": "M0 0v10M6 0L0 6.2M2.1 4.2L6 10",
+}
+
+
+def digits(text, cx, cy, h=9.0, sw=2.4):
+    """Angka garis sederhana (tanpa font) di tengah (cx, cy), tinggi h."""
+    s = h / 10
+    w = len(text) * 6 * s + (len(text) - 1) * 2.2 * s
+    x0 = cx - w / 2
+    out = []
+    for i, ch in enumerate(text):
+        x = x0 + i * (6 + 2.2) * s
+        out.append(f'<path d="{DIGITS[ch]}" transform="translate({x:.2f} {cy - h / 2:.2f}) scale({s:.3f})" '
+                   f'stroke="{{ink2}}" stroke-width="{sw / s:.2f}"/>')
+    return "".join(out)
+
+
+def bib(label, h=8.5):
+    return ('<rect x="9.5" y="13" width="29" height="22" rx="3.5" fill="{p}" stroke="{k}"/>'
+            '<path d="M9.5 18h29" stroke="{a}" stroke-width="2.6"/>'
+            '<circle cx="13.2" cy="31.6" r=".9" fill="{ink2}" stroke="none"/><circle cx="34.8" cy="31.6" r=".9" fill="{ink2}" stroke="none"/>'
+            + digits(label, 24, 26.2, h))
+
+
+LEG = ('<path d="M19 9v13c0 3-1.5 5-1.5 8.5V35h12.5c0-2-1.6-3.6-4-4-1.4-3-1.6-6-1.6-9V9" fill="{p}" stroke="{k}"/>'
+       '<path d="M30 17l-3 4.5h3.5l-3 4.5" stroke="{a}" stroke-width="2"/>')
+
+NEXT = {
+    # Target (1.2, 1.8, Profil)
+    "goal-5k": ("target", "Target 5K", "peach", "charcoal", "orange", "coral", bib("5K")),
+    "goal-10k": ("target", "Target 10K", "long", "charcoal", "orange", "coral", bib("10K", 8)),
+    "goal-hm": ("target", "Target half marathon", "orange", "charcoal", "charcoal", "coral", bib("21K", 7.6)),
+    "goal-fm": ("target", "Target marathon", "interval", "cream", "orange", "coral",
+                bib("42K", 7.6)),
+    "goal-fitness": ("target", "Bugar", "mint", "charcoal", "orange", "coral",
+                     '<path d="M24 37s-12-6.8-12-15.2A6.4 6.4 0 0 1 24 18a6.4 6.4 0 0 1 12 3.8C36 30.2 24 37 24 37z" fill="{p}" stroke="{k}"/>'
+                     + face(24, 26, "smile", 0.85) + cheeks(24, 26, 0.8)
+                     + '<path d="M33 11.5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" fill="{a}" stroke="none"/>'),
+    # Fase plan (3.1, 1.8): warna ubin = token phase
+    "phase-base": ("fase", "Fase Base", "peach", "charcoal", "orange", "coral",
+                   '<rect x="11.5" y="28" width="12" height="8" rx="1.5" fill="{p}" stroke="{k}"/>'
+                   '<rect x="24.5" y="28" width="12" height="8" rx="1.5" fill="{p}" stroke="{k}"/>'
+                   '<rect x="18" y="19.5" width="12" height="8" rx="1.5" fill="{a}" stroke="{k}"/>'
+                   '<path d="M9 38.5h30" stroke="{k}"/>'),
+    "phase-build": ("fase", "Fase Build", "long", "charcoal", "orange", "coral",
+                    '<path d="M10 37V30h8.5v-7.5H27V15h11v22z" fill="{p}" stroke="{k}"/>'
+                    '<path d="M14 23v-9M10.5 17.5L14 14l3.5 3.5" stroke="{a2}" stroke-width="2.6"/>'),
+    "phase-peak": ("fase", "Fase Peak", "orange", "charcoal", "white", "coral",
+                   '<path d="M7.5 37l11.5-18 6.5 9 4.5-6 10.5 15z" fill="{p}" stroke="{k}"/>'
+                   '<path d="M19 19v-8.5l6.5 2.6-6.5 2.6" fill="{y}" stroke="{k}" stroke-width="2"/>'
+                   '<path d="M15.5 25.5l3.5 2 3-2" stroke="{k}" stroke-width="1.8"/>'),
+    "phase-taper": ("fase", "Fase Taper", "lavender", "charcoal", "orange", "coral",
+                    "".join(f'<rect x="{x}" y="{36 - h}" width="5.5" height="{h}" rx="1.6" fill="{c}" stroke="{{k}}"/>'
+                            for x, h, c in ((10.5, 22, "{p}"), (17.8, 17, "{p}"), (25.1, 12, "{p}"), (32.4, 7, "{a}")))
+                    + '<path d="M9 38.5h30" stroke="{k}"/>'),
+    # Jenis latihan yang masih memakai ikon pinjaman
+    "progression": ("latihan2", "Progression", "peach", "charcoal", "orange", "coral",
+                    '<path d="M10 37h28" stroke="{k}"/>'
+                    '<path d="M12 32l7.5-5 6 3 9.5-13" stroke="{k}"/>'
+                    '<circle cx="12" cy="32" r="2.2" fill="{p}" stroke="{k}" stroke-width="2"/>'
+                    '<circle cx="19.5" cy="27" r="2.2" fill="{p}" stroke="{k}" stroke-width="2"/>'
+                    '<circle cx="25.5" cy="30" r="2.2" fill="{p}" stroke="{k}" stroke-width="2"/>'
+                    '<path d="M29 16.5h7v7" stroke="{a}" stroke-width="2.8"/>'),
+    "run-walk": ("latihan2", "Run-walk", "lavender", "charcoal", "orange", "coral",
+                 '<g transform="translate(3 1) scale(.6)">' + SHOE.replace('stroke="{k}"/>', 'stroke="{k}" stroke-width="3.6"/>', 1) + "</g>"
+                 + '<g fill="{k}" stroke="none">'
+                 '<ellipse cx="27" cy="35" rx="2.6" ry="4.2" transform="rotate(-14 27 35)"/>'
+                 '<circle cx="25" cy="29.2" r="1"/><circle cx="27.2" cy="28.6" r=".9"/>'
+                 '<ellipse cx="35.5" cy="28" rx="2.6" ry="4.2" transform="rotate(10 35.5 28)"/>'
+                 '<circle cx="34.1" cy="22.2" r="1"/><circle cx="36.3" cy="22" r=".9"/></g>'),
+    "strides": ("latihan2", "Strides", "peach", "charcoal", "orange", "coral",
+                '<g transform="translate(5 0)">' + SHOE + "</g>"
+                + '<path d="M6 22h6M4 27h7M6.5 32h4" stroke="{a}" stroke-width="2.2"/>'
+                + face(22, 27.5, "smile", 0.85)),
+    "core": ("latihan2", "Core", "strength", "cream", "orange", "coral",
+             '<circle cx="35" cy="19" r="3" fill="{k}" stroke="none"/>'
+             '<path d="M32 21.5L14 27.5" stroke="{k}" stroke-width="3"/>'
+             '<path d="M30.5 22.2l.5 8M14 27.5l-2.5 3" stroke="{k}" stroke-width="2.6"/>'
+             '<path d="M8 33h32" stroke="{a}" stroke-width="2.6"/>'
+             '<path d="M20 15.5q2-2.4 4 0" stroke="{k}" stroke-width="1.8"/>'),
+    # Catatan rasa (tag 2.4 / 2.6)
+    "tag-hot": ("catatan", "Cuaca panas", "coral", "charcoal", "orange", "orange",
+                '<circle cx="23" cy="26" r="9" fill="{y}" stroke="{k}"/>'
+                + "".join(f'<path d="M{23 + 12.5 * math.cos(a):.1f} {26 + 12.5 * math.sin(a):.1f}l{2.4 * math.cos(a):.1f} {2.4 * math.sin(a):.1f}" stroke="{{k}}" stroke-width="2"/>'
+                          for a in [i * math.pi / 4 for i in range(8)])
+                + face(23, 25, "strain", 0.75)
+                + '<path d="M36 10c1.5 2 2.2 3.3 2.2 4.3a2.2 2.2 0 0 1-4.4 0c0-1 .7-2.3 2.2-4.3z" fill="{l}" stroke="{k}" stroke-width="1.6"/>'),
+    "tag-sleep": ("catatan", "Kurang tidur", "lavender", "charcoal", "orange", "coral",
+                  '<path d="M9.5 24c0-5 3-8 7-8h15c4 0 7 3 7 8s-3 8-7 8h-15c-4 0-7-3-7-8z" fill="{p}" stroke="{k}"/>'
+                  + face(24, 23, "sleep", 0.85)
+                  + '<path d="M31 9.5h4l-4 4h4M37 14.5h2.6l-2.6 2.6h2.6" stroke="{k}" stroke-width="1.8"/>'
+                  '<path d="M13 36.5h22" stroke="{a}"/>'),
+    "tag-sore": ("catatan", "Kaki pegal", "peach", "charcoal", "orange", "coral", LEG
+                 + '<path d="M14.5 26.5l-2.5-1M14 31l-3 .5" stroke="{k}" stroke-width="1.8"/>'),
+    # Jeda plan (4.3)
+    "pause-sick": ("jeda", "Sakit", "coral", "charcoal", "orange", "coral",
+                   '<rect x="20.5" y="9" width="7" height="20" rx="3.5" fill="{p}" stroke="{k}"/>'
+                   '<circle cx="24" cy="32" r="5.5" fill="{a}" stroke="{k}"/>'
+                   '<path d="M24 28V17" stroke="{a}" stroke-width="2.6"/>'
+                   '<path d="M27.5 14h2M27.5 18h2M27.5 22h2" stroke="{k}" stroke-width="1.6"/>'),
+    "pause-busy": ("jeda", "Sibuk / libur", "sand", "charcoal", "orange", "coral",
+                   '<rect x="10.5" y="17" width="27" height="18" rx="3" fill="{p}" stroke="{k}"/>'
+                   '<path d="M19 17v-3a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v3" stroke="{k}"/>'
+                   '<path d="M16.5 17v18M31.5 17v18" stroke="{a}" stroke-width="2.6"/>'
+                   '<path d="M14 38h3M31 38h3" stroke="{k}" stroke-width="2"/>'),
+    # Pengaturan dan onboarding
+    "reminder": ("setelan", "Pengingat", "sand", "charcoal", "orange", "coral",
+                 '<path d="M12.5 16.5a5 5 0 0 1 6.5-4.5M35.5 16.5a5 5 0 0 0-6.5-4.5" stroke="{a}" stroke-width="3"/>'
+                 '<path d="M17 36l-2 2.5M31 36l2 2.5" stroke="{k}"/>'
+                 '<circle cx="24" cy="26" r="11" fill="{p}" stroke="{k}"/>'
+                 + face(24, 25.5, "smile", 0.85)),
+    "backup": ("setelan", "Backup ke file", "mint", "charcoal", "orange", "coral",
+               '<path d="M9.5 16.5a2 2 0 0 1 2-2h7.5l3 3h14.5a2 2 0 0 1 2 2V34a2 2 0 0 1-2 2h-25a2 2 0 0 1-2-2z" fill="{p}" stroke="{k}"/>'
+               '<path d="M24 21.5v9M20 27l4 4 4-4" stroke="{a}" stroke-width="2.8"/>'),
+    "language": ("setelan", "Bahasa", "lavender", "charcoal", "orange", "coral",
+                 '<path d="M9 14a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-9l-4 3.5V25h-1a3 3 0 0 1-3-3z" fill="{p}" stroke="{k}"/>'
+                 '<path d="M15 22l4-8 4 8M16.4 19.3h5.2" stroke="{k}" stroke-width="2"/>'
+                 '<path d="M39 25a3 3 0 0 0-3-3H24a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h8l4 3.5V35a3 3 0 0 0 3-3z" fill="{a}" stroke="{k}"/>'
+                 '<path d="M25.5 27h9M25.5 30.6h6" stroke="{p}" stroke-width="2"/>'),
+    "guide": ("setelan", "Panduan & istilah", "peach", "charcoal", "orange", "coral",
+              '<path d="M24 15c-4-2.2-9.5-2.2-13.5 0v20c4-2.2 9.5-2.2 13.5 0 4-2.2 9.5-2.2 13.5 0V15c-4-2.2-9.5-2.2-13.5 0z" fill="{p}" stroke="{k}"/>'
+              '<path d="M24 15v20" stroke="{k}"/>'
+              '<path d="M30 13.5v8l2-1.6 2 1.6v-8.3" fill="{a}" stroke="{k}" stroke-width="1.6"/>'
+              '<path d="M14 21h6M14 25h6M28 26h6" stroke="{k}" stroke-width="1.8"/>'),
+    "premium": ("setelan", "Premium", "sand", "charcoal", "orange", "coral",
+                '<path d="M11.5 32.5L9.5 17l8 6.5 6.5-10 6.5 10 8-6.5-2 15.5z" fill="{a}" stroke="{k}"/>'
+                '<path d="M12 37h24" stroke="{k}" stroke-width="3"/>'
+                '<circle cx="24" cy="27" r="2" fill="{p}" stroke="none"/><circle cx="17" cy="28.5" r="1.4" fill="{p}" stroke="none"/><circle cx="31" cy="28.5" r="1.4" fill="{p}" stroke="none"/>'),
+    "zones": ("setelan", "Zona pace", "sunken", "charcoal", "orange", "coral",
+              "".join(f'<rect x="10.5" y="{y}" width="{w}" height="5" rx="2.5" fill="{c}" stroke="{{k}}" stroke-width="2"/>'
+                      for y, w, c in ((11.5, 14, "{l}"), (18.5, 19, "{y2}"), (25.5, 23, "{a}"), (32.5, 27, "{iv}")))),
+    "heart-rate": ("setelan", "Detak jantung", "coral", "charcoal", "orange", "coral",
+                   '<path d="M24 37s-13-7.4-13-16.4A6.8 6.8 0 0 1 24 16.6a6.8 6.8 0 0 1 13 4C37 29.6 24 37 24 37z" fill="{p}" stroke="{k}"/>'
+                   '<path d="M8 26h8l2.5-4.5 3.5 9 3-7 2 2.5h13" stroke="{a2}" stroke-width="2.4"/>'),
+    "integration": ("setelan", "Strava / Health", "lavender", "charcoal", "orange", "coral",
+                    '<rect x="8.5" y="19" width="18" height="10" rx="5" fill="none" stroke="{k}" stroke-width="3" transform="rotate(-35 17.5 24)"/>'
+                    '<rect x="21.5" y="19" width="18" height="10" rx="5" fill="none" stroke="{a}" stroke-width="3" transform="rotate(-35 30.5 24)"/>'),
+    "health": ("setelan", "Cek kesehatan", "mint", "charcoal", "orange", "coral",
+               '<rect x="12.5" y="12" width="23" height="27" rx="3" fill="{p}" stroke="{k}"/>'
+               '<rect x="18.5" y="9.5" width="11" height="5" rx="2" fill="{a}" stroke="{k}" stroke-width="2"/>'
+               '<path d="M24 31s-6-3.4-6-7.6a3.2 3.2 0 0 1 6-1.6 3.2 3.2 0 0 1 6 1.6c0 4.2-6 7.6-6 7.6z" fill="{c}" stroke="{k}" stroke-width="1.8"/>'),
+    "days": ("setelan", "Hari latihan", "peach", "charcoal", "orange", "coral",
+             '<rect x="9.5" y="12" width="29" height="25" rx="3.5" fill="{p}" stroke="{k}"/>'
+             '<path d="M9.5 18.5h29M16 9.5v5M32 9.5v5" stroke="{k}"/>'
+             + "".join(f'<circle cx="{14 + (i % 4) * 6.7:.1f}" cy="{24.5 + (i // 4) * 6.5}" r="2" fill="{{{"a" if i in (0, 2, 4, 6) else "y2"}}}" stroke="none"/>'
+                       for i in range(7))),
+}
+
 BADGES = {
     "badge-5k": ("badge", "5K pertama", "peach",
                  '<path d="M20.5 19h-5v4.6c.8-.6 1.8-.9 2.8-.9a3.4 3.4 0 0 1 0 6.8c-1.3 0-2.4-.6-3-1.5" stroke="{k}" stroke-width="2.4"/>'
@@ -264,7 +420,7 @@ def colors(tile, ink, acc, cheek, mode):
     return {
         "t": v(tile), "T": v(tile), "k": v(ink), "a": v(acc), "a2": v("white" if tile == "orange" else "orange"),
         "p": v("white"), "c": v(cheek), "y": v("sand"), "y2": v("peach"), "l": v("lavender"),
-        "ink2": v("charcoal"), "acc2": v(acc2),
+        "ink2": v("charcoal"), "acc2": v(acc2), "iv": v("interval"),
     }
 
 
@@ -275,8 +431,8 @@ def fill(markup, cmap):
 
 
 def inner_markup(name, mode):
-    if name in ICONS:
-        _, _, tile, ink, acc, cheek, body = ICONS[name]
+    if name in ICONS or name in NEXT:
+        _, _, tile, ink, acc, cheek, body = ICONS.get(name) or NEXT[name]
         cmap = colors(tile, ink, acc, cheek, mode)
         inner = f'<rect width="48" height="48" rx="14" fill="{cmap["t"]}"/>' + fill(body, cmap)
     else:
@@ -287,8 +443,8 @@ def inner_markup(name, mode):
 
 
 def svg(name, mode="file", size=48):
-    if name in ICONS:
-        _, _, tile, ink, acc, cheek, body = ICONS[name]
+    if name in ICONS or name in NEXT:
+        _, _, tile, ink, acc, cheek, body = ICONS.get(name) or NEXT[name]
         cmap = colors(tile, ink, acc, cheek, mode)
         inner = f'<rect width="48" height="48" rx="14" fill="{cmap["t"]}"/>' + fill(body, cmap)
     else:
@@ -302,7 +458,8 @@ def svg(name, mode="file", size=48):
     )
 
 
-ALL = {**{k: v[:2] for k, v in ICONS.items()}, **{k: v[:2] for k, v in BADGES.items()}}
+APP = {**{k: v[:2] for k, v in ICONS.items()}, **{k: v[:2] for k, v in BADGES.items()}}
+ALL = {**APP, **{k: v[:2] for k, v in NEXT.items()}}
 
 if __name__ == "__main__":
     OUT.mkdir(exist_ok=True)
@@ -311,6 +468,6 @@ if __name__ == "__main__":
     import json
 
     # Untuk app: isi SVG dengan placeholder $warna$, nama berurutan agar diff stabil.
-    data = {n: inner_markup(n, "app") for n in sorted(ALL)}
+    data = {n: inner_markup(n, "app") for n in sorted(APP)}
     APP_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
     print(len(ALL), "ikon ->", OUT, "dan", APP_JSON)
