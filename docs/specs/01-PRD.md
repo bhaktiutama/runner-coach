@@ -107,7 +107,7 @@ Exit criteria beta: 50-100 beta tester aktif (PLANNING bagian 7).
 | D1 | Persona utama: pemula atau rekreasional? | Keduanya |
 | D2 | GPS sendiri atau cukup integrasi? | Tanpa GPS |
 | D3 | Pace atau HR sebagai default? | Pace (pengguna bisa pilih RPE di 2.2) |
-| D5 | Nama dan brand | "Run Coach" (nama kerja, dipakai di 1.1). Cek merek dagang dan ketersediaan nama di App Store, Play Store dan domain belum dilakukan |
+| D5 | Nama dan brand | **Diputuskan 2026-11-06:** "RunCo". Package/bundle ID `com.bhaktiutama.runco` (domain pemilik bhaktiutama.com; permanen setelah rilis). Scheme `runcoach` dan slug EAS `run-coach` tidak diubah (redirect login + URL preview). Cek merek dagang belum dilakukan |
 | D6 | Pelatih bersertifikat untuk review aturan plan | Wajib sebelum beta publik |
 | D9 | Multibahasa untuk pasar global: bahasa kedua, library i18n, kapan rilis | **Diputuskan 2026-10-30:** bahasa kedua = English, tanpa library i18n (katalog TypeScript per bahasa, tipe memaksa kunci lengkap), rilis bersama fase 2. Terjemahan perlu dibaca penutur asli sebelum rilis |
 | P1 | Login wajib di 1.8 atau boleh "Nanti saja"? Tanpa sinkron, login di MVP belum memberi manfaat langsung ke pengguna (dipakai untuk Premium di fase 3) | Wajib, sesuai keputusan pemilik produk. Pantau drop-off di 1.8; jika tinggi, jadikan opsional |

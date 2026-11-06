@@ -8,12 +8,12 @@ Copy di bawah siap ditempel ke App Store Connect dan Google Play Console. Teks d
 
 | Field | Limit | Copy | Chars |
 |---|---|---|---|
-| Name | 30 | `Run Coach: Running Plan` | 23 |
+| Name | 30 | `RunCo: Running Plan & Coach` | 27 |
 | Subtitle | 30 | `5K to Marathon Training Coach` | 29 |
 | Primary category | | Health & Fitness | |
 | Secondary category | | Sports | |
 
-Alternatif nama jika "Run Coach" tidak tersedia (D5): `Run Coach: 5K to Marathon` (25).
+Alternatif nama: `RunCo: 5K to Marathon Coach` (27). Brand diganti dari "Run Coach" ke "RunCo" pada 2026-11-06 (D5).
 
 **Keywords** (100 byte, koma tanpa spasi, tidak mengulang kata di Name/Subtitle karena Apple sudah mengindeksnya):
 
@@ -30,7 +30,7 @@ Your full plan is free, from day one to race day. A guided timer, strength built
 **Description** (4000). Tiga baris pertama tampil sebelum "more", jadi berisi janji utama:
 
 ```
-Know exactly what to run today. Run Coach builds a training plan around your race date, your schedule and your current fitness, then coaches you through every session.
+Know exactly what to run today. RunCo builds a training plan around your race date, your schedule and your current fitness, then coaches you through every session.
 
 Your full running plan is free. Not a trial week. The whole plan, to the finish line.
 
@@ -76,13 +76,13 @@ PRIVATE BY DESIGN
 
 Also: English and Bahasa Indonesia, dark mode, and training reminders on your running days.
 
-Run Coach is not a medical device. Check with a doctor before starting a new training program.
+RunCo is not a medical device. Check with a doctor before starting a new training program.
 ```
 
 **What's New** (versi 1.0):
 
 ```
-Welcome to Run Coach. Build your plan, press Start, and run. Tell us what you think from Profile, we read every message.
+Welcome to RunCo. Build your plan, press Start, and run. Tell us what you think from Profile, we read every message.
 ```
 
 Catatan: kalimat "we read every message" hanya dipakai jika ada kanal feedback di Profil saat rilis; jika belum, hapus kalimat kedua.
@@ -91,7 +91,7 @@ Catatan: kalimat "we read every message" hanya dipakai jika ada kanal feedback d
 
 | Field | Limit | Copy | Chars |
 |---|---|---|---|
-| App name | 30 | `Run Coach: 5K to Marathon Plan` | 30 |
+| App name | 30 | `RunCo: 5K to Marathon Plan` | 26 |
 | Category | | Health & Fitness | |
 | Tags | | Running, Workout tracker, Fitness coaching (pilih yang tersedia di Play Console) | |
 
@@ -186,12 +186,12 @@ Setiap klaim di copy harus benar di build yang dirilis. Hapus atau ubah kalimat 
 
 | Field | Chars | Limit |
 |---|---|---|
-| iOS Name | 23 | 30 |
+| iOS Name | 27 | 30 |
 | iOS Subtitle | 29 | 30 |
 | iOS Keywords | 97 (byte) | 100 |
 | iOS Promotional text | 141 | 170 |
-| iOS / Play Description | 2351 | 4000 |
-| Play App name | 30 | 30 |
+| iOS / Play Description | 2343 | 4000 |
+| Play App name | 26 | 30 |
 | Play Short description A | 80 | 80 |
 | Play Short description B | 79 | 80 |
 | Play feature graphic line | 34 | - |

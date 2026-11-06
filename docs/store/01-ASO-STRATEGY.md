@@ -59,7 +59,7 @@ Hal berikut **tidak** dikerjakan di dokumen ini karena menambah library/perilaku
 |---|---|---|---|
 | A1 | Prompt rating native setelah minggu tuntas pertama (2.5, "Oke, terapkan" atau tutup), maks 1x per versi; tidak setelah latihan dengan RPE >= 8 | PRD fitur baru, library `expo-store-review`, event analitik `rating_prompt_shown` (tanpa data pribadi) | Tinggi (H6) |
 | A2 | Halaman kebijakan privasi publik + isian App Privacy / Data safety yang konsisten dengan klaim "data stays on your phone" | Sudah di STATUS M7 no. 4 | Wajib sebelum listing |
-| A3 | Cek nama "Run Coach" (D5): ketersediaan di kedua store dan merek dagang. Nama generik sulit dilindungi dan mungkin sudah dipakai | PRD D5 | Wajib sebelum listing |
+| A3 | Cek nama "RunCo" (D5, diputuskan 2026-11-06): ketersediaan di kedua store dan merek dagang. Package ID `com.bhaktiutama.runco` | PRD D5 | Wajib sebelum listing |
 | A4 | Gambar resolusi tinggi + lisensi jelas untuk feature graphic dan latar screenshot (imagery saat ini maks 887 px, lisensi belum diverifikasi) | `docs/design-system/assets/imagery/README.md` | Wajib sebelum listing |
 | A5 | Listing Bahasa Indonesia (`id`) setelah EN, memakai istilah dari katalog `i18n/id.ts` | Dokumen `03-LISTING-ID.md` | Sedang |
 | A6 | Kartu ringkasan yang bisa dibagikan (2.5, Fase 4) sebagai akuisisi organik | Sudah di PRD bagian 5 | Rendah sekarang |
