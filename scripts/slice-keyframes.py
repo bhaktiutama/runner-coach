@@ -95,8 +95,8 @@ def main():
     arr = np.asarray(sheet)
     xs, ys = cells(arr[..., 3].astype(int), arr[..., :3])
     n = len(xs)
-    if n != len(ys) or n not in (3, 4):
-        sys.exit(f"Garis pemisah tidak terdeteksi: {len(xs)} kolom x {len(ys)} baris (butuh 3x3 atau 4x4)")
+    if n != len(ys) or n not in (3, 4, 6):
+        sys.exit(f"Garis pemisah tidak terdeteksi: {len(xs)} kolom x {len(ys)} baris (butuh 3x3, 4x4 atau 6x6)")
 
     frames = []  # (RGBA array, anchor_x, bottom_y)
     for r in range(n):
