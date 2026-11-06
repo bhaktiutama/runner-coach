@@ -135,7 +135,7 @@ p {{ margin: 0; max-width: 64ch; }}
 
   <section class="rules" aria-label="Aturan bentuk">
     <div class="rule"><b>48 px grid</b><span>Ubin persegi radius 14, tampil 32 sampai 64 px</span></div>
-    <div class="rule"><b>Garis 2.5</b><span>Ujung dan sambungan bulat, tinta charcoal (krem di ubin gelap)</span></div>
+    <div class="rule"><b>Garis 1.75</b><span>Tipis dan luwes, ujung bulat, tinta charcoal (krem di ubin gelap)</span></div>
     <div class="rule"><b>1 aksen</b><span>Oranye primary untuk satu bagian saja: sol, nyala, pita</span></div>
     <div class="rule"><b>Wajah titik</b><span>Dua titik + senyum, hanya di ikon yang punya rasa (sepatu, nyala, stopwatch, RPE)</span></div>
     <div class="rule"><b>Warna = arti</b><span>Ubin latihan = skala panas zona; ubin status = mint, sand, coral, lavender</span></div>

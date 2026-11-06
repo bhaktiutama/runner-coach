@@ -29,7 +29,18 @@ HEX = {
     "strength": ("#242C32", "#3A444C"),
 }
 
-SW = 2.5
+SW = 1.75
+# v1.1: semua garis ditipiskan (2.5 -> 1.75) agar tidak kaku; lebar eksplisit ikut diskalakan, minimum 1.1.
+STROKE_SCALE = 0.7
+
+
+def thin(markup):
+    import re
+
+    def r(m):
+        return f'stroke-width="{max(1.1, float(m.group(1)) * STROKE_SCALE):.2f}"'
+
+    return re.sub(r'stroke-width="([0-9.]+)"', r, markup)
 
 
 def face(cx, cy, mood="smile", s=1.0):
@@ -269,6 +280,7 @@ def svg(name, mode="file", size=48):
         _, _, tile, body = BADGES[name]
         cmap = colors(tile, "charcoal", "orange", "coral", mode)
         inner = fill(badge_frame(tile) + body, cmap)
+    inner = thin(inner)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 48 48" fill="none" '
         f'stroke-width="{SW}" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="{name}">{inner}</svg>'
