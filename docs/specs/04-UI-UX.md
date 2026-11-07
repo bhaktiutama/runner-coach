@@ -58,7 +58,7 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | SettingsRow, Switch, DangerButton | 4.1, 4.5, 4.6 |
 | LaneWeek | 2.1, 3.1 |
 | StatusChip | 2.1, 2.5, 3.1 |
-| PhaseBar | 1.8, 3.1 |
+| PhaseBar (satu bar gradasi fase + penanda minggu ini + nama fase di bawah, v2026-11-07) | 3.1 |
 | BarChart, LineTrend, TrackRing | 1.8, 3.3 |
 | PrimaryButton, SecondaryButton, SegmentedControl, TabBar | Semua |
 | Icon (`name`, `size`, `color`) dari `assets/icons/icons.json` | Semua |
@@ -267,7 +267,7 @@ Set v2 (2026-11-07, 55 ikon): 53 terpakai; `heart-rate` dan `integration` menung
 | 4.7 | Ikon panduan `spot-md` di kiri paragraf pembuka | Paragraf saja |
 | 1.6, Hari & pengingat | 1.6: baris pengingat 2 baris (judul + "Kami ingatkan di hari latihan saja.") dengan ikon setinggi dua baris; Hari & pengingat: label dengan ikon `spot-xs` | Lonceng garis / label |
 | 1.8 | Legenda fase: kisi 2 kolom, ikon fase setinggi dua baris (nama fase + jumlah minggu), menggantikan kotak warna. 3.1 tetap kotak kecil: legenda di bawah bar 14 px tidak boleh lebih berat dari bar-nya | Kotak warna |
-| 3.1 | Navigasi minggu: ikon fase di kiri setinggi dua baris, di kanannya "Minggu n · Fase" dan "9-15 Nov · 17 km" rata kiri (`formatDayRange`). Layar < 360 px: nama fase tidak ditulis. Sesi strength tambahan ditulis sebaris judul hari agar tiap hari 2 baris (di 320 px boleh turun ke baris 3) | "Minggu n" + tanggal di tengah |
+| 3.1 | Navigasi minggu: ikon fase di kiri setinggi dua baris, di kanannya "Minggu n · Fase" dan "9-15 Nov · 17 km" rata kiri (`formatDayRange`). Layar < 360 px: nama fase tidak ditulis. Sesi strength di hari yang sama = baris latihan kedua (ikon strength + nama + menit/gerakan) di kartu hari yang sama, rapat tanpa garis pemisah. Bar fase di atasnya: satu bar gradasi warna fase, penanda bulat minggu ini, nama fase di bawah (fase sekarang tebal, label yang bertabrakan disembunyikan), jarak lebih lega ke navigasi minggu | "Minggu n" + tanggal di tengah |
 | 2.5 | Baris "Fase X" di bawah judul; "Pencapaian baru" (badge `spot-lg` yang baru didapat minggu ini) | Tidak tampil |
 | 3.3 | Label Prediksi = ikon rekor sebaris | Label saja |
 | 4.1 Profil | Semua baris memakai ikon `spot-sm` (target, zona, hari, strength, timer, cedera, Premium, privasi, panduan, bahasa, satuan, ikon ilustrasi) agar satu grup konsisten | Ikon garis lama / tanpa ikon |
