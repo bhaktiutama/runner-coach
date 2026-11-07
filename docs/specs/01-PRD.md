@@ -1,6 +1,6 @@
 # 01. Product Requirements Document (PRD)
 
-Status: Draft v0.4 (2026-10-30, fase 2: F-21, F-22, F-23; F-24 mode gelap 2026-10-31) | Latar belakang: `docs/PLANNING.md` bagian 1, 2, 8, 9 | Layar: wireframe (lihat `README.md`)
+Status: Draft v0.5 (2026-11-07: F-23 aktif + whitelist, F-29 plan bagikan; sebelumnya fase 2: F-21, F-22, F-23; F-24 mode gelap 2026-10-31) | Latar belakang: `docs/PLANNING.md` bagian 1, 2, 8, 9 | Layar: wireframe (lihat `README.md`)
 
 ## Ringkasan
 
@@ -69,7 +69,8 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 | F-20 | Panduan & istilah | 4.7, hint (i) di 1.8, 2.1, 2.2, 2.4, 2.6, 3.1, 3.3 | Should | Penjelasan bahasa awam: cara kerja plan, istilah (volume, volume puncak, pace, zona, RPE, fase, taper, cutback), jenis lari (easy, recovery, long, tempo, interval, progression, strides, run-walk, drill) dan dasar ilmiah tiap aturan engine (tingkat bukti + sumber dari registri 07). Offline, teks dari katalog i18n. Tombol (i) di samping istilah membuka 4.7 langsung ke topiknya |
 | F-21 | Strength + core bodyweight (fase 2) | 1.6, 2.1, 2.2s, 2.3s, 2.4, 3.1, 3.2, 4.1 | Should | Opsional ("Mau latihan kekuatan?" di 1.6, sakelar di 4.1). Sesi kaki + core tanpa alat masuk plan yang sama: kartu kedua di 2.1, baris "+ Strength" di 3.1. Jadwal dan dosis mengikuti E-23..E-26 (TRD 4.2). Timer mode gerakan (2.3s): nama, set, angka waktu di setiap set, istirahat otomatis. Mode otomatis (bawaan, sakelar di 4.1 dan pil di timer): set repetisi dan drill jarak berwaktu dari estimasi dan maju sendiri; mode manual: "Selesai set" / "Lanjut" atau tahan layar. "Siap-siap" 5 dtk sebelum gerakan tanpa istirahat, "+15 dtk" di istirahat (`09-VOICE.md` bagian 6 dan 13). **Animasi gerakan = placeholder kosong** sampai D8. 2.4: satu isian RPE; rasa beban diturunkan dari RPE (1-4 terlalu ringan, 5-7 pas, 8-10 terlalu berat, keputusan pemilik 2026-11-05); "terlalu berat" menurunkan level sesi berikutnya. Lari tidak berubah saat strength dinyalakan |
 | F-22 | Bahasa (fase 2) | 4.1, 4.8 | Should | Bahasa Indonesia / English / Ikuti perangkat. Semua teks UI, engine (rationale, nama + cue gerakan), Panduan, notifikasi dan cue timer ikut bahasa. Angka/tanggal lewat `Intl` sesuai locale. Install baru: ikut bahasa perangkat (Indonesia -> ID, lainnya -> EN). Satuan tidak ikut berubah |
-| F-23 | Gerbang Premium (konsep, fase 2 nonaktif) | 4.4, 4.1, 2.1, 2.2s | Should | Detail `08-MONETIZATION.md`. Flag mati = tidak ada fitur terkunci. Flag nyala: strength/core setelah minggu ke-2 terkunci, lari tidak pernah. 4.4 tanpa pembelian sampai Fase 3 |
+| F-23 | Gerbang Premium (fase 2b aktif) | 4.4, 4.1, 2.1, 2.2s | Should | Detail `08-MONETIZATION.md`. Aktif bawaan sejak 2026-11-07 (`EXPO_PUBLIC_PAYWALL=0` mematikan): strength/core setelah minggu ke-2 dan bagikan (F-29) terkunci, lari tidak pernah. Whitelist user id di Supabase (Edge Function `entitlement`) = Premium tanpa bayar; 4.4 menampilkan "Premium aktif". 4.4 tanpa pembelian sampai Fase 3 |
+| F-29 | Bagikan momen ke media sosial (plan) | 2.7 (baru), 1.8, 2.1, 2.4, 2.5, 3.3, 3.4 | Could | Detail `10-SHARE.md`. Hanya 6 momen (plan dimulai, long run rekor, pencapaian F-28, minggu tuntas 4/8/12, minggu race, plan tuntas). Kartu PNG 9:16 dibuat di HP, dikirim lewat lembar bagikan sistem ke Instagram Story / WhatsApp Status. Tanpa data kesehatan, tanpa upload. Premium. Status: hanya gerbang `canShare` yang sudah ada |
 | F-27 | Ikon ilustrasi | 1.2-1.8, 2.1-2.6, 3.1, 3.3, 3.4, 4.1, 4.3-4.8 | Could | Ikon spot berwarna per jenis latihan, target, fase, kartu Today, rasa RPE, catatan, statistik dan pengaturan (UI/UX 14). Bawaan nyala; sakelar di Profil mengembalikan tampilan tanpa ikon |
 | F-28 | Pencapaian | 3.3 | Could | Tiga badge dihitung dari data di HP (tanpa tabel baru): 5K pertama (aktivitas >= 5 km), 4 minggu beruntun (rekor minggu tuntas >= 4), plan tuntas (plan berakhir dan >= 80% lari selesai). Belum didapat = pudar + kemajuan. Tampil saat ikon ilustrasi (F-27) nyala |
 | F-24 | Mode gelap | Semua layar | Should | Ikut tema perangkat (iOS/Android/web), berganti langsung saat tema perangkat berubah. Tidak ada pilihan manual di app. Warna sesuai wireframe `png/dark/` dan UI/UX 2 |
@@ -81,7 +82,7 @@ Prioritas: Must = wajib untuk beta, Should = boleh menyusul di fase 2 jika waktu
 |------|-------|-------------------|
 | Ambil data dari Strava, Apple Health, Health Connect (hasilnya tetap disimpan di HP) | Fase 2 | Layar 4.2; tautan "Isi otomatis dari Strava" di 1.4 dan status sinkron di 2.1 disembunyikan di MVP |
 | Panduan intensitas detak jantung | Fase 2 | Pilihan "Detak jantung" di 2.2 nonaktif sampai ada data HR |
-| Paywall Premium (pembelian) | Fase 3 | Konsep + gerbang nonaktif sudah ada (F-23, `08-MONETIZATION.md`). Pembelian lewat RevenueCat di Fase 3 |
+| Paywall Premium (pembelian) | Fase 3 | Gerbang aktif + whitelist sudah ada (F-23, `08-MONETIZATION.md`). Pembelian lewat RevenueCat di Fase 3 |
 | Bagikan kartu ringkasan | Fase 4 | Tombol di 2.5 disembunyikan di MVP |
 | Strength kaki + core bodyweight 2x/minggu | Fase 2: selesai (F-21) | Wireframe 2.1, 2.2s, 2.3s. Animasi masih placeholder |
 | Strength lanjutan (beban, plyometrik), mobility, library gerakan + animasi Rive | Fase 3 (Premium) | PLANNING 4.7, 8.2; format animasi = D8 |

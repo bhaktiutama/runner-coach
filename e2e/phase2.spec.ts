@@ -3,7 +3,7 @@ import { onboard } from './helpers';
 
 test.use({ actionTimeout: 10_000 });
 
-// Fase 2: strength + core (F-21), bahasa (F-22), gerbang Premium nonaktif (F-23).
+// Fase 2: strength + core (F-21), bahasa (F-22), gerbang Premium aktif (F-23, 08 bagian 7).
 test('strength: kalender, detail 2.2s (animasi frame semua gerakan), timer gerakan, selesai', async ({
   page,
 }) => {
@@ -154,7 +154,8 @@ test('sakelar strength di Profil menambah sesi ke plan', async ({ page }) => {
 test('ganti bahasa ke English lalu kembali', async ({ page }) => {
   await onboard(page);
   await page.getByRole('tab', { name: 'Profil' }).click();
-  await expect(page.getByTestId('row-premium')).toHaveCount(0); // paywall mati
+  // Paywall aktif bawaan; mode uji tanpa login = bukan Premium.
+  await expect(page.getByTestId('row-premium')).toContainText('Coba gratis 14 hari');
   await page.getByTestId('row-language').click();
   await expect(page.getByTestId('screen-language')).toBeVisible();
   await page.getByTestId('lang-en-US').click();
@@ -176,10 +177,34 @@ test('ganti bahasa ke English lalu kembali', async ({ page }) => {
   await expect(page.getByRole('tab', { name: 'Profil' })).toBeVisible();
 });
 
-test('layar Premium (4.4) ada, pembelian belum aktif', async ({ page }) => {
+test('layar Premium (4.4) ada, pembelian belum aktif, bagikan termasuk Premium', async ({ page }) => {
   await onboard(page);
   await page.goto('/premium');
   await expect(page.getByTestId('screen-premium')).toBeVisible();
   await expect(page.getByText('Lari tetap gratis. Strength penuh dengan Premium.')).toBeVisible();
+  await expect(page.getByText(/Instagram Story dan WhatsApp Status/)).toBeVisible();
   await expect(page.getByTestId('premium-buy')).toBeDisabled();
+  await expect(page.getByTestId('premium-active')).toHaveCount(0);
+});
+
+test('paywall: strength minggu 1 terbuka, minggu 3 terkunci -> 4.4', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
+  await onboard(page, { strength: true });
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  await page
+    .getByText(/Strength/)
+    .first()
+    .click();
+  await expect(page.getByTestId('screen-detail').getByTestId('start')).toBeVisible();
+  await expect(page.getByText('Buka dengan Premium')).toHaveCount(0);
+  await page.getByTestId('back').click();
+  await page.getByTestId('next-week').click();
+  await page.getByTestId('next-week').click();
+  await page
+    .getByText(/Strength/)
+    .first()
+    .click();
+  await expect(page.getByTestId('screen-detail')).toBeVisible();
+  await page.getByText('Buka dengan Premium').first().click();
+  await expect(page.getByTestId('screen-premium')).toBeVisible();
 });

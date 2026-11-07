@@ -707,6 +707,7 @@ export const en: Record<MessageKey, string> = {
   'profile.premium': 'Premium',
   'profile.premiumActive': 'Active',
   'profile.premiumTry': 'Try free for 14 days',
+  'profile.premiumWhitelist': 'Active (tester access)',
   'profile.language': 'Language',
   'language.title': 'Language',
   'language.subtitle': 'App text, notifications and timer cues use this language.',
@@ -742,6 +743,8 @@ export const en: Record<MessageKey, string> = {
   'premium.paidTitle': 'Premium',
   'premium.paid.strength': 'Strength + core for the whole plan, with exercise progressions',
   'premium.paid.nextGoal': 'Set up your next goal before the current plan ends',
+  'premium.paid.share':
+    'Share key moments (records, achievements, finished plan) to Instagram Stories and WhatsApp Status',
   'premium.paid.history': 'Full progress history',
   'premium.paid.future': 'Coming next: mobility, weighted strength, exercise animations',
   'premium.yearly': 'Yearly',
@@ -750,6 +753,9 @@ export const en: Record<MessageKey, string> = {
   'premium.monthlySub': 'Cancel any time',
   'premium.cta': 'Try free for {days} days',
   'premium.soon': 'Purchases are not available in this version yet.',
+  'premium.active': 'Premium is active on this account.',
+  'premium.activeWhitelist':
+    'Premium is active: your account is on the tester list, so every feature is unlocked at no cost.',
   'premium.privacy':
     'Subscriptions are handled by the App Store / Google Play. Your training data stays only on this phone; we never receive it.',
   'premium.cancel':

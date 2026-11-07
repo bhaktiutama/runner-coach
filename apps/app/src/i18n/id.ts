@@ -704,6 +704,7 @@ export const id = {
   'profile.premium': 'Premium',
   'profile.premiumActive': 'Aktif',
   'profile.premiumTry': 'Coba gratis 14 hari',
+  'profile.premiumWhitelist': 'Aktif (akses penguji)',
   'profile.language': 'Bahasa',
   'language.title': 'Bahasa',
   'language.subtitle': 'Teks app, notifikasi dan cue timer memakai bahasa ini.',
@@ -739,6 +740,8 @@ export const id = {
   'premium.paidTitle': 'Premium',
   'premium.paid.strength': 'Strength + core sepanjang plan, dengan progresi gerakan',
   'premium.paid.nextGoal': 'Siapkan target berikutnya sebelum plan sekarang selesai',
+  'premium.paid.share':
+    'Bagikan momen penting (rekor, pencapaian, plan tuntas) ke Instagram Story dan WhatsApp Status',
   'premium.paid.history': 'Riwayat progres penuh',
   'premium.paid.future': 'Fitur berikutnya: mobility, strength dengan beban, animasi gerakan',
   'premium.yearly': 'Tahunan',
@@ -747,6 +750,9 @@ export const id = {
   'premium.monthlySub': 'Batalkan kapan saja',
   'premium.cta': 'Coba gratis {days} hari',
   'premium.soon': 'Pembelian belum tersedia di versi ini.',
+  'premium.active': 'Premium aktif di akun ini.',
+  'premium.activeWhitelist':
+    'Premium aktif: akunmu ada di daftar penguji, jadi semua fitur terbuka tanpa bayar.',
   'premium.privacy':
     'Langganan dikelola App Store / Google Play. Data latihanmu tetap hanya di HP ini; kami tidak menerimanya.',
   'premium.cancel':

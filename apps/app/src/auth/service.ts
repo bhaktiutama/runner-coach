@@ -1,6 +1,7 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
+import { clearPremiumCache } from './premium';
 import { isAuthConfigured, supabase } from './supabase';
 
 // Login (F-01). Hanya data Auth yang ke server: email/provider. Tidak ada data plan yang dikirim.
@@ -145,6 +146,7 @@ async function signInWebPopup(provider: 'google' | 'apple'): Promise<AuthResult>
 
 export async function signOut(): Promise<void> {
   if (!isAuthConfigured) return;
+  await clearPremiumCache();
   await supabase().auth.signOut();
 }
 
@@ -154,6 +156,7 @@ export async function deleteAccount(): Promise<{ ok: true } | { ok: false; error
   try {
     const { error } = await supabase().functions.invoke('delete-account', { method: 'POST' });
     if (error) return { ok: false, error: mapError(error) };
+    await clearPremiumCache();
     await supabase().auth.signOut({ scope: 'local' });
     return { ok: true };
   } catch (e) {

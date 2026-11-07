@@ -151,7 +151,7 @@ Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, m
 | 3.3 rentang | Baris total di bawah judul kartu volume. Plan: batang per minggu plan berwarna fase, minggu depan bergaris luar, sumbu "M1..", angka di atas batang disembunyikan jika > 10 batang. Semua: per bulan jika > 16 minggu. Baris "Ringkasan minggu ini" (ikon trofi) di atas kartu volume |
 | 2.3s jarak jauh (U3) | HP datar menghadap ke atas >= 0,8 dtk, atau ketuk angka: bib, nama, angka `timer` ~30% lebar layar, bar progres tebal. Ketuk = kembali |
 | 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
-| 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
+| 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif). Sudah Premium (whitelist, 2026-11-07): kartu harga disembunyikan, footer `InfoBox ok` "Premium aktif"; kartu Premium memuat baris "Bagikan momen penting" (F-29) |
 | Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |
 
 ## 11. Gerak (v0.8, 2026-10-31)

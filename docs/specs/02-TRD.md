@@ -78,6 +78,7 @@ Aturan:
 |------|--------|
 | `auth.users`: id, email (Email/Apple/Google), provider, waktu dibuat/login terakhir | Dibutuhkan untuk login. Dikelola Supabase Auth |
 | Sesi (access + refresh token) | Disimpan di perangkat lewat `expo-secure-store` (web: penyimpanan browser) |
+| Whitelist Premium (secret `PREMIUM_WHITELIST` di Edge Function `entitlement`) | Daftar user id (UUID) yang mendapat Premium tanpa bayar (`08-MONETIZATION.md` bagian 7). Bukan tabel; tidak ada email, nama atau data latihan |
 
 Tidak ada: nama tampilan, target, plan, aktivitas, RPE, data kesehatan, lokasi. Nama dari provider login tidak disalin ke tabel apa pun.
 
@@ -188,6 +189,8 @@ Setiap keputusan engine (plan, latihan, usulan adaptasi) mengembalikan daftar `r
 | `EXPO_PUBLIC_SUPABASE_URL` | URL project (`https://<ref>.supabase.co`) | `.env`, EAS, environment session |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Anon / publishable key (aman di app karena tidak ada tabel yang bisa dibaca) | `.env`, EAS, environment session |
 | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` | Untuk `supabase functions deploy` dari CI/session | GitHub Actions, environment session |
+| `PREMIUM_WHITELIST` | User id Auth (UUID, dipisah koma) yang mendapat Premium tanpa bayar | Secret Edge Function di Supabase (Dashboard > Edge Functions > Secrets). Tidak di repo, app atau EAS |
+| `EXPO_PUBLIC_PAYWALL` | `0` = paywall mati (semua terbuka). Kosong / nilai lain = aktif (bawaan sejak 2026-11-07) | `.env`, EAS, environment session |
 
 Service role key **tidak** perlu diberikan ke repo, CI, atau session; Edge Function sudah mendapatkannya dari Supabase. Session cloud perlu izin jaringan ke `*.supabase.co` dan `api.supabase.com`.
 
