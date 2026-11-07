@@ -32,13 +32,13 @@ USE = {
 
 # Tempat ikon sudah dipakai di app (layar).
 IN_APP = {
-    "easy": "2.1 · 3.1 · 3.3 · 3.4", "long": "2.1 · 3.1 · 3.3 · 3.4", "tempo": "2.1 · 3.1 · 3.3 · 3.4",
-    "interval": "2.1 · 3.1 · 3.3 · 3.4", "recovery": "3.1 · 3.3 · 3.4", "strength": "2.1 · 3.1 · 3.3 · 3.4",
-    "drill": "3.1 · 3.3 (strides)", "rest-day": "3.1", "race-day": "2.1 kartu geser", "next-long": "2.1 kartu geser",
-    "records": "2.1 kartu geser", "streak": "2.1 kartu geser", "feel-easy": "2.4 · 2.6 · 3.4", "feel-ok": "2.4 · 2.6 · 3.4",
-    "feel-hard": "2.4 · 2.6 · 3.4", "get-ready": "2.3s · 2.5", "rest": "2.3s", "sound": "2.3 izin notifikasi",
-    "finish": "2.4 · 2.1 (sisa plan)", "week-done": "3.3", "distance": "2.5", "privacy": "4.5", "empty": "3.3",
-    "injury": "4.3", "badge-5k": "3.3 Pencapaian", "badge-plan": "3.3 Pencapaian", "badge-streak": "3.3 Pencapaian",
+    "easy": "2.1 · 3.1 · 3.3 · 3.4 · 4.1", "long": "2.1 · 3.1 · 3.3 · 3.4", "tempo": "2.1 · 3.1 · 3.3 · 3.4",
+    "interval": "2.1 · 3.1 · 3.3 · 3.4", "recovery": "3.1 · 3.3 · 3.4", "strength": "2.1 · 3.1 · 3.3 · 3.4 · 4.1",
+    "drill": "2.3b timer drill", "rest-day": "3.1", "race-day": "2.1 kartu geser", "next-long": "2.1 kartu geser",
+    "records": "2.1 kartu geser · 3.3 prediksi", "streak": "2.1 kartu geser", "feel-easy": "2.4 · 2.6 · 3.4", "feel-ok": "2.4 · 2.6 · 3.4",
+    "feel-hard": "2.4 · 2.6 · 3.4", "get-ready": "2.3s · 2.5 · 1.4 · 4.1", "rest": "2.3s", "sound": "2.3 izin notifikasi",
+    "finish": "2.4 · 2.1 · 1.3", "week-done": "3.3 · 2.1 Minggu ini", "distance": "2.5 · 2.6 · 1.5 · 4.1", "privacy": "4.5 · 4.1", "empty": "3.3",
+    "injury": "4.3 · 4.1 · tag Ada nyeri", "badge-5k": "3.3 · 2.5", "badge-plan": "3.3 · 2.5", "badge-streak": "3.3 · 2.5",
 }
 
 # Usulan penempatan untuk ikon baru: (layar, isi, prioritas).
@@ -55,20 +55,20 @@ IDEAS = {
     "goal-hm": ("1.2 · 4.1", "Sama", "Sedang"),
     "goal-fm": ("1.2 · 4.1", "Sama", "Sedang"),
     "goal-fitness": ("1.2 · 4.1", "Sama, target Bugar", "Sedang"),
-    "phase-base": ("3.1 · 1.8 · 2.5", "Di samping nama minggu (\"Minggu 3 · Base\") dan legenda fase", "Sedang"),
-    "phase-build": ("3.1 · 1.8 · 2.5", "Sama", "Sedang"),
-    "phase-peak": ("3.1 · 1.8 · 2.5", "Sama", "Sedang"),
-    "phase-taper": ("3.1 · 1.8 · 2.5", "Sama; juga kartu \"minggu taper\" di 2.1", "Sedang"),
+    "phase-base": ("3.1 · 1.8 · 2.5", "Judul minggu 3.1 (\"Minggu 5 · Base\"), legenda fase 1.8, baris fase 2.5", "Sedang"),
+    "phase-build": ("3.1 · 1.8 · 2.5", "Sama dengan Base", "Sedang"),
+    "phase-peak": ("3.1 · 1.8 · 2.5", "Sama dengan Base", "Sedang"),
+    "phase-taper": ("3.1 · 1.8 · 2.5", "Sama dengan Base", "Sedang"),
     "pause-sick": ("4.3", "Chip alasan Sakit (Cedera = ikon cedera)", "Sedang"),
     "pause-busy": ("4.3", "Chip alasan Sibuk / libur", "Sedang"),
     "backup": ("2.1 · 4.5", "Kartu pengingat backup di Hari ini dan bagian Backup di 4.5", "Sedang"),
-    "reminder": ("1.6 · 4.1", "Baris pengingat latihan", "Rendah"),
-    "days": ("1.6 · 4.1", "Judul pilih hari latihan, baris Hari di Profil", "Rendah"),
+    "reminder": ("1.6 · Hari & pengingat", "Baris dan label pengingat latihan", "Rendah"),
+    "days": ("1.6 · 4.1 · Hari & pengingat", "Judul pilih hari, baris Hari & pengingat di Profil", "Rendah"),
     "health": ("1.7", "Kepala layar cek kesehatan", "Rendah"),
-    "language": ("4.8", "Kepala layar Bahasa", "Rendah"),
-    "guide": ("4.7", "Kepala layar Panduan & istilah", "Rendah"),
-    "premium": ("4.4 · 2.1", "Hero Premium dan kartu strength terkunci", "Rendah"),
-    "zones": ("Zona pace · 1.8", "Kepala layar zona dan bagian zona di preview plan", "Rendah"),
+    "language": ("4.8 · 4.1", "Judul layar Bahasa dan barisnya di Profil", "Rendah"),
+    "guide": ("4.7 · 4.1", "Pembuka layar Panduan dan barisnya di Profil", "Rendah"),
+    "premium": ("4.4 · 2.1 · 4.1", "Judul Premium, kartu strength terkunci, baris Premium di Profil", "Rendah"),
+    "zones": ("Zona pace · 4.1", "Judul layar Zona pace dan barisnya di Profil", "Rendah"),
     "heart-rate": ("2.2 · 4.2", "Panduan detak jantung (fase 2)", "Rendah, fase 2"),
     "integration": ("4.2", "Layar integrasi Strava / Health (fase 2)", "Rendah, fase 2"),
 }
@@ -78,8 +78,8 @@ MORE = [
     ("week-done", "2.1 kartu \"Minggu ini\"", "Ikon kecil di kepala kartu lajur minggu"),
     ("records", "3.3 kartu Prediksi", "Ikon di label prediksi race"),
     ("distance", "2.6 Catat lari manual", "Kepala layar, menggantikan ruang kosong di atas form"),
-    ("finish", "1.3 Tanggal race", "Ikon di samping tanggal yang dipilih"),
-    ("badge-5k", "2.5 Ringkasan minggu", "Badge yang baru didapat minggu ini tampil besar di bawah oval 4/4"),
+    ("finish", "1.3 Tanggal race", "Ikon di kiri judul layar"),
+    ("badge-5k", "2.5 Ringkasan minggu", "Badge yang baru didapat minggu ini tampil di bawah judul"),
 ]
 
 
@@ -87,10 +87,13 @@ def ic(name, size=64):
     return si.svg(name, "html", size)
 
 
+PENDING = {"heart-rate", "integration"}
+
+
 def cell(n):
-    new = n in si.NEXT
-    status = (f'<span class="pill new">Baru</span>' if new else f'<span class="pill on">Di app</span>')
-    where = IDEAS[n][0] if new else IN_APP.get(n, "")
+    new = n in PENDING
+    status = '<span class="pill new">Fase 2</span>' if new else '<span class="pill on">Di app</span>'
+    where = IDEAS[n][0] if n in IDEAS else IN_APP.get(n, "")
     return (f'<figure class="cell" data-kind="{"new" if new else "app"}"><div class="ico">{ic(n)}</div>'
             f'<figcaption><b>{html.escape(USE[n])}</b>{status}<small>{html.escape(where)}</small><code>{n}</code></figcaption></figure>')
 
@@ -103,8 +106,8 @@ sections = "".join(
 
 idea_rows = "".join(
     f'<tr><td class="ti">{ic(n, 32)}</td><td><b>{html.escape(USE[n])}</b><br><code>{n}</code></td>'
-    f'<td>{html.escape(w)}</td><td>{html.escape(what)}</td><td><span class="prio p{prio.split(",")[0].lower()}">{html.escape(prio)}</span></td></tr>'
-    for n, (w, what, prio) in sorted(IDEAS.items(), key=lambda kv: ["Tinggi", "Sedang", "Rendah"].index(kv[1][2].split(",")[0]))
+    f'<td>{html.escape(w)}</td><td>{html.escape(what)}</td><td><span class="prio {"prendah" if n in PENDING else "ptinggi"}">{"Menunggu layar fase 2" if n in PENDING else "Dipasang"}</span></td></tr>'
+    for n, (w, what, prio) in sorted(IDEAS.items(), key=lambda kv: kv[0] in PENDING)
 )
 more_rows = "".join(
     f'<tr><td class="ti">{ic(n, 32)}</td><td><code>{n}</code></td><td>{html.escape(w)}</td><td>{html.escape(what)}</td></tr>'
@@ -116,8 +119,8 @@ ladder = "".join(
     for sz in (64, 48, 40, 32)
 )
 
-n_app = len(si.APP)
-n_new = len(si.NEXT)
+n_app = len(si.ALL) - len(PENDING)
+n_new = len(PENDING)
 
 page = f"""<title>Ikon Spot Run Coach</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -203,11 +206,11 @@ td.ti {{ width: 44px; line-height: 0; }}
     <div class="lede">
       <span class="eyebrow">Design system Lintas · ikon spot</span>
       <h1>Ikon spot Run Coach</h1>
-      <p>Ikon berwarna yang memberi wajah pada konten: jenis latihan, kartu Today, rasa setelah latihan, timer, progres dan pencapaian. {n_app} ikon sudah dipakai di app; {n_new} ikon baru di halaman ini masih usulan.</p>
+      <p>Ikon berwarna yang memberi wajah pada konten: jenis latihan, kartu Today, rasa setelah latihan, timer, progres dan pencapaian. {n_app} ikon dipakai di app; {n_new} menunggu layar fase 2. Semua bisa dimatikan lewat Profil, Ikon ilustrasi.</p>
       <div class="stats">
         <div class="stat"><b>{n_app + n_new}</b><span>ikon total</span></div>
         <div class="stat"><b>{n_app}</b><span>di app</span></div>
-        <div class="stat"><b>{n_new}</b><span>baru, usulan</span></div>
+        <div class="stat"><b>{n_new}</b><span>menunggu fase 2</span></div>
         <div class="stat"><b>{len(GROUPS)}</b><span>kelompok fitur</span></div>
       </div>
     </div>
@@ -226,7 +229,7 @@ td.ti {{ width: 44px; line-height: 0; }}
     <div class="seg" role="group" aria-label="Tampilkan">
       <button type="button" data-f="all" aria-pressed="true">Semua {n_app + n_new}</button>
       <button type="button" data-f="app" aria-pressed="false">Di app {n_app}</button>
-      <button type="button" data-f="new" aria-pressed="false">Baru {n_new}</button>
+      <button type="button" data-f="new" aria-pressed="false">Fase 2 {n_new}</button>
     </div>
     <div class="seg" role="group" aria-label="Ukuran ikon">
       <button type="button" data-s="32" aria-pressed="false">32</button>
@@ -243,15 +246,15 @@ td.ti {{ width: 44px; line-height: 0; }}
   </section>
 
   <section class="group" id="ide">
-    <header><h2>Ide penempatan ikon baru</h2><p>Diurutkan dari dampak terbesar. Prioritas tinggi = ganti ikon pinjaman, cukup ubah satu pemetaan tanpa menyentuh tata letak.</p></header>
+    <header><h2>Penempatan 28 ikon tambahan</h2><p>Dipasang 7 Nov 2026. Detak jantung dan integrasi menunggu layarnya ada (fase 2).</p></header>
     <div class="tbl"><table>
-      <thead><tr><th></th><th>Ikon</th><th>Layar</th><th>Di mana</th><th>Prioritas</th></tr></thead>
+      <thead><tr><th></th><th>Ikon</th><th>Layar</th><th>Di mana</th><th>Status</th></tr></thead>
       <tbody>{idea_rows}</tbody>
     </table></div>
   </section>
 
   <section class="group">
-    <header><h2>Tempat lain untuk ikon yang sudah ada</h2><p>Ikon di app yang bisa dipakai di satu layar lagi.</p></header>
+    <header><h2>Tempat tambahan untuk ikon lama</h2><p>Ikon set pertama yang kini juga dipakai di layar lain.</p></header>
     <div class="tbl"><table>
       <thead><tr><th></th><th>Ikon</th><th>Layar</th><th>Di mana</th></tr></thead>
       <tbody>{more_rows}</tbody>
@@ -261,10 +264,10 @@ td.ti {{ width: 44px; line-height: 0; }}
   <section class="notes group">
     <h2>Catatan</h2>
     <ul>
-      <li>File SVG di <code>docs/design-system/assets/spot-icons/</code>, dibuat dari <code>_build/spot_icons.py</code>. Ikon baru belum masuk <code>spot-icons.json</code> app.</li>
+      <li>File SVG di <code>docs/design-system/assets/spot-icons/</code>, dibuat dari <code>_build/spot_icons.py</code>, yang juga menulis <code>packages/ui/src/spot-icons.json</code> untuk app.</li>
       <li>Semua warna dari token Lintas. Mode gelap: ubin pastel tetap, ubin strength memakai <code>zone-strength</code> gelap.</li>
       <li>Angka di ikon target digambar sebagai garis (tanpa font), jadi tampil sama di semua perangkat.</li>
-      <li>Pengaturan dan chip memakai komponen yang sudah ada; ikon spot di sana mengubah gaya baris, jadi perlu keputusan dulu.</li>
+      <li>Ukuran per peran: 40 px judul layar, 32 px baris dan stat, 28 px chip dan label sebaris, 56 px hero dan badge.</li>
     </ul>
   </section>
 </div>

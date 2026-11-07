@@ -42,6 +42,7 @@ import { track } from '@/lib/analytics';
 import { weekDates, weekIndexOf } from '@/lib/planView';
 import { localDateOf } from '@/lib/today';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
+import { SpotInline } from '@/components/Spot';
 
 /** TRD 3.3: 30 hari tanpa backup; sebelum backup pertama dihitung dari mulai plan. */
 function backupDue(m: MetaRow | undefined, planStart: string, d: string) {
@@ -111,11 +112,14 @@ export default function Today() {
       ) : null}
       {backupDue(meta.data, plan.data.start_date, today) ? (
         <Card variant="outline" testID="backup-card" style={styles.backup}>
-          <Text variant="row">
-            {meta.data?.last_backup_at
-              ? t('today.backupTitle', { days: diffDays(localDateOf(meta.data.last_backup_at), today) })
-              : t('today.backupTitleNever')}
-          </Text>
+          <View style={styles.hintRow}>
+            <SpotInline name="backup" />
+            <Text variant="row" style={styles.flexShrink}>
+              {meta.data?.last_backup_at
+                ? t('today.backupTitle', { days: diffDays(localDateOf(meta.data.last_backup_at), today) })
+                : t('today.backupTitleNever')}
+            </Text>
+          </View>
           <Text variant="bodySm" color="textMuted">
             {t('today.backupBody')}
           </Text>
@@ -172,6 +176,7 @@ export default function Today() {
       <View style={styles.week}>
         <View style={styles.weekHead}>
           <View style={styles.hintRow}>
+            <SpotInline name="week-done" />
             <Text variant="controlStrong">{t('today.thisWeek')}</Text>
             <HelpHint topic="volume" term={t('today.thisWeek')} />
           </View>
@@ -260,6 +265,7 @@ const styles = themed(() =>
     // UI/UX 12: gambar track-aerial menggantikan garis kiri recovery.
     rest: { gap: space[2] },
     backup: { gap: space[2] },
+    flexShrink: { flexShrink: 1 },
     backupRow: { flexDirection: 'row', gap: space[3] },
   }),
 );

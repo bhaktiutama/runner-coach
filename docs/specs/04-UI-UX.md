@@ -231,7 +231,7 @@ Ikon berwarna kecil yang memberi wajah pada konten (bukan pengganti ikon garis u
 |---|---|
 | Bentuk | Ubin persegi 48 grid radius 14, garis 1.75 ujung bulat, tinta charcoal (krem di ubin strength), satu aksen oranye. Wajah titik hanya di benda yang punya rasa |
 | Warna | Semua dari token: ubin latihan = skala panas zona (easy peach, long, tempo oranye, interval bara, recovery lavender, strength charcoal); ubin status = mint, sand, coral, lavender. Mode gelap: ubin pastel tetap, ubin strength memakai `dark.zone-strength` |
-| Ukuran (token `size`) | `spot-sm` 32 (baris daftar, label stat, rasa RPE), `spot-md` 40 (kepala kartu, judul 3.4, privasi), `spot-lg` 56 (2.4 selesai), `spot-xl` 96 (cadangan ilustrasi kosong) |
+| Ukuran (token `size`) | `spot-xs` 28 (di dalam chip, label sebaris, legenda fase), `spot-sm` 32 (baris daftar dan Profil, label stat, rasa RPE), `spot-md` 40 (kepala kartu, judul layar, judul 3.4), `spot-lg` 56 (2.4 selesai, badge), `spot-xl` 96 (cadangan ilustrasi kosong). Satu peran = satu ukuran di semua layar |
 | Aksesibilitas | Dekoratif: selalu bersama teks, disembunyikan dari pembaca layar. Wajah RPE tidak menggantikan angka |
 | Tata letak | Struktur, tombol dan kartu tidak berubah. Di baris yang tingginya tetap (kepala kartu geser, bib, label stat, baris RPE), ikon memakai margin negatif sehingga tinggi baris sama dengan mode tanpa ikon |
 | Sakelar | Profil 4.1 "Ikon ilustrasi" (`profile.spot_icons`, bawaan nyala). Mati = tampilan sebelumnya persis (garis warna `LaneMark`, centang 2.4, logo di 4.5) |
@@ -251,5 +251,24 @@ Ikon berwarna kecil yang memberi wajah pada konten (bukan pengganti ikon garis u
 | 4.3 Jeda plan (alasan Cedera) | Ikon cedera `spot-sm` di kiri label "Bagian yang nyeri" | Label saja |
 | 3.3 Pencapaian (F-28) | Kartu 3 badge `spot-lg` sebelum Aktivitas terakhir: 5K pertama, 4 minggu beruntun, plan tuntas; belum didapat = pudar 35% + kemajuan (km, minggu, latihan) | Kartu tidak tampil |
 
-Semua 27 ikon terpakai. Kartu 2.1 dengan gambar header tidak diberi ikon (gambar sudah menjadi visual).
+Set v2 (2026-11-07, 55 ikon): 53 terpakai; `heart-rate` dan `integration` menunggu layar fase 2 (2.2 panduan HR, 4.2 integrasi). Kartu 2.1 dengan gambar header tidak diberi ikon (gambar sudah menjadi visual).
+
+| Layar (v2) | Penempatan | Saat mati |
+|---|---|---|
+| 2.1, 3.1, 3.3, 3.4 | Jenis latihan memakai ikon sendiri: progression, strides, run-walk, core (sebelumnya meminjam easy, drill, recovery, strength). Strength terkunci (paywall) = ikon Premium | Garis warna / bib saja |
+| 2.1 | "Minggu ini" = week-done sebaris judul; kartu pengingat backup = backup | Judul saja |
+| 2.3b timer drill | Ikon drill `spot-sm` di kiri bib | Bib saja |
+| 2.4, 2.6 tag | Chip tag dengan ikon `spot-xs` di kiri: cuaca panas, kurang tidur, kaki pegal, ada nyeri (= cedera) | Chip teks |
+| 3.4 catatan | Deretan ikon `spot-xs` + label (tidak bisa diketuk, bukan chip) | Satu baris teks "Catatan: ..." |
+| 1.2 | Kartu target: ikon `spot-md` di atas judul (centang pindah ke baris ikon); Bugar: ikon di kiri | Kartu tanpa ikon |
+| 1.3-1.7, 2.6, 4.4, 4.8, Zona pace, Hari & pengingat | Ikon `spot-md` di kiri judul layar (`ScreenTitle.leading` / `SpotTitle`). 1.2 dan 4.3 tidak: pilihannya sudah membawa ikon | Judul saja |
+| 4.7 | Ikon panduan `spot-md` di kiri paragraf pembuka | Paragraf saja |
+| 1.6, Hari & pengingat | Pengingat: ikon `spot-xs` (menggantikan lonceng garis) | Lonceng garis / label |
+| 1.8 | Legenda fase memakai ikon fase `spot-xs` (menggantikan kotak warna). 3.1 tetap kotak kecil: legenda di bawah bar 14 px tidak boleh lebih berat dari bar-nya | Kotak warna |
+| 3.1 | Judul minggu "Minggu n · Fase" dengan ikon fase `spot-xs` | "Minggu n" |
+| 2.5 | Baris "Fase X" di bawah judul; "Pencapaian baru" (badge `spot-lg` yang baru didapat minggu ini) | Tidak tampil |
+| 3.3 | Label Prediksi = ikon rekor sebaris | Label saja |
+| 4.1 Profil | Semua baris memakai ikon `spot-sm` (target, zona, hari, strength, timer, cedera, Premium, privasi, panduan, bahasa, satuan, ikon ilustrasi) agar satu grup konsisten | Ikon garis lama / tanpa ikon |
+| 4.3 | Chip alasan: ikon `spot-xs` di atas label (`Chip stack`, label boleh 2 baris di 320 px) | Chip teks |
+| 4.5 | Judul Backup dengan ikon backup sebaris | Judul saja |
 

@@ -26,6 +26,7 @@ import { segmentRows, TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { buildSegments, decodeResults, exerciseSummary } from '@/timer/machine';
 import { ExerciseSummaryList } from '@/components/ExerciseSummaryList';
 import { feelSpot, TYPE_SPOT, useSpotIcons } from '@/lib/spot';
+import { TAG_SPOT } from '@/lib/spotMap';
 import { IMAGES, workoutImage } from '@/lib/imagery';
 
 /** 3.4 Detail aktivitas (F-14). Split per km hanya jika ada data (fase 2); tidak dikarang. */
@@ -222,7 +223,17 @@ export default function ActivityDetail() {
           <Text variant="row">{t(`finish.loadFeel.${x.load_feel}` as MessageKey)}</Text>
         </View>
       ) : null}
-      {x.tags.length ? (
+      {x.tags.length && icons ? (
+        // UI/UX 14: catatan sebagai deretan ikon + label (bukan chip: tidak bisa diketuk).
+        <View style={styles.tagRow} testID="activity-tags">
+          {x.tags.map((tg) => (
+            <View key={tg} style={styles.tagItem}>
+              <SpotIcon name={TAG_SPOT[tg as keyof typeof TAG_SPOT] ?? 'injury'} size={size.spotXs} />
+              <Text variant="controlSm">{t(`tag.${tg}` as MessageKey)}</Text>
+            </View>
+          ))}
+        </View>
+      ) : x.tags.length ? (
         <Text variant="bodySm" color="textMuted">
           {t('activity.tagsValue', { tags: x.tags.map((tg) => t(`tag.${tg}` as MessageKey)).join(', ') })}
         </Text>
@@ -279,6 +290,8 @@ const styles = themed(() =>
       alignItems: 'center',
       gap: space[2] + border.selected - border.hairline / 2,
     },
+    tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] + space[1] / 2 },
+    tagItem: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     rowSpot: { marginVertical: -space[1] - space[1] / 2 },
     grid: { gap: space[2] },
     gridRow: { flexDirection: 'row', gap: space[2] },

@@ -37,6 +37,7 @@ import { weekIndexOf } from '@/lib/planView';
 import { et } from '@/lib/rationale';
 import { approxKm, hasDrill, minutesOf, TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { TYPE_SPOT, useSpotIcons } from '@/lib/spot';
+import { PHASE_SPOT } from '@/lib/spotMap';
 
 /** 3.1 Kalender plan. Tata letak = wireframe Plan (jarak antarblok 16). */
 export default function PlanTab() {
@@ -95,9 +96,27 @@ export default function PlanTab() {
           testID="prev-week"
         />
         <View style={styles.navCenter}>
-          <Text variant="subheading" align="center">
-            {t('plan.weekTitle', { n: idx })}
-          </Text>
+          {icons && wk ? (
+            // UI/UX 14: ikon fase minggu ini di kiri judul; nama fase ikut tertulis agar ikon punya arti.
+            <View style={styles.weekHead}>
+              <View style={styles.weekSpot}>
+                <SpotIcon
+                  name={PHASE_SPOT[wk.phase as keyof typeof PHASE_SPOT] ?? 'phase-base'}
+                  size={size.spotXs}
+                />
+              </View>
+              <Text variant="subheading" align="center" testID="week-phase">
+                {t('plan.weekTitlePhase', {
+                  n: idx,
+                  phase: et(`phase.${wk.phase}` as EngineMessageKey),
+                })}
+              </Text>
+            </View>
+          ) : (
+            <Text variant="subheading" align="center">
+              {t('plan.weekTitle', { n: idx })}
+            </Text>
+          )}
           <Text variant="controlSm" color="textMuted" align="center">
             {t('plan.weekRange', {
               from: formatDayMonth(from),
@@ -206,6 +225,8 @@ export default function PlanTab() {
 
 const styles = themed(() =>
   StyleSheet.create({
+    weekHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[2] },
+    weekSpot: { marginVertical: -space[1] },
     supRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     head: { gap: space[1] },

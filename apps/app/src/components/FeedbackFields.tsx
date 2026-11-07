@@ -7,6 +7,8 @@ import { t, type MessageKey } from '@/i18n/t';
 import { rpeVerdict } from '@/lib/progress';
 import { typeName } from '@/lib/workoutView';
 import { feelSpot, useSpotIcons } from '@/lib/spot';
+import { TAG_SPOT } from '@/lib/spotMap';
+import { useSpot } from '@/components/Spot';
 
 /** Label RPE: "6 / 10: Sesuai target tempo" jika di rentang target tipe latihan, selain itu deskripsi skala. */
 export function rpeLabel(rpe: number, type: WorkoutType | null): string {
@@ -34,6 +36,7 @@ export function FeedbackFields({
   showTags?: boolean;
 }) {
   const icons = useSpotIcons();
+  const spot = useSpot();
   return (
     <>
       <View style={styles.block}>
@@ -66,7 +69,11 @@ export function FeedbackFields({
             {t('tags.title')}
           </Text>
           <TagChips
-            tags={TAGS.map((v) => ({ value: v, label: t(`tag.${v}` as MessageKey) }))}
+            tags={TAGS.map((v) => ({
+              value: v,
+              label: t(`tag.${v}` as MessageKey),
+              leading: spot(TAG_SPOT[v], size.spotXs),
+            }))}
             selected={tags}
             onToggle={(v) => setTags(tags.includes(v) ? tags.filter((x) => x !== v) : [...tags, v])}
           />

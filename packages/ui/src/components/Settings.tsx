@@ -29,10 +29,13 @@ export function SettingsRow({
   first,
   testID,
   sub,
+  leading,
 }: {
   label: string;
   value?: string;
   icon?: IconName;
+  /** Elemen di kiri label (mis. ikon spot), menggantikan `icon`. */
+  leading?: ReactNode;
   danger?: boolean;
   onPress?: () => void;
   right?: ReactNode;
@@ -46,7 +49,7 @@ export function SettingsRow({
   // Teks besar), nilai turun ke baris kedua di bawah label, rata kiri (seperti `sub`).
   const content = (
     <>
-      {icon ? <Icon name={icon} size={space[5]} color={fg} /> : null}
+      {leading ?? (icon ? <Icon name={icon} size={space[5]} color={fg} /> : null)}
       <View style={styles.labelCol}>
         <View style={styles.line}>
           <Text variant="rowRegular" style={[styles.label, { color: fg }]}>

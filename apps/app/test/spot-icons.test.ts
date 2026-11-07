@@ -3,12 +3,19 @@ import spot from '../../../packages/ui/src/spot-icons.json';
 import { migrate } from '../src/db/migrate';
 import { migrations } from '../src/db/migrations';
 import { achievements } from '../src/lib/achievements';
-import { feelSpot, TYPE_SPOT } from '../src/lib/spotMap';
+import { feelSpot, GOAL_SPOT, PAUSE_SPOT, PHASE_SPOT, TAG_SPOT, TYPE_SPOT } from '../src/lib/spotMap';
 import { createNodeDb } from './node-db';
 
 describe('ikon spot (UI/UX 14)', () => {
-  it('setiap jenis latihan punya ikon yang ada di set', () => {
-    for (const name of Object.values(TYPE_SPOT)) expect(spot).toHaveProperty(name);
+  it('setiap jenis latihan, target, fase, tag dan alasan jeda punya ikon yang ada di set', () => {
+    for (const map of [TYPE_SPOT, GOAL_SPOT, PHASE_SPOT, TAG_SPOT, PAUSE_SPOT]) {
+      for (const name of Object.values(map)) expect(spot).toHaveProperty(name);
+    }
+  });
+
+  it('jenis latihan tidak lagi meminjam ikon jenis lain', () => {
+    const own = ['progression', 'strides', 'run_walk', 'core'] as const;
+    expect(own.map((k) => TYPE_SPOT[k])).toEqual(['progression', 'strides', 'run-walk', 'core']);
   });
 
   it('wajah rasa memakai batas RPE yang sama: 1-4 ringan, 5-7 pas, 8-10 berat', () => {

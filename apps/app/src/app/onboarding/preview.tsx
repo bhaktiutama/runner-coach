@@ -34,6 +34,8 @@ import { HelpHint } from '@/components/HelpHint';
 import { t } from '@/i18n/t';
 import { startFresh } from '@/lib/nav';
 import { et } from '@/lib/rationale';
+import { useSpot } from '@/components/Spot';
+import { PHASE_SPOT } from '@/lib/spotMap';
 
 /** 1.8 Preview plan + buat akun (wireframe OB8). Login tidak mengirim data plan. */
 export default function Preview() {
@@ -42,6 +44,7 @@ export default function Preview() {
   const session = useSession();
   const insets = useSafeAreaInsets();
   const [whyOpen, setWhyOpen] = useState(true);
+  const spot = useSpot();
   const flow = useAuthFlow(async (uid) => {
     await complete.mutateAsync(uid);
     startFresh();
@@ -116,7 +119,11 @@ export default function Preview() {
             <PhaseLegend
               items={(['base', 'build', 'peak', 'taper'] as const)
                 .filter((ph) => weeks.some((w) => w.phase === ph))
-                .map((ph) => ({ phase: ph, label: et(`phase.${ph}` as EngineMessageKey) }))}
+                .map((ph) => ({
+                  phase: ph,
+                  label: et(`phase.${ph}` as EngineMessageKey),
+                  leading: spot(PHASE_SPOT[ph], size.spotXs),
+                }))}
             />
           </Card>
           <Card style={styles.card}>

@@ -701,6 +701,7 @@ export const tokens = {
     "hero": 300,
     "heroTall": 480,
     "cardImage": 150,
+    "spotXs": 28,
     "spotSm": 32,
     "spotMd": 40,
     "spotLg": 56,

@@ -12,6 +12,7 @@ import {
   size,
   space,
   SpotIcon,
+  type SpotIconName,
   Text,
   themed,
 } from '@run-coach/ui';
@@ -145,7 +146,7 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
   return (
     <Card style={[styles.card, styles.strength]} testID="strength-card">
       <View style={styles.head}>
-        <TypeHead type={workout.type} on={icons}>
+        <TypeHead type={workout.type} on={icons} spot={locked && !done ? 'premium' : undefined}>
           <BibTag label={typeName(workout.type)} zone="strength" />
         </TypeHead>
         {done ? (
@@ -198,12 +199,24 @@ export function StrengthCard({ workout, onStart, onDetails }: Props) {
 }
 
 /** Ikon spot jenis latihan di kiri bib (UI/UX 14). Margin negatif: tinggi baris tetap setinggi bib. */
-function TypeHead({ type, on, children }: { type: Workout['type']; on: boolean; children: React.ReactNode }) {
+function TypeHead({
+  type,
+  on,
+  spot,
+  children,
+}: {
+  type: Workout['type'];
+  on: boolean;
+  /** Ganti ikon jenis (mis. `premium` untuk sesi strength terkunci). */
+  spot?: SpotIconName;
+  children: React.ReactNode;
+}) {
   if (!on) return <>{children}</>;
+  const name = spot ?? TYPE_SPOT[type];
   return (
     <View style={styles.typeHead}>
       <View style={styles.spot}>
-        <SpotIcon name={TYPE_SPOT[type]} size={size.spotMd} testID={`spot-${TYPE_SPOT[type]}`} />
+        <SpotIcon name={name} size={size.spotMd} testID={`spot-${name}`} />
       </View>
       {children}
     </View>

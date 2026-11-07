@@ -32,6 +32,7 @@ import { startFresh } from '@/lib/nav';
 import { et } from '@/lib/rationale';
 import { localDateOf } from '@/lib/today';
 import { useSpotIcons } from '@/lib/spot';
+import { SpotInline } from '@/components/Spot';
 
 type Sheet = null | 'signout' | 'wipe' | { file: BackupFile; summary: BackupSummary };
 
@@ -101,8 +102,11 @@ export default function Privacy() {
         </Text>
       </View>
       <View style={styles.group}>
-        <View style={styles.row}>
-          <Text variant="subheading">{t('privacy.backup')}</Text>
+        <View style={[styles.row, styles.rowCenter]}>
+          <View style={styles.headRow}>
+            <SpotInline name="backup" />
+            <Text variant="subheading">{t('privacy.backup')}</Text>
+          </View>
           <Text
             variant="label"
             style={{ color: days == null || days >= 30 ? color.status.attentionInk : color.textMuted }}
@@ -275,6 +279,7 @@ export default function Privacy() {
 const styles = themed(() =>
   StyleSheet.create({
     flex: { flex: 1 },
+    headRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     top: { flexDirection: 'row', alignItems: 'center' },
     spacer: { width: space[10] + space[2] },
     hero: { backgroundColor: color.text, borderRadius: radius.lg, padding: space[5], gap: space[3] },
@@ -286,5 +291,6 @@ const styles = themed(() =>
     heroBody: { lineHeight: space[5] + border.hairline, opacity: 0.85 },
     group: { gap: space[2] + border.selected - border.hairline / 2 },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+    rowCenter: { alignItems: 'center' },
   }),
 );

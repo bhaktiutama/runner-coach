@@ -5,6 +5,7 @@ import { Screen } from '@/components/Screen';
 import { useProfile, useUpdateProfile } from '@/data/hooks';
 import { deviceLocale, LOCALE_PREFS, resolveLocale } from '@/i18n/locale';
 import { languageLabel, t } from '@/i18n/t';
+import { SpotTitle } from '@/components/Spot';
 
 /** 4.8 Bahasa (F-22): Ikuti perangkat / Bahasa Indonesia / English. Tersimpan di profile.locale. */
 export default function Language() {
@@ -16,7 +17,7 @@ export default function Language() {
     <Screen testID="screen-language">
       <IconButton icon="back" label={t('common.back')} onPress={back} testID="back" />
       <View style={styles.head}>
-        <Text variant="title">{t('language.title')}</Text>
+        <SpotTitle title={t('language.title')} spot="language" />
         <Text color="textMuted">{t('language.subtitle')}</Text>
       </View>
       <View style={styles.list}>

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { formatNumber } from '../format';
 import { duration, easing, ScaleIn, STAGGER_BAR, useAnimatedNumber, useEntrance } from '../motion';
@@ -316,12 +317,17 @@ function Bar({
 }
 
 /** Legenda fase: kotak 12 px radius 4 + label 12/600, rata kiri-kanan. */
-export function PhaseLegend({ items }: { items: { phase: PhaseKey; label: string }[] }) {
+export function PhaseLegend({
+  items,
+}: {
+  /** `leading` (mis. ikon spot fase) menggantikan kotak warna. */
+  items: { phase: PhaseKey; label: string; leading?: ReactNode }[];
+}) {
   return (
     <View style={styles.legend}>
       {items.map((l) => (
         <View key={l.phase} style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: phaseColor(l.phase) }]} />
+          {l.leading ?? <View style={[styles.legendDot, { backgroundColor: phaseColor(l.phase) }]} />}
           <Text variant="caption" color="textMuted">
             {l.label}
           </Text>

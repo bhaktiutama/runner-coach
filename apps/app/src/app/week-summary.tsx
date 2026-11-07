@@ -9,6 +9,7 @@ import {
   shadow,
   size,
   space,
+  SpotIcon,
   Text,
   TextColorContext,
   TrackRing,
@@ -20,6 +21,9 @@ import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { StatLabel } from '@/components/StatLabel';
+import { useSpotIcons } from '@/lib/spot';
+import { PHASE_SPOT } from '@/lib/spotMap';
+import { achievements } from '@/lib/achievements';
 import {
   useActivePlan,
   useActivities,
@@ -27,6 +31,7 @@ import {
   useProposals,
   useToday,
   useWeekWorkouts,
+  useWorkoutStatuses,
 } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
@@ -63,6 +68,22 @@ export default function WeekSummary() {
   const proposals = useProposals(today, weekStart);
   const ops = usePlanOps();
   const [decided, setDecided] = useState<Record<string, boolean>>({});
+  const icons = useSpotIcons();
+  const statuses = useWorkoutStatuses(plan.data?.id);
+  const allActs = useActivities();
+  const fresh = useMemo(() => {
+    if (!plan.data) return [];
+    const st = statuses.data ?? [];
+    const as = allActs.data ?? [];
+    const now = achievements({ acts: as, statuses: st, today, planEnd: plan.data.end_date });
+    const before = achievements({
+      acts: as.filter((a) => a.date < weekStart),
+      statuses: st.filter((x) => x.date < weekStart),
+      today: addDays(weekStart, -1),
+      planEnd: plan.data.end_date,
+    });
+    return now.filter((a, i) => a.earned && !before[i]!.earned);
+  }, [plan.data, statuses.data, allActs.data, today, weekStart]);
   const stats = useMemo(() => {
     const list = acts.data ?? [];
     const sum = (from: string, to: string, f: 'distance_m' | 'duration_s') =>
@@ -81,6 +102,7 @@ export default function WeekSummary() {
   const g = plan.data.goal;
   const target = ws.reduce((s, w) => s + (w.target_duration_s ?? 0), 0);
   const delta = stats.dist - stats.prev;
+  const phase = params.weeks?.[idx - 1]?.phase;
 
   return (
     <Screen testID="screen-week" hero={{ source: IMAGES.trackOverhead, keepFirst: true }}>
@@ -110,6 +132,17 @@ export default function WeekSummary() {
         <Text variant="title" align="center">
           {done === ws.length ? t('week.title', { n: idx }) : t('week.titlePartial', { n: idx })}
         </Text>
+        {icons && phase ? (
+          <View style={styles.phaseRow} testID="week-phase">
+            <SpotIcon
+              name={PHASE_SPOT[phase as keyof typeof PHASE_SPOT] ?? 'phase-base'}
+              size={size.spotXs}
+            />
+            <Text variant="controlStrong">
+              {t('week.phase', { phase: et(`phase.${phase}` as EngineMessageKey) })}
+            </Text>
+          </View>
+        ) : null}
         {g.race_date ? (
           <Text variant="control" color="textMuted" align="center">
             {t('week.toRace', {
@@ -119,6 +152,24 @@ export default function WeekSummary() {
           </Text>
         ) : null}
       </View>
+      {icons && fresh.length ? (
+        // F-28: badge yang baru didapat minggu ini (belum didapat sebelum Senin).
+        <View style={styles.fresh} testID="week-badges">
+          <Text variant="label" color="textMuted" align="center">
+            {t('week.newBadges')}
+          </Text>
+          <View style={styles.freshRow}>
+            {fresh.map((a) => (
+              <View key={a.id} style={styles.freshItem}>
+                <SpotIcon name={a.spot} size={size.spotLg} />
+                <Text variant="controlSmStrong" align="center">
+                  {t(`achv.${a.id}` as MessageKey)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      ) : null}
       <View style={styles.pair}>
         <View style={styles.stat}>
           <StatLabel label={t('week.distance')} spot="distance" />
@@ -204,6 +255,10 @@ const styles = themed(() =>
   StyleSheet.create({
     center: { alignItems: 'center', gap: space[3] },
     pair: { flexDirection: 'row', gap: space[2] },
+    phaseRow: { flexDirection: 'row', alignItems: 'center', gap: space[2], marginTop: -space[1] },
+    fresh: { gap: space[2] },
+    freshRow: { flexDirection: 'row', justifyContent: 'center', gap: space[6] },
+    freshItem: { alignItems: 'center', gap: space[1], maxWidth: space[10] * 3 },
     stat: {
       flex: 1,
       backgroundColor: color.surface,

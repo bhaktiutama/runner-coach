@@ -468,6 +468,6 @@ if __name__ == "__main__":
     import json
 
     # Untuk app: isi SVG dengan placeholder $warna$, nama berurutan agar diff stabil.
-    data = {n: inner_markup(n, "app") for n in sorted(APP)}
+    data = {n: inner_markup(n, "app") for n in sorted(ALL)}
     APP_JSON.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
     print(len(ALL), "ikon ->", OUT, "dan", APP_JSON)

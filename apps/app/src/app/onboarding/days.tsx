@@ -9,6 +9,7 @@ import {
   radius,
   ring,
   SegmentedControl,
+  size,
   space,
   Text,
   weekdayShortName,
@@ -22,6 +23,7 @@ import { useOnboarding } from '@/data/useOnboarding';
 import { t } from '@/i18n/t';
 import { notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
+import { useSpot } from '@/components/Spot';
 
 const TIMES = ['05:00', '05:30', '06:00', '06:30', '17:00', '18:00'];
 
@@ -30,6 +32,7 @@ export default function DaysStep() {
   const o = useOnboarding('days');
   const d = o.draft;
   const days = (d.availableDays ?? []) as Weekday[];
+  const spot = useSpot();
   const longDay = d.longRunDay ?? 6;
   const [picking, setPicking] = useState(false);
   const [explained, setExplained] = useState(false);
@@ -130,7 +133,7 @@ export default function DaysStep() {
         testID="reminder"
       >
         <View style={styles.reminderLabel}>
-          <Icon name="bell" size={space[5]} />
+          {spot('reminder', size.spotXs) ?? <Icon name="bell" size={space[5]} />}
           <Text variant="row">{t('days.reminder')}</Text>
         </View>
         <Text variant="numberSm">{d.reminderTime ?? t('days.reminderOff')}</Text>

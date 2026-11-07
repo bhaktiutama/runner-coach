@@ -33,12 +33,14 @@ import { averagePace, parseDuration, parseKm } from '@/lib/progress';
 import { isoAtLocal } from '@/lib/today';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { IMAGES } from '@/lib/imagery';
+import { useSpot } from '@/components/Spot';
 
 /** 2.6 Catat lari manual (F-15, FL-3). Tata letak = wireframe LogManual. */
 export default function LogRun() {
   const today = useToday();
   const tz = useProfile().data?.timezone ?? 'Asia/Jakarta';
   const [date, setDate] = useState(today);
+  const spot = useSpot();
   const [picking, setPicking] = useState(false);
   const [ym, setYm] = useState({ y: Number(today.slice(0, 4)), m: Number(today.slice(5, 7)) - 1 });
   const match = useMatchWorkout(date);
@@ -94,7 +96,11 @@ export default function LogRun() {
         </Text>
         <View style={styles.spacer} />
       </View>
-      <ScreenTitle title={t('log.title')} subtitle={t('log.subtitle')} />
+      <ScreenTitle
+        title={t('log.title')}
+        subtitle={t('log.subtitle')}
+        leading={spot('distance', size.spotMd)}
+      />
       <View style={styles.block}>
         <Text variant="label" color="textMuted">
           {t('log.date')}

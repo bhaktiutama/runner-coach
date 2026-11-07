@@ -51,6 +51,7 @@ export function ChoiceCard({
   onPress,
   testID,
   wide,
+  leading,
 }: {
   title: string;
   subtitle?: string;
@@ -58,6 +59,8 @@ export function ChoiceCard({
   onPress: () => void;
   testID?: string;
   wide?: boolean;
+  /** Ikon di kiri (wide) atau di atas judul (grid), mis. ikon spot. */
+  leading?: ReactNode;
 }) {
   return (
     <Pressable
@@ -75,6 +78,7 @@ export function ChoiceCard({
     >
       {wide ? (
         <>
+          {leading}
           <View style={styles.flex}>
             <Text variant="row">{title}</Text>
             {subtitle ? (
@@ -87,9 +91,15 @@ export function ChoiceCard({
         </>
       ) : (
         <>
+          {leading ? (
+            <View style={styles.choiceHead}>
+              {leading}
+              {selected ? <Check /> : null}
+            </View>
+          ) : null}
           <View style={styles.choiceHead}>
             <Text variant="title">{title}</Text>
-            {selected ? <Check /> : null}
+            {selected && !leading ? <Check /> : null}
           </View>
           {subtitle ? (
             <Text variant="control" color="textMuted" style={styles.choiceSub}>
@@ -119,6 +129,8 @@ export function Chip({
   disabled,
   fill,
   size: chipSize = 'option',
+  leading,
+  stack,
 }: {
   label: string;
   selected?: boolean;
@@ -126,6 +138,10 @@ export function Chip({
   testID?: string;
   disabled?: boolean;
   fill?: boolean;
+  /** Ikon kecil di kiri label (mis. ikon spot `spot-xs`). */
+  leading?: ReactNode;
+  /** Ikon di atas label (chip `fill` sempit: label panjang tidak terpotong). */
+  stack?: boolean;
   /** option 44, quick 40, large 48 (4.3, teks tebal). */
   size?: 'option' | 'quick' | 'large';
 }) {
@@ -142,13 +158,16 @@ export function Chip({
         styles.chip,
         { minHeight: h },
         fill && styles.chipFill,
+        leading ? (stack ? styles.chipStack : styles.chipLead) : null,
         selected ? styles.chipSelected : styles.chipIdle,
         { opacity: disabled ? 0.4 : pressed ? 0.8 : 1 },
       ]}
     >
+      {leading}
       <Text
         variant={selected || chipSize === 'large' ? 'controlStrong' : 'control'}
-        numberOfLines={1}
+        numberOfLines={stack ? 2 : 1}
+        align={stack ? 'center' : undefined}
         style={{ color: selected ? color.bg : color.text }}
       >
         {label}
@@ -455,16 +474,33 @@ export function ScreenTitle({
   title,
   subtitle,
   large,
+  leading,
 }: {
   title: string;
   subtitle?: string;
   large?: boolean;
+  /** Ikon di kiri judul (mis. ikon spot); subjudul tetap selebar layar. */
+  leading?: ReactNode;
 }) {
+  const head = (
+    <Text
+      variant={large ? 'display' : 'title'}
+      accessibilityRole="header"
+      style={leading ? styles.flex : null}
+    >
+      {title}
+    </Text>
+  );
   return (
     <View style={{ gap: large ? space[3] : space[2] }}>
-      <Text variant={large ? 'display' : 'title'} accessibilityRole="header">
-        {title}
-      </Text>
+      {leading ? (
+        <View style={styles.titleLead}>
+          {leading}
+          {head}
+        </View>
+      ) : (
+        head
+      )}
       {subtitle ? (
         <Text variant="subtitle" color="textMuted">
           {subtitle}
@@ -498,6 +534,7 @@ const styles = themed(() =>
       gap: space[1] + space[1] / 2,
     },
     choiceWide: {
+      gap: space[3],
       minHeight: size.buttonPrimary,
       paddingHorizontal: space[5],
       paddingVertical: space[3],
@@ -528,7 +565,11 @@ const styles = themed(() =>
       alignItems: 'center',
       justifyContent: 'center',
     },
+    titleLead: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     chipFill: { flex: 1, paddingHorizontal: space[1] },
+    // Dengan ikon di kiri: baris, ikon dekat tepi kiri (ubinnya sudah memberi ruang visual).
+    chipLead: { flexDirection: 'row', gap: space[2], paddingLeft: space[2] },
+    chipStack: { gap: space[1], paddingVertical: space[2], borderRadius: radius.lg },
     chipIdle: { backgroundColor: color.surface, ...ring(border.control, color.line) },
     chipSelected: { backgroundColor: color.text },
     seg: {

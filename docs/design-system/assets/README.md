@@ -15,7 +15,7 @@ Logo, ikon app dan set ikon untuk Run Coach. Semua warna dari `../tokens.json`.
 | `app-icon/` | `splash-icon.png` (transparan, mark oranye) | `expo-splash-screen`, `backgroundColor: "#F5F4F2"` |
 | `app-icon/` | `favicon.png` 48 px, `favicon.svg` | `web.favicon` |
 | `icons/` | 40 ikon garis 24 px + `icons.json` | Semua UI; lihat daftar di bawah |
-| `spot-icons/` | 27 ikon spot berwarna 48 grid (`index.html` set, `wireframe.html` penempatan) | Komponen SpotIcon (`packages/ui/src/spot-icons.json`), UI/UX 14 |
+| `spot-icons/` | 55 ikon spot berwarna 48 grid (`index.html` set, `wireframe.html` penempatan) | Komponen SpotIcon (`packages/ui/src/spot-icons.json`), UI/UX 14 |
 | `spot-icons-painted-draft/` | Alternatif gaya lukisan, tidak dipakai | Arsip eksplorasi |
 | `_build/` | `build.py`, `icons.py`, `render.js` | Membuat ulang semua file di atas |
 

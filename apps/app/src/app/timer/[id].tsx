@@ -533,6 +533,7 @@ function DrillView({
   far: boolean;
   onToggleFar: () => void;
 }) {
+  const icons = useSpotIcons();
   const pos = tm.position!;
   const seg = pos.segment;
   if (!seg || seg.kind !== 'drill') return null;
@@ -579,7 +580,17 @@ function DrillView({
   return (
     <View style={styles.drill} testID="timer-drill">
       <View style={styles.drillHead}>
-        <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+        {icons ? (
+          // UI/UX 14: ikon drill di kiri bib, tinggi baris tetap setinggi bib.
+          <View style={styles.bibSpotRow}>
+            <View style={styles.bibSpot}>
+              <SpotIcon name="drill" size={size.spotSm} testID="spot-drill" />
+            </View>
+            <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+          </View>
+        ) : (
+          <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+        )}
         <Text variant="drillName" color="darkText">
           {et(`drill.${seg.exercise_id}.name` as EngineMessageKey)}
         </Text>

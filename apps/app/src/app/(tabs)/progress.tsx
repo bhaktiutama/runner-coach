@@ -57,6 +57,7 @@ import { weekIndexOf } from '@/lib/planView';
 import { et } from '@/lib/rationale';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { IMAGES } from '@/lib/imagery';
+import { SpotInline } from '@/components/Spot';
 
 /** 3.3 Progres (F-07). Tata letak = wireframe Progress. */
 export default function ProgressTab() {
@@ -297,6 +298,7 @@ export default function ProgressTab() {
           {pred && g.distance !== 'fitness' ? (
             <>
               <View style={styles.hintRow}>
+                <SpotInline name="records" />
                 <Text variant="label" color="textMuted" style={styles.shrink}>
                   {t('progress.prediction', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
                 </Text>
