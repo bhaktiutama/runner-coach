@@ -177,12 +177,11 @@ test('ganti bahasa ke English lalu kembali', async ({ page }) => {
   await expect(page.getByRole('tab', { name: 'Profil' })).toBeVisible();
 });
 
-test('layar Premium (4.4) ada, pembelian belum aktif, bagikan termasuk Premium', async ({ page }) => {
+test('layar Premium (4.4) ada, pembelian belum aktif', async ({ page }) => {
   await onboard(page);
   await page.goto('/premium');
   await expect(page.getByTestId('screen-premium')).toBeVisible();
   await expect(page.getByText('Lari tetap gratis. Strength penuh dengan Premium.')).toBeVisible();
-  await expect(page.getByText(/Instagram Story dan WhatsApp Status/)).toBeVisible();
   await expect(page.getByTestId('premium-buy')).toBeDisabled();
   await expect(page.getByTestId('premium-active')).toHaveCount(0);
 });

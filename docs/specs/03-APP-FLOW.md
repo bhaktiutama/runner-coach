@@ -35,7 +35,7 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 4.2 | Integrasi | Fase 2 (ditunda: butuh kredensial Strava + HP fisik) |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
 | 4.4 | Premium (F-23) | Layar tanpa pembelian (tombol nonaktif); sudah Premium (whitelist): "Premium aktif" tanpa harga. Kembali -> layar asal. Pembelian Fase 3 (`08-MONETIZATION.md`) |
-| 2.7 | Bagikan momen (F-29, plan) | Pratinjau kartu 9:16 -> lembar bagikan sistem. Belum dibuat (`10-SHARE.md`) |
+| 2.7 | Bagikan (F-29) | Dari 3.4 (ikon bagikan), 2.5 ("Bagikan kartu ringkasan"), 3.1 (ikon bagikan di judul), 3.3 (badge yang didapat). Pratinjau kartu 9:16, sakelar pace/nama, "Bagikan" -> lembar bagikan sistem, "Unduh gambar" (web). Kembali -> layar asal |
 | 4.8 | Bahasa (F-22) | Ikuti perangkat / Bahasa Indonesia / English; pilihan langsung berlaku (FL-13). Kembali -> 4.1 |
 | 4.7 | Panduan & istilah (F-20) | Dari 4.1 "Panduan & istilah" atau tombol (i) di layar terkait -> 4.7 terbuka di topik itu. Kembali -> layar asal |
 | 4.5 | Data & privasi | Backup ke file; Pulihkan dari file; sakelar data anonim; Keluar; Hapus akun -> 4.6 |
@@ -147,11 +147,11 @@ Keluar di tengah onboarding: jawaban tetap tersimpan lokal, lanjut dari langkah 
 
 ### FL-14 Gerbang Premium (F-23)
 
-Paywall aktif (bawaan sejak 2026-11-07): sesi strength/core minggu ke-3 dst. menampilkan "Buka dengan Premium" di 2.1 dan 2.2s -> 4.4; bagikan (F-29) juga ke 4.4; event `paywall_viewed`. Lari tidak pernah terkunci. Status Premium: setelah login app memanggil Edge Function `entitlement`; user id di whitelist = Premium (4.1 "Aktif (akses penguji)", 4.4 "Premium aktif" tanpa harga). Offline: cache status terakhir akun yang sama. Paywall mati (`EXPO_PUBLIC_PAYWALL=0`): tidak ada yang terkunci, baris Premium di 4.1 tersembunyi.
+Paywall aktif (bawaan sejak 2026-11-07): sesi strength/core minggu ke-3 dst. menampilkan "Buka dengan Premium" di 2.1 dan 2.2s -> 4.4; event `paywall_viewed`. Lari tidak pernah terkunci. Status Premium: setelah login app memanggil Edge Function `entitlement`; user id di whitelist = Premium (4.1 "Aktif (akses penguji)", 4.4 "Premium aktif" tanpa harga). Offline: cache status terakhir akun yang sama. Paywall mati (`EXPO_PUBLIC_PAYWALL=0`): tidak ada yang terkunci, baris Premium di 4.1 tersembunyi.
 
-### FL-15 Bagikan momen (F-29, plan)
+### FL-15 Bagikan (F-29)
 
-Belum diimplementasi. Alur, momen dan kriteria di `10-SHARE.md` bagian 2, 5 dan 8. Layar baru 2.7 (pratinjau kartu) menunggu wireframe (SH-0).
+3.4 / 2.5 / 3.1 / badge 3.3 -> 2.7 pratinjau -> "Bagikan" -> lembar bagikan sistem (Instagram Story, WhatsApp Status, simpan gambar). Batal = tetap di 2.7. Web tanpa Web Share API: gambar diunduh + pesan "Gambar diunduh". Gratis, tanpa login whitelist, offline bisa. Detail `10-SHARE.md` bagian 2 dan 5.
 
 ### FL-11 Pengingat dan izin notifikasi (F-12, F-05)
 

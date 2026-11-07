@@ -15,6 +15,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./format": "./src/format.ts",
-    "./tokens": "./src/tokens.ts"
+    "./tokens": "./src/tokens.ts",
+    "./spot": "./src/spot-svg.ts"
   }
 }

@@ -1,6 +1,7 @@
 import { isSupportType, type WorkoutType } from '@run-coach/training-engine';
 
-// Gerbang Premium (F-23, docs/specs/08-MONETIZATION.md). Sejak 2026-11-07 paywall AKTIF secara bawaan;
+// Gerbang Premium (F-23, docs/specs/08-MONETIZATION.md). Bagikan (F-29) gratis untuk semua, tidak lewat sini.
+// Sejak 2026-11-07 paywall AKTIF secara bawaan;
 // EXPO_PUBLIC_PAYWALL=0 mematikannya (semua terbuka). Status Premium dari Edge Function `entitlement`
 // (whitelist user id, bagian 7); pembelian (RevenueCat) menyusul di Fase 3. Fungsi di file ini murni
 // supaya bisa diuji; hook ada di `useEntitlement.ts`.
@@ -37,11 +38,6 @@ export function entitlementFor(
 /** Latihan terkunci: hanya strength/core setelah minggu gratis, dan hanya jika paywall aktif. */
 export function isLocked(w: { type: WorkoutType; week_index: number }, e: Entitlement): boolean {
   return e.paywall && !e.premium && isSupportType(w.type) && w.week_index > e.freeStrengthWeeks;
-}
-
-/** Bagikan momen ke media sosial (F-29, 10-SHARE) = Premium penuh. Paywall mati = semua boleh. */
-export function canShare(e: Entitlement): boolean {
-  return !e.paywall || e.premium;
 }
 
 /** Cache status Premium terakhir di perangkat (08 bagian 4), terikat ke satu akun. */

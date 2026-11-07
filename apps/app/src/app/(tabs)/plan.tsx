@@ -70,6 +70,13 @@ export default function PlanTab() {
               : t('plan.title', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
           </Text>
           <HelpHint topic="fase" term={t('help.phases')} />
+          <View style={styles.flexFill} />
+          <IconButton
+            icon="share"
+            label={t('share.open.plan')}
+            onPress={() => router.push({ pathname: '/share', params: { kind: 'plan' } })}
+            testID="share-open"
+          />
         </View>
         <Text variant="control" color="textMuted">
           {g.race_date
@@ -249,6 +256,7 @@ const styles = themed(() =>
     supRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     titleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space[2] },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    flexFill: { flex: 1 },
     head: { gap: space[1] },
     nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[2] },
     navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },

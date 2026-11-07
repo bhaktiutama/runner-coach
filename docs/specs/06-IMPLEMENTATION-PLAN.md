@@ -49,7 +49,7 @@ Prasyarat di luar kode:
 |------|-----------------|-----------------|
 | 2. Integrasi & adaptif | 4-6 minggu | Layar 4.2; Strava (via `strava-token`, data ditarik perangkat), HealthKit, Health Connect; panduan detak jantung di 2.2; strength + core bodyweight, daftar gerakan statis |
 | 3. Monetisasi | 3-4 minggu | Layar 4.4, RevenueCat (entitlement, tanpa tabel di server kita), paywall via feature flag, strength lanjutan + mobility |
-| 4. Growth | Berkelanjutan | Kartu share (2.5), race lokal, export workout ke jam |
+| 4. Growth | Berkelanjutan | Race lokal, export workout ke jam (kartu share selesai di fase 2, F-29) |
 
 Setiap fase lanjut dipecah jadi milestone dengan format tabel yang sama sebelum dikerjakan.
 
@@ -66,8 +66,8 @@ Keputusan pemilik produk 2026-10-30: integrasi Strava/Health ditunda (butuh kred
 | P2-5 | English: katalog app/engine/Panduan, 4.8, locale format | Kunci + placeholder EN = ID, resolve locale perangkat, ganti bahasa | E2E ganti bahasa | Selesai; terjemahan perlu dibaca penutur asli |
 | P2-6 | Gerbang Premium (flag mati), 4.4 tanpa pembelian, `paywall_viewed` | `isLocked` flag mati/nyala | E2E 4.4 | Selesai; pembelian = Fase 3 |
 | P2-7 | Integrasi Strava, HealthKit, Health Connect, layar 4.2, panduan HR di 2.2 | - | - | Ditunda |
-| P2-8 | Paywall aktif bawaan (strength + bagikan), Edge Function `entitlement` dengan whitelist user id (08 bagian 7), cache status di perangkat, 4.4/4.1 status aktif | Unit: handler (whitelist, 401, CORS), `resolvePremium`, `canShare`, `paywallEnabled`. E2E: strength minggu 3 terkunci -> 4.4 | `pnpm test`, E2E `phase2.spec.ts` | Selesai di kode 2026-11-07; deploy fungsi + isi secret = pemilik |
-| P2-9 | Bagikan momen ke Instagram Story / WhatsApp Status (F-29), milestone SH-0..SH-6 | `10-SHARE.md` bagian 7-8 | Lihat 10-SHARE | Plan; SH-1 (gerbang) selesai |
+| P2-8 | Paywall aktif bawaan (strength), Edge Function `entitlement` dengan whitelist user id (08 bagian 7), cache status di perangkat, 4.4/4.1 status aktif | Unit: handler (whitelist, 401, CORS), `resolvePremium`, `paywallEnabled`. E2E: strength minggu 3 terkunci -> 4.4 | `pnpm test`, E2E `phase2.spec.ts` | Selesai di kode 2026-11-07; deploy fungsi + isi secret = pemilik |
+| P2-9 | Bagikan (F-29): kartu latihan selesai, ringkasan minggu, plan, pencapaian; layar 2.7; gratis | Unit `share-card.test.ts` (isi kartu, tanpa data kesehatan, sorotan, EN). E2E `share.spec.ts` (PNG 1080 x 1920, 0 request ke luar, tanpa Premium) | `pnpm test`, E2E | Selesai di web 2026-11-07; native perlu HP (SH-5) |
 
 ## 4. Perintah standar
 

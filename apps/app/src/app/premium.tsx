@@ -33,7 +33,6 @@ const FREE: MessageKey[] = [
 const PAID: MessageKey[] = [
   'premium.paid.strength',
   'premium.paid.nextGoal',
-  'premium.paid.share',
   'premium.paid.history',
   'premium.paid.future',
 ];

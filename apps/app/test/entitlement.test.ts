@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  canShare,
   entitlementFor,
   isLocked,
   paywallEnabled,
@@ -9,7 +8,7 @@ import {
   type PremiumCache,
 } from '../src/lib/entitlement';
 
-// Gerbang Premium aktif + whitelist (08-MONETIZATION bagian 7), bagikan = Premium (10-SHARE).
+// Gerbang Premium aktif + whitelist (08-MONETIZATION bagian 7). Bagikan (F-29) gratis, tidak digerbang.
 const U = 'user-1';
 const cache = (p: Partial<PremiumCache> = {}): PremiumCache => ({
   user_id: U,
@@ -24,14 +23,6 @@ describe('paywallEnabled', () => {
     expect(paywallEnabled(undefined)).toBe(true);
     expect(paywallEnabled('1')).toBe(true);
     expect(paywallEnabled('0')).toBe(false);
-  });
-});
-
-describe('canShare (F-29)', () => {
-  it('paywall mati: semua boleh; paywall nyala: hanya Premium', () => {
-    expect(canShare(entitlementFor(false, false))).toBe(true);
-    expect(canShare(entitlementFor(true, false))).toBe(false);
-    expect(canShare(entitlementFor(true, true, 'whitelist'))).toBe(true);
   });
 });
 
