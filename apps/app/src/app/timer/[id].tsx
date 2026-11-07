@@ -11,6 +11,7 @@ import {
   radius,
   size,
   space,
+  SpotIcon,
   Text,
   ToneBar,
   TrackRing,
@@ -28,6 +29,7 @@ import { useProfile, useWorkout } from '@/data/hooks';
 import { t } from '@/i18n/t';
 import { getPermission, notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
+import { useSpotIcons } from '@/lib/spot';
 import { intensitySegments } from '@/lib/workoutView';
 import { countdownTick, holdHaptic, requestWakeLock } from '@/timer/cues';
 import { exerciseCue, exerciseName, FEEL_KEY, segmentName } from '@/timer/labels';
@@ -52,6 +54,7 @@ export default function TimerScreen() {
   const [confirm, setConfirm] = useState(false);
   const [locked, setLocked] = useState(false);
   const [askPerm, setAskPerm] = useState<boolean | null>(null);
+  const icons = useSpotIcons();
   // U3: HP datar menghadap ke atas -> tampilan jarak jauh. Ketuk angka = paksa nyala/mati sampai posisi HP berubah.
   const flat = useFlat(tm.state?.status === 'running' || tm.state?.status === 'paused');
   const [farOverride, setFarOverride] = useState<boolean | null>(null);
@@ -151,7 +154,11 @@ export default function TimerScreen() {
   if (askPerm) {
     return (
       <View style={[styles.root, bg, styles.centerCol]} testID="timer-perm">
-        <Icon name="bell" color={dark.text} size={size.touchMin} />
+        {icons ? (
+          <SpotIcon name="sound" size={size.spotLg} testID="spot-sound" />
+        ) : (
+          <Icon name="bell" color={dark.text} size={size.touchMin} />
+        )}
         <Text variant="title" color="darkText" align="center">
           {t('timer.permTitle')}
         </Text>
@@ -526,6 +533,7 @@ function DrillView({
   far: boolean;
   onToggleFar: () => void;
 }) {
+  const icons = useSpotIcons();
   const pos = tm.position!;
   const seg = pos.segment;
   if (!seg || seg.kind !== 'drill') return null;
@@ -572,7 +580,17 @@ function DrillView({
   return (
     <View style={styles.drill} testID="timer-drill">
       <View style={styles.drillHead}>
-        <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+        {icons ? (
+          // UI/UX 14: ikon drill di kiri bib, tinggi baris tetap setinggi bib.
+          <View style={styles.bibSpotRow}>
+            <View style={styles.bibSpot}>
+              <SpotIcon name="drill" size={size.spotSm} testID="spot-drill" />
+            </View>
+            <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+          </View>
+        ) : (
+          <BibTag label={t('timer.drillBib', { n: exIdx, total: exercises.length })} zone="easy" />
+        )}
         <Text variant="drillName" color="darkText">
           {et(`drill.${seg.exercise_id}.name` as EngineMessageKey)}
         </Text>
@@ -650,6 +668,7 @@ function StrengthView({
   const { width, height } = useWindowDimensions();
   // Layar pendek (mis. iPhone SE): animasi dan cincin mengecil agar angka waktu tetap terlihat tanpa gulir.
   const short = height < 700;
+  const icons = useSpotIcons();
   if (!seg || (seg.kind !== 'exercise' && seg.kind !== 'rest')) return null;
   const groups = [...new Set(tm.segs.filter((s) => s.kind === 'exercise').map((s) => s.group))];
   const exIdx = groups.indexOf(seg.group) + 1;
@@ -702,7 +721,17 @@ function StrengthView({
           trackColor={dark.surfaceSunken}
         >
           <View style={styles.ringCol}>
-            <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
+            {icons ? (
+              // UI/UX 14: ikon istirahat / siap-siap di kiri bib; tinggi baris tetap setinggi bib.
+              <View style={styles.bibSpotRow}>
+                <View style={styles.bibSpot}>
+                  <SpotIcon name={seg.prep ? 'get-ready' : 'rest'} size={size.spotSm} testID="spot-rest" />
+                </View>
+                <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
+              </View>
+            ) : (
+              <BibTag label={seg.prep ? t('timer.prepBib') : t('timer.restBib')} zone="recovery" />
+            )}
             {paused ? (
               <Text variant="statusCaps" style={{ color: color.status.attention }}>
                 {t('timer.paused')}
@@ -1193,6 +1222,8 @@ const styles = themed(() =>
     tnum: { fontVariant: ['tabular-nums'] },
     segFill: { height: '100%', borderRadius: radius.stadium },
     clip: { overflow: 'hidden' },
+    bibSpotRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    bibSpot: { marginVertical: -space[1] },
     nextCard: {
       flexDirection: 'row',
       alignItems: 'center',

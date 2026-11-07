@@ -1,6 +1,6 @@
 # 05. Data Schema (lokal) + Backend
 
-Status: Draft v0.6 (2026-11-05, migrasi v8 kartu utama 2.1) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
+Status: Draft v0.7 (2026-11-06, migrasi v9 sakelar ikon spot) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
 
 ## Ringkasan
 
@@ -63,6 +63,7 @@ Check dan enum di bawah ditulis sebagai `CHECK` SQLite dan divalidasi zod di app
 | strength_opt_in | boolean default false | F-21: plan memuat strength + core (1.6, 4.1). Sejak v6 |
 | timer_auto | boolean default true | Timer maju otomatis: set repetisi dan drill jarak memakai estimasi waktu (4.1, `09-VOICE.md` bagian 6). Sejak v7 |
 | today_card | text default 'countdown' | Kartu 2.1 yang tampil pertama: `countdown`, `long_run`, `records`, `streak` ("Jadikan utama"). Sejak v8 |
+| spot_icons | boolean default true | Ikon spot berwarna tampil (UI/UX 14); sakelar "Ikon ilustrasi" di 4.1. Sejak v9 |
 
 ### goals
 

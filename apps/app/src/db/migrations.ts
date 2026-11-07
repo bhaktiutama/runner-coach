@@ -202,6 +202,13 @@ ALTER TABLE profile ADD COLUMN timer_auto INTEGER NOT NULL DEFAULT 1 CHECK (time
 ALTER TABLE profile ADD COLUMN today_card TEXT NOT NULL DEFAULT 'countdown' CHECK (today_card IN ('countdown', 'long_run', 'records', 'streak'));
 `,
   },
+  {
+    // Ikon spot (UI/UX 14): 1 = tampil, 0 = tampilan tanpa ikon seperti sebelumnya. Sakelar di Profil 4.1.
+    version: 9,
+    sql: `
+ALTER TABLE profile ADD COLUMN spot_icons INTEGER NOT NULL DEFAULT 1 CHECK (spot_icons IN (0, 1));
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = migrations[migrations.length - 1]!.version;

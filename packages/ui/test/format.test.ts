@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatDate,
+  formatDayRange,
   formatDistance,
   formatDuration,
   formatPace,
@@ -66,5 +67,13 @@ describe('jam timer', () => {
   it('menit 2 digit', () => {
     expect(formatClock(522)).toBe('08:42');
     expect(formatClock(3725)).toBe('1:02:05');
+  });
+});
+
+describe('formatDayRange (3.1 judul minggu)', () => {
+  it('bulan sama digabung, beda bulan ditulis lengkap', () => {
+    expect(formatDayRange('2026-11-09', '2026-11-15', 'id-ID')).toBe('9-15 Nov');
+    expect(formatDayRange('2026-11-09', '2026-11-15', 'en-US')).toBe('Nov 9-15');
+    expect(formatDayRange('2026-11-30', '2026-12-06', 'id-ID')).toBe('30 Nov - 6 Des');
   });
 });

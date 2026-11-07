@@ -1,11 +1,25 @@
-import { border, Card, color, Icon, radius, size, space, Text, themed } from '@run-coach/ui';
+import {
+  border,
+  Card,
+  color,
+  Icon,
+  radius,
+  size,
+  space,
+  type SpotIconName,
+  Text,
+  themed,
+} from '@run-coach/ui';
 import {
   formatDateLong,
   formatDayMonth,
   formatDistance,
   formatDuration,
   formatNumber,
-  formatPace,
+  formatDayMonthNumeric,
+  formatPaceValue,
+  formatTotalDuration,
+  formatWeekdayShort,
 } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
@@ -21,8 +35,10 @@ import {
 import { useActivities, useProfile, useUpdateProfile, useWorkouts, useWorkoutStatuses } from '@/data/hooks';
 import type { PlanRow } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
+import { addDays } from '@run-coach/training-engine';
+import { rangeTotals } from '@/lib/progress';
 import { cardOrder, nextLongRun, planRecords, weekStreak, type TodayCard } from '@/lib/todayCards';
-import { CARD_H, CountdownCard } from './CountdownCard';
+import { CARD_H, CardHead, CountdownCard } from './CountdownCard';
 
 type Props = {
   today: string;
@@ -30,6 +46,8 @@ type Props = {
     goal: { distance: '5k' | '10k' | 'hm' | 'fm' | 'fitness'; race_date: string | null };
   };
   planTargetM: number;
+  /** Fase minggu ini, untuk baris kedua judul kartu hitung mundur. */
+  phase?: string;
 };
 
 /**
@@ -37,7 +55,7 @@ type Props = {
  * Digeser per halaman; titik di bawah bisa diketuk. Kartu default dipilih lewat "Jadikan utama"
  * (`profile.today_card`) dan selalu tampil pertama.
  */
-export function TodayCarousel({ today, plan, planTargetM }: Props) {
+export function TodayCarousel({ today, plan, planTargetM, phase }: Props) {
   const profile = useProfile();
   const update = useUpdateProfile();
   const ahead = useWorkouts(plan.id, today);
@@ -88,13 +106,20 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
             planStart={plan.start_date}
             planEnd={plan.end_date}
             planTargetM={planTargetM}
+            phase={phase}
             pin={pin(c)}
           />
         );
       case 'long_run': {
         const lr = nextLongRun(ahead.data ?? [], today);
         return (
-          <Shell title={t('today.card.longRun')} pin={pin(c)} testID="card-long_run">
+          <Shell
+            title={t('today.card.longRun')}
+            sub={t('today.card.longRunSub')}
+            spot="next-long"
+            pin={pin(c)}
+            testID="card-long_run"
+          >
             {lr ? (
               <Pressable onPress={() => router.push(`/workout/${lr.id}`)} style={styles.row}>
                 <View style={styles.flex}>
@@ -112,6 +137,30 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
                   label={lr.inDays === 0 ? '' : t('today.countdownDays')}
                 />
               </Pressable>
+            ) : null}
+            {lr ? (
+              // Lajur 7 hari dari hari ini: hari long run = isian warna zona long, hari ini = garis.
+              <View style={styles.days}>
+                {Array.from({ length: 7 }, (_, i) => {
+                  const d = addDays(today, i);
+                  const isLr = d === lr.date;
+                  return (
+                    <View key={d} style={styles.dayCol}>
+                      <View
+                        style={[
+                          styles.dayBar,
+                          i < lr.inDays && styles.dayPassed,
+                          isLr && { backgroundColor: color.zone.long },
+                          i === 0 && !isLr && styles.dayToday,
+                        ]}
+                      />
+                      <Text variant="caption" color={isLr ? 'text' : 'textMuted'} numberOfLines={1}>
+                        {formatWeekdayShort(d)}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
             ) : (
               <Text variant="bodySm" color="textMuted">
                 {t('today.card.longRunNone')}
@@ -122,6 +171,10 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
       }
       case 'records': {
         const r = planRecords(acts.data ?? [], plan.start_date);
+        const runs = (acts.data ?? []).filter(
+          (a) => a.workout_type !== 'strength' && a.workout_type !== 'core',
+        );
+        const tot = rangeTotals(runs, plan.start_date, today);
         const items: [MessageKey, string | null, string | null][] = [
           [
             'today.card.recLongest',
@@ -129,8 +182,8 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
             r.longest?.date ?? null,
           ],
           [
-            'today.card.recPace',
-            r.bestEasyPace ? formatPace(r.bestEasyPace.pace) : null,
+            'today.card.recPaceKm',
+            r.bestEasyPace ? formatPaceValue(r.bestEasyPace.pace) : null,
             r.bestEasyPace?.date ?? null,
           ],
           [
@@ -140,7 +193,13 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
           ],
         ];
         return (
-          <Shell title={t('today.card.records')} pin={pin(c)} testID="card-records">
+          <Shell
+            title={t('today.card.records')}
+            sub={t('today.card.recordsSub')}
+            spot="records"
+            pin={pin(c)}
+            testID="card-records"
+          >
             {r.longest || r.longestTime ? (
               <View style={styles.recs}>
                 {items.map(([k, v, d]) => (
@@ -162,35 +221,58 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
                 {t('today.card.recordsNone')}
               </Text>
             )}
+            <View style={styles.totals}>
+              {[
+                t('today.card.totRuns', { n: tot.count }),
+                formatDistance(tot.distanceM),
+                formatTotalDuration(tot.durationS),
+              ].map((x) => (
+                <View key={x} style={styles.totChip}>
+                  <Text variant="captionStrong">{x}</Text>
+                </View>
+              ))}
+            </View>
           </Shell>
         );
       }
       case 'streak': {
         const s = weekStreak(statuses.data ?? [], today);
         return (
-          <Shell title={t('today.card.streak')} pin={pin(c)} testID="card-streak">
+          <Shell
+            title={t('today.card.streak')}
+            sub={t('today.card.streakSub')}
+            spot="streak"
+            pin={pin(c)}
+            testID="card-streak"
+          >
             <View style={styles.row}>
-              <View style={styles.flex}>
-                <Text variant="row">
-                  {s.current > 0 ? t('today.card.streakNow', { n: s.current }) : t('today.card.streakZero')}
-                </Text>
-                <Text variant="controlSm" color="textMuted">
-                  {t(s.current > 0 ? 'today.card.streakBestOnly' : 'today.card.streakBest', { n: s.best })}
-                </Text>
-              </View>
-              <View style={styles.weeks} accessibilityLabel={t('today.card.streakWeeks')}>
-                {s.weeks.map((x) => (
-                  <View
-                    key={x.monday}
-                    style={[
-                      styles.weekDot,
-                      x.state === 'done' && { backgroundColor: color.success },
-                      x.state === 'missed' && { backgroundColor: color.surfaceSunken },
-                      x.state === 'open' && styles.weekOpen,
-                    ]}
-                  />
-                ))}
-              </View>
+              <Text variant="row" style={styles.flex}>
+                {s.current > 0 ? t('today.card.streakNow', { n: s.current }) : t('today.card.streakZero')}
+              </Text>
+              <Text variant="controlSm" color="textMuted">
+                {t('today.card.streakBestOnly', { n: s.best })}
+              </Text>
+            </View>
+            {/* 6 minggu terakhir lebar penuh: tinggi isian = bagian lari selesai, label tanggal Senin. */}
+            <View style={styles.days} accessibilityLabel={t('today.card.streakWeeks')}>
+              {s.weeks.map((x) => (
+                <View key={x.monday} style={styles.dayCol}>
+                  <View style={[styles.weekBar, x.state === 'open' && styles.weekOpen]}>
+                    <View
+                      style={[
+                        styles.weekFill,
+                        {
+                          height: `${x.total ? Math.round((x.done / x.total) * 100) : 0}%`,
+                          backgroundColor: x.state === 'done' ? color.success : color.line,
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text variant="caption" color={x.state === 'open' ? 'text' : 'textMuted'} numberOfLines={1}>
+                    {x.state === 'open' ? t('progress.thisWeek') : formatDayMonthNumeric(x.monday)}
+                  </Text>
+                </View>
+              ))}
             </View>
           </Shell>
         );
@@ -252,24 +334,24 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
 
 function Shell({
   title,
+  sub,
+  spot,
   pin,
   children,
   testID,
 }: {
   title: string;
+  sub: string;
+  spot: SpotIconName;
   pin: ReactNode;
   children: ReactNode;
   testID: string;
 }) {
   return (
     <Card style={styles.card} testID={testID}>
-      <View style={styles.row}>
-        <Text variant="captionStrong" color="textMuted" style={styles.flex}>
-          {title}
-        </Text>
-        {pin}
-      </View>
-      {children}
+      <CardHead title={title} sub={sub} spot={spot} pin={pin} />
+      {/* Isi + visual dikelompokkan di tengah ruang sisa: jarak atas dan bawah seimbang. */}
+      <View style={styles.body}>{children}</View>
     </Card>
   );
 }
@@ -296,8 +378,9 @@ const styles = themed(() =>
     scroller: { marginHorizontal: -GAP / 2, overflow: 'visible' },
     page: { paddingHorizontal: GAP / 2, paddingVertical: space[1] },
     placeholder: { height: CARD_H + space[2] },
-    card: { gap: space[3], padding: space[4], paddingBottom: space[6], height: CARD_H },
+    card: { gap: space[3], padding: space[4], paddingBottom: space[6] + space[1], height: CARD_H },
     row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    body: { flex: 1, justifyContent: 'center', gap: space[3] },
     big: { alignItems: 'center', minWidth: space[10] },
     recs: { flexDirection: 'row', gap: space[2] },
     rec: { flex: 1, minWidth: 0, gap: space[1] / 2 },
@@ -307,6 +390,32 @@ const styles = themed(() =>
       height: space[5],
       borderRadius: radius.stadium,
       backgroundColor: color.line,
+    },
+    days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
+    dayCol: { flex: 1, alignItems: 'center', gap: space[1] },
+    dayBar: {
+      alignSelf: 'stretch',
+      height: space[2],
+      borderRadius: radius.stadium,
+      backgroundColor: color.surfaceSunken,
+    },
+    dayPassed: { backgroundColor: color.zone.long, opacity: 0.35 },
+    dayToday: { borderWidth: border.selected, borderColor: color.text, backgroundColor: color.surface },
+    weekBar: {
+      alignSelf: 'stretch',
+      height: space[6],
+      borderRadius: radius.sm,
+      backgroundColor: color.surfaceSunken,
+      overflow: 'hidden',
+      justifyContent: 'flex-end',
+    },
+    weekFill: { width: '100%' },
+    totals: { flexDirection: 'row', gap: space[2] },
+    totChip: {
+      paddingHorizontal: space[2] + space[1] / 2,
+      paddingVertical: space[1],
+      borderRadius: radius.stadium,
+      backgroundColor: color.surfaceSunken,
     },
     weekOpen: { backgroundColor: color.surface, borderWidth: border.selected, borderColor: color.success },
     pin: {
@@ -323,7 +432,7 @@ const styles = themed(() =>
       position: 'absolute',
       left: 0,
       right: 0,
-      bottom: space[1] + space[2],
+      bottom: space[3],
       flexDirection: 'row',
       justifyContent: 'center',
     },

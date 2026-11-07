@@ -19,6 +19,8 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
+import { useSpot } from '@/components/Spot';
+import { GOAL_SPOT } from '@/lib/spotMap';
 import { useActivePlan, usePlanOps, useProfile, useToday, useUpdateProfile } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { languageLabel, t } from '@/i18n/t';
@@ -46,6 +48,7 @@ export default function ProfileTab() {
   const [editName, setEditName] = useState(false);
   const [name, setName] = useState('');
   const [confirmGoal, setConfirmGoal] = useState(false);
+  const spot = useSpot();
 
   useEffect(() => {
     void getPermission().then(setPerm);
@@ -101,6 +104,7 @@ export default function ProfileTab() {
       <SettingsGroup title={t('profile.sectionTraining')}>
         <SettingsRow
           first
+          leading={spot(GOAL_SPOT[g.distance])}
           label={t('profile.goal')}
           value={
             g.race_date
@@ -111,6 +115,7 @@ export default function ProfileTab() {
           testID="row-goal"
         />
         <SettingsRow
+          leading={spot('zones')}
           label={t('profile.zones')}
           value={t('profile.zonesValue', {
             pace: formatPaceRange(z.easy.min, z.easy.max).replace(' /km', ''),
@@ -118,6 +123,7 @@ export default function ProfileTab() {
           onPress={() => router.push('/zones')}
         />
         <SettingsRow
+          leading={spot('days')}
           label={t('profile.days')}
           value={t('profile.daysValue', {
             n: params.available_days.length,
@@ -130,9 +136,10 @@ export default function ProfileTab() {
           testID="row-days"
         />
         {notificationsSupported && reminder && perm === 'denied' ? (
-          <SettingsRow label={t('profile.openSettings')} onPress={openSettings} />
+          <SettingsRow leading={spot('reminder')} label={t('profile.openSettings')} onPress={openSettings} />
         ) : null}
         <SettingsRow
+          leading={spot('strength')}
           label={t('profile.strength')}
           sub={t('profile.strengthSub')}
           testID="row-strength"
@@ -146,6 +153,7 @@ export default function ProfileTab() {
           }
         />
         <SettingsRow
+          leading={spot('get-ready')}
           label={t('profile.timerAuto')}
           sub={t('profile.timerAutoSub')}
           testID="row-timer-auto"
@@ -159,6 +167,7 @@ export default function ProfileTab() {
           }
         />
         <SettingsRow
+          leading={spot('injury')}
           label={t('profile.pause')}
           danger
           value={p.status === 'paused' ? t('profile.paused') : t('profile.pauseValue')}
@@ -171,6 +180,7 @@ export default function ProfileTab() {
           <SettingsRow
             first
             icon="premium"
+            leading={spot('premium')}
             label={t('profile.premium')}
             value={ent.premium ? t('profile.premiumActive') : t('profile.premiumTry')}
             onPress={() => router.push('/premium')}
@@ -182,6 +192,7 @@ export default function ProfileTab() {
         <SettingsRow
           first
           icon="lock"
+          leading={spot('privacy')}
           label={t('profile.privacy')}
           value={t('profile.privacyValue')}
           onPress={() => router.push('/privacy')}
@@ -189,6 +200,7 @@ export default function ProfileTab() {
         />
         <SettingsRow
           icon="info"
+          leading={spot('guide')}
           label={t('profile.help')}
           value={t('profile.helpValue')}
           onPress={() => router.push('/help')}
@@ -196,12 +208,32 @@ export default function ProfileTab() {
         />
         <SettingsRow
           icon="link"
+          leading={spot('language')}
           label={t('profile.language')}
           value={languageLabel(profile.data.locale)}
           onPress={() => router.push('/language')}
           testID="row-language"
         />
-        <SettingsRow icon="distance" label={t('profile.unit')} value={t('profile.unitValue')} />
+        <SettingsRow
+          icon="distance"
+          leading={spot('distance')}
+          label={t('profile.unit')}
+          value={t('profile.unitValue')}
+        />
+        <SettingsRow
+          leading={spot('easy')}
+          label={t('profile.spotIcons')}
+          sub={t('profile.spotIconsSub')}
+          testID="row-spot-icons"
+          right={
+            <Switch
+              label={t('profile.spotIcons')}
+              value={profile.data.spot_icons !== 0}
+              onChange={(on) => update.mutate({ spot_icons: on ? 1 : 0 })}
+              testID="spot-icons-switch"
+            />
+          }
+        />
       </SettingsGroup>
       {/* Ganti target = dialog di tengah layar, sama dengan aksi lain yang mengubah status (UI/UX dialog). */}
       <ConfirmDialog
