@@ -21,6 +21,7 @@ import { track } from '@/lib/analytics';
 import { FREE_STRENGTH_WEEKS, useEntitlement } from '@/lib/entitlement';
 import { PRICES, yearlySavingPct } from '@/lib/pricing';
 import { IMAGES } from '@/lib/imagery';
+import { SpotTitle } from '@/components/Spot';
 
 const FREE: MessageKey[] = [
   'premium.free.plan',
@@ -71,7 +72,7 @@ export default function Premium() {
         <Text variant="statusCaps" color="primaryInk">
           {t('premium.kicker')}
         </Text>
-        <Text variant="title">{t('premium.title')}</Text>
+        <SpotTitle title={t('premium.title')} spot="premium" />
         <Text color="textMuted">{t('premium.subtitle', { weeks: FREE_STRENGTH_WEEKS })}</Text>
       </View>
       <Card style={styles.list}>

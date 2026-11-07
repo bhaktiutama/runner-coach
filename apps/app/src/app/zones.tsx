@@ -8,6 +8,7 @@ import { useActivePlan } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t } from '@/i18n/t';
 import { et } from '@/lib/rationale';
+import { SpotTitle } from '@/components/Spot';
 
 const ROWS = [
   { key: 'easy', zone: 'easy', label: 'zone.easy' },
@@ -30,7 +31,7 @@ export default function Zones() {
         label={t('common.back')}
         onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile'))}
       />
-      <Text variant="title">{t('zones.title')}</Text>
+      <SpotTitle title={t('zones.title')} spot="zones" />
       <Text color="textMuted">{t('zones.subtitle', { vdot: formatNumber(params.vdot, 1) })}</Text>
       <Card>
         {ROWS.map((r) => (

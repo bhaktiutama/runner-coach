@@ -22,7 +22,8 @@ Agent tidak boleh mengganti atau menambah library di luar tabel ini tanpa update
 | Validasi data | zod (tipe `steps`, input form, respons Edge Function) |
 | Grafik | Berbasis react-native-svg (kandidat: Victory Native; final setelah spike M0) |
 | Backend | Supabase **cloud**: Auth + Edge Functions (Deno). Tanpa tabel data pengguna |
-| Notifikasi | Expo Notifications |
+| Notifikasi | Expo Notifications (pengingat, cue timer, status timer di layar kunci U5) |
+| Timer: bunyi, getar, sensor | expo-audio (bunyi penanda), expo-haptics, expo-keep-awake, expo-sensors `DeviceMotion` (U3: HP datar = tampilan jarak jauh; disetujui pemilik 2026-11-05) |
 | Tema gelap (F-24) | `useColorScheme` RN + expo-system-ui (Android mengikuti tema perangkat; `userInterfaceStyle: automatic`) |
 | Analitik | PostHog (lewat HTTP capture API, tanpa SDK; aktif hanya jika `EXPO_PUBLIC_POSTHOG_KEY` diisi; daftar properti di `apps/app/src/lib/analytics.ts`) |
 | Error monitoring | Sentry (SDK dipasang saat DSN tersedia; `sendDefaultPii: false`) |

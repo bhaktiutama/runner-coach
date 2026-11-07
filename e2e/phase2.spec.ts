@@ -46,11 +46,96 @@ test('strength: kalender, detail 2.2s (animasi frame semua gerakan), timer gerak
   await page.getByTestId('timer-confirm-yes').click();
   await expect(page.getByTestId('screen-finish')).toBeVisible();
   await expect(page.getByTestId('finish-distance')).toHaveCount(0);
-  await page.getByRole('tab', { name: 'Terlalu berat' }).click();
+  // Satu isian: RPE 8+ = terlalu berat (rasa beban diturunkan dari RPE).
+  await expect(page.getByRole('tab', { name: 'Terlalu berat' })).toHaveCount(0);
+  await page.getByTestId('rpe-8').click();
   await expect(page.getByText('Sesi strength berikutnya akan kami ringankan 1 level.')).toBeVisible();
-  await page.getByTestId('rpe-7').click();
   await page.getByTestId('finish-save').click();
   await expect(page.getByTestId('screen-today').or(page.getByTestId('screen-week-summary'))).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('strength mode otomatis: angka tiap set, maju sendiri tanpa tombol, bisa ganti manual', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await onboard(page, { strength: true });
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  await page
+    .getByText(/Strength/)
+    .first()
+    .click();
+  await page.getByTestId('screen-detail').getByTestId('start').click();
+  await expect(async () => {
+    await page.clock.runFor(1000);
+    await expect(page.getByTestId('timer-exercise')).toBeVisible({ timeout: 200 });
+  }).toPass({ timeout: 15_000 });
+  // Bawaan otomatis: set repetisi punya hitung mundur dan bar sesi.
+  await expect(page.getByTestId('timer-auto')).toContainText('Otomatis');
+  await expect(page.getByTestId('session-bar')).toBeVisible();
+  const clock = page.getByTestId('timer-remaining');
+  await expect(clock).toHaveText(/^\d+:\d\d$/);
+  const first = await clock.textContent();
+  await page.clock.runFor(2000);
+  await expect(clock).not.toHaveText(first ?? '');
+  // Tanpa menekan tombol: set habis -> istirahat (cincin + pratinjau gerakan berikutnya).
+  await expect(async () => {
+    await page.clock.runFor(5000);
+    await expect(page.getByTestId('timer-rest')).toBeVisible({ timeout: 200 });
+  }).toPass({ timeout: 20_000 });
+  await expect(page.getByTestId('rest-next')).toContainText('Set 2 dari');
+  await expect(async () => {
+    await page.clock.runFor(5000);
+    await expect(page.getByTestId('timer-exercise')).toContainText('Set 2 dari', { timeout: 200 });
+  }).toPass({ timeout: 30_000 });
+  // Ganti ke manual: angka menjadi hitung naik ("waktu set ini").
+  await page.getByTestId('timer-auto').click();
+  await expect(page.getByTestId('timer-auto')).toContainText('Manual');
+  await expect(page.getByTestId('timer-exercise')).toContainText('waktu set ini');
+  expect(errors).toEqual([]);
+});
+
+test('strength: siap-siap sebelum gerakan, tahan layar = selesai set, +15 dtk istirahat', async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await onboard(page, { strength: true });
+  await page.getByRole('tab', { name: 'Plan' }).click();
+  await page
+    .getByText(/Strength/)
+    .first()
+    .click();
+  await page.getByTestId('screen-detail').getByTestId('start').click();
+  // U4: gerakan pertama didahului "Siap-siap" dengan pratinjau gerakan.
+  await expect(async () => {
+    await page.clock.runFor(1000);
+    await expect(page.getByTestId('timer-rest')).toContainText(/siap-siap/i, { timeout: 200 });
+  }).toPass({ timeout: 15_000 });
+  await expect(page.getByTestId('rest-next')).toContainText('Set 1 dari');
+  await expect(page.getByTestId('rest-extend')).toHaveCount(0);
+  await page.getByTestId('rest-skip').click();
+  await expect(page.getByTestId('timer-exercise')).toBeVisible();
+  // U2: tahan layar 0,5 dtk = Selesai set; ketuk biasa tidak.
+  const body = page.getByTestId('timer-exercise');
+  await body.click();
+  await expect(body).toBeVisible();
+  await body.hover();
+  await page.mouse.down();
+  await page.clock.runFor(700);
+  await page.mouse.up();
+  await expect(page.getByTestId('timer-rest')).toContainText(/istirahat/i);
+  // U1: +15 dtk menambah sisa istirahat.
+  const secs = async () => {
+    const [m, sec] = ((await page.getByTestId('timer-remaining').textContent()) ?? '0:0').split(':');
+    return Number(m) * 60 + Number(sec);
+  };
+  const before = await secs();
+  await page.getByTestId('rest-extend').click();
+  await expect.poll(secs).toBeGreaterThanOrEqual(before + 14);
   expect(errors).toEqual([]);
 });
 

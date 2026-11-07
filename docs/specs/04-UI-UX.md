@@ -1,6 +1,6 @@
 # 04. UI/UX Design Brief
 
-Status: Draft v0.6 (2026-11-03) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
+Status: Draft v0.7 (2026-11-06, ikon spot bagian 14) | Tata letak: [`docs/wireframes/`](../wireframes/README.md) | Tampilan: [`docs/design-system/`](../design-system/README.md)
 
 ## Ringkasan
 
@@ -62,6 +62,7 @@ Anatomi, varian dan state lengkap: `docs/design-system/README.md` bagian 4.
 | BarChart, LineTrend, TrackRing | 1.8, 3.3 |
 | PrimaryButton, SecondaryButton, SegmentedControl, TabBar | Semua |
 | Icon (`name`, `size`, `color`) dari `assets/icons/icons.json` | Semua |
+| SpotIcon (`name`, `size`) dari `spot-icons.json` (bagian 14) | 2.1, 2.3, 2.3s, 2.4, 2.5, 3.1, 3.3, 3.4, 4.3, 4.5 |
 | Logo (mark / horizontal) | 1.1, web |
 
 ## 4. Aset
@@ -73,6 +74,7 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 | Logo mark + wordmark "run coach" | 1.1, header web |
 | `icon.png`, `adaptive-icon.png` (+ monochrome), `splash-icon.png`, `favicon.png` | `app.json`: icon, adaptiveIcon (latar #F26B38), splash (latar #F5F4F2), web.favicon |
 | 40 ikon garis 24 px | Komponen Icon; tab bar: today, plan, progress, profile |
+| 27 ikon spot berwarna 48 grid (`assets/spot-icons/`) | Komponen SpotIcon, bagian 14 |
 | Karakter animasi gerakan | Belum ada (D8). MVP pakai teks + SVG prototipe |
 
 ## 5. Layout & breakpoint
@@ -138,8 +140,16 @@ Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, m
 | Kartu strength 2.1 | Di bawah kartu lari (atau kartu Istirahat). Lebih ringkas: bib + jumlah gerakan, menit besar, 1 kalimat, "Mulai strength", "Lihat detail". Terkunci: tombol "Buka dengan Premium" |
 | Tempat animasi | `ExerciseAnimation`: kotak `surface-sunken` (gelap: `dark.surface-sunken`) dengan garis putus-putus 2.5 px `line-strong`, ikon `strength` + "Animasi gerakan menyusul". Tinggi 120 (timer) / 88 (daftar 2.2s). Gerakan yang punya frame (semua 15): tanpa kotak dan tanpa warna latar sendiri (frame transparan langsung di atas warna layar, terang maupun gelap), area persegi lebar penuh maksimal 240, di tengah. Frame diputar bolak-balik (awal -> puncak -> awal; 100 ms per frame, awal ditahan 300 ms, puncak ditahan 0,4 sampai 2 dtk sesuai gerakan), label aksesibilitas "Animasi gerakan {nama}", reduce motion diam di frame puncak. Layar tidak berubah (D8) |
 | 2.2s | Kartu per gerakan: tempat animasi, "n. Nama" + dosis (`3 x 8x / sisi`, `2 x 30 dtk`), cue `body-sm`, istirahat `caption`. Tanpa grafik intensitas dan tanpa pilihan panduan intensitas |
-| 2.3s | Gelap seperti 2.3b: tempat animasi, bib "Gerakan n/N", nama `drill-name`, "Set x dari y · dosis" `set`, lajur set, angka hitung mundur `stat` untuk gerakan berwaktu, cue. Istirahat: bib recovery + angka `timer` di tengah + "Berikutnya: ...". Footer: tombol utama (Selesai set / Lanjut / Lewati istirahat) + Jeda dan Lewati gerakan sebagai teks |
-| 2.4 untuk strength | Tanpa kolom jarak dan pace. SegmentedControl "Bebannya terasa" (Terlalu berat / Pas / Terlalu ringan) di atas RPE |
+| 2.3s | Gelap seperti 2.3b. Bar atas: Akhiri, pil Otomatis/Manual, bisu (tanpa "Segmen x dari y"). Bar sesi (lajur per gerakan). Set: animasi, bib "Gerakan n/N", nama `drill-name`, "Set x dari y · dosis" `set`, lajur set, angka `numberXl` (hitung mundur saat berwaktu/otomatis, hitung naik saat manual) + bar progres set `primary`, cue, petunjuk mode. Istirahat: cincin `zone.recovery` bergradasi + angka `timer` + pil "+15 dtk" + kartu "Berikutnya" (animasi kecil, nama, set, dosis). "Siap-siap" (5 dtk sebelum gerakan tanpa istirahat): layar istirahat dengan bib "Siap-siap", tanpa "+15 dtk", tombol "Mulai sekarang". Tahan layar set 0,5 dtk = Selesai set. Cincin timer (2.3, 2.3s) dan bar set bergradasi satu tone (`TrackRing gradient`, `ToneBar`). Layar < 700 px: animasi di samping nama, angka istirahat `numberXl`. Footer: tombol utama (Selesai set / Lewati istirahat) + Jeda dan Lewati gerakan sebagai teks. Detail `09-VOICE.md` bagian 13 |
+| 2.4 untuk strength | Tanpa kolom jarak dan pace. Daftar "Per gerakan" (U6: ikon selesai/dilewati, nama, "Kerja 1:15 · rencana 1:00", "2/2 set"). Tanpa isian "Bebannya terasa": rasa beban diturunkan dari RPE (8-10 = terlalu berat, catatan "Sesi strength berikutnya akan kami ringankan 1 level" di bawah RPE) |
+| 3.4 Detail aktivitas | Hero bergambar (gambar tipe 2.1; strength = track-side), tombol kembali + pil sumber (Dari timer / Dicatat manual). Judul = LaneMark zona + nama tipe (tanpa bib). Tanggal di bawah judul. Stat 3 kolom dalam satu kartu surface, dipisah garis tipis (4 nilai = 2 x 2); kolom < 100 px memakai `numberSm`. Catatan perkiraan jarak/pace untuk sumber timer. Lari: Segmen vs target. Strength: Per gerakan (U6) |
+| 2.1 kartu geser | Carousel halaman penuh, jarak antar kartu 16 px saat digeser, tepi kartu sejajar isi layar. Tinggi kartu tetap (`CARD_H`) agar layar tidak bergeser saat kartu utama diganti. Titik penanda di dalam kartu (bawah tengah), bisa diketuk; titik aktif = pil lebar. Urutan: kartu utama dulu, lalu hitung mundur, long run berikutnya (jarak/waktu, tanggal, sisa hari, ketuk -> 2.2), rekor plan (terjauh, pace easy terbaik >= 2 km, terlama), minggu tuntas (streak sekarang + terbaik, 6 lajur minggu: hijau tuntas, abu terlewat, garis minggu ini). Pojok kanan atas tiap kartu: ikon pin (`pin`, design system). Kartu utama = pin berwarna dalam lingkaran; lainnya = pin pudar, ketuk untuk jadikan utama. Tinggi kartu seragam |
+| 2.1 isi kartu (review 2026-11-05, kurangi ruang kosong) | Hitung mundur race: tetap seperti versi awal (bar bagian plan yang lewat + km terkumpul). Long run: lajur 7 hari dari hari ini (hari ini garis, hari long run warna zona long). Rekor: 3 rekor + chip total plan (jumlah lari, km, waktu). Minggu tuntas: 6 batang minggu lebar penuh, isian = bagian lari selesai, label tanggal Senin / "Ini". Judul di atas; isi + visual dikelompokkan di tengah ruang antara judul dan titik penanda (jarak atas-bawah seimbang). Tinggi kartu `CARD_H` = 168 dipas ke kartu terpadat (rekor). Kartu latihan: "Target pace /km" di kanan angka menit (disembunyikan jika panduan intensitas RPE) |
+| 2.1 hitung mundur | Kartu surface di bawah judul: label "Menuju race 10K" + tanggal "21 Jan 2027 · 06.00", angka `numberMd` hari dan jam, `ToneBar` primary = bagian plan yang sudah lewat, baris jarak terkumpul. Tanpa tanggal race: "Plan kamu", sisa hari, `ToneBar` success = jarak / target plan. Tidak tampil saat plan dijeda atau hari race. Angka dan teks di kartu latihan dirapatkan (gap 4); kartu strength menampilkan 3 gerakan pertama "+n" |
+| 2.1 latihan satu segmen | Tanpa bar intensitas dan baris segmen (mengulang nama tipe); diganti 1 baris rasa usaha (`timer.feel.*`) |
+| 2.5 tombol usulan | Bertumpuk lebar penuh ("Oke, terapkan" gelap, "Tetap plan awal" terang) agar label EN tidak terpotong |
+| 3.3 rentang | Baris total di bawah judul kartu volume. Plan: batang per minggu plan berwarna fase, minggu depan bergaris luar, sumbu "M1..", angka di atas batang disembunyikan jika > 10 batang. Semua: per bulan jika > 16 minggu. Baris "Ringkasan minggu ini" (ikon trofi) di atas kartu volume |
+| 2.3s jarak jauh (U3) | HP datar menghadap ke atas >= 0,8 dtk, atau ketuk angka: bib, nama, angka `timer` ~30% lebar layar, bar progres tebal. Ketuk = kembali |
 | 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
 | 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
 | Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |
@@ -154,13 +164,13 @@ Prototipe untuk melihat wujudnya: `docs/prototypes/motion-prototype.html`. Semua
 | G2 | Konfeti kecil, 16 potongan, warna palet | 2.5 hanya jika semua latihan minggu itu tuntas | Sekali putar saat layar tampil, `slow` 320 ms, memudar di akhir. Tata letak deterministik (tanpa acak) | `Confetti`, `confettiPieces` |
 | G3 | (dibatalkan) Animasi centang "Selesai" di kartu latihan | | Kartu Selesai kembali statis seperti semula (keputusan pemilik produk 2026-11-01) | |
 | G4 | Tombol ditekan | Semua tombol utama | Sudah ada: turun 2 px dan bayangan hilang (README design system, PrimaryButton). Tidak ditambah skala | `PrimaryButton` |
-| G5 | Getar + suara saat pergantian segmen dan selesai | Timer 2.3, 2.3b, 2.3s | Sudah ada (F-05, `apps/app/src/timer/cues.ts`). Tidak ada perubahan. Tidak ada di web | `playCue` |
+| G5 | Bunyi penanda + getar: pergantian segmen (naik = kerja, turun = istirahat), 3-2-1, peringatan, setengah jalan, ganti sisi, jeda/lanjut, selesai | Timer 2.3, 2.3b, 2.3s | `09-VOICE.md` bagian 5; bunyi dari `scripts/make-earcons.py`. Bisu = getar saja. Getar tidak ada di web | `playEarcon`, `earcons.ts` |
 | G6 | Bib segmen dan kartu pace/rasa memudar masuk saat segmen berganti | Timer 2.3 | `base` + `standard`. Angka hitung mundur tidak dianimasikan (tidak berkedip tiap detik) | `FadeIn` |
 | G7 | Batang volume tumbuh dari dasar bergantian (jeda 70 ms, `slow` + `stride`), angkanya naik dari 0; garis tren tergambar kiri ke kanan (`ring`, setelah jeda 320 ms) | Progres 3.3 (juga dipakai grafik 1.8 jika `animate`) | Diputar setiap tab Progres terlihat. Angka naik tanpa melewati nilai akhir (easing `standard`) | `BarChart` dan `LineTrend` (`animate`) |
 | G8 | Tujuh lajur "Minggu ini" muncul membesar + fade in bergantian (jeda 80 ms, `base` + `stride`); angka km minggu ini naik dari 0 (`ring`) | Hari ini 2.1 | **Sekali per sesi app** (saat Today pertama terlihat), bukan setiap membuka tab | `LaneWeek` (`animate`), `useAnimatedNumber` |
 | G9 | Tombol RPE terpilih membesar 0.9 ke 1.12 lalu 1 | 2.4, 2.6 | `base` + `fast`, `stride`. Tidak ada saat pilihan awal | `RpePicker` |
 | G10 | Knob sakelar bergeser halus, bukan loncat | Semua `Switch` (mis. 4.1, 4.5) | `base` + `standard` | `Switch` |
-| G11 | Angka hitung mundur 3-2-1 mengecil dari 1.5x sambil fade in; getar ringan per angka | Timer 2.3 | `slow` + `standard`. Getar hanya di iOS/Android (`countdownTick`) | `ZoomIn`, `cues.ts` |
+| G11 | Angka hitung mundur 3-2-1 mengecil dari 1.5x sambil fade in; bunyi tick + getar ringan per angka | Timer 2.3 | `slow` + `standard`. Getar hanya di iOS/Android (`countdownTick`) | `ZoomIn`, `cues.ts` |
 
 Aturan umum:
 - **Kurangi gerakan**: semua G1, G2, G6 sampai G11 berhenti (nilai langsung ke akhir; konfeti tidak dirender). Dibaca dari setelan OS (web: `prefers-reduced-motion`) lewat `useReducedMotion`.
@@ -193,7 +203,7 @@ Teks langsung di atas gambar memakai `color.on-image` (#FFF9F2, kedua tema) dan 
 | 2.1 strides | track-overhead |
 | 2.1 long | road-sunrise-f / -m (bergantian per tanggal) |
 | 2.1 istirahat (`RestCard`, garis kiri recovery dihapus) | track-aerial |
-| 2.1 strength / core | Tanpa gambar (belum ada) |
+| 2.1 strength / core | Tanpa gambar (belum ada); 3.4 strength memakai track-side |
 | 2.4 Selesai | shoe-sole |
 | 2.5 Ringkasan minggu | track-overhead |
 | 2.6 Catat lari manual | pov-feet |
@@ -212,3 +222,55 @@ Menggantikan hero tunggal 1.1 (bagian 12). Hanya tampil saat belum ada plan (per
 | Gambar | `promo-science`, `promo-privacy`, `promo-companion` (658 x 732, draft, lisensi B10) selebar layar, fokus horizontal per gambar agar pelari tidak terpotong, memudar ke `bg` antara 36% dan 66% tinggi (ikut tema terang/gelap) |
 | Tetap di setiap halaman | Logo `on-image` di atas, lalu di bawah: titik halaman, "Buat plan saya", "Sudah punya akun? Masuk", catatan "Data latihanmu tersimpan di HP ini" |
 | Teks (`welcome.s1..s3`, ID + EN) | 1 Ada dasarnya / Backed by science: "Latihan pintar, bukan asal capek." 2 Privasi / Private by default: "Data larimu, ya punyamu." 3 Teman Strava / Strava's sidekick: "Strava tetap jalan, kami yang atur menunya." Bahasa santai untuk pelari muda; tanpa klaim mencegah cedera dan tanpa janji sinkron Strava (fase 2) |
+
+## 14. Ikon spot (v1.0, 2026-11-06)
+
+Ikon berwarna kecil yang memberi wajah pada konten (bukan pengganti ikon garis untuk navigasi dan tombol). Desain: `docs/design-system/assets/spot-icons/` (`index.html` = set ikon, `wireframe.html` = penempatan), dibuat oleh `_build/spot_icons.py`.
+
+| Aturan | Isi |
+|---|---|
+| Bentuk | Ubin persegi 48 grid radius 14, garis 1.75 ujung bulat, tinta charcoal (krem di ubin strength), satu aksen oranye. Wajah titik hanya di benda yang punya rasa |
+| Warna | Semua dari token: ubin latihan = skala panas zona (easy peach, long, tempo oranye, interval bara, recovery lavender, strength charcoal); ubin status = mint, sand, coral, lavender. Mode gelap: ubin pastel tetap, ubin strength memakai `dark.zone-strength` |
+| Ukuran (token `size`) | `spot-xs` 28 (di dalam chip, label sebaris, legenda fase), `spot-sm` 32 (baris daftar dan Profil, label stat, rasa RPE), `spot-md` 40 (kepala kartu, judul layar, judul 3.4), `spot-lg` 56 (2.4 selesai, badge), `spot-xl` 96 (cadangan ilustrasi kosong). Satu peran = satu ukuran di semua layar |
+| Aksesibilitas | Dekoratif: selalu bersama teks, disembunyikan dari pembaca layar. Wajah RPE tidak menggantikan angka |
+| Tinggi ikon = tinggi teks (review 2026-11-07) | Ikon di samping teks digambar setinggi blok teksnya: judul layar 1 baris = 1 line height, 2 baris = 2 line height (`ScreenTitle` mengukur judul; judul 3 baris di 320 px: ikon rata atas setinggi 2 baris). Ikon di kepala kartu, navigasi minggu, legenda fase dan baris pengingat dipasangkan dengan blok 2 baris (judul + keterangan) yang tingginya sama dengan ikon |
+| Tata letak | Struktur, tombol dan kartu tidak berubah. Di baris yang tingginya tetap (kepala kartu geser, bib, label stat, baris RPE), ikon memakai margin negatif sehingga tinggi baris sama dengan mode tanpa ikon |
+| Sakelar | Profil 4.1 "Ikon ilustrasi" (`profile.spot_icons`, bawaan nyala). Mati = tampilan sebelumnya persis (garis warna `LaneMark`, centang 2.4, logo di 4.5) |
+
+| Layar | Penempatan | Saat mati |
+|---|---|---|
+| 2.1 kartu latihan tanpa gambar, kartu strength | Ikon jenis latihan `spot-md` di kiri bib | Bib saja |
+| 2.1 kartu geser | Judul 2 baris: label kecil + kalimat pendek (hitung mundur = fase minggu ini, mis. "Build: daya tahan naik"; long run "Pelan dan stabil"; rekor "Kemajuan sejak plan mulai"; streak "Tuntaskan semua lari"). Ikon race-day / finish, next-long, records, streak setinggi dua baris itu. Tinggi kartu +18 px untuk baris kedua | Judul 2 baris tanpa ikon |
+| 2.1 kartu istirahat | Ikon rest-day setinggi judul; judul + isi satu kelompok rapat (jarak 4), berjarak 16 dari gambar seperti kartu latihan | Judul tanpa ikon |
+| 2.4, 2.6 | 2.4: bendera `spot-lg` menggantikan lingkaran centang. RPE: wajah `spot-sm` di kiri label (1-4 ringan, 5-7 pas, 8-10 berat) | Centang, label saja |
+| 2.3s istirahat / siap-siap | `spot-sm` di kiri bib di dalam cincin | Bib saja |
+| 2.5 | Ikon `spot-sm` kecil di kanan label stat (jarak, waktu) | Label saja |
+| 3.1 | Ikon jenis latihan `spot-sm` menggantikan garis warna; hari istirahat = bulan; terlewat = pudar | Garis warna |
+| 3.3 | Baris "Ringkasan minggu ini" = week-done; aktivitas terakhir = ikon jenis; belum ada aktivitas = sepatu tidur | Trophy garis, garis warna, teks saja |
+| 3.4 | Ikon jenis `spot-md` di kiri judul; wajah RPE di baris Rasa | Garis warna tinggi |
+| 4.5 | Ikon privasi `spot-md` di hero | Logo mark |
+| 2.3 izin notifikasi | Ikon bunyi `spot-lg` | Ikon lonceng garis |
+| 4.3 Jeda plan (alasan Cedera) | Ikon cedera `spot-sm` di kiri label "Bagian yang nyeri" | Label saja |
+| 3.3 Pencapaian (F-28) | Kartu 3 badge `spot-lg` sebelum Aktivitas terakhir: 5K pertama, 4 minggu beruntun, plan tuntas; belum didapat = pudar 35% + kemajuan (km, minggu, latihan) | Kartu tidak tampil |
+
+Set v2 (2026-11-07, 55 ikon): 53 terpakai; `heart-rate` dan `integration` menunggu layar fase 2 (2.2 panduan HR, 4.2 integrasi). Kartu 2.1 dengan gambar header tidak diberi ikon (gambar sudah menjadi visual).
+
+| Layar (v2) | Penempatan | Saat mati |
+|---|---|---|
+| 2.1, 3.1, 3.3, 3.4 | Jenis latihan memakai ikon sendiri: progression, strides, run-walk, core (sebelumnya meminjam easy, drill, recovery, strength). Strength terkunci (paywall) = ikon Premium | Garis warna / bib saja |
+| 2.1 | "Minggu ini" = week-done sebaris judul; kartu pengingat backup = backup | Judul saja |
+| 2.3b timer drill | Ikon drill `spot-sm` di kiri bib | Bib saja |
+| 2.4, 2.6 tag | Chip tag dengan ikon `spot-xs` di kiri: cuaca panas, kurang tidur, kaki pegal, ada nyeri (= cedera) | Chip teks |
+| 3.4 catatan | Deretan ikon `spot-xs` + label (tidak bisa diketuk, bukan chip) | Satu baris teks "Catatan: ..." |
+| 1.2 | Kartu target: ikon `spot-md` di atas judul (centang pindah ke baris ikon); Bugar: ikon di kiri | Kartu tanpa ikon |
+| 1.3-1.7, 2.6, 4.4, 4.8, Zona pace, Hari & pengingat | Ikon `spot-md` di kiri judul layar (`ScreenTitle.leading` / `SpotTitle`). 1.2 dan 4.3 tidak: pilihannya sudah membawa ikon | Judul saja |
+| 4.7 | Ikon panduan `spot-md` di kiri paragraf pembuka | Paragraf saja |
+| 1.6, Hari & pengingat | 1.6: baris pengingat 2 baris (judul + "Kami ingatkan di hari latihan saja.") dengan ikon setinggi dua baris; Hari & pengingat: label dengan ikon `spot-xs` | Lonceng garis / label |
+| 1.8 | Legenda fase: kisi 2 kolom, ikon fase setinggi dua baris (nama fase + jumlah minggu), menggantikan kotak warna. 3.1 tetap kotak kecil: legenda di bawah bar 14 px tidak boleh lebih berat dari bar-nya | Kotak warna |
+| 3.1 | Navigasi minggu: ikon fase di kiri setinggi dua baris, di kanannya "Minggu n · Fase" dan "9-15 Nov · 17 km" rata kiri (`formatDayRange`). Layar < 360 px: nama fase tidak ditulis. Sesi strength tambahan ditulis sebaris judul hari agar tiap hari 2 baris (di 320 px boleh turun ke baris 3) | "Minggu n" + tanggal di tengah |
+| 2.5 | Baris "Fase X" di bawah judul; "Pencapaian baru" (badge `spot-lg` yang baru didapat minggu ini) | Tidak tampil |
+| 3.3 | Label Prediksi = ikon rekor sebaris | Label saja |
+| 4.1 Profil | Semua baris memakai ikon `spot-sm` (target, zona, hari, strength, timer, cedera, Premium, privasi, panduan, bahasa, satuan, ikon ilustrasi) agar satu grup konsisten | Ikon garis lama / tanpa ikon |
+| 4.3 | Chip alasan: ikon `spot-xs` di atas label (`Chip stack`, label boleh 2 baris di 320 px) | Chip teks |
+| 4.5 | Judul Backup dengan ikon backup sebaris | Judul saja |
+

@@ -15,6 +15,8 @@ Logo, ikon app dan set ikon untuk Run Coach. Semua warna dari `../tokens.json`.
 | `app-icon/` | `splash-icon.png` (transparan, mark oranye) | `expo-splash-screen`, `backgroundColor: "#F5F4F2"` |
 | `app-icon/` | `favicon.png` 48 px, `favicon.svg` | `web.favicon` |
 | `icons/` | 40 ikon garis 24 px + `icons.json` | Semua UI; lihat daftar di bawah |
+| `spot-icons/` | 55 ikon spot berwarna 48 grid (`index.html` set, `wireframe.html` penempatan) | Komponen SpotIcon (`packages/ui/src/spot-icons.json`), UI/UX 14 |
+| `spot-icons-painted-draft/` | Alternatif gaya lukisan, tidak dipakai | Arsip eksplorasi |
 | `_build/` | `build.py`, `icons.py`, `render.js` | Membuat ulang semua file di atas |
 
 ## Logo
@@ -47,6 +49,9 @@ pip install fonttools
 # Font: BricolageGrotesque[opsz,wdth,wght].ttf dari github.com/google/fonts (ofl/bricolagegrotesque), lisensi OFL
 python3 _build/build.py <path-font.ttf> <folder-svg>
 python3 _build/icons.py <folder-svg>/icons
+python3 _build/spot_icons.py          # ikon spot: SVG + packages/ui/src/spot-icons.json
+python3 _build/spot_icons_page.py     # halaman pratinjau set
+python3 _build/spot_icons_wireframe.py
 node _build/render.js <folder-svg> <folder-png> app-icon.svg:icon.png:1024 ...
 ```
 
@@ -57,7 +62,7 @@ node _build/render.js <folder-svg> <folder-png> app-icon.svg:icon.png:1024 ...
 | Karakter animasi latihan | Menunggu | Sumber yang diminta: polyfork.dev/characters. Situs belum bisa diakses dari container (domain belum diizinkan di network policy). Dari deskripsi publik, Polyfork berisi aset **3D low-poly** (GLB / ES module untuk three.js). Ini berbeda dengan `ANIMATION_PIPELINE.md` yang memakai **2D tampak samping + Rive**. Perlu keputusan sebelum dipakai, lihat bagian berikut |
 | Lisensi aset Polyfork | Belum dicek | Wajib dibaca sebelum aset masuk repo (komersial? atribusi?) |
 | Ilustrasi kosong / error / onboarding | Belum | Bisa dari karakter yang sama supaya konsisten |
-| Badge pencapaian (minggu tuntas, rekor) | Belum | Bisa memakai mark + bib |
+| Badge pencapaian (minggu tuntas, rekor) | Dipakai (`spot-icons/badge-*.svg`) | Kartu Pencapaian 3.3 (F-28) |
 | Screenshot store, feature graphic | Fase rilis (M7) | Dibuat dari layar final |
 
 ### Karakter: 2D (Rive) atau 3D (Polyfork)?

@@ -18,20 +18,20 @@ Status: Draft v0.4 (2026-10-30, fase 2: FL-12, FL-13, FL-14) | Nomor layar = wir
 | 1.2-1.7 | Onboarding 1/6 sampai 6/6 | Lanjut / Kembali |
 | 1.8 | Preview plan + masuk | Apple / Google / Email -> 2.1; tombol kembali "Ubah jawaban" -> 1.7 (jawaban tetap tersimpan, plan dibuat ulang) |
 | 1.9 | Masuk (akun lama / HP baru) | Masuk -> data lokal ada: 2.1; kosong: "Pulihkan dari file" -> 4.5 atau "Buat plan baru" -> 1.2 |
-| 2.1 | Hari ini (tab) | Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6. Kartu kedua strength (F-21): "Mulai strength" -> 2.3s, "Lihat detail" -> 2.2s, terkunci -> 4.4 |
+| 2.1 | Hari ini (tab) | Kartu geser di atas (hitung mundur, long run berikutnya, rekor plan, minggu tuntas; "Jadikan utama" = tampil pertama, `profile.today_card`). Kartu hitung mundur (race: hari + jam ke pukul 06.00 hari race, jarak terkumpul; tanpa tanggal race: sisa hari plan + jarak dari target plan). Mulai -> 2.3; "Lihat detail" -> 2.2; "Catat lari manual" -> 2.6. Kartu kedua strength (F-21): "Mulai strength" -> 2.3s, "Lihat detail" -> 2.2s, terkunci -> 4.4 |
 | 2.2 | Detail latihan | Mulai -> 2.3; Pindah hari -> 3.2; Ganti jadi easy |
 | 2.2s | Detail strength (F-21) | Daftar gerakan (tempat animasi kosong, dosis, cue, istirahat), "Kenapa latihan ini?". Mulai -> 2.3s; Pindah hari -> 3.2. Terkunci (paywall aktif): "Buka dengan Premium" -> 4.4 |
 | 2.3s | Timer: mode gerakan (F-21) | Gerakan repetisi: "Selesai set"; gerakan berwaktu: hitung mundur; istirahat: hitung mundur + "Lewati istirahat". Akhiri / selesai -> 2.4 |
 | 2.3 | Timer (gelap) | Selesai / Akhiri -> 2.4 |
 | 2.3b | Timer: segmen drill | "Lanjut" per set; set terakhir -> segmen berikut |
 | 2.4 | Selesai + RPE | Simpan -> 2.5 (jika latihan terakhir minggu itu) atau 2.1 |
-| 2.5 | Ringkasan minggu + adaptasi | 2.1 atau 3.1 |
+| 2.5 | Ringkasan minggu + adaptasi | Tutup -> layar sebelumnya (3.3) atau 2.1 |
 | 2.6 | Catat lari (manual) | Simpan -> 2.1 (atau 2.5 jika latihan terakhir minggu itu) |
 | 3.1 | Kalender plan (tab) | Tap latihan -> 2.2 atau 3.2 |
 | 3.2 | Pindahkan latihan | Simpan / Lewati -> 3.1 |
-| 3.3 | Progres (tab) | Tap aktivitas -> 3.4 |
+| 3.3 | Progres (tab) | Tap aktivitas -> 3.4; "Ringkasan minggu ini" -> 2.5 |
 | 3.4 | Detail aktivitas | Kembali -> 3.3 |
-| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
+| 4.1 | Profil (tab) | Target -> 1.2; Zona pace -> ringkasan zona; Hari & pengingat -> 1.6; sakelar Strength + core (FL-12); sakelar Ikon ilustrasi (`profile.spot_icons`, UI/UX 14, langsung berlaku di semua layar); Jeda plan -> 4.3; Premium -> 4.4 (hanya jika paywall aktif); Data & privasi -> 4.5; Panduan & istilah -> 4.7; Bahasa -> 4.8 |
 | 4.2 | Integrasi | Fase 2 (ditunda: butuh kredensial Strava + HP fisik) |
 | 4.3 | Jeda plan | Jeda -> 2.1 (status dijeda) |
 | 4.4 | Premium (F-23) | Fase 2: layar tanpa pembelian (tombol nonaktif). Kembali -> layar asal. Pembelian Fase 3 (`08-MONETIZATION.md`) |
@@ -187,9 +187,9 @@ Tampilan status di 3.1: completed = centang di lingkaran warna zona, missed/skip
 
 Saat `paused`: notifikasi terjadwal dibatalkan, dijadwalkan ulang saat `running`.
 
-Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen di "Segmen x dari y". Set berbasis repetisi tidak memakai countdown ("Selesai set"); set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
+Mode gerakan strength (F-21, 2.3s): 1 gerakan = 1 segmen ("Gerakan n/N"). Set berbasis waktu (plank) dan istirahat antar set memakai countdown dan maju otomatis. Set berbasis repetisi: mode otomatis (bawaan, `profile.timer_auto`) = countdown dari estimasi 3 dtk per repetisi dan maju otomatis, "Selesai set" mengakhiri lebih cepat; mode manual = hitung naik, maju dengan "Selesai set". Mode bisa diganti di tengah sesi (pil di bar atas); hitungan set yang sedang berjalan dimulai ulang. Gerakan yang tidak didahului istirahat (termasuk gerakan pertama) diawali "Siap-siap" 5 dtk ("Mulai sekarang" untuk melewati). Istirahat bisa ditambah "+15 dtk" berkali-kali. Tahan layar set 0,5 dtk = "Selesai set" / "Lanjut". Detail: `09-VOICE.md` bagian 6 dan 13. Istirahat sesudah set terakhir gerakan terakhir tidak ada. "Lewati gerakan" melewati semua set gerakan itu.
 
-Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS, jadi segmen ini tidak memakai countdown. Layar menampilkan nama gerakan, set ke-berapa, dan cue; pengguna menekan "Lanjut" setiap set selesai. Dosis berbasis waktu tetap memakai countdown.
+Segmen drill (F-17): dosis berbasis jarak (mis. 2 x 20 m) tidak bisa diukur tanpa GPS. Mode otomatis: countdown 60 dtk per set (termasuk kembali ke awal) dan maju sendiri; mode manual: hitung naik dan pengguna menekan "Lanjut" setiap set selesai. Layar menampilkan nama gerakan, set ke-berapa, dan cue. Dosis berbasis waktu tetap memakai countdown.
 
 ### 3.3 Status plan
 

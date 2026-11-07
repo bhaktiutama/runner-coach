@@ -10,6 +10,8 @@ import {
   ring,
   SegmentedControl,
   space,
+  SpotIcon,
+  typography,
   Text,
   weekdayShortName,
   themed,
@@ -22,6 +24,7 @@ import { useOnboarding } from '@/data/useOnboarding';
 import { t } from '@/i18n/t';
 import { notificationsSupported, requestPermission } from '@/lib/notifications';
 import { et } from '@/lib/rationale';
+import { useSpotIcons } from '@/lib/spot';
 
 const TIMES = ['05:00', '05:30', '06:00', '06:30', '17:00', '18:00'];
 
@@ -30,6 +33,7 @@ export default function DaysStep() {
   const o = useOnboarding('days');
   const d = o.draft;
   const days = (d.availableDays ?? []) as Weekday[];
+  const icons = useSpotIcons();
   const longDay = d.longRunDay ?? 6;
   const [picking, setPicking] = useState(false);
   const [explained, setExplained] = useState(false);
@@ -129,10 +133,23 @@ export default function DaysStep() {
         style={[styles.reminder, !notificationsSupported && styles.off]}
         testID="reminder"
       >
-        <View style={styles.reminderLabel}>
-          <Icon name="bell" size={space[5]} />
-          <Text variant="row">{t('days.reminder')}</Text>
-        </View>
+        {icons ? (
+          // Review 2026-11-07: ikon setinggi dua baris (judul + penjelasan singkat).
+          <View style={styles.reminderLabel}>
+            <SpotIcon name="reminder" size={REMINDER_ICON} testID="spot-reminder" />
+            <View style={styles.flexShrink}>
+              <Text variant="row">{t('days.reminder')}</Text>
+              <Text variant="caption" color="textMuted">
+                {t('days.reminderExplain')}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.reminderLabel}>
+            <Icon name="bell" size={space[5]} />
+            <Text variant="row">{t('days.reminder')}</Text>
+          </View>
+        )}
         <Text variant="numberSm">{d.reminderTime ?? t('days.reminderOff')}</Text>
       </Pressable>
       {!notificationsSupported ? (
@@ -168,6 +185,8 @@ export default function DaysStep() {
   );
 }
 
+const REMINDER_ICON = (typography.row.lineHeight ?? space[5]) + (typography.caption.lineHeight ?? space[4]);
+
 const styles = themed(() =>
   StyleSheet.create({
     days: { flexDirection: 'row', gap: space[1] + space[1] / 2 },
@@ -190,7 +209,13 @@ const styles = themed(() =>
       ...ring(border.hairline, color.line),
       backgroundColor: color.surface,
     },
-    reminderLabel: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
+    reminderLabel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[2] + space[1] / 2,
+      flexShrink: 1,
+    },
+    flexShrink: { flexShrink: 1 },
     off: { opacity: 0.5 },
     times: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
   }),

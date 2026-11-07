@@ -188,6 +188,27 @@ ALTER TABLE workout_feedback ADD COLUMN load_feel TEXT NULL CHECK (load_feel IN 
 UPDATE profile SET locale = 'system' WHERE NOT EXISTS (SELECT 1 FROM goals);
 `,
   },
+  {
+    // Timer mode otomatis (09-VOICE bagian 6): set repetisi dan drill jarak maju sendiri memakai estimasi waktu.
+    version: 7,
+    sql: `
+ALTER TABLE profile ADD COLUMN timer_auto INTEGER NOT NULL DEFAULT 1 CHECK (timer_auto IN (0, 1));
+`,
+  },
+  {
+    // Kartu geser 2.1: kartu yang tampil pertama (dipilih lewat "Jadikan utama").
+    version: 8,
+    sql: `
+ALTER TABLE profile ADD COLUMN today_card TEXT NOT NULL DEFAULT 'countdown' CHECK (today_card IN ('countdown', 'long_run', 'records', 'streak'));
+`,
+  },
+  {
+    // Ikon spot (UI/UX 14): 1 = tampil, 0 = tampilan tanpa ikon seperti sebelumnya. Sakelar di Profil 4.1.
+    version: 9,
+    sql: `
+ALTER TABLE profile ADD COLUMN spot_icons INTEGER NOT NULL DEFAULT 1 CHECK (spot_icons IN (0, 1));
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = migrations[migrations.length - 1]!.version;

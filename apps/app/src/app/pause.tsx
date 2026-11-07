@@ -8,6 +8,7 @@ import {
   radius,
   ScreenTitle,
   SegmentedControl,
+  size,
   space,
   Text,
   TextColorContext,
@@ -22,6 +23,8 @@ import { useActivePlan, usePlanOps, useToday } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
 import { track } from '@/lib/analytics';
 import { goHome } from '@/lib/nav';
+import { PAUSE_SPOT } from '@/lib/spotMap';
+import { useSpot } from '@/components/Spot';
 
 const REASONS = ['injury', 'sick', 'busy'] as const;
 const DUR = [
@@ -38,6 +41,7 @@ export default function Pause() {
   const ops = usePlanOps();
   const today = useToday();
   const [reason, setReason] = useState<(typeof REASONS)[number]>('injury');
+  const spot = useSpot();
   const [dur, setDur] = useState<string>('7');
   const [parts, setParts] = useState<MessageKey[]>([]);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/profile'));
@@ -96,6 +100,8 @@ export default function Pause() {
               size="large"
               testID={`reason-${r}`}
               label={t(`pause.${r}` as MessageKey)}
+              leading={spot(PAUSE_SPOT[r], size.spotXs)}
+              stack
               selected={reason === r}
               onPress={() => setReason(r)}
             />

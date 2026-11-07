@@ -19,6 +19,7 @@ import { Screen } from '@/components/Screen';
 import { helpCatalog, type HelpTopic } from '@/i18n/help';
 import { t } from '@/i18n/t';
 import { et, refShort } from '@/lib/rationale';
+import { useSpot } from '@/components/Spot';
 
 const GRADE_DOT = themed(() => ({
   A: color.success,
@@ -32,6 +33,7 @@ export default function Help() {
   const { topic } = useLocalSearchParams<{ topic?: string }>();
   const { text: helpText, groups: HELP } = helpCatalog();
   const focused = HELP.flatMap((g) => g.topics).find((x) => x.id === topic);
+  const spot = useSpot();
   const back = () => (router.canGoBack() ? router.back() : router.replace('/profile'));
   return (
     <Screen testID="screen-help">
@@ -47,9 +49,12 @@ export default function Help() {
           <TopicCard topic={focused} initiallyOpen />
         </View>
       ) : (
-        <Text variant="subtitle" color="textMuted">
-          {helpText.intro}
-        </Text>
+        <View style={styles.intro}>
+          {spot('guide', size.spotMd)}
+          <Text variant="subtitle" color="textMuted" style={styles.flex}>
+            {helpText.intro}
+          </Text>
+        </View>
       )}
       {HELP.map((g) => (
         <View key={g.id} style={styles.group}>
@@ -140,6 +145,7 @@ function TopicCard({
 const styles = themed(() =>
   StyleSheet.create({
     flex: { flex: 1 },
+    intro: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     top: { flexDirection: 'row', alignItems: 'center' },
     spacer: { width: space[10] + space[1] },
     group: { gap: space[2] },

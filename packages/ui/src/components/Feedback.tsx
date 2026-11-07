@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { duration, easing, useReducedMotion } from '../motion';
 import { border, color, radius, ring, size, space, themed } from '../theme';
@@ -118,7 +118,7 @@ export function TagChips<T extends string>({
   selected,
   onToggle,
 }: {
-  tags: { value: T; label: string }[];
+  tags: { value: T; label: string; leading?: ReactNode }[];
   selected: T[];
   onToggle: (v: T) => void;
 }) {
@@ -129,6 +129,7 @@ export function TagChips<T extends string>({
           key={t.value}
           testID={`tag-${t.value}`}
           label={t.label}
+          leading={t.leading}
           selected={selected.includes(t.value)}
           onPress={() => onToggle(t.value)}
         />

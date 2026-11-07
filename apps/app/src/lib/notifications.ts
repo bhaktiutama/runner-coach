@@ -28,7 +28,8 @@ export function openSettings() {
 if (notificationsSupported) {
   Notifications.setNotificationHandler({
     handleNotification: async (n) => {
-      const timer = (n.request.content.data as { kind?: string } | undefined)?.kind === 'timer';
+      const kind = (n.request.content.data as { kind?: string } | undefined)?.kind;
+      const timer = kind === 'timer' || kind === STATUS_KIND;
       return {
         shouldPlaySound: !timer,
         shouldSetBadge: false,
@@ -62,4 +63,56 @@ export async function cancelTimerCues(): Promise<void> {
       .filter((n) => (n.content.data as { kind?: string } | undefined)?.kind === 'timer')
       .map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier)),
   );
+}
+
+// U5 (09-VOICE bagian 13): status timer di layar kunci / bayangan notifikasi. Satu notifikasi yang
+// diperbarui (identifier tetap) tiap pergantian segmen: tanpa suara, Android = notifikasi berjalan
+// (sticky, kanal prioritas rendah), iOS = notifikasi pasif. Live Activity iOS belum (butuh modul native).
+const STATUS_ID = 'timer-status';
+const STATUS_KIND = 'timer-status';
+const STATUS_CHANNEL = 'timer-status';
+let channelReady = false;
+
+export async function showTimerStatus(title: string, body: string, channelName: string): Promise<void> {
+  if (!notificationsSupported) return;
+  try {
+    if ((await getPermission()) !== 'granted') return;
+    if (process.env.EXPO_OS === 'android' && !channelReady) {
+      await Notifications.setNotificationChannelAsync(STATUS_CHANNEL, {
+        name: channelName,
+        importance: Notifications.AndroidImportance.LOW,
+        sound: null,
+        vibrationPattern: null,
+        enableVibrate: false,
+        showBadge: false,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
+      channelReady = true;
+    }
+    await Notifications.scheduleNotificationAsync({
+      identifier: STATUS_ID,
+      content: {
+        title,
+        body,
+        sound: false,
+        sticky: true,
+        autoDismiss: false,
+        priority: Notifications.AndroidNotificationPriority.LOW,
+        interruptionLevel: 'passive',
+        data: { kind: STATUS_KIND },
+      },
+      trigger: process.env.EXPO_OS === 'android' ? { channelId: STATUS_CHANNEL } : null,
+    });
+  } catch {
+    /* notifikasi status tidak penting untuk jalannya timer */
+  }
+}
+
+export async function clearTimerStatus(): Promise<void> {
+  if (!notificationsSupported) return;
+  try {
+    await Notifications.dismissNotificationAsync(STATUS_ID);
+  } catch {
+    /* sudah hilang */
+  }
 }

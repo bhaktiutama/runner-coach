@@ -63,6 +63,9 @@ const PROFILE_KEYS = [
   'health_flag',
   'disclaimer_accepted_at',
   'strength_opt_in',
+  'timer_auto',
+  'today_card',
+  'spot_icons',
 ] as const;
 
 export async function updateProfile(db: Db, patch: Partial<ProfileRow>): Promise<void> {

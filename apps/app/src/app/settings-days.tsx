@@ -18,6 +18,7 @@ import { useActivePlan, usePlanOps, useProfile, useToday, useUpdateProfile } fro
 import { planParams } from '@/data/rows';
 import { t } from '@/i18n/t';
 import { notificationsSupported, requestPermission } from '@/lib/notifications';
+import { SpotLabel, SpotTitle } from '@/components/Spot';
 
 const TIMES = ['05:00', '05:30', '06:00', '06:30', '17:00', '18:00'];
 
@@ -61,7 +62,7 @@ export default function SettingsDays() {
       }
     >
       <IconButton icon="back" label={t('common.back')} onPress={() => router.back()} />
-      <Text variant="title">{t('daysEdit.title')}</Text>
+      <SpotTitle title={t('daysEdit.title')} spot="days" />
       <View style={styles.row}>
         {Array.from({ length: 7 }, (_, i) => (
           <Chip
@@ -99,9 +100,7 @@ export default function SettingsDays() {
           {t('daysEdit.note')}
         </Text>
       ) : null}
-      <Text variant="label" color="textMuted">
-        {t('days.reminder')}
-      </Text>
+      <SpotLabel label={t('days.reminder')} spot="reminder" />
       {notificationsSupported ? (
         <>
           <View style={styles.row}>

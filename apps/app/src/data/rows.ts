@@ -23,6 +23,12 @@ export type ProfileRow = {
   disclaimer_accepted_at: string | null;
   /** F-21: 1 = plan memuat strength + core. */
   strength_opt_in: number;
+  /** 1 = timer maju otomatis (set repetisi/drill memakai estimasi waktu). Sejak v7 */
+  timer_auto: number;
+  /** Kartu 2.1 yang tampil pertama. Sejak v8 */
+  today_card: 'countdown' | 'long_run' | 'records' | 'streak';
+  /** 1 = ikon spot berwarna tampil di kartu/daftar. Sejak v9 */
+  spot_icons: number;
 };
 
 export type GoalRow = {
