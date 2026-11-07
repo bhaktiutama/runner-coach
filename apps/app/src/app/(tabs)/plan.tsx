@@ -154,80 +154,98 @@ export default function PlanTab() {
           // Selesai: centang di lingkaran warna zona, sama dengan lajur minggu di 2.1 (LaneWeek).
           const done = w?.status === 'completed';
           return (
-            <Pressable
+            <View
               key={date}
-              testID={`plan-day-${date}`}
-              disabled={!w}
-              onPress={() => w && router.push(`/workout/${w.id}`)}
-              style={[styles.day, w ? styles.dayWorkout : styles.dayRest, isToday && styles.dayToday]}
+              style={[styles.dayCard, w ? styles.dayWorkout : styles.dayRest, isToday && styles.dayToday]}
             >
-              <View style={styles.date}>
-                <Text variant="dow" color="textMuted">
-                  {weekdayShortName(i)}
-                </Text>
-                <Text variant="subheading">{String(Number(date.slice(8)))}</Text>
-              </View>
-              {icons ? (
-                // UI/UX 14: ikon jenis latihan menggantikan garis warna; terlewat = pudar.
-                <View style={struck ? styles.dim : null}>
-                  <SpotIcon name={w ? TYPE_SPOT[w.type] : 'rest-day'} size={size.spotSm} />
+              <Pressable
+                testID={`plan-day-${date}`}
+                disabled={!w}
+                onPress={() => w && router.push(`/workout/${w.id}`)}
+                style={[styles.day, run && sup ? styles.dayTop : null]}
+              >
+                <View style={styles.date}>
+                  <Text variant="dow" color="textMuted">
+                    {weekdayShortName(i)}
+                  </Text>
+                  <Text variant="subheading">{String(Number(date.slice(8)))}</Text>
                 </View>
-              ) : w ? (
-                <LaneMark zone={TYPE_ZONE[w.type]} stretch />
-              ) : (
-                <View style={styles.restMark} />
-              )}
-              <View style={styles.body}>
-                {/* Review 2026-11-07: sesi strength tambahan sebaris judul, agar setiap hari tetap 2 baris. */}
-                <View style={styles.titleRow}>
+                {icons ? (
+                  // UI/UX 14: ikon jenis latihan menggantikan garis warna; terlewat = pudar.
+                  <View style={struck ? styles.dim : null}>
+                    <SpotIcon name={w ? TYPE_SPOT[w.type] : 'rest-day'} size={size.spotSm} />
+                  </View>
+                ) : w ? (
+                  <LaneMark zone={TYPE_ZONE[w.type]} stretch />
+                ) : (
+                  <View style={styles.restMark} />
+                )}
+                <View style={styles.body}>
                   <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
                     {w ? typeName(w.type) : t('plan.rest')}
                   </Text>
-                  {run && sup ? (
-                    <Pressable
-                      onPress={() => router.push(`/workout/${sup.id}`)}
-                      accessibilityRole="button"
-                      testID={`plan-strength-${date}`}
-                      style={styles.supRow}
-                    >
-                      <LaneMark zone="strength" />
-                      <Text variant="caption" color="text">
-                        {t('plan.strengthLine', { type: typeName(sup.type), min: minutesOf(sup.steps) })}
-                      </Text>
-                    </Pressable>
+                  {w || i === 0 ? (
+                    <Text variant="caption" color="textMuted">
+                      {w
+                        ? isSupportType(w.type)
+                          ? t('plan.strengthSub', {
+                              min: minutesOf(w.steps),
+                              n: w.steps.filter((x) => x.kind === 'exercise').length,
+                            })
+                          : `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
+                        : t('plan.restSub')}
+                    </Text>
                   ) : null}
                 </View>
-                {w || i === 0 ? (
-                  <Text variant="caption" color="textMuted">
-                    {w
-                      ? isSupportType(w.type)
-                        ? t('plan.strengthSub', {
-                            min: minutesOf(w.steps),
-                            n: w.steps.filter((x) => x.kind === 'exercise').length,
-                          })
-                        : `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
-                      : t('plan.restSub')}
-                  </Text>
+                {done && w ? (
+                  <View
+                    testID={`plan-done-${date}`}
+                    accessible
+                    accessibilityLabel={t('detail.status.completed')}
+                    style={[styles.doneMark, { backgroundColor: color.zone[TYPE_ZONE[w.type]] }]}
+                  >
+                    <Icon name="check" size={space[4]} color={onZone(TYPE_ZONE[w.type])} strokeWidth={3} />
+                  </View>
                 ) : null}
-              </View>
-              {done && w ? (
-                <View
-                  testID={`plan-done-${date}`}
-                  accessible
-                  accessibilityLabel={t('detail.status.completed')}
-                  style={[styles.doneMark, { backgroundColor: color.zone[TYPE_ZONE[w.type]] }]}
+                {isToday ? (
+                  <View style={styles.tag}>
+                    <Text variant="tag" style={{ color: color.bg }}>
+                      {t('plan.today')}
+                    </Text>
+                  </View>
+                ) : null}
+              </Pressable>
+              {run && sup ? (
+                // Review 2026-11-07: sesi strength di hari yang sama = baris latihan kedua di kartu yang sama.
+                <Pressable
+                  onPress={() => router.push(`/workout/${sup.id}`)}
+                  accessibilityRole="button"
+                  testID={`plan-strength-${date}`}
+                  style={[styles.day, styles.supDay]}
                 >
-                  <Icon name="check" size={space[4]} color={onZone(TYPE_ZONE[w.type])} strokeWidth={3} />
-                </View>
+                  <View style={styles.date} />
+                  {icons ? (
+                    <SpotIcon name={TYPE_SPOT[sup.type]} size={size.spotSm} />
+                  ) : (
+                    <LaneMark zone="strength" stretch />
+                  )}
+                  <View style={styles.body}>
+                    <Text variant="row">{typeName(sup.type)}</Text>
+                    <Text variant="caption" color="textMuted">
+                      {t('plan.strengthSub', {
+                        min: minutesOf(sup.steps),
+                        n: sup.steps.filter((x) => x.kind === 'exercise').length,
+                      })}
+                    </Text>
+                  </View>
+                  {sup.status === 'completed' ? (
+                    <View style={[styles.doneMark, { backgroundColor: color.zone.strength }]}>
+                      <Icon name="check" size={space[4]} color={onZone('strength')} strokeWidth={3} />
+                    </View>
+                  ) : null}
+                </Pressable>
               ) : null}
-              {isToday ? (
-                <View style={styles.tag}>
-                  <Text variant="tag" style={{ color: color.bg }}>
-                    {t('plan.today')}
-                  </Text>
-                </View>
-              ) : null}
-            </Pressable>
+            </View>
           );
         })}
       </View>
@@ -246,8 +264,10 @@ const styles = themed(() =>
   StyleSheet.create({
     navLead: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[3] },
     navText: { flexShrink: 1, gap: NAV_GAP },
-    supRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
-    titleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space[2] },
+    dayCard: { borderRadius: radius.md },
+    // Strength di hari yang sama: satu kartu, dua baris latihan rapat tanpa garis pemisah.
+    dayTop: { minHeight: 0, paddingTop: space[3], paddingBottom: space[1] },
+    supDay: { minHeight: 0, paddingTop: space[1], paddingBottom: space[3] },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     head: { gap: space[1] },
     nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[2] },

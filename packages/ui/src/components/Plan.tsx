@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import { formatNumber } from '../format';
 import { duration, easing, ScaleIn, STAGGER_BAR, useAnimatedNumber, useEntrance } from '../motion';
-import Svg, { Defs, Pattern, Rect } from 'react-native-svg';
-import { border, color, fontFiles, radius, ring, size, space, themed } from '../theme';
+import Svg, { Defs, LinearGradient, Pattern, Rect, Stop } from 'react-native-svg';
+import { border, color, fontFiles, radius, ring, size, space, themed, typography } from '../theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
 
@@ -194,7 +194,10 @@ export function LaneBadge({ label }: { label: string }) {
 export type PhaseKey = 'base' | 'build' | 'peak' | 'taper' | 'return';
 const phaseColor = (p: PhaseKey) => (p === 'return' ? color.status.recovery : color.phase[p]);
 
-/** Bar fase per minggu (3.1): pil 14 px jarak 4, minggu ini garis luar 2 px; legenda kotak 10. */
+/**
+ * Bar fase (3.1, review 2026-11-07 opsi A): satu bar gradasi warna fase, penanda bulat di minggu
+ * ini, nama fase langsung di bawah bar (fase minggu ini tebal). Menggantikan 15 pil + legenda.
+ */
 export function PhaseBar({
   weeks,
   current,
@@ -204,32 +207,94 @@ export function PhaseBar({
   current?: number;
   legend: { phase: PhaseKey; label: string }[];
 }) {
+  const [w, setW] = useState(0);
+  const n = Math.max(1, weeks.length);
+  // Rentang berurutan per fase: [fase, minggu awal, jumlah].
+  const runs: { phase: PhaseKey; start: number; len: number }[] = [];
+  weeks.forEach((p, i) => {
+    const last = runs[runs.length - 1];
+    if (last && last.phase === p) last.len++;
+    else runs.push({ phase: p, start: i, len: 1 });
+  });
+  const blend = 0.6 / n; // sambungan halus antar fase (0,6 minggu)
+  const stops = runs.flatMap((r) => [
+    { o: Math.max(0, r.start / n + blend), c: phaseColor(r.phase) },
+    { o: Math.min(1, (r.start + r.len) / n - blend), c: phaseColor(r.phase) },
+  ]);
+  const curRun = current
+    ? runs.find((r) => current - 1 >= r.start && current - 1 < r.start + r.len)
+    : undefined;
+  const label = (p: PhaseKey) => legend.find((l) => l.phase === p)?.label ?? p;
+  const id = `phase-grad-${n}`;
   return (
-    <View style={styles.phaseWrap}>
-      <View style={styles.phaseRow}>
-        {weeks.map((p, i) => (
+    <View style={styles.phaseWrap} onLayout={(e) => setW(e.nativeEvent.layout.width)} testID="phase-bar">
+      <View style={styles.phaseTrack}>
+        {w > 0 ? (
+          <Svg width={w} height={PHASE_H}>
+            <Defs>
+              <LinearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+                {stops.map((st, i) => (
+                  <Stop key={i} offset={st.o} stopColor={st.c} />
+                ))}
+              </LinearGradient>
+            </Defs>
+            <Rect width={w} height={PHASE_H} rx={PHASE_H / 2} fill={`url(#${id})`} />
+          </Svg>
+        ) : null}
+        {current && w > 0 ? (
           <View
-            key={i}
-            style={[
-              styles.phasePill,
-              { backgroundColor: phaseColor(p) },
-              i + 1 === current && styles.todayOutline,
-            ]}
+            testID="phase-marker"
+            style={[styles.phaseMarker, { left: ((current - 0.5) / n) * w - PHASE_MARK / 2 }]}
           />
-        ))}
+        ) : null}
       </View>
-      <View style={styles.legend}>
-        {legend.map((l) => (
-          <View key={l.phase} style={styles.legendItem}>
-            <View style={[styles.legendDotSm, { backgroundColor: phaseColor(l.phase) }]} />
-            <Text variant="caption" color="textMuted">
-              {l.label}
-            </Text>
-          </View>
-        ))}
+      <View style={styles.phaseLabels}>
+        {w > 0
+          ? placeLabels(runs, n, w, curRun, label).map((l) => (
+              <Text
+                key={l.key}
+                variant={l.on ? 'captionStrong' : 'caption'}
+                color={l.on ? 'text' : 'textMuted'}
+                numberOfLines={1}
+                style={[styles.phaseLabel, l.right ? { right: 0 } : { left: l.x }]}
+              >
+                {l.text}
+              </Text>
+            ))
+          : null}
       </View>
     </View>
   );
+}
+
+/**
+ * Posisi label fase di bawah bar. Label terakhir rata kanan. Perkiraan lebar (6 px per huruf);
+ * label yang menabrak label sebelumnya disembunyikan, kecuali fase minggu ini (yang lain mengalah).
+ */
+function placeLabels<R extends { phase: PhaseKey; start: number }>(
+  runs: R[],
+  n: number,
+  w: number,
+  cur: R | undefined,
+  label: (p: PhaseKey) => string,
+) {
+  const est = (t: string) => t.length * (space[1] + space[1] / 2) + space[1];
+  const all = runs.map((r, i) => {
+    const text = label(r.phase);
+    const right = i === runs.length - 1 && runs.length > 1;
+    const x = right ? w - est(text) : (r.start / n) * w;
+    return { key: i, text, x, end: x + est(text), right, on: r === cur };
+  });
+  const out: typeof all = [];
+  for (const l of all) {
+    const prev = out[out.length - 1];
+    if (prev && l.x < prev.end) {
+      if (l.on || (l.right && !prev.on)) out.pop();
+      else continue;
+    }
+    out.push(l);
+  }
+  return out;
 }
 
 /** Grafik batang volume per minggu (1.8, 3.3): tinggi area 124, jarak 6, label angka di atas batang. */
@@ -372,6 +437,9 @@ export function StatusChip({
   );
 }
 
+const PHASE_H = space[2] + border.selected - border.hairline / 2;
+const PHASE_MARK = space[4] + border.selected;
+
 const styles = themed(() =>
   StyleSheet.create({
     laneBadge: {
@@ -418,7 +486,20 @@ const styles = themed(() =>
       justifyContent: 'center',
     },
     bold: { fontFamily: fontFiles.ui800 },
-    phaseWrap: { gap: space[2] },
+    // Jarak lebih lega ke navigasi minggu di bawahnya (review 2026-11-07).
+    phaseWrap: { gap: space[2], marginBottom: space[2] },
+    phaseTrack: { height: PHASE_MARK, justifyContent: 'center' },
+    phaseMarker: {
+      position: 'absolute',
+      width: PHASE_MARK,
+      height: PHASE_MARK,
+      borderRadius: radius.stadium,
+      backgroundColor: color.surface,
+      borderWidth: border.selected + border.hairline,
+      borderColor: color.text,
+    },
+    phaseLabels: { height: typography.captionStrong.lineHeight ?? space[4] },
+    phaseLabel: { position: 'absolute', top: 0 },
     phaseRow: { flexDirection: 'row', gap: space[1] },
     phasePill: {
       flex: 1,
