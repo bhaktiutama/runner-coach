@@ -11,7 +11,10 @@ import {
   LinkButton,
   radius,
   ring,
+  size,
   space,
+  SpotIcon,
+  typography,
   StatusChip,
   Text,
   themed,
@@ -43,6 +46,7 @@ import { weekDates, weekIndexOf } from '@/lib/planView';
 import { localDateOf } from '@/lib/today';
 import { TYPE_ZONE, typeName } from '@/lib/workoutView';
 import { SpotInline } from '@/components/Spot';
+import { useSpotIcons } from '@/lib/spot';
 
 /** TRD 3.3: 30 hari tanpa backup; sebelum backup pertama dihitung dari mulai plan. */
 function backupDue(m: MetaRow | undefined, planStart: string, d: string) {
@@ -108,6 +112,7 @@ export default function Today() {
           today={today}
           plan={plan.data}
           planTargetM={(params.weeks ?? []).reduce((s, w) => s + w.volumeM, 0)}
+          phase={wIdx ? params.weeks?.[wIdx - 1]?.phase : undefined}
         />
       ) : null}
       {backupDue(meta.data, plan.data.start_date, today) ? (
@@ -230,13 +235,28 @@ export default function Today() {
 }
 
 function RestCard({ next }: { next: Workout | null }) {
+  const icons = useSpotIcons();
   return (
     <Card testID="rest-card" style={styles.rest}>
       <ImageHeader source={IMAGES.trackAerial} />
-      <Text variant="title">{t('today.restTitle')}</Text>
-      <Text variant="bodySm" color="textMuted">
-        {t('today.restBody')}
-      </Text>
+      {/* Review 2026-11-07: judul + isi satu kelompok rapat, berjarak sama dengan kartu latihan dari gambar. */}
+      <View style={styles.restText}>
+        <View style={styles.restHead}>
+          {icons ? (
+            <SpotIcon
+              name="rest-day"
+              size={typography.title.lineHeight ?? size.spotSm}
+              testID="spot-rest-day"
+            />
+          ) : null}
+          <Text variant="title" style={styles.flexShrink}>
+            {t('today.restTitle')}
+          </Text>
+        </View>
+        <Text variant="bodySm" color="textMuted">
+          {t('today.restBody')}
+        </Text>
+      </View>
       {next ? (
         <LinkButton
           size="sm"
@@ -263,7 +283,9 @@ const styles = themed(() =>
     weekHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     weekDone: { fontFamily: fontFiles.display700, color: color.text },
     // UI/UX 12: gambar track-aerial menggantikan garis kiri recovery.
-    rest: { gap: space[2] },
+    rest: { gap: space[4] },
+    restText: { gap: space[1] },
+    restHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] + space[1] / 2 },
     backup: { gap: space[2] },
     flexShrink: { flexShrink: 1 },
     backupRow: { flexDirection: 'row', gap: space[3] },

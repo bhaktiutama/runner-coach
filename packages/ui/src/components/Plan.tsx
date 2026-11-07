@@ -321,16 +321,27 @@ export function PhaseLegend({
   items,
 }: {
   /** `leading` (mis. ikon spot fase) menggantikan kotak warna. */
-  items: { phase: PhaseKey; label: string; leading?: ReactNode }[];
+  /** `sub`: baris kedua di bawah label (mis. jumlah minggu), ikon dibuat setinggi dua baris. */
+  items: { phase: PhaseKey; label: string; leading?: ReactNode; sub?: string }[];
 }) {
+  const grid = items.some((l) => l.sub);
   return (
-    <View style={styles.legend}>
+    <View style={grid ? styles.legendGrid : styles.legend}>
       {items.map((l) => (
-        <View key={l.phase} style={styles.legendItem}>
+        <View key={l.phase} style={[styles.legendItem, grid && styles.legendCell]}>
           {l.leading ?? <View style={[styles.legendDot, { backgroundColor: phaseColor(l.phase) }]} />}
-          <Text variant="caption" color="textMuted">
-            {l.label}
-          </Text>
+          {l.sub ? (
+            <View>
+              <Text variant="captionStrong">{l.label}</Text>
+              <Text variant="caption" color="textMuted">
+                {l.sub}
+              </Text>
+            </View>
+          ) : (
+            <Text variant="caption" color="textMuted">
+              {l.label}
+            </Text>
+          )}
         </View>
       ))}
     </View>
@@ -421,6 +432,9 @@ const styles = themed(() =>
     },
     legend: { flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', gap: space[2] },
     legendItem: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    // Dengan baris kedua: kisi 2 kolom rata kiri (4 fase muat di 320 px tanpa terpotong).
+    legendGrid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: space[3] },
+    legendCell: { width: '50%', gap: space[2] },
     legendDot: { width: space[3], height: space[3], borderRadius: space[1] },
     bars: { flexDirection: 'row', alignItems: 'flex-end', gap: space[1] + space[1] / 2 },
     barCol: { flex: 1, alignItems: 'center', gap: space[1], justifyContent: 'flex-end' },

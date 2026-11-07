@@ -12,6 +12,7 @@ import {
   radius,
   size,
   space,
+  typography,
   Text,
   type PhaseKey,
   themed,
@@ -36,6 +37,7 @@ import { startFresh } from '@/lib/nav';
 import { et } from '@/lib/rationale';
 import { useSpot } from '@/components/Spot';
 import { PHASE_SPOT } from '@/lib/spotMap';
+import { useSpotIcons } from '@/lib/spot';
 
 /** 1.8 Preview plan + buat akun (wireframe OB8). Login tidak mengirim data plan. */
 export default function Preview() {
@@ -45,6 +47,7 @@ export default function Preview() {
   const insets = useSafeAreaInsets();
   const [whyOpen, setWhyOpen] = useState(true);
   const spot = useSpot();
+  const icons = useSpotIcons();
   const flow = useAuthFlow(async (uid) => {
     await complete.mutateAsync(uid);
     startFresh();
@@ -122,7 +125,15 @@ export default function Preview() {
                 .map((ph) => ({
                   phase: ph,
                   label: et(`phase.${ph}` as EngineMessageKey),
-                  leading: spot(PHASE_SPOT[ph], size.spotXs),
+                  // Review 2026-11-07: ikon setinggi dua baris (nama fase + jumlah minggu).
+                  leading: spot(
+                    PHASE_SPOT[ph],
+                    (typography.captionStrong.lineHeight ?? space[4]) +
+                      (typography.caption.lineHeight ?? space[4]),
+                  ),
+                  sub: icons
+                    ? t('preview.phaseWeeks', { n: weeks.filter((w) => w.phase === ph).length })
+                    : undefined,
                 }))}
             />
           </Card>

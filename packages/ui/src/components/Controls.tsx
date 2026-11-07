@@ -479,14 +479,21 @@ export function ScreenTitle({
   title: string;
   subtitle?: string;
   large?: boolean;
-  /** Ikon di kiri judul (mis. ikon spot); subjudul tetap selebar layar. */
-  leading?: ReactNode;
+  /**
+   * Ikon di kiri judul (mis. ikon spot), digambar setinggi blok judul: 1 baris = 1 line height,
+   * 2 baris = 2 line height. Subjudul tetap selebar layar.
+   */
+  leading?: (px: number) => ReactNode;
 }) {
+  const variant = large ? 'display' : 'title';
+  const lh = typography[variant].lineHeight ?? space[8];
+  const [h, setH] = useState(lh);
   const head = (
     <Text
-      variant={large ? 'display' : 'title'}
+      variant={variant}
       accessibilityRole="header"
       style={leading ? styles.flex : null}
+      onLayout={leading ? (e) => setH(Math.round(e.nativeEvent.layout.height)) : undefined}
     >
       {title}
     </Text>
@@ -495,7 +502,7 @@ export function ScreenTitle({
     <View style={{ gap: large ? space[3] : space[2] }}>
       {leading ? (
         <View style={styles.titleLead}>
-          {leading}
+          {leading(Math.min(Math.max(h, lh), lh * 2))}
           {head}
         </View>
       ) : (
@@ -565,7 +572,8 @@ const styles = themed(() =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    titleLead: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    // Ikon rata atas: judul 3 baris (320 px) tetap rapi, ikon setinggi 2 baris pertama.
+    titleLead: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3] },
     chipFill: { flex: 1, paddingHorizontal: space[1] },
     // Dengan ikon di kiri: baris, ikon dekat tepi kiri (ubinnya sudah memberi ruang visual).
     chipLead: { flexDirection: 'row', gap: space[2], paddingLeft: space[2] },

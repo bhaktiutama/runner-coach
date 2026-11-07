@@ -20,14 +20,15 @@ import {
   space,
   SpotIcon,
   Text,
+  typography,
   weekdayShortName,
   type PhaseKey,
   themed,
 } from '@run-coach/ui';
-import { formatDateFull, formatDayMonth, formatNumber } from '@run-coach/ui/format';
+import { formatDateFull, formatDayMonth, formatDayRange, formatNumber } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useActivePlan, useToday, useWorkouts } from '@/data/hooks';
@@ -53,6 +54,7 @@ export default function PlanTab() {
   const to = addDays(from, 6);
   const ws = useWorkouts(plan.data?.id, from, to);
   const icons = useSpotIcons();
+  const narrow = useWindowDimensions().width < NARROW_W;
   if (!plan.data || !params) return null;
   const g = plan.data.goal;
   const workouts = ws.data ?? [];
@@ -95,36 +97,43 @@ export default function PlanTab() {
           onPress={() => setSel(idx - 1)}
           testID="prev-week"
         />
-        <View style={styles.navCenter}>
-          {icons && wk ? (
-            // UI/UX 14: ikon fase minggu ini di kiri judul; nama fase ikut tertulis agar ikon punya arti.
-            <View style={styles.weekHead}>
-              <View style={styles.weekSpot}>
-                <SpotIcon
-                  name={PHASE_SPOT[wk.phase as keyof typeof PHASE_SPOT] ?? 'phase-base'}
-                  size={size.spotXs}
-                />
-              </View>
-              <Text variant="subheading" align="center" testID="week-phase">
-                {t('plan.weekTitlePhase', {
-                  n: idx,
-                  phase: et(`phase.${wk.phase}` as EngineMessageKey),
+        {icons && wk ? (
+          // Review 2026-11-07: ikon fase di kiri setinggi dua baris; judul + tanggal rata kiri di kanannya.
+          <View style={styles.navLead}>
+            <SpotIcon
+              name={PHASE_SPOT[wk.phase as keyof typeof PHASE_SPOT] ?? 'phase-base'}
+              size={NAV_ICON}
+              testID="week-phase-icon"
+            />
+            <View style={styles.navText}>
+              {/* Layar sempit (< 360 px): nama fase tidak ditulis, ikon fase sudah mewakili. */}
+              <Text variant="subheading" numberOfLines={1} testID="week-phase">
+                {narrow
+                  ? t('plan.weekTitle', { n: idx })
+                  : t('plan.weekTitlePhase', { n: idx, phase: et(`phase.${wk.phase}` as EngineMessageKey) })}
+              </Text>
+              <Text variant="controlSm" color="textMuted" numberOfLines={1}>
+                {t('plan.weekRangeShort', {
+                  range: formatDayRange(from, to),
+                  km: formatNumber(Math.round(weekKm / 1000)),
                 })}
               </Text>
             </View>
-          ) : (
+          </View>
+        ) : (
+          <View style={styles.navCenter}>
             <Text variant="subheading" align="center">
               {t('plan.weekTitle', { n: idx })}
             </Text>
-          )}
-          <Text variant="controlSm" color="textMuted" align="center">
-            {t('plan.weekRange', {
-              from: formatDayMonth(from),
-              to: formatDayMonth(to),
-              km: formatNumber(Math.round(weekKm / 1000)),
-            })}
-          </Text>
-        </View>
+            <Text variant="controlSm" color="textMuted" align="center">
+              {t('plan.weekRange', {
+                from: formatDayMonth(from),
+                to: formatDayMonth(to),
+                km: formatNumber(Math.round(weekKm / 1000)),
+              })}
+            </Text>
+          </View>
+        )}
         <IconButton
           icon="chevron-right"
           label={t('plan.nextWeek')}
@@ -169,22 +178,25 @@ export default function PlanTab() {
                 <View style={styles.restMark} />
               )}
               <View style={styles.body}>
-                <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
-                  {w ? typeName(w.type) : t('plan.rest')}
-                </Text>
-                {run && sup ? (
-                  <Pressable
-                    onPress={() => router.push(`/workout/${sup.id}`)}
-                    accessibilityRole="button"
-                    testID={`plan-strength-${date}`}
-                    style={styles.supRow}
-                  >
-                    <LaneMark zone="strength" />
-                    <Text variant="caption" color="text">
-                      {t('plan.strengthLine', { type: typeName(sup.type), min: minutesOf(sup.steps) })}
-                    </Text>
-                  </Pressable>
-                ) : null}
+                {/* Review 2026-11-07: sesi strength tambahan sebaris judul, agar setiap hari tetap 2 baris. */}
+                <View style={styles.titleRow}>
+                  <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
+                    {w ? typeName(w.type) : t('plan.rest')}
+                  </Text>
+                  {run && sup ? (
+                    <Pressable
+                      onPress={() => router.push(`/workout/${sup.id}`)}
+                      accessibilityRole="button"
+                      testID={`plan-strength-${date}`}
+                      style={styles.supRow}
+                    >
+                      <LaneMark zone="strength" />
+                      <Text variant="caption" color="text">
+                        {t('plan.strengthLine', { type: typeName(sup.type), min: minutesOf(sup.steps) })}
+                      </Text>
+                    </Pressable>
+                  ) : null}
+                </View>
                 {w || i === 0 ? (
                   <Text variant="caption" color="textMuted">
                     {w
@@ -223,14 +235,22 @@ export default function PlanTab() {
   );
 }
 
+/** Lebar layar yang dianggap sempit (iPhone SE 320). */
+const NARROW_W = space[10] * 9;
+const NAV_GAP = border.selected - border.hairline / 2;
+/** Ikon fase setinggi judul minggu + baris tanggal. */
+const NAV_ICON =
+  (typography.subheading.lineHeight ?? space[5]) + (typography.controlSm.lineHeight ?? space[4]) + NAV_GAP;
+
 const styles = themed(() =>
   StyleSheet.create({
-    weekHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space[2] },
-    weekSpot: { marginVertical: -space[1] },
-    supRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    navLead: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    navText: { flexShrink: 1, gap: NAV_GAP },
+    supRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    titleRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space[2] },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
     head: { gap: space[1] },
-    nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[2] },
     navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },
     days: { gap: space[2] },
     day: {

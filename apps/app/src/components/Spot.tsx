@@ -1,4 +1,4 @@
-import { size, space, SpotIcon, type SpotIconName, Text, themed } from '@run-coach/ui';
+import { ScreenTitle, size, space, SpotIcon, type SpotIconName, Text, themed } from '@run-coach/ui';
 import { StyleSheet, View } from 'react-native';
 import type { ReactNode } from 'react';
 import { useSpotIcons } from '@/lib/spot';
@@ -13,26 +13,31 @@ export function useSpot(): (name: SpotIconName, px?: number) => ReactNode | unde
     on ? <SpotIcon name={name} size={px} testID={`spot-${name}`} /> : undefined;
 }
 
-/** Judul layar (`title`) dengan ikon spot di kiri; tanpa ikon = Text biasa seperti sebelumnya. */
-export function SpotTitle({ title, spot }: { title: string; spot: SpotIconName }) {
+/**
+ * Ikon spot untuk `ScreenTitle.leading`: digambar setinggi blok judul (1 atau 2 baris), atau
+ * `undefined` jika ikon dimatikan.
+ */
+export function useSpotTitleIcon(): (
+  name: SpotIconName | undefined,
+) => ((px: number) => ReactNode) | undefined {
   const on = useSpotIcons();
-  if (!on) return <Text variant="title">{title}</Text>;
-  return (
-    <View style={styles.row}>
-      <SpotIcon name={spot} size={size.spotMd} testID={`spot-${spot}`} />
-      <Text variant="title" style={styles.flex}>
-        {title}
-      </Text>
-    </View>
-  );
+  return (name) =>
+    on && name ? (px) => <SpotIcon name={name} size={px} testID={`spot-${name}`} /> : undefined;
 }
 
-const styles = themed(() =>
-  StyleSheet.create({
-    row: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-    flex: { flex: 1 },
-  }),
-);
+/** Judul layar dengan ikon spot setinggi judul; tanpa ikon = judul biasa seperti sebelumnya. */
+export function SpotTitle({
+  title,
+  spot,
+  subtitle,
+}: {
+  title: string;
+  spot: SpotIconName;
+  subtitle?: string;
+}) {
+  const icon = useSpotTitleIcon();
+  return <ScreenTitle title={title} subtitle={subtitle} leading={icon(spot)} />;
+}
 
 /** Label bagian (variant `label`) dengan ikon spot kecil di kiri. */
 export function SpotLabel({ label, spot }: { label: string; spot: SpotIconName }) {

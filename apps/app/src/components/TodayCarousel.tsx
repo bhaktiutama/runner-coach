@@ -46,6 +46,8 @@ type Props = {
     goal: { distance: '5k' | '10k' | 'hm' | 'fm' | 'fitness'; race_date: string | null };
   };
   planTargetM: number;
+  /** Fase minggu ini, untuk baris kedua judul kartu hitung mundur. */
+  phase?: string;
 };
 
 /**
@@ -53,7 +55,7 @@ type Props = {
  * Digeser per halaman; titik di bawah bisa diketuk. Kartu default dipilih lewat "Jadikan utama"
  * (`profile.today_card`) dan selalu tampil pertama.
  */
-export function TodayCarousel({ today, plan, planTargetM }: Props) {
+export function TodayCarousel({ today, plan, planTargetM, phase }: Props) {
   const profile = useProfile();
   const update = useUpdateProfile();
   const ahead = useWorkouts(plan.id, today);
@@ -104,13 +106,20 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
             planStart={plan.start_date}
             planEnd={plan.end_date}
             planTargetM={planTargetM}
+            phase={phase}
             pin={pin(c)}
           />
         );
       case 'long_run': {
         const lr = nextLongRun(ahead.data ?? [], today);
         return (
-          <Shell title={t('today.card.longRun')} spot="next-long" pin={pin(c)} testID="card-long_run">
+          <Shell
+            title={t('today.card.longRun')}
+            sub={t('today.card.longRunSub')}
+            spot="next-long"
+            pin={pin(c)}
+            testID="card-long_run"
+          >
             {lr ? (
               <Pressable onPress={() => router.push(`/workout/${lr.id}`)} style={styles.row}>
                 <View style={styles.flex}>
@@ -184,7 +193,13 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
           ],
         ];
         return (
-          <Shell title={t('today.card.records')} spot="records" pin={pin(c)} testID="card-records">
+          <Shell
+            title={t('today.card.records')}
+            sub={t('today.card.recordsSub')}
+            spot="records"
+            pin={pin(c)}
+            testID="card-records"
+          >
             {r.longest || r.longestTime ? (
               <View style={styles.recs}>
                 {items.map(([k, v, d]) => (
@@ -223,7 +238,13 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
       case 'streak': {
         const s = weekStreak(statuses.data ?? [], today);
         return (
-          <Shell title={t('today.card.streak')} spot="streak" pin={pin(c)} testID="card-streak">
+          <Shell
+            title={t('today.card.streak')}
+            sub={t('today.card.streakSub')}
+            spot="streak"
+            pin={pin(c)}
+            testID="card-streak"
+          >
             <View style={styles.row}>
               <Text variant="row" style={styles.flex}>
                 {s.current > 0 ? t('today.card.streakNow', { n: s.current }) : t('today.card.streakZero')}
@@ -313,12 +334,14 @@ export function TodayCarousel({ today, plan, planTargetM }: Props) {
 
 function Shell({
   title,
+  sub,
   spot,
   pin,
   children,
   testID,
 }: {
   title: string;
+  sub: string;
   spot: SpotIconName;
   pin: ReactNode;
   children: ReactNode;
@@ -326,7 +349,7 @@ function Shell({
 }) {
   return (
     <Card style={styles.card} testID={testID}>
-      <CardHead title={title} spot={spot} pin={pin} />
+      <CardHead title={title} sub={sub} spot={spot} pin={pin} />
       {/* Isi + visual dikelompokkan di tengah ruang sisa: jarak atas dan bawah seimbang. */}
       <View style={styles.body}>{children}</View>
     </Card>

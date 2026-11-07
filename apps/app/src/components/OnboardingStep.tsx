@@ -1,9 +1,9 @@
-import { OnboardingHeader, PrimaryButton, ScreenTitle, size, type SpotIconName } from '@run-coach/ui';
+import { OnboardingHeader, PrimaryButton, ScreenTitle, type SpotIconName } from '@run-coach/ui';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
 import { Screen } from '@/components/Screen';
 import { t } from '@/i18n/t';
-import { useSpot } from './Spot';
+import { useSpotTitleIcon } from './Spot';
 
 const ORDER = ['goal', 'race', 'ability', 'volume', 'days', 'health'] as const;
 
@@ -34,8 +34,7 @@ type Props = {
 /** Kerangka layar 1.2-1.7: header progres 6 lajur, judul, isi, 1 tombol primary di bawah. */
 export function OnboardingStep(p: Props) {
   const n = ORDER.indexOf(p.step) + 1;
-  const spot = useSpot();
-  const icon = STEP_SPOT[p.step];
+  const titleIcon = useSpotTitleIcon();
   return (
     <Screen
       gap={p.gap}
@@ -60,11 +59,7 @@ export function OnboardingStep(p: Props) {
         counter={t('onboarding.counter', { step: n, total: ORDER.length })}
         onBack={p.onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/welcome')))}
       />
-      <ScreenTitle
-        title={p.title}
-        subtitle={p.subtitle}
-        leading={icon ? spot(icon, size.spotMd) : undefined}
-      />
+      <ScreenTitle title={p.title} subtitle={p.subtitle} leading={titleIcon(STEP_SPOT[p.step])} />
       {p.children}
     </Screen>
   );

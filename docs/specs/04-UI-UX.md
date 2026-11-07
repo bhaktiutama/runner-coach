@@ -233,13 +233,15 @@ Ikon berwarna kecil yang memberi wajah pada konten (bukan pengganti ikon garis u
 | Warna | Semua dari token: ubin latihan = skala panas zona (easy peach, long, tempo oranye, interval bara, recovery lavender, strength charcoal); ubin status = mint, sand, coral, lavender. Mode gelap: ubin pastel tetap, ubin strength memakai `dark.zone-strength` |
 | Ukuran (token `size`) | `spot-xs` 28 (di dalam chip, label sebaris, legenda fase), `spot-sm` 32 (baris daftar dan Profil, label stat, rasa RPE), `spot-md` 40 (kepala kartu, judul layar, judul 3.4), `spot-lg` 56 (2.4 selesai, badge), `spot-xl` 96 (cadangan ilustrasi kosong). Satu peran = satu ukuran di semua layar |
 | Aksesibilitas | Dekoratif: selalu bersama teks, disembunyikan dari pembaca layar. Wajah RPE tidak menggantikan angka |
+| Tinggi ikon = tinggi teks (review 2026-11-07) | Ikon di samping teks digambar setinggi blok teksnya: judul layar 1 baris = 1 line height, 2 baris = 2 line height (`ScreenTitle` mengukur judul; judul 3 baris di 320 px: ikon rata atas setinggi 2 baris). Ikon di kepala kartu, navigasi minggu, legenda fase dan baris pengingat dipasangkan dengan blok 2 baris (judul + keterangan) yang tingginya sama dengan ikon |
 | Tata letak | Struktur, tombol dan kartu tidak berubah. Di baris yang tingginya tetap (kepala kartu geser, bib, label stat, baris RPE), ikon memakai margin negatif sehingga tinggi baris sama dengan mode tanpa ikon |
 | Sakelar | Profil 4.1 "Ikon ilustrasi" (`profile.spot_icons`, bawaan nyala). Mati = tampilan sebelumnya persis (garis warna `LaneMark`, centang 2.4, logo di 4.5) |
 
 | Layar | Penempatan | Saat mati |
 |---|---|---|
 | 2.1 kartu latihan tanpa gambar, kartu strength | Ikon jenis latihan `spot-md` di kiri bib | Bib saja |
-| 2.1 kartu geser | Ikon kartu `spot-sm` di kiri judul: race-day / finish (sisa plan), next-long, records, streak | Judul saja |
+| 2.1 kartu geser | Judul 2 baris: label kecil + kalimat pendek (hitung mundur = fase minggu ini, mis. "Build: daya tahan naik"; long run "Pelan dan stabil"; rekor "Kemajuan sejak plan mulai"; streak "Tuntaskan semua lari"). Ikon race-day / finish, next-long, records, streak setinggi dua baris itu. Tinggi kartu +18 px untuk baris kedua | Judul 2 baris tanpa ikon |
+| 2.1 kartu istirahat | Ikon rest-day setinggi judul; judul + isi satu kelompok rapat (jarak 4), berjarak 16 dari gambar seperti kartu latihan | Judul tanpa ikon |
 | 2.4, 2.6 | 2.4: bendera `spot-lg` menggantikan lingkaran centang. RPE: wajah `spot-sm` di kiri label (1-4 ringan, 5-7 pas, 8-10 berat) | Centang, label saja |
 | 2.3s istirahat / siap-siap | `spot-sm` di kiri bib di dalam cincin | Bib saja |
 | 2.5 | Ikon `spot-sm` kecil di kanan label stat (jarak, waktu) | Label saja |
@@ -263,9 +265,9 @@ Set v2 (2026-11-07, 55 ikon): 53 terpakai; `heart-rate` dan `integration` menung
 | 1.2 | Kartu target: ikon `spot-md` di atas judul (centang pindah ke baris ikon); Bugar: ikon di kiri | Kartu tanpa ikon |
 | 1.3-1.7, 2.6, 4.4, 4.8, Zona pace, Hari & pengingat | Ikon `spot-md` di kiri judul layar (`ScreenTitle.leading` / `SpotTitle`). 1.2 dan 4.3 tidak: pilihannya sudah membawa ikon | Judul saja |
 | 4.7 | Ikon panduan `spot-md` di kiri paragraf pembuka | Paragraf saja |
-| 1.6, Hari & pengingat | Pengingat: ikon `spot-xs` (menggantikan lonceng garis) | Lonceng garis / label |
-| 1.8 | Legenda fase memakai ikon fase `spot-xs` (menggantikan kotak warna). 3.1 tetap kotak kecil: legenda di bawah bar 14 px tidak boleh lebih berat dari bar-nya | Kotak warna |
-| 3.1 | Judul minggu "Minggu n · Fase" dengan ikon fase `spot-xs` | "Minggu n" |
+| 1.6, Hari & pengingat | 1.6: baris pengingat 2 baris (judul + "Kami ingatkan di hari latihan saja.") dengan ikon setinggi dua baris; Hari & pengingat: label dengan ikon `spot-xs` | Lonceng garis / label |
+| 1.8 | Legenda fase: kisi 2 kolom, ikon fase setinggi dua baris (nama fase + jumlah minggu), menggantikan kotak warna. 3.1 tetap kotak kecil: legenda di bawah bar 14 px tidak boleh lebih berat dari bar-nya | Kotak warna |
+| 3.1 | Navigasi minggu: ikon fase di kiri setinggi dua baris, di kanannya "Minggu n · Fase" dan "9-15 Nov · 17 km" rata kiri (`formatDayRange`). Layar < 360 px: nama fase tidak ditulis. Sesi strength tambahan ditulis sebaris judul hari agar tiap hari 2 baris (di 320 px boleh turun ke baris 3) | "Minggu n" + tanggal di tengah |
 | 2.5 | Baris "Fase X" di bawah judul; "Pencapaian baru" (badge `spot-lg` yang baru didapat minggu ini) | Tidak tampil |
 | 3.3 | Label Prediksi = ikon rekor sebaris | Label saja |
 | 4.1 Profil | Semua baris memakai ikon `spot-sm` (target, zona, hari, strength, timer, cedera, Premium, privasi, panduan, bahasa, satuan, ikon ilustrasi) agar satu grup konsisten | Ikon garis lama / tanpa ikon |
