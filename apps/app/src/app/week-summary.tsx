@@ -17,7 +17,7 @@ import {
   themed,
 } from '@run-coach/ui';
 import { formatDistance, formatTotalDuration } from '@run-coach/ui/format';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
@@ -36,7 +36,7 @@ import {
 } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { t, type MessageKey } from '@/i18n/t';
-import { track } from '@/lib/analytics';
+import { track, trackProposalsShown } from '@/lib/analytics';
 import { goHome } from '@/lib/nav';
 import { weekIndexOf } from '@/lib/planView';
 import { et, rationaleText } from '@/lib/rationale';
@@ -67,6 +67,9 @@ export default function WeekSummary() {
   const week = useWeekWorkouts(plan.data?.id, today);
   const acts = useActivities(addDays(weekStart, -7));
   const proposals = useProposals(today, weekStart);
+  useEffect(() => {
+    if (proposals.data) trackProposalsShown(weekStart, proposals.data.map((p) => p.rule));
+  }, [proposals.data, weekStart]);
   const ops = usePlanOps();
   const [decided, setDecided] = useState<Record<string, boolean>>({});
   const icons = useSpotIcons();

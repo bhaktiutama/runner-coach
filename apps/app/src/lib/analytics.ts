@@ -63,3 +63,15 @@ export function track(name: EventName, props: Props = {}): void {
     body: JSON.stringify(body),
   }).catch(() => undefined);
 }
+
+const proposalsSent = new Set<string>();
+
+/** `adjustment_proposed` sekali per (minggu, aturan) per sesi app, saat usulan tampil di 2.5. */
+export function trackProposalsShown(weekStart: string, rules: string[]): void {
+  for (const rule of rules) {
+    const k = `${weekStart}:${rule}`;
+    if (proposalsSent.has(k)) continue;
+    proposalsSent.add(k);
+    track('adjustment_proposed', { rule });
+  }
+}
