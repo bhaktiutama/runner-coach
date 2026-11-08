@@ -29,6 +29,7 @@ export const EXERCISES: readonly Exercise[] = [
   { id: 'single_leg_calf_raise', category: 'leg', animation: null },
   { id: 'plank', category: 'core', animation: null },
   { id: 'side_plank', category: 'core', animation: null },
+  // Tetap di katalog agar plan/backup lama terbaca; tidak dipakai generator lagi.
   { id: 'dead_bug', category: 'core', animation: null },
   { id: 'bird_dog', category: 'core', animation: null },
   { id: 'copenhagen_plank', category: 'core', animation: null },
@@ -74,10 +75,11 @@ const CORE_SLOTS: Dose[][] = [
     { exercise_id: 'plank', sets: 3, duration_s: 40 },
     { exercise_id: 'plank', sets: 3, duration_s: 45 },
   ],
+  // Dead bug dinonaktifkan (animasi belum benar, keputusan pemilik 2026-11-08); slot diisi bird dog.
   [
-    { exercise_id: 'dead_bug', sets: 2, reps: 8, per_side: true },
-    { exercise_id: 'dead_bug', sets: 3, reps: 10, per_side: true },
-    { exercise_id: 'dead_bug', sets: 3, reps: 12, per_side: true },
+    { exercise_id: 'bird_dog', sets: 2, reps: 8, per_side: true },
+    { exercise_id: 'bird_dog', sets: 3, reps: 10, per_side: true },
+    { exercise_id: 'bird_dog', sets: 3, reps: 12, per_side: true },
   ],
 ];
 
@@ -88,11 +90,6 @@ const CORE_ONLY: Dose[][] = [
     { exercise_id: 'side_plank', sets: 2, duration_s: 20, per_side: true },
     { exercise_id: 'side_plank', sets: 2, duration_s: 30, per_side: true },
     { exercise_id: 'copenhagen_plank', sets: 2, duration_s: 20, per_side: true },
-  ],
-  [
-    { exercise_id: 'bird_dog', sets: 2, reps: 8, per_side: true },
-    { exercise_id: 'bird_dog', sets: 2, reps: 10, per_side: true },
-    { exercise_id: 'bird_dog', sets: 2, reps: 12, per_side: true },
   ],
 ];
 

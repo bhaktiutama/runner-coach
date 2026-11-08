@@ -185,7 +185,7 @@ Strength/core (F-21, sejak v6):
 [
   { "kind": "exercise", "exercise_id": "squat", "sets": 2, "reps": 10, "rest_s": 45 },
   { "kind": "exercise", "exercise_id": "plank", "sets": 2, "duration_s": 30, "rest_s": 30 },
-  { "kind": "exercise", "exercise_id": "dead_bug", "sets": 2, "reps": 8, "per_side": true, "rest_s": 30 }
+  { "kind": "exercise", "exercise_id": "bird_dog", "sets": 2, "reps": 8, "per_side": true, "rest_s": 30 }
 ]
 ```
 

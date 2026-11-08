@@ -136,7 +136,7 @@ Tingkat bukti, referensi dan putusan tiap aturan: `07-ENGINE-EVIDENCE.md` (kolom
 | E-15 | ABC drill (F-17) | Segmen drill 8-12 mnt ditempel setelah pemanasan easy, sebelum bagian kerja Tempo/Interval. Daftar gerakan MVP = data statis di `training-engine` (tanpa tabel DB) |
 | E-23 | Strength + core (F-21, opsional) | Base/Build 2 sesi per minggu, Peak 1 (maks 2 set per gerakan), cutback = maks 2 set. Mode ringan (E-12): sesi `core` saja. Ditambahkan sesudah plan lari dibuat; lari tidak berubah |
 | E-24 | Penempatan strength | Tidak di hari long run, tidak sehari sebelum long run / interval (dihindari juga 2 hari sebelumnya), tidak 2 hari sebelum race, jeda >= 1 hari antar sesi strength. Urutan pilihan: hari easy (sesudah lari) -> hari kualitas / hari tanpa lari -> hari recovery |
-| E-25 | Progresi gerakan | Level 1 -> 2 -> 3 tiap 3 minggu plan (mis. squat -> split squat -> Bulgarian split squat); pemula maks level 2. Feedback "terlalu berat" di 2.4: sesi strength terjadwal berikutnya turun 1 level |
+| E-25 | Progresi gerakan | Level 1 -> 2 -> 3 tiap 3 minggu plan (mis. squat -> split squat -> Bulgarian split squat); pemula maks level 2. Feedback "terlalu berat" di 2.4: sesi strength terjadwal berikutnya turun 1 level. Dead bug tidak dipakai generator (slot core kedua = bird dog), tetap di katalog untuk data lama |
 | E-26 | Strength saat taper | Minggu taper (bukan minggu race): 1 sesi `core` ringan. Minggu race dan minggu Return to run: tanpa strength |
 
 ### 4.3 Adaptasi (F-11, layar 2.5)
