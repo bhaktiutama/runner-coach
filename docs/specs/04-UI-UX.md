@@ -95,7 +95,7 @@ Semua di `docs/design-system/assets/` (detail: README di folder itu). Di M1 disa
 ## 7. Ditunda
 
 - Animasi karakter Rive untuk gerakan (D8). MVP drill memakai teks + animasi SVG sederhana dari prototipe jika siap.
-- Kartu share. (Konfeti sudah masuk bagian 11.)
+- (Konfeti masuk bagian 11; kartu bagikan masuk bagian 15.)
 
 ## 8b. Baris pengaturan di layar sempit (v0.9, 2026-11-04)
 
@@ -151,7 +151,7 @@ Wireframe: `docs/wireframes/png/` layar 2.1s, 2.2s, 2.3s, 2.4s, 4.1, 4.4, 4.8, m
 | 3.3 rentang | Baris total di bawah judul kartu volume. Plan: batang per minggu plan berwarna fase, minggu depan bergaris luar, sumbu "M1..", angka di atas batang disembunyikan jika > 10 batang. Semua: per bulan jika > 16 minggu. Baris "Ringkasan minggu ini" (ikon trofi) di atas kartu volume |
 | 2.3s jarak jauh (U3) | HP datar menghadap ke atas >= 0,8 dtk, atau ketuk angka: bib, nama, angka `timer` ~30% lebar layar, bar progres tebal. Ketuk = kembali |
 | 4.8 Bahasa | Pola 4.3: tombol kembali, judul, subjudul, 3 `ChoiceCard` lebar dengan centang. Nama bahasa ditulis dalam bahasanya sendiri |
-| 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif) |
+| 4.4 Premium | Kicker `status-caps` oranye, judul, kartu Gratis (centang hijau) dan kartu Premium (garis kiri oranye, ikon `premium`), 2 kartu harga (Tahunan terpilih default), catatan privasi `InfoBox info`, tombol "Coba gratis 14 hari" (fase 2 nonaktif). Sudah Premium (whitelist, 2026-11-07): kartu harga disembunyikan, footer `InfoBox ok` "Premium aktif" |
 | Teks EN | Panjang teks EN rata-rata lebih pendek dari ID; tidak ada ukuran tetap baru. Pil/chip tetap `minHeight` + padding |
 
 ## 11. Gerak (v0.8, 2026-10-31)
@@ -273,4 +273,14 @@ Set v2 (2026-11-07, 55 ikon): 53 terpakai; `heart-rate` dan `integration` menung
 | 4.1 Profil | Semua baris memakai ikon `spot-sm` (target, zona, hari, strength, timer, cedera, Premium, privasi, panduan, bahasa, satuan, ikon ilustrasi) agar satu grup konsisten | Ikon garis lama / tanpa ikon |
 | 4.3 | Chip alasan: ikon `spot-xs` di atas label (`Chip stack`, label boleh 2 baris di 320 px) | Chip teks |
 | 4.5 | Judul Backup dengan ikon backup sebaris | Judul saja |
+
+## 15. Bagikan (F-29, v1.1, 2026-11-07)
+
+Detail kartu: `10-SHARE.md` bagian 2-3. Wireframe 2.7 belum ada; direview lewat screenshot preview web (390 terang + gelap).
+
+| Elemen | Aturan |
+|---|---|
+| Titik masuk | 3.4: `IconButton` `share` di baris atas sebelum pil sumber. 2.5: `SecondaryButton` "Bagikan kartu ringkasan" ikon `share` di footer (wireframe WeekDone). 3.1: `IconButton` `share` rata kanan di baris judul. 3.3: badge yang didapat = tombol (label "Bagikan pencapaian ...") |
+| 2.7 | Tombol kembali, `SpotTitle` ikon `finish` + subjudul, pratinjau kartu (lebar maks 280, rasio 9:16, sudut `radius.lg`, garis `line-strong` hairline), pesan status, grup sakelar (Tampilkan pace, Tampilkan nama), footer: `PrimaryButton` "Bagikan" ikon `share`, `SecondaryButton` "Unduh gambar" (web), caption privasi |
+| Kartu | Semua warna dari token tema aktif; angka font display; tidak ada hex di komponen (warna dioper ke builder SVG) |
 

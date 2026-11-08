@@ -17,6 +17,8 @@ export const EVENTS = {
   backup_restored: ['platform'],
   account_deleted: ['platform'],
   paywall_viewed: ['platform'],
+  // F-29: jenis kartu saja (activity, week, achievement, plan); tanpa isi kartu.
+  share_completed: ['moment', 'platform'],
 } as const;
 
 export type EventName = keyof typeof EVENTS;

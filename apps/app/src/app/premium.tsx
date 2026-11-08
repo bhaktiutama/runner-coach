@@ -18,7 +18,8 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Screen } from '@/components/Screen';
 import { t, type MessageKey } from '@/i18n/t';
 import { track } from '@/lib/analytics';
-import { FREE_STRENGTH_WEEKS, useEntitlement } from '@/lib/entitlement';
+import { FREE_STRENGTH_WEEKS } from '@/lib/entitlement';
+import { useEntitlement } from '@/lib/useEntitlement';
 import { PRICES, yearlySavingPct } from '@/lib/pricing';
 import { IMAGES } from '@/lib/imagery';
 import { SpotTitle } from '@/components/Spot';
@@ -37,8 +38,8 @@ const PAID: MessageKey[] = [
 ];
 
 /**
- * 4.4 Premium (F-23, konsep di 08-MONETIZATION). Fase 2: layar ada tetapi pembelian belum
- * tersambung (RevenueCat menyusul), jadi tombol beli nonaktif dengan keterangan.
+ * 4.4 Premium (F-23, 08-MONETIZATION). Pembelian belum tersambung (RevenueCat, Fase 3), jadi tombol
+ * beli nonaktif dengan keterangan. Sudah Premium (mis. whitelist, bagian 7): status aktif, tanpa harga.
  */
 export default function Premium() {
   const ent = useEntitlement();
@@ -53,18 +54,24 @@ export default function Premium() {
       testID="screen-premium"
       hero={{ source: IMAGES.riversideCityM, keepFirst: true }}
       footer={
-        <>
-          <PrimaryButton
-            label={t('premium.cta', { days: PRICES.trialDays })}
-            icon="premium"
-            disabled
-            testID="premium-buy"
-            onPress={() => undefined}
-          />
-          <Text variant="caption" color="textMuted" align="center">
-            {t('premium.soon')}
-          </Text>
-        </>
+        ent.premium ? (
+          <InfoBox tone="ok" icon="premium" testID="premium-active">
+            {t(ent.source === 'whitelist' ? 'premium.activeWhitelist' : 'premium.active')}
+          </InfoBox>
+        ) : (
+          <>
+            <PrimaryButton
+              label={t('premium.cta', { days: PRICES.trialDays })}
+              icon="premium"
+              disabled
+              testID="premium-buy"
+              onPress={() => undefined}
+            />
+            <Text variant="caption" color="textMuted" align="center">
+              {t('premium.soon')}
+            </Text>
+          </>
+        )
       }
     >
       <IconButton icon="back" label={t('common.back')} onPress={back} testID="back" />
@@ -87,29 +94,31 @@ export default function Premium() {
           <Row key={k} text={t(k)} premium />
         ))}
       </Card>
-      <View style={styles.prices}>
-        {(['yearly', 'monthly'] as const).map((p) => (
-          <Pressable
-            key={p}
-            accessibilityRole="radio"
-            accessibilityState={{ selected: plan === p }}
-            onPress={() => setPlan(p)}
-            testID={`price-${p}`}
-            style={[styles.price, plan === p && styles.priceOn]}
-          >
-            <Text variant="controlStrong">{t(`premium.${p}` as MessageKey)}</Text>
-            <Text variant="stat">{price(p)}</Text>
-            <Text variant="caption" color="textMuted">
-              {p === 'yearly'
-                ? t('premium.yearlySub', {
-                    perMonth: formatPrice(PRICES.yearly / 12, PRICES.currency),
-                    pct: yearlySavingPct(),
-                  })
-                : t('premium.monthlySub')}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      {ent.premium ? null : (
+        <View style={styles.prices}>
+          {(['yearly', 'monthly'] as const).map((p) => (
+            <Pressable
+              key={p}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: plan === p }}
+              onPress={() => setPlan(p)}
+              testID={`price-${p}`}
+              style={[styles.price, plan === p && styles.priceOn]}
+            >
+              <Text variant="controlStrong">{t(`premium.${p}` as MessageKey)}</Text>
+              <Text variant="stat">{price(p)}</Text>
+              <Text variant="caption" color="textMuted">
+                {p === 'yearly'
+                  ? t('premium.yearlySub', {
+                      perMonth: formatPrice(PRICES.yearly / 12, PRICES.currency),
+                      pct: yearlySavingPct(),
+                    })
+                  : t('premium.monthlySub')}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
       <InfoBox tone="info">{t('premium.privacy')}</InfoBox>
       <Text variant="caption" color="textMuted">
         {t('premium.cancel')}

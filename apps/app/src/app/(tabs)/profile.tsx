@@ -24,7 +24,7 @@ import { GOAL_SPOT } from '@/lib/spotMap';
 import { useActivePlan, usePlanOps, useProfile, useToday, useUpdateProfile } from '@/data/hooks';
 import { planParams } from '@/data/rows';
 import { languageLabel, t } from '@/i18n/t';
-import { useEntitlement } from '@/lib/entitlement';
+import { useEntitlement } from '@/lib/useEntitlement';
 import {
   getPermission,
   notificationsSupported,
@@ -35,7 +35,7 @@ import { et } from '@/lib/rationale';
 
 /**
  * 4.1 Profil (F-16). Fase 2: sakelar strength (F-21), bahasa (F-22). Baris Premium hanya saat paywall
- * aktif (F-23, flag); Integrasi tetap tersembunyi (PRD 5).
+ * aktif (F-23, aktif bawaan sejak 2026-11-07; `EXPO_PUBLIC_PAYWALL=0` mematikan); Integrasi tetap tersembunyi (PRD 5).
  */
 export default function ProfileTab() {
   const plan = useActivePlan();
@@ -182,7 +182,11 @@ export default function ProfileTab() {
             icon="premium"
             leading={spot('premium')}
             label={t('profile.premium')}
-            value={ent.premium ? t('profile.premiumActive') : t('profile.premiumTry')}
+            value={
+              ent.premium
+                ? t(ent.source === 'whitelist' ? 'profile.premiumWhitelist' : 'profile.premiumActive')
+                : t('profile.premiumTry')
+            }
             onPress={() => router.push('/premium')}
             testID="row-premium"
           />

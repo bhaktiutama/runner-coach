@@ -49,6 +49,8 @@ Catatan E2E: 6 test "skipped" itu normal (spec screenshot butuh `SHOTS_DIR`; sat
 |---|---|
 | Web preview, link tetap | `cd apps/app && rm -rf dist && npx expo export --platform web --output-dir dist && npx eas-cli deploy --alias preview --non-interactive` -> https://run-coach--preview.expo.app |
 | Update HP (Expo Go / APK preview) | `cd apps/app && npx eas-cli update --branch preview --environment preview --message "<pesan>" --non-interactive` |
+| Edge Function (Supabase) | `npx supabase@latest functions deploy <nama> --no-verify-jwt --project-ref <ref>` (butuh `SUPABASE_ACCESS_TOKEN` yang valid). Fungsi: `delete-account`, `entitlement` |
+| Whitelist Premium | `npx supabase@latest secrets set PREMIUM_WHITELIST="<uuid>,<uuid>" --project-ref <ref>` atau Dashboard > Edge Functions > Secrets (08-MONETIZATION 7.3) |
 | Link Expo Go (selalu terbaru) | `exp://u.expo.dev/9855e7c4-9e3c-49d8-b871-d04ded670b08?channel-name=preview` |
 
 `eas deploy --prod` (produksi) dijalankan pemilik sendiri. EAS project: `@bhaktiutama/run-coach`.
@@ -93,3 +95,4 @@ Build iOS tidak bisa dari sesi cloud selama akun EAS belum punya kredensial Appl
 | Expo Go menampilkan versi lama | Buka lewat link channel di atas, bukan "Recently opened" |
 | Prettier gagal di CI | Jalankan `pnpm format` atau `pnpm exec prettier --write <path>` sebelum commit |
 | Perubahan Supabase dashboard (redirect URL, template email) ditolak untuk agent | Minta pemilik mengubah di dashboard |
+| `SUPABASE_ACCESS_TOKEN` ditolak (401, 2026-11-07): MCP Supabase gagal tersambung, Edge Function tidak bisa di-deploy dari sesi | Pemilik membuat token baru (supabase.com > Account > Access Tokens) dan mengganti variabel environment, atau deploy sendiri |
