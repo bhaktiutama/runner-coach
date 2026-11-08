@@ -47,7 +47,7 @@ test('latihan selesai (3.4) -> 2.7 -> PNG 1080 x 1920, tanpa request ke luar', a
     await expect(preview).not.toContainText('Pace');
   }
   const f = await download(page);
-  expect(f.name).toMatch(/^run-coach-activity-\d{4}-\d{2}-\d{2}\.png$/);
+  expect(f.name).toMatch(/^runco-activity-\d{4}-\d{2}-\d{2}\.png$/);
   expect(pngSize(f.path)).toEqual({ w: 1080, h: 1920 });
   await expect(page.getByTestId('share-note')).toContainText('Gambar diunduh');
   expect(external).toEqual([]);

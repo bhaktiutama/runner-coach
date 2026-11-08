@@ -4,7 +4,7 @@ import type { MessageKey } from './id';
 // Address the user as "you"; keep it short and plain. Reviewed by a native speaker before release.
 export const en: Record<MessageKey, string> = {
   'app.name': 'RunCo',
-  'brand.wordmark': 'run coach',
+  'brand.wordmark': 'runco',
   'common.next': 'Next',
   'common.back': 'Back',
   'common.save': 'Save',

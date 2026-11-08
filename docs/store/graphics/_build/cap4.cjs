@@ -1,0 +1,24 @@
+const { chromium } = require('playwright');
+const S = process.argv[2], scheme = process.argv[3] || 'light';
+(async () => {
+  const b = await chromium.launch();
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, locale: 'en-US', colorScheme: scheme, timezoneId: 'Asia/Jakarta' });
+  const page = await ctx.newPage();
+  await page.clock.install({ time: new Date('2026-11-08T18:30:00+07:00') });
+  await page.clock.resume();
+  await page.goto('http://localhost:8081/');
+  await page.getByText('Have an account? Sign in').click();
+  await page.getByTestId('auth-skip').click();
+  await page.getByText('Restore from backup file').click();
+  const ch = page.waitForEvent('filechooser');
+  await page.getByTestId('restore').click();
+  await (await ch).setFiles(`${S}/seed-done.json`);
+  await page.getByTestId('restore-yes').click();
+  await page.getByTestId('screen-today').or(page.getByTestId('screen-week')).first().waitFor();
+  await page.goto('http://localhost:8081/progress'); await page.getByTestId('screen-progress').waitFor();
+  await page.getByTestId('open-week-summary').click(); await page.getByTestId('screen-week').waitFor();
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: `${S}/shots/${scheme}-week2.png` });
+  await page.screenshot({ path: `${S}/shots/${scheme}-week2-full.png`, fullPage: true });
+  await b.close();
+})().catch(e => { console.error(e.message); process.exit(1); });

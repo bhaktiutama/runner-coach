@@ -2,7 +2,7 @@
 // Kunci stabil; nilainya teks. Placeholder `{nama}` diisi nilai yang sudah diformat.
 export const id = {
   'app.name': 'RunCo',
-  'brand.wordmark': 'run coach',
+  'brand.wordmark': 'runco',
   'common.next': 'Lanjut',
   'common.back': 'Kembali',
   'common.save': 'Simpan',

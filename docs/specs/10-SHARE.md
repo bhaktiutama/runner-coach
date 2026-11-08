@@ -64,7 +64,7 @@ Perilaku lembar bagikan per app (opsi "Story" di Instagram, "Status saya" di Wha
 | Tabel / migrasi | Tidak ada |
 | Server | Tidak ada. Gambar tidak pernah di-upload. Font dibaca dari aset app sendiri (origin yang sama) |
 | Analitik | `share_completed` dengan `moment` (`activity`, `week`, `plan`, `achievement`) + `platform`. Tanpa jarak, pace, nama, target |
-| File sementara (native) | `run-coach-<jenis>-<tanggal>.png` di cache app, ditimpa saat berbagi berikutnya |
+| File sementara (native) | `runco-<jenis>-<tanggal>.png` di cache app, ditimpa saat berbagi berikutnya |
 
 ## 7. Milestone
 

@@ -115,18 +115,20 @@ Semua dari wireframe / build yang sudah ada; nomor layar mengacu `docs/wireframe
 
 | # | Layar sumber | Headline (baris 1) | Subline (baris 2) | Kenapa di posisi ini |
 |---|---|---|---|---|
-| 1 | 2.1 Hari ini (`2-1-hari-ini.png`, kartu interval dari `imagery/2-1i-hari-ini-interval.png`) | Know exactly what to **run today** | Your plan, one screen, one tap to start | Menjawab P1 langsung; tampil di hasil search (H2) |
-| 2 | 1.8 Preview plan (`1-8-preview-plan.png`) | A real plan, built around **race day** | 5K, 10K, half or full marathon, on your days | Bukti personalisasi; tampil di hasil search |
-| 3 | 2.3 Timer (`2-3-timer.png`) | Every interval, **coached** | Target pace, sound cues and haptics | Fitur yang dipakai tiap hari; tampil di hasil search |
-| 4 | 2.2 Detail latihan, bagian "Kenapa latihan ini?" (`2-2-detail-latihan.png`) | Every workout **explains itself** | The reason and the evidence, in plain words | Pembeda dari plan generik (H4) |
-| 5 | 2.5 Ringkasan minggu (`imagery/2-5-ringkasan-minggu.png`) | Adapts when **life happens** | Missed a run or felt heavy? Your plan adjusts | Mengatasi P2 |
-| 6 | 2.3s Timer gerakan (`2-3s-timer-gerakan-en.png`) | Strength built for **runners** | Bodyweight legs and core, timed for you | Fitur fase 2, nilai tambah Premium |
-| 7 | 3.3 Progres (`3-3-progres.png`) | See yourself getting **faster** | Pace trend, consistency, race prediction | Mengatasi P4 |
-| 8 | 4.5 Data & privasi (`4-5-data-privasi.png`) | Your data stays **on your phone** | No cloud profile. Your backup, your file | Pembeda privasi (H3) |
+| 1 | 2.1 Hari ini (tempo) | Know exactly what to **run today** | Your plan, one screen, one tap to start | Menjawab P1 langsung; tampil di hasil search (H2) |
+| 2 | 1.8 Preview plan (HM) | A real plan, built around **race day** | 5K, 10K, half or full marathon, on your days | Bukti personalisasi; tampil di hasil search |
+| 3 | 2.3 Timer, segmen tempo (latar gelap) | Every interval, **coached** | Target pace, sound cues and haptics | Fitur yang dipakai tiap hari; tampil di hasil search |
+| 4 | 2.2 Detail latihan, "Why this workout?" | Every workout **explains itself** | The reason and the evidence, in plain words | Pembeda dari plan generik (H4) |
+| 5 | 2.3s Timer gerakan (latar gelap) | Strength built for **runners** | Bodyweight legs and core, timed for you | Fitur fase 2, nilai tambah Premium |
+| 6 | 3.3 Progres | See yourself getting **faster** | Pace trend, consistency, race prediction | Mengatasi P4 |
+| 7 | 2.5 Ringkasan minggu (5/5 tuntas) | Every week, a clear **win** | Distance, time and streaks at a glance | Motivasi; frame "Adapts when life happens" diganti karena layar usulan adaptasi belum bisa ditangkap dari data contoh |
+| 8 | 4.5 Data & privasi (latar gelap) | Your data stays **on your phone** | No cloud profile. Your backup, your file | Pembeda privasi (H3) |
 
 Opsional (App Store mengizinkan sampai 10): 9 = mode gelap layar 2.3 (`dark/2-3-timer.png`) dengan headline `Made for early mornings` / `Dark mode follows your phone`; 10 = 3.1 Kalender (`3-1-kalender-plan.png`) `Your whole season, phase by phase` / `Base, Build, Peak, Taper`.
 
 Semua screenshot harus memakai **build EN**. Layar yang wireframe EN-nya belum ada (2.1, 1.8, 2.3, 2.2, 2.5, 3.3, 4.5) diambil dari app dengan bahasa English di 4.8, bukan dari PNG berbahasa Indonesia.
+
+**Hasil (2026-11-08):** `docs/store/graphics/play/` (1080 x 1920) dan `docs/store/graphics/ios/` (1320 x 2868), `feature-graphic.png` (1024 x 500, RGB), `icon-512.png`. Layar ditangkap dari build web EN dengan data contoh (`docs/prototypes/seed/`), dirangkai oleh skrip di `docs/store/graphics/_build/`. Gambar ilustrasi di dalam layar app masih berstatus lisensi belum diverifikasi (A4).
 
 ## 4. Arah visual screenshot
 
