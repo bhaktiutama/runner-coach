@@ -1,11 +1,11 @@
 # 05. Data Schema (lokal) + Backend
 
-Status: Draft v0.7 (2026-11-06, migrasi v9 sakelar ikon spot) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
+Status: Draft v0.8 (2026-11-07, Edge Function `entitlement` untuk whitelist Premium) | Data pribadi: SQLite di perangkat | Server: Supabase cloud, hanya Auth + Edge Function
 
 ## Ringkasan
 
 - **Semua data pribadi disimpan di perangkat pengguna** (SQLite). 9 tabel lokal untuk MVP. Tidak ada sinkron ke server.
-- **Supabase hanya untuk login/sesi.** Tidak ada tabel di schema `public`. Satu Edge Function di MVP (`delete-account`), satu di fase 2 (`strava-token`, tanpa menyimpan data).
+- **Supabase hanya untuk login/sesi.** Tidak ada tabel di schema `public`. Satu Edge Function di MVP (`delete-account`), dua di fase 2 (`entitlement` untuk whitelist Premium, `strava-token`), semuanya tanpa menyimpan data.
 - Satuan: meter (`_m`), detik (`_s`), detik per km untuk pace. Pindah HP = file backup milik pengguna (bagian 4).
 
 ## 1. Aturan umum tabel lokal
@@ -240,6 +240,7 @@ Test wajib (CI): query ke `information_schema.tables` untuk schema `public` meng
 
 | Fungsi | Method | Fase | Input | Output | Menyimpan data? |
 |--------|--------|------|-------|--------|-----------------|
+| entitlement | POST | 2b | JWT pengguna | `{ premium, source }` milik pemanggil (whitelist user id dari secret `PREMIUM_WHITELIST`, 08 bagian 7) | **Tidak.** Tidak ada tabel; daftar ada di secret, tidak dikirim ke app, tidak dicatat. Deploy `--no-verify-jwt` (JWT divalidasi di fungsi) |
 | delete-account | POST | MVP | JWT pengguna | 204; user Auth terhapus | Tidak (menghapus). Kode: `supabase/functions/delete-account/`. JWT divalidasi di fungsi (`auth.getUser`), jadi deploy dengan `--no-verify-jwt` agar preflight CORS dari web lolos |
 | strava-token | POST | 2 | `{grant: 'authorization_code', code}` atau `{grant: 'refresh_token', refresh_token}` + JWT | Token dari Strava diteruskan ke perangkat | **Tidak.** Hanya memakai client secret; tidak ada log isi token |
 
@@ -253,4 +254,4 @@ Dihapus dibanding v0.2: `export-data` (sekarang lokal), `strava-oauth` + `strava
 |------|------|---------|---------|
 | integrations | 2 | Tabel lokal: provider, athlete_id, connected_at, last_synced_at | Token di `expo-secure-store`, tidak di SQLite dan tidak di server |
 | exercises | 2 (selesai) | Data statis di app (`training-engine/src/strength.ts`) | Bukan data pribadi. Jika kelak dipindah ke server agar bisa diperbarui tanpa rilis app: tabel `public.exercises` read-only, RLS select untuk semua, tanpa data pribadi |
-| Langganan Premium | 3 | RevenueCat (entitlement per `auth.uid()`) | Tidak ada tabel `subscriptions` di server kita. Dukungan web (Stripe lewat RevenueCat) dicek di fase 3. Fase 2: gerbang di kode, flag mati (`08-MONETIZATION.md`) |
+| Langganan Premium | 3 | RevenueCat (entitlement per `auth.uid()`) | Tidak ada tabel `subscriptions` di server kita. Dukungan web (Stripe lewat RevenueCat) dicek di fase 3. Fase 2b: gerbang aktif, Premium dari whitelist user id di secret Edge Function `entitlement` (`08-MONETIZATION.md` bagian 7). Cache status di penyimpanan sesi perangkat, bukan SQLite |

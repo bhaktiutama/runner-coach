@@ -6,6 +6,7 @@ import {
   IconButton,
   InfoBox,
   radius,
+  SecondaryButton,
   shadow,
   size,
   space,
@@ -58,7 +59,7 @@ function changeRow(c: Change): [MessageKey, string] | null {
   }
 }
 
-/** 2.5 Ringkasan minggu + usulan adaptasi (F-11, FL-4). Tombol bagikan disembunyikan di MVP. */
+/** 2.5 Ringkasan minggu + usulan adaptasi (F-11, FL-4). "Bagikan kartu ringkasan" -> 2.7 (F-29, wireframe WeekDone). */
 export default function WeekSummary() {
   const today = useToday();
   const weekStart = mondayOf(today);
@@ -105,7 +106,18 @@ export default function WeekSummary() {
   const phase = params.weeks?.[idx - 1]?.phase;
 
   return (
-    <Screen testID="screen-week" hero={{ source: IMAGES.trackOverhead, keepFirst: true }}>
+    <Screen
+      testID="screen-week"
+      hero={{ source: IMAGES.trackOverhead, keepFirst: true }}
+      footer={
+        <SecondaryButton
+          label={t('share.open.week')}
+          icon="share"
+          onPress={() => router.push({ pathname: '/share', params: { kind: 'week', date: today } })}
+          testID="share-open"
+        />
+      }
+    >
       <IconButton
         icon="close"
         label={t('week.close')}

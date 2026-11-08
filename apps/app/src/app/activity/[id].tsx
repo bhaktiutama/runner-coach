@@ -29,7 +29,7 @@ import { feelSpot, TYPE_SPOT, useSpotIcons } from '@/lib/spot';
 import { TAG_SPOT } from '@/lib/spotMap';
 import { IMAGES, workoutImage } from '@/lib/imagery';
 
-/** 3.4 Detail aktivitas (F-14). Split per km hanya jika ada data (fase 2); tidak dikarang. */
+/** 3.4 Detail aktivitas (F-14). Split per km hanya jika ada data (fase 2); tidak dikarang. Bagikan -> 2.7 (F-29). */
 export default function ActivityDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const a = useActivity(id);
@@ -107,6 +107,12 @@ export default function ActivityDetail() {
       <View style={styles.top}>
         <IconButton icon="back" label={t('activity.back')} onPress={back} />
         <View style={styles.flex} />
+        <IconButton
+          icon="share"
+          label={t('share.open.activity')}
+          onPress={() => router.push({ pathname: '/share', params: { kind: 'activity', id: x.id } })}
+          testID="share-open"
+        />
         <View style={styles.sourcePill}>
           <Text variant="captionStrong">
             {t(`activity.source.${x.source === 'timer' ? 'timer' : 'manual'}` as MessageKey)}
