@@ -7,6 +7,7 @@ import {
   radius,
   size,
   space,
+  SpotIcon,
   Text,
   TextField,
   themed,
@@ -27,6 +28,7 @@ import { typeName } from '@/lib/workoutView';
 import { buildSegments, encodeResults, exerciseSummary, summary, type TimerState } from '@/timer/machine';
 import { ExerciseSummaryList } from '@/components/ExerciseSummaryList';
 import { IMAGES } from '@/lib/imagery';
+import { useSpotIcons } from '@/lib/spot';
 
 /** 2.4 Selesai + RPE. Data dari timer yang baru selesai (app_meta.active_timer). */
 export default function Finish() {
@@ -35,6 +37,7 @@ export default function Finish() {
   const w = useWorkout(st?.workoutId);
   const save = useSaveActivity();
   const discard = useDiscardTimer();
+  const icons = useSpotIcons();
   const sum = useMemo(
     () => (st && w.data ? summary(st, buildSegments(w.data.steps), st.finishedAt ?? Date.now()) : null),
     [st, w.data],
@@ -105,9 +108,13 @@ export default function Finish() {
       }
     >
       <View style={styles.head}>
-        <View style={styles.check}>
-          <Icon name="check" color={color.onSuccess} size={size.iconSm + space[1]} strokeWidth={3} />
-        </View>
+        {icons ? (
+          <SpotIcon name="finish" size={size.spotLg} testID="spot-finish" />
+        ) : (
+          <View style={styles.check}>
+            <Icon name="check" color={color.onSuccess} size={size.iconSm + space[1]} strokeWidth={3} />
+          </View>
+        )}
         <Text variant="title">{t('finish.title', { type: typeName(w.data.type) })}</Text>
         <Text variant="control" color="success" testID="finish-segments">
           {t('finish.segments', { done: sum.segmentsDone, total: sum.segmentsTotal })}

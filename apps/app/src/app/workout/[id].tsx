@@ -31,7 +31,8 @@ import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useProfile, useUpdateProfile, useWorkout, useWorkoutActions } from '@/data/hooks';
 import { t, type MessageKey } from '@/i18n/t';
-import { isLocked, useEntitlement } from '@/lib/entitlement';
+import { isLocked } from '@/lib/entitlement';
+import { useEntitlement } from '@/lib/useEntitlement';
 import { et } from '@/lib/rationale';
 import { exerciseCue, exerciseName } from '@/timer/labels';
 import {

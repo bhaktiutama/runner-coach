@@ -18,15 +18,17 @@ import {
   shadow,
   size,
   space,
+  SpotIcon,
   Text,
+  typography,
   weekdayShortName,
   type PhaseKey,
   themed,
 } from '@run-coach/ui';
-import { formatDateFull, formatDayMonth, formatNumber } from '@run-coach/ui/format';
+import { formatDateFull, formatDayMonth, formatDayRange, formatNumber } from '@run-coach/ui/format';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { HelpHint } from '@/components/HelpHint';
 import { Screen } from '@/components/Screen';
 import { useActivePlan, useToday, useWorkouts } from '@/data/hooks';
@@ -35,6 +37,8 @@ import { t } from '@/i18n/t';
 import { weekIndexOf } from '@/lib/planView';
 import { et } from '@/lib/rationale';
 import { approxKm, hasDrill, minutesOf, TYPE_ZONE, typeName } from '@/lib/workoutView';
+import { TYPE_SPOT, useSpotIcons } from '@/lib/spot';
+import { PHASE_SPOT } from '@/lib/spotMap';
 
 /** 3.1 Kalender plan. Tata letak = wireframe Plan (jarak antarblok 16). */
 export default function PlanTab() {
@@ -49,6 +53,8 @@ export default function PlanTab() {
   const from = wk?.startDate ?? mondayOf(today);
   const to = addDays(from, 6);
   const ws = useWorkouts(plan.data?.id, from, to);
+  const icons = useSpotIcons();
+  const narrow = useWindowDimensions().width < NARROW_W;
   if (!plan.data || !params) return null;
   const g = plan.data.goal;
   const workouts = ws.data ?? [];
@@ -64,6 +70,13 @@ export default function PlanTab() {
               : t('plan.title', { distance: et(`distance.${g.distance}` as EngineMessageKey) })}
           </Text>
           <HelpHint topic="fase" term={t('help.phases')} />
+          <View style={styles.flexFill} />
+          <IconButton
+            icon="share"
+            label={t('share.open.plan')}
+            onPress={() => router.push({ pathname: '/share', params: { kind: 'plan' } })}
+            testID="share-open"
+          />
         </View>
         <Text variant="control" color="textMuted">
           {g.race_date
@@ -91,18 +104,43 @@ export default function PlanTab() {
           onPress={() => setSel(idx - 1)}
           testID="prev-week"
         />
-        <View style={styles.navCenter}>
-          <Text variant="subheading" align="center">
-            {t('plan.weekTitle', { n: idx })}
-          </Text>
-          <Text variant="controlSm" color="textMuted" align="center">
-            {t('plan.weekRange', {
-              from: formatDayMonth(from),
-              to: formatDayMonth(to),
-              km: formatNumber(Math.round(weekKm / 1000)),
-            })}
-          </Text>
-        </View>
+        {icons && wk ? (
+          // Review 2026-11-07: ikon fase di kiri setinggi dua baris; judul + tanggal rata kiri di kanannya.
+          <View style={styles.navLead}>
+            <SpotIcon
+              name={PHASE_SPOT[wk.phase as keyof typeof PHASE_SPOT] ?? 'phase-base'}
+              size={NAV_ICON}
+              testID="week-phase-icon"
+            />
+            <View style={styles.navText}>
+              {/* Layar sempit (< 360 px): nama fase tidak ditulis, ikon fase sudah mewakili. */}
+              <Text variant="subheading" numberOfLines={1} testID="week-phase">
+                {narrow
+                  ? t('plan.weekTitle', { n: idx })
+                  : t('plan.weekTitlePhase', { n: idx, phase: et(`phase.${wk.phase}` as EngineMessageKey) })}
+              </Text>
+              <Text variant="controlSm" color="textMuted" numberOfLines={1}>
+                {t('plan.weekRangeShort', {
+                  range: formatDayRange(from, to),
+                  km: formatNumber(Math.round(weekKm / 1000)),
+                })}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <View style={styles.navCenter}>
+            <Text variant="subheading" align="center">
+              {t('plan.weekTitle', { n: idx })}
+            </Text>
+            <Text variant="controlSm" color="textMuted" align="center">
+              {t('plan.weekRange', {
+                from: formatDayMonth(from),
+                to: formatDayMonth(to),
+                km: formatNumber(Math.round(weekKm / 1000)),
+              })}
+            </Text>
+          </View>
+        )}
         <IconButton
           icon="chevron-right"
           label={t('plan.nextWeek')}
@@ -123,68 +161,98 @@ export default function PlanTab() {
           // Selesai: centang di lingkaran warna zona, sama dengan lajur minggu di 2.1 (LaneWeek).
           const done = w?.status === 'completed';
           return (
-            <Pressable
+            <View
               key={date}
-              testID={`plan-day-${date}`}
-              disabled={!w}
-              onPress={() => w && router.push(`/workout/${w.id}`)}
-              style={[styles.day, w ? styles.dayWorkout : styles.dayRest, isToday && styles.dayToday]}
+              style={[styles.dayCard, w ? styles.dayWorkout : styles.dayRest, isToday && styles.dayToday]}
             >
-              <View style={styles.date}>
-                <Text variant="dow" color="textMuted">
-                  {weekdayShortName(i)}
-                </Text>
-                <Text variant="subheading">{String(Number(date.slice(8)))}</Text>
-              </View>
-              {w ? <LaneMark zone={TYPE_ZONE[w.type]} stretch /> : <View style={styles.restMark} />}
-              <View style={styles.body}>
-                <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
-                  {w ? typeName(w.type) : t('plan.rest')}
-                </Text>
-                {run && sup ? (
-                  <Pressable
-                    onPress={() => router.push(`/workout/${sup.id}`)}
-                    accessibilityRole="button"
-                    testID={`plan-strength-${date}`}
-                    style={styles.supRow}
-                  >
-                    <LaneMark zone="strength" />
-                    <Text variant="caption" color="text">
-                      {t('plan.strengthLine', { type: typeName(sup.type), min: minutesOf(sup.steps) })}
+              <Pressable
+                testID={`plan-day-${date}`}
+                disabled={!w}
+                onPress={() => w && router.push(`/workout/${w.id}`)}
+                style={[styles.day, run && sup ? styles.dayTop : null]}
+              >
+                <View style={styles.date}>
+                  <Text variant="dow" color="textMuted">
+                    {weekdayShortName(i)}
+                  </Text>
+                  <Text variant="subheading">{String(Number(date.slice(8)))}</Text>
+                </View>
+                {icons ? (
+                  // UI/UX 14: ikon jenis latihan menggantikan garis warna; terlewat = pudar.
+                  <View style={struck ? styles.dim : null}>
+                    <SpotIcon name={w ? TYPE_SPOT[w.type] : 'rest-day'} size={size.spotSm} />
+                  </View>
+                ) : w ? (
+                  <LaneMark zone={TYPE_ZONE[w.type]} stretch />
+                ) : (
+                  <View style={styles.restMark} />
+                )}
+                <View style={styles.body}>
+                  <Text variant="row" color={w ? 'text' : 'textMuted'} style={struck ? styles.strike : null}>
+                    {w ? typeName(w.type) : t('plan.rest')}
+                  </Text>
+                  {w || i === 0 ? (
+                    <Text variant="caption" color="textMuted">
+                      {w
+                        ? isSupportType(w.type)
+                          ? t('plan.strengthSub', {
+                              min: minutesOf(w.steps),
+                              n: w.steps.filter((x) => x.kind === 'exercise').length,
+                            })
+                          : `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
+                        : t('plan.restSub')}
                     </Text>
-                  </Pressable>
+                  ) : null}
+                </View>
+                {done && w ? (
+                  <View
+                    testID={`plan-done-${date}`}
+                    accessible
+                    accessibilityLabel={t('detail.status.completed')}
+                    style={[styles.doneMark, { backgroundColor: color.zone[TYPE_ZONE[w.type]] }]}
+                  >
+                    <Icon name="check" size={space[4]} color={onZone(TYPE_ZONE[w.type])} strokeWidth={3} />
+                  </View>
                 ) : null}
-                {w || i === 0 ? (
-                  <Text variant="caption" color="textMuted">
-                    {w
-                      ? isSupportType(w.type)
-                        ? t('plan.strengthSub', {
-                            min: minutesOf(w.steps),
-                            n: w.steps.filter((x) => x.kind === 'exercise').length,
-                          })
-                        : `${t('plan.cardSub', { min: minutesOf(w.steps), km: approxKm(w.steps) })}${hasDrill(w.steps) ? t('plan.cardDrill') : ''}`
-                      : t('plan.restSub')}
-                  </Text>
+                {isToday ? (
+                  <View style={styles.tag}>
+                    <Text variant="tag" style={{ color: color.bg }}>
+                      {t('plan.today')}
+                    </Text>
+                  </View>
                 ) : null}
-              </View>
-              {done && w ? (
-                <View
-                  testID={`plan-done-${date}`}
-                  accessible
-                  accessibilityLabel={t('detail.status.completed')}
-                  style={[styles.doneMark, { backgroundColor: color.zone[TYPE_ZONE[w.type]] }]}
+              </Pressable>
+              {run && sup ? (
+                // Review 2026-11-07: sesi strength di hari yang sama = baris latihan kedua di kartu yang sama.
+                <Pressable
+                  onPress={() => router.push(`/workout/${sup.id}`)}
+                  accessibilityRole="button"
+                  testID={`plan-strength-${date}`}
+                  style={[styles.day, styles.supDay]}
                 >
-                  <Icon name="check" size={space[4]} color={onZone(TYPE_ZONE[w.type])} strokeWidth={3} />
-                </View>
+                  <View style={styles.date} />
+                  {icons ? (
+                    <SpotIcon name={TYPE_SPOT[sup.type]} size={size.spotSm} />
+                  ) : (
+                    <LaneMark zone="strength" stretch />
+                  )}
+                  <View style={styles.body}>
+                    <Text variant="row">{typeName(sup.type)}</Text>
+                    <Text variant="caption" color="textMuted">
+                      {t('plan.strengthSub', {
+                        min: minutesOf(sup.steps),
+                        n: sup.steps.filter((x) => x.kind === 'exercise').length,
+                      })}
+                    </Text>
+                  </View>
+                  {sup.status === 'completed' ? (
+                    <View style={[styles.doneMark, { backgroundColor: color.zone.strength }]}>
+                      <Icon name="check" size={space[4]} color={onZone('strength')} strokeWidth={3} />
+                    </View>
+                  ) : null}
+                </Pressable>
               ) : null}
-              {isToday ? (
-                <View style={styles.tag}>
-                  <Text variant="tag" style={{ color: color.bg }}>
-                    {t('plan.today')}
-                  </Text>
-                </View>
-              ) : null}
-            </Pressable>
+            </View>
           );
         })}
       </View>
@@ -192,12 +260,25 @@ export default function PlanTab() {
   );
 }
 
+/** Lebar layar yang dianggap sempit (iPhone SE 320). */
+const NARROW_W = space[10] * 9;
+const NAV_GAP = border.selected - border.hairline / 2;
+/** Ikon fase setinggi judul minggu + baris tanggal. */
+const NAV_ICON =
+  (typography.subheading.lineHeight ?? space[5]) + (typography.controlSm.lineHeight ?? space[4]) + NAV_GAP;
+
 const styles = themed(() =>
   StyleSheet.create({
-    supRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    navLead: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    navText: { flexShrink: 1, gap: NAV_GAP },
+    dayCard: { borderRadius: radius.md },
+    // Strength di hari yang sama: satu kartu, dua baris latihan rapat tanpa garis pemisah.
+    dayTop: { minHeight: 0, paddingTop: space[3], paddingBottom: space[1] },
+    supDay: { minHeight: 0, paddingTop: space[1], paddingBottom: space[3] },
     hintRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] + space[1] / 2 },
+    flexFill: { flex: 1 },
     head: { gap: space[1] },
-    nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: space[2] },
     navCenter: { alignItems: 'center', gap: border.selected - border.hairline / 2 },
     days: { gap: space[2] },
     day: {
@@ -222,6 +303,7 @@ const styles = themed(() =>
       backgroundColor: color.surfaceSunken,
     },
     strike: { textDecorationLine: 'line-through' },
+    dim: { opacity: 0.45 },
     doneMark: {
       width: space[6],
       height: space[6],

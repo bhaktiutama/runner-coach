@@ -123,6 +123,19 @@ export function formatDayMonth(date: string, locale = activeLocale): string {
   );
 }
 
+/** Rentang tanggal ringkas: bulan sama "9-15 Nov" / "Nov 9-15"; beda bulan "30 Nov - 6 Des". */
+export function formatDayRange(from: string, to: string, locale = activeLocale): string {
+  if (from.slice(0, 7) !== to.slice(0, 7))
+    return `${formatDayMonth(from, locale)} - ${formatDayMonth(to, locale)}`;
+  const parts = new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    timeZone: 'UTC',
+  }).formatToParts(parseLocalDate(to));
+  const d1 = String(parseLocalDate(from).getUTCDate());
+  return parts.map((p) => (p.type === 'day' ? `${d1}-${p.value}` : p.value)).join('');
+}
+
 /** Tanggal angka ringkas untuk sumbu grafik: "7/9". */
 export function formatDayMonthNumeric(date: string): string {
   const d = parseLocalDate(date);

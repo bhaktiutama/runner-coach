@@ -1,4 +1,10 @@
-import { parseSteps, type Rationale, type Step, type WorkoutType } from '@run-coach/training-engine';
+import {
+  parseSteps,
+  replaceRetiredExercises,
+  type Rationale,
+  type Step,
+  type WorkoutType,
+} from '@run-coach/training-engine';
 
 // Baris tabel lokal (Schema 2) dan konversi JSON.
 
@@ -27,6 +33,8 @@ export type ProfileRow = {
   timer_auto: number;
   /** Kartu 2.1 yang tampil pertama. Sejak v8 */
   today_card: 'countdown' | 'long_run' | 'records' | 'streak';
+  /** 1 = ikon spot berwarna tampil di kartu/daftar. Sejak v9 */
+  spot_icons: number;
 };
 
 export type GoalRow = {
@@ -95,7 +103,11 @@ export type WorkoutRow = {
 export type Workout = Omit<WorkoutRow, 'steps' | 'rationale'> & { steps: Step[]; rationale: Rationale[] };
 
 export function toWorkout(r: WorkoutRow): Workout {
-  return { ...r, steps: parseSteps(JSON.parse(r.steps)), rationale: JSON.parse(r.rationale) as Rationale[] };
+  return {
+    ...r,
+    steps: replaceRetiredExercises(parseSteps(JSON.parse(r.steps))),
+    rationale: JSON.parse(r.rationale) as Rationale[],
+  };
 }
 
 export function planParams(p: PlanRow): PlanParams {

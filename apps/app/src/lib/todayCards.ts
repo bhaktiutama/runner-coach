@@ -92,9 +92,14 @@ export function weekStreak(statuses: Status[], today: string) {
     run = state(m) === 'done' ? run + 1 : 0;
     best = Math.max(best, run);
   }
-  const weeks = Array.from({ length: 6 }, (_, i) => addDays(thisMonday, -7 * (5 - i))).map((m) => ({
-    monday: m,
-    state: state(m),
-  }));
+  const weeks = Array.from({ length: 6 }, (_, i) => addDays(thisMonday, -7 * (5 - i))).map((m) => {
+    const xs = byWeek.get(m) ?? [];
+    return {
+      monday: m,
+      state: state(m),
+      done: xs.filter((x) => x.status === 'completed').length,
+      total: xs.length,
+    };
+  });
   return { current, best, weeks };
 }

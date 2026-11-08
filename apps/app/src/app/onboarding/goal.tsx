@@ -1,9 +1,11 @@
-import { ChoiceCard, space, themed } from '@run-coach/ui';
+import { ChoiceCard, size, space, themed } from '@run-coach/ui';
 import type { GoalDistance } from '@run-coach/training-engine';
 import { StyleSheet, View } from 'react-native';
 import { OnboardingStep } from '@/components/OnboardingStep';
 import { useOnboarding } from '@/data/useOnboarding';
 import { t, type MessageKey } from '@/i18n/t';
+import { useSpot } from '@/components/Spot';
+import { GOAL_SPOT } from '@/lib/spotMap';
 
 const GRID: Exclude<GoalDistance, 'fitness'>[][] = [
   ['5k', '10k'],
@@ -14,6 +16,7 @@ const GRID: Exclude<GoalDistance, 'fitness'>[][] = [
 export default function GoalStep() {
   const o = useOnboarding('goal');
   const sel = o.draft.distance;
+  const spot = useSpot();
   return (
     <OnboardingStep
       step="goal"
@@ -34,6 +37,7 @@ export default function GoalStep() {
                 title={t(`goal.${d}.title` as MessageKey)}
                 subtitle={t(`goal.${d}.sub` as MessageKey)}
                 selected={sel === d}
+                leading={spot(GOAL_SPOT[d], size.spotMd)}
                 onPress={() => o.update({ distance: d })}
               />
             ))}
@@ -45,6 +49,7 @@ export default function GoalStep() {
         testID="goal-fitness"
         title={t('goal.fitness')}
         selected={sel === 'fitness'}
+        leading={spot('goal-fitness', size.spotMd)}
         onPress={() => o.update({ distance: 'fitness', raceDate: null })}
       />
     </OnboardingStep>

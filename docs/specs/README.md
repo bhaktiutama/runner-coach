@@ -19,6 +19,7 @@ Folder ini adalah **acuan build**. `docs/PLANNING.md` tetap jadi latar belakang 
 | 7 | [07-ENGINE-EVIDENCE.md](07-ENGINE-EVIDENCE.md) | Dasar ilmiah tiap aturan engine, reasoning yang dilihat pengguna | 6 menit |
 | 8 | [08-MONETIZATION.md](08-MONETIZATION.md) | Konsep paywall, harga usulan, gerbang Premium | 3 menit |
 | 9 | [09-VOICE.md](09-VOICE.md) | Usulan: pelatih suara (Suara / Bunyi saja) agar latihan tanpa melihat layar (belum disetujui) | 6 menit |
+| 10 | [10-SHARE.md](10-SHARE.md) | Bagikan latihan, ringkasan minggu, plan, pencapaian ke Instagram Story / WhatsApp Status (F-29, gratis) | 4 menit |
 
 Waktu baca adalah perkiraan kasar, bukan hasil ukur.
 
