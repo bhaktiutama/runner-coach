@@ -230,3 +230,21 @@ export function easierStrength(
     rationale: { rule: 'E-25', values: { level, scope: 'down' } },
   };
 }
+
+/** Gerakan yang dinonaktifkan -> pengganti. Diterapkan saat membaca plan lama dari DB. */
+const RETIRED_EXERCISES: Record<string, string> = { dead_bug: 'bird_dog' };
+
+/**
+ * Ganti gerakan yang dinonaktifkan di plan yang sudah tersimpan. Jika penggantinya sudah ada
+ * di sesi yang sama, step lama dibuang agar tidak dobel.
+ */
+export function replaceRetiredExercises(steps: Step[]): Step[] {
+  const present = new Set(steps.flatMap((s) => (s.kind === 'exercise' ? [s.exercise_id] : [])));
+  const out: Step[] = [];
+  for (const s of steps) {
+    const to = s.kind === 'exercise' ? RETIRED_EXERCISES[s.exercise_id] : undefined;
+    if (!to) out.push(s);
+    else if (!present.has(to)) out.push({ ...s, exercise_id: to });
+  }
+  return out.length > 0 ? out : steps;
+}
