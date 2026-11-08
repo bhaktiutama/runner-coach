@@ -35,7 +35,7 @@ import { IMAGES, type ImageKey } from '@/lib/imagery';
 // fx = titik fokus horizontal subjek di gambar; rasio gambar 658 x 732.
 const SLIDES: { image: ImageKey; key: 's1' | 's2' | 's3'; fx: number }[] = [
   { image: 'promoScience', key: 's1', fx: 0.24 },
-  { image: 'promoPrivacy', key: 's2', fx: 0.45 },
+  { image: 'promoPrivacy', key: 's2', fx: 0.5 },
   { image: 'promoCompanion', key: 's3', fx: 0.42 },
 ];
 const PROMO_ASPECT = 658 / 732;
