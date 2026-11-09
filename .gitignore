@@ -13,3 +13,7 @@ test-results/
 playwright-report/
 .DS_Store
 supabase/.temp/
+
+# Skill design-taste-frontend (1.631 file, 40 MB): tercatat di skills-lock.json, belum di-commit.
+# Keputusan K6 di docs/store/05-LANDING-PLAN.md. Pulihkan: npx skills add Leonxlnx/taste-skill --skill design-taste-frontend --agent claude-code -y
+.claude/skills/design-taste-frontend/
