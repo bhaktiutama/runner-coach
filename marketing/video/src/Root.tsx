@@ -63,6 +63,14 @@ export const Root: React.FC = () => (
       height={1080}
     />
     <Composition
+      id="V1-Portrait"
+      component={() => <Cut parts={V1} />}
+      durationInFrames={total(V1)}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    <Composition
       id="V2-Social"
       component={() => <Cut parts={V2} />}
       durationInFrames={total(V2)}
