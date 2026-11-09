@@ -3,8 +3,8 @@ import type { MessageKey } from './id';
 // English catalog (F-22, TRD 8). Same keys as id.ts; the type makes a missing key a typecheck error.
 // Address the user as "you"; keep it short and plain. Reviewed by a native speaker before release.
 export const en: Record<MessageKey, string> = {
-  'app.name': 'Run Coach',
-  'brand.wordmark': 'run coach',
+  'app.name': 'RunCo',
+  'brand.wordmark': 'runco',
   'common.next': 'Next',
   'common.back': 'Back',
   'common.save': 'Save',
@@ -23,7 +23,7 @@ export const en: Record<MessageKey, string> = {
   'profile.help': 'Guide & glossary',
   'profile.helpValue': 'How the plan works',
   'common.error': 'Something went wrong. Try again.',
-  'common.dbLocked': 'Run Coach is open in another tab. Close that tab, then try again.',
+  'common.dbLocked': 'RunCo is open in another tab. Close that tab, then try again.',
 
   'tabs.today': 'Today',
   'tabs.plan': 'Plan',
@@ -45,7 +45,7 @@ export const en: Record<MessageKey, string> = {
   'welcome.s3.kicker': "STRAVA'S SIDEKICK",
   'welcome.s3.title': 'Keep Strava. We plan the runs.',
   'welcome.s3.body':
-    'You just run. Run Coach tells you what to run today, how long, and how easy. Start with 3 days a week.',
+    'You just run. RunCo tells you what to run today, how long, and how easy. Start with 3 days a week.',
   'welcome.page': '{n}/{total}',
   'welcome.goTo': 'Page {n} of {total}',
   'welcome.cta': 'Build my plan',
@@ -143,7 +143,7 @@ export const en: Record<MessageKey, string> = {
   'health.warn':
     'If you answered "Yes", we recommend seeing a doctor before you start. You can still continue with a lighter plan.',
   'health.lightOn': 'Your plan will be built in light mode (no hard sessions).',
-  'health.disclaimer': 'I understand Run Coach is a training guide, not medical advice.',
+  'health.disclaimer': 'I understand RunCo is a training guide, not medical advice.',
   'health.cta': 'Build my plan',
   'health.error': "The plan can't be built yet: {reason}",
   'engineError.race_too_far': 'the race is more than 52 weeks away. Pick a closer race.',
@@ -571,7 +571,7 @@ export const en: Record<MessageKey, string> = {
   'privacy.restoreSummary':
     'Goal: {goal}. {workouts} scheduled workouts, {activities} activities. Backup: {date}.',
   'privacy.restoreReplace': 'Replace data on this phone',
-  'privacy.restoreNotBackup': "This file isn't a Run Coach backup. Your existing data is unchanged.",
+  'privacy.restoreNotBackup': "This file isn't a RunCo backup. Your existing data is unchanged.",
   'privacy.restoreNewer':
     'This file is from a newer app version. Update the app first. Your existing data is unchanged.',
   'privacy.restoreFailed': 'Restore failed. Your existing data is unchanged.',
@@ -665,7 +665,7 @@ export const en: Record<MessageKey, string> = {
   'week.change.timeTrialValue': 'time trial',
   'week.toToday': 'Go to Today',
   'week.toPlan': 'See plan',
-  'reminder.title': 'Run Coach',
+  'reminder.title': 'RunCo',
   'reminder.body': 'Today: {title} {min} minutes. Ready to run?',
   'move.title': 'Move workout',
   'move.summary': '{type}, {min} min',

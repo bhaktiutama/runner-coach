@@ -18,6 +18,7 @@ App latihan lari harian (5K, 10K, HM, FM, Bugar) untuk Web, iOS dan Android dari
 | Warna, tipe, bentuk, komponen | `docs/design-system/tokens.json` + `README.md`; ringkasan di `docs/specs/04-UI-UX.md` |
 | Logo, ikon app, ikon UI | `docs/design-system/assets/` |
 | Tabel lokal (SQLite), file backup, Auth, Edge Functions | `docs/specs/05-BACKEND-SCHEMA.md` |
+| Listing App Store / Google Play, ASO, hipotesis konversi | `docs/store/01-ASO-STRATEGY.md`, `docs/store/02-LISTING-EN.md` |
 | Latar belakang, riset | `docs/PLANNING.md` (kalah jika konflik dengan `docs/specs/`) |
 | Setup sesi, perintah test/deploy, alur git | `docs/DEV-SESSION.md`, `scripts/setup-session.sh` |
 

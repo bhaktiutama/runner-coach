@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Run Coach",
+    "name": "RunCo",
     "slug": "run-coach",
     "scheme": "runcoach",
     "version": "0.1.0",
@@ -9,14 +9,14 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.runcoach",
+      "bundleIdentifier": "com.bhaktiutama.runco",
       "usesAppleSignIn": true,
       "infoPlist": {
         "UIBackgroundModes": ["audio", "audio"]
       }
     },
     "android": {
-      "package": "app.runcoach",
+      "package": "com.bhaktiutama.runco",
       "adaptiveIcon": {
         "backgroundColor": "#F26B38",
         "foregroundImage": "./assets/adaptive-icon.png",

@@ -123,7 +123,7 @@ describe('SVG kartu', () => {
     ).toBe(true);
     expect(svg).toContain('Jakarta &lt;Run&gt; &amp; Co');
     expect(svg).not.toContain('<Run>');
-    expect(svg).toContain('Run Coach');
+    expect(svg).toContain('RunCo');
   });
   it('font web hanya disisipkan untuk ekspor', () => {
     const m = activityCard(run, P);

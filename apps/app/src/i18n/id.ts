@@ -1,8 +1,8 @@
 // Katalog teks bahasa Indonesia (TRD 8). Semua teks UI diambil dari sini lewat t().
 // Kunci stabil; nilainya teks. Placeholder `{nama}` diisi nilai yang sudah diformat.
 export const id = {
-  'app.name': 'Run Coach',
-  'brand.wordmark': 'run coach',
+  'app.name': 'RunCo',
+  'brand.wordmark': 'runco',
   'common.next': 'Lanjut',
   'common.back': 'Kembali',
   'common.save': 'Simpan',
@@ -21,7 +21,7 @@ export const id = {
   'profile.help': 'Panduan & istilah',
   'profile.helpValue': 'Cara kerja plan',
   'common.error': 'Terjadi kesalahan. Coba lagi.',
-  'common.dbLocked': 'Run Coach sedang terbuka di tab lain. Tutup tab itu, lalu coba lagi.',
+  'common.dbLocked': 'RunCo sedang terbuka di tab lain. Tutup tab itu, lalu coba lagi.',
 
   'tabs.today': 'Hari ini',
   'tabs.plan': 'Plan',
@@ -43,7 +43,7 @@ export const id = {
   'welcome.s3.kicker': 'TEMAN STRAVA',
   'welcome.s3.title': 'Strava tetap jalan, kami yang atur menunya.',
   'welcome.s3.body':
-    'Kamu tinggal lari. Run Coach kasih tahu hari ini lari apa, berapa lama, dan sesantai apa. Mulai dari 3 hari seminggu.',
+    'Kamu tinggal lari. RunCo kasih tahu hari ini lari apa, berapa lama, dan sesantai apa. Mulai dari 3 hari seminggu.',
   'welcome.page': '{n}/{total}',
   'welcome.goTo': 'Halaman {n} dari {total}',
   'welcome.cta': 'Buat plan saya',
@@ -142,7 +142,7 @@ export const id = {
   'health.warn':
     'Jika ada jawaban "Ya", kami sarankan konsultasi ke dokter sebelum mulai. Kamu tetap bisa lanjut dengan plan yang lebih ringan.',
   'health.lightOn': 'Plan akan dibuat dalam mode ringan (tanpa sesi berat).',
-  'health.disclaimer': 'Saya paham Run Coach adalah panduan latihan, bukan nasihat medis.',
+  'health.disclaimer': 'Saya paham RunCo adalah panduan latihan, bukan nasihat medis.',
   'health.cta': 'Buat plan saya',
   'health.error': 'Plan belum bisa dibuat: {reason}',
   'engineError.race_too_far': 'tanggal race lebih dari 52 minggu lagi. Pilih race yang lebih dekat.',
@@ -568,7 +568,7 @@ export const id = {
   'privacy.restoreSummary':
     'Target: {goal}. {workouts} latihan terjadwal, {activities} aktivitas. Backup: {date}.',
   'privacy.restoreReplace': 'Ganti data di HP ini',
-  'privacy.restoreNotBackup': 'File ini bukan backup Run Coach. Data lama tetap utuh.',
+  'privacy.restoreNotBackup': 'File ini bukan backup RunCo. Data lama tetap utuh.',
   'privacy.restoreNewer': 'File dari versi app lebih baru. Perbarui app dulu. Data lama tetap utuh.',
   'privacy.restoreFailed': 'Gagal memulihkan. Data lama tetap utuh.',
   'privacy.signOutTitle': 'Keluar dari akun?',
@@ -661,7 +661,7 @@ export const id = {
   'week.change.timeTrialValue': 'time trial',
   'week.toToday': 'Ke Hari ini',
   'week.toPlan': 'Lihat plan',
-  'reminder.title': 'Run Coach',
+  'reminder.title': 'RunCo',
   'reminder.body': 'Hari ini: {title} {min} menit. Siap lari?',
   'move.title': 'Pindahkan latihan',
   'move.summary': '{type}, {min} mnt',

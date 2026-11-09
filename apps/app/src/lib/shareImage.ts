@@ -117,4 +117,4 @@ export async function nativeSharePng(base64: string, name: string, title: string
   }
 }
 
-export const shareFileName = (kind: string, date: string) => `run-coach-${kind}-${date}.png`;
+export const shareFileName = (kind: string, date: string) => `runco-${kind}-${date}.png`;

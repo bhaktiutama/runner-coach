@@ -1,0 +1,25 @@
+{
+  "name": "runco-video",
+  "private": true,
+  "description": "Marketing videos for RunCo (Remotion). Not part of the app build. See docs/store/04-VIDEO-PLAN.md",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render:v1-promo": "remotion render src/index.ts V1-Promo out/runco-promo-16x9-orbit.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell --crf=18",
+    "render:v1-promo-stride": "remotion render src/index.ts V1-Promo-Stride out/runco-promo-16x9-stride.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell --crf=18",
+    "render:v1-portrait": "remotion render src/index.ts V1-Portrait out/runco-promo-9x16-orbit.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell --crf=18",
+    "render:v1-portrait-stride": "remotion render src/index.ts V1-Portrait-Stride out/runco-promo-9x16-stride.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell --crf=18",
+    "render:v2-social": "remotion render src/index.ts V2-Social out/runco-social-15s-9x16-orbit.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell --crf=18",
+    "render:v2-social-stride": "remotion render src/index.ts V2-Social-Stride out/runco-social-15s-9x16-stride.mp4 --browser-executable=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell --crf=18",
+    "render:all": "npm run -s render:v1-promo && npm run -s render:v1-promo-stride && npm run -s render:v1-portrait && npm run -s render:v1-portrait-stride && npm run -s render:v2-social && npm run -s render:v2-social-stride"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "remotion": "4.0.538",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.10",
+    "typescript": "5.9.3"
+  }
+}
