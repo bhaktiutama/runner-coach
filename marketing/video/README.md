@@ -14,7 +14,7 @@ Gaya: ritme pelari; ritme pelari 180 langkah/menit (1 beat = 10 frame). Semua du
 
 1. `npm install` di folder ini (lisensi Remotion: gratis untuk individu / tim sampai 3 orang).
 2. Aset (di-gitignore): `public/photos/` = salinan `apps/app/assets/imagery/*.webp`; `public/fonts/` = Bricolage Grotesque 800, Plus Jakarta Sans 600/800 (`/root/.fonts`); `public/screens/` = hasil `scripts/capture.cjs` (build web EN dengan `EXPO_PUBLIC_E2E=1`, server `node scripts/serve-web.mjs apps/app/dist`, seed dari `docs/store/graphics/README.md`; jalankan salinan skrip di luar repo agar memakai Playwright global) ditambah `progress.png`, `week.png`, `preview.png` dari skrip screenshot store.
-3. `npm run render:v1` dan `npm run render:v2` (hasil di `out/`, di-gitignore).
+3. `npm run render:all` (6 video: tiap komposisi dengan musik Orbit dan Stride; hasil di `out/`, di-gitignore). Id komposisi: `V1-Promo`, `V1-Portrait`, `V2-Social` (Orbit) dan versi `-Stride`.
 
 ## Musik
 
