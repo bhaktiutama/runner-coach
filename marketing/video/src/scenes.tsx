@@ -297,11 +297,11 @@ export const StrengthScene = () => (
               w: l.width,
               h: l.height * 0.78,
               fade: 'up',
-              dim: 0.35,
-              target: [l.width * 0.5, l.height * 0.3],
+              dim: 0.2,
+              target: [l.width * 0.8, l.height * 0.38],
             },
             head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.08 },
-            phone: { left: l.width * 0.5 - pw(l) * 0.45, top: l.height * 0.4, w: pw(l) * 0.9, tilt: 3 },
+            phone: { left: l.width * 0.06, top: l.height * 0.4, w: pw(l) * 0.9, tilt: -3 },
           }
         : {
             photo: {
@@ -310,8 +310,8 @@ export const StrengthScene = () => (
               w: l.width * 0.65,
               h: l.height,
               fade: 'left',
-              dim: 0.3,
-              target: [l.width * 0.48, l.height * 0.5],
+              dim: 0.2,
+              target: [l.width * 0.16, l.height * 0.5],
             },
             head: { left: l.u * 6, width: l.u * 40, top: l.height * 0.3 },
             phone: { left: l.width * 0.82 - pw(l) / 2, top: l.height * 0.13, w: pw(l), tilt: 3 },
