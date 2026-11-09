@@ -1,6 +1,6 @@
 # 04. Rencana video motion (marketing + store)
 
-Status: Rencana v0.1 (2026-11-08), menunggu keputusan pemilik (bagian 6) | Copy dan klaim: `02-LISTING-EN.md` | Grafis: `graphics/`
+Status: v0.2 (2026-11-09). Keputusan: tanpa musik, ShotCraft diabaikan, foto hero app dipakai, gaya ritme pelari. V1 dan V2 draft pertama selesai (`marketing/video/`) | Copy dan klaim: `02-LISTING-EN.md` | Grafis: `graphics/`
 
 ## Ringkasan
 

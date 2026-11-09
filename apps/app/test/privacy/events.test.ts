@@ -32,7 +32,12 @@ describe('adjustment_proposed', () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
     const body = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
     expect(body.event).toBe('adjustment_proposed');
-    expect(Object.keys(body.properties).sort()).toEqual(['$ip', '$process_person_profile', 'platform', 'rule']);
+    expect(Object.keys(body.properties).sort()).toEqual([
+      '$ip',
+      '$process_person_profile',
+      'platform',
+      'rule',
+    ]);
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });

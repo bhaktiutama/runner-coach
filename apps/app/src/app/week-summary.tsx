@@ -68,7 +68,11 @@ export default function WeekSummary() {
   const acts = useActivities(addDays(weekStart, -7));
   const proposals = useProposals(today, weekStart);
   useEffect(() => {
-    if (proposals.data) trackProposalsShown(weekStart, proposals.data.map((p) => p.rule));
+    if (proposals.data)
+      trackProposalsShown(
+        weekStart,
+        proposals.data.map((p) => p.rule),
+      );
   }, [proposals.data, weekStart]);
   const ops = usePlanOps();
   const [decided, setDecided] = useState<Record<string, boolean>>({});
