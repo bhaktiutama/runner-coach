@@ -11,6 +11,7 @@ import {
   LogoMark,
   Phone,
   PhotoStadium,
+  Backdrop,
   StrideWipe,
   Word,
   Wordmark,
@@ -24,7 +25,20 @@ const useLayout = () => {
   return { width, height, v, u: width / 100 };
 };
 
-/** Tata letak umum: judul + HP (+ foto opsional). Landscape: judul kiri, HP kanan. Portrait: judul atas, HP bawah. */
+type Box = { left: number; top: number; w: number; h: number };
+type Spec = {
+  photo?: Box & {
+    fade: 'down' | 'up' | 'left' | 'right' | 'radial';
+    dim?: number;
+    target?: [number, number];
+    opacity?: number;
+  };
+  phone: { left: number; top: number; w: number; tilt?: number };
+  head: React.CSSProperties;
+  size?: number;
+};
+
+/** Adegan fitur: foto latar memudar (opsional) di belakang, HP di depan, judul. Tata letak per adegan lewat `spec`. */
 const Feature: React.FC<{
   lines: Word[][];
   sub: string;
@@ -32,65 +46,35 @@ const Feature: React.FC<{
   every?: number;
   dark?: boolean;
   photo?: string;
-  photoSide?: 'left' | 'right';
-  extra?: React.ReactNode;
-}> = ({ lines, sub, screen, every, dark, photo, extra }) => {
-  const { width, height, v, u } = useLayout();
-  const phoneW = v ? width * 0.62 : height * 0.43;
-  const phoneLeft = v ? (width - phoneW) / 2 : width * 0.64 - phoneW / 2;
-  const phoneTop = v ? height * 0.36 : height * 0.13;
-  const ring = dark ? C.primary : C.sand;
-  // Landscape: foto di belakang HP, di tepi kanan; orangnya ditaruh di tengah bagian yang tidak tertutup HP.
-  const lw = height * 0.5;
-  const lh = height * 0.68;
-  const ll = width * 0.74;
-  const visL = Math.max(ll, phoneLeft + phoneW);
-  const visR = Math.min(ll + lw, width);
-  // Portrait: foto kecil di depan HP (kanan bawah) supaya tetap terlihat utuh.
-  const vw = width * 0.4;
-  const vh = vw * 1.28;
+  spec: (l: { width: number; height: number; v: boolean; u: number }) => Spec;
+  extra?: (s: Spec) => React.ReactNode;
+}> = ({ lines, sub, screen, every, dark, photo, spec, extra }) => {
+  const L = useLayout();
+  const { v, u } = L;
+  const s = spec(L);
   return (
     <AbsoluteFill style={{ background: dark ? C.dark : C.bg, overflow: 'hidden' }}>
-      <LaneDashes opacity={dark ? 0.22 : 0.14} />
-      {photo && !v && (
-        <PhotoStadium
-          name={photo}
-          w={lw}
-          h={lh}
-          enterAt={4}
-          from="right"
-          ring={ring}
-          target={[(visL + visR) / 2 - ll, lh / 2]}
-          style={{ left: ll, top: height * 0.22 }}
+      {photo && s.photo && <Backdrop name={photo} {...s.photo} />}
+      <LaneDashes opacity={dark ? 0.18 : 0.12} />
+      {extra?.(s)}
+      <div style={{ position: 'absolute', left: s.phone.left, top: s.phone.top }}>
+        <Phone
+          src={screen}
+          width={s.phone.w}
+          every={every}
+          dark={dark}
+          enterAt={2}
+          tilt={s.phone.tilt ?? 0}
         />
-      )}
-      <div style={{ position: 'absolute', left: phoneLeft, top: phoneTop }}>
-        <Phone src={screen} width={phoneW} every={every} dark={dark} enterAt={2} tilt={v ? 0 : -3} />
       </div>
-      {photo && v && (
-        <PhotoStadium
-          name={photo}
-          w={vw}
-          h={vh}
-          enterAt={8}
-          from="right"
-          ring={ring}
-          style={{ left: width * 0.56, top: height * 0.66 }}
-        />
-      )}
-      {extra}
       <Headline
         lines={lines}
         dark={dark}
-        size={v ? u * 10.5 : u * 5.6}
+        size={s.size ?? (v ? u * 10.5 : u * 5.6)}
         sub={sub}
         subSize={v ? u * 4.4 : u * 1.9}
         startAt={3}
-        style={
-          v
-            ? { position: 'absolute', left: u * 8, right: u * 8, top: height * 0.08 }
-            : { position: 'absolute', left: u * 6, width: u * 44, top: height * 0.3 }
-        }
+        style={{ position: 'absolute', ...s.head }}
       />
       <StrideWipe />
     </AbsoluteFill>
@@ -183,6 +167,10 @@ export const LogoScene: React.FC<{ tagline?: string }> = ({ tagline }) => {
   );
 };
 
+// Lebar HP: portrait 62% lebar layar, landscape 43% tinggi layar.
+const pw = (l: { width: number; height: number; v: boolean }) => (l.v ? l.width * 0.62 : l.height * 0.43);
+
+/** A. Foto di atas memudar ke bawah, judul di bagian yang memudar, HP di bawah. Landscape: foto kanan memudar ke kiri. */
 export const TodayScene = () => (
   <Feature
     lines={[
@@ -192,9 +180,37 @@ export const TodayScene = () => (
     sub="Your plan, one screen, one tap to start."
     screen="today"
     photo="track-side"
+    spec={(l) =>
+      l.v
+        ? {
+            photo: {
+              left: 0,
+              top: 0,
+              w: l.width,
+              h: l.height * 0.46,
+              fade: 'down',
+              target: [l.width * 0.62, l.height * 0.2],
+            },
+            head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.27 },
+            phone: { left: (l.width - pw(l)) / 2, top: l.height * 0.56, w: pw(l) },
+          }
+        : {
+            photo: {
+              left: l.width * 0.42,
+              top: 0,
+              w: l.width * 0.58,
+              h: l.height,
+              fade: 'left',
+              target: [l.width * 0.42, l.height * 0.5],
+            },
+            head: { left: l.u * 6, width: l.u * 36, top: l.height * 0.3 },
+            phone: { left: l.width * 0.6 - pw(l) / 2, top: l.height * 0.13, w: pw(l), tilt: -3 },
+          }
+    }
   />
 );
 
+/** B. HP di kiri, foto tinggi di kanan memudar ke kiri. Landscape: foto melebar di bawah memudar ke atas, judul kanan atas. */
 export const PlanScene = () => (
   <Feature
     lines={[
@@ -205,27 +221,62 @@ export const PlanScene = () => (
     screen={['onb-welcome', 'onb-goal', 'onb-race', 'preview']}
     every={BEAT * 3}
     photo="road-sunrise-m"
-    photoSide="right"
+    spec={(l) =>
+      l.v
+        ? {
+            photo: {
+              left: l.width * 0.3,
+              top: l.height * 0.26,
+              w: l.width * 0.7,
+              h: l.height * 0.74,
+              fade: 'left',
+              target: [l.width * 0.52, l.height * 0.3],
+            },
+            head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.07 },
+            phone: { left: l.width * 0.06, top: l.height * 0.4, w: l.width * 0.56, tilt: -4 },
+          }
+        : {
+            photo: {
+              left: 0,
+              top: l.height * 0.35,
+              w: l.width,
+              h: l.height * 0.65,
+              fade: 'up',
+              target: [l.width * 0.78, l.height * 0.4],
+            },
+            head: { left: l.width * 0.42, width: l.u * 50, top: l.height * 0.12 },
+            phone: { left: l.width * 0.08, top: l.height * 0.1, w: pw(l), tilt: -4 },
+          }
+    }
   />
 );
 
-export const TimerScene: React.FC = () => {
-  const { width, height, v } = useLayout();
-  const phoneW = v ? width * 0.62 : height * 0.43;
-  const cx = v ? width / 2 : width * 0.64;
-  const cy = v ? height * 0.36 + phoneW * 0.62 : height * 0.13 + phoneW * 0.62;
-  return (
-    <Feature
-      dark
-      lines={[['Every', 'interval,'], [{ k: 'coached' }]]}
-      sub="Target pace, sound cues and haptics."
-      screen={Array.from({ length: 12 }, (_, i) => `timer-${String(i).padStart(2, '0')}`)}
-      every={BEAT}
-      extra={<CueRings x={cx} y={cy} r={phoneW * 0.46} />}
-    />
-  );
-};
+/** C. Gelap tanpa foto: HP di tengah, cincin bunyi penanda. */
+export const TimerScene: React.FC = () => (
+  <Feature
+    dark
+    lines={[['Every', 'interval,'], [{ k: 'coached' }]]}
+    sub="Target pace, sound cues and haptics."
+    screen={Array.from({ length: 12 }, (_, i) => `timer-${String(i).padStart(2, '0')}`)}
+    every={BEAT}
+    spec={(l) =>
+      l.v
+        ? {
+            head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.08 },
+            phone: { left: (l.width - pw(l)) / 2, top: l.height * 0.36, w: pw(l) },
+          }
+        : {
+            head: { left: l.u * 6, width: l.u * 40, top: l.height * 0.3 },
+            phone: { left: l.width * 0.64 - pw(l) / 2, top: l.height * 0.13, w: pw(l) },
+          }
+    }
+    extra={(s) => (
+      <CueRings x={s.phone.left + s.phone.w / 2} y={s.phone.top + s.phone.w * 0.62} r={s.phone.w * 0.46} />
+    )}
+  />
+);
 
+/** D. Foto penuh di belakang, digelapkan dan memudar ke atas; judul di area gelap. Landscape: foto kanan memudar ke kiri. */
 export const StrengthScene = () => (
   <Feature
     dark
@@ -237,10 +288,39 @@ export const StrengthScene = () => (
     screen={Array.from({ length: 10 }, (_, i) => `strength-${String(i).padStart(2, '0')}`)}
     every={BEAT}
     photo="track-overhead"
-    photoSide="right"
+    spec={(l) =>
+      l.v
+        ? {
+            photo: {
+              left: 0,
+              top: l.height * 0.22,
+              w: l.width,
+              h: l.height * 0.78,
+              fade: 'up',
+              dim: 0.35,
+              target: [l.width * 0.5, l.height * 0.3],
+            },
+            head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.08 },
+            phone: { left: l.width * 0.5 - pw(l) * 0.45, top: l.height * 0.4, w: pw(l) * 0.9, tilt: 3 },
+          }
+        : {
+            photo: {
+              left: l.width * 0.35,
+              top: 0,
+              w: l.width * 0.65,
+              h: l.height,
+              fade: 'left',
+              dim: 0.3,
+              target: [l.width * 0.48, l.height * 0.5],
+            },
+            head: { left: l.u * 6, width: l.u * 40, top: l.height * 0.3 },
+            phone: { left: l.width * 0.82 - pw(l) / 2, top: l.height * 0.13, w: pw(l), tilt: 3 },
+          }
+    }
   />
 );
 
+/** E. Terbalik: HP di atas, judul di bawah; foto memudar dari pojok kanan. Landscape: HP kiri, judul kanan, foto pojok kanan bawah. */
 export const ProgressScene = () => (
   <Feature
     lines={[
@@ -251,10 +331,37 @@ export const ProgressScene = () => (
     screen={['progress', 'progress', 'progress', 'progress', 'progress', 'week']}
     every={BEAT * 1.2}
     photo="shoe-sole"
-    photoSide="right"
+    spec={(l) =>
+      l.v
+        ? {
+            photo: {
+              left: l.width * 0.35,
+              top: 0,
+              w: l.width * 0.65,
+              h: l.height * 0.62,
+              fade: 'radial',
+              target: [l.width * 0.38, l.height * 0.3],
+            },
+            head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.72 },
+            phone: { left: l.width * 0.07, top: l.height * 0.06, w: l.width * 0.5, tilt: -3 },
+          }
+        : {
+            photo: {
+              left: l.width * 0.6,
+              top: l.height * 0.3,
+              w: l.width * 0.4,
+              h: l.height * 0.7,
+              fade: 'radial',
+              target: [l.width * 0.22, l.height * 0.38],
+            },
+            head: { left: l.width * 0.42, width: l.u * 44, top: l.height * 0.14 },
+            phone: { left: l.width * 0.1, top: l.height * 0.08, w: pw(l), tilt: -3 },
+          }
+    }
   />
 );
 
+/** F. Gelap, foto lebar di atas memudar ke gelap, judul putih menimpa bagian bawah foto; HP kanan bawah. */
 export const PrivacyScene = () => (
   <Feature
     dark
@@ -265,7 +372,35 @@ export const PrivacyScene = () => (
     sub="No cloud profile. Your backup, your file."
     screen="privacy"
     photo="promo-privacy"
-    photoSide="right"
+    spec={(l) =>
+      l.v
+        ? {
+            photo: {
+              left: 0,
+              top: 0,
+              w: l.width,
+              h: l.height * 0.5,
+              fade: 'down',
+              dim: 0.25,
+              target: [l.width * 0.55, l.height * 0.2],
+            },
+            head: { left: l.u * 8, right: l.u * 8, top: l.height * 0.33 },
+            phone: { left: l.width * 0.38, top: l.height * 0.56, w: l.width * 0.56, tilt: 4 },
+          }
+        : {
+            photo: {
+              left: 0,
+              top: 0,
+              w: l.width * 0.55,
+              h: l.height,
+              fade: 'right',
+              dim: 0.35,
+              target: [l.width * 0.25, l.height * 0.45],
+            },
+            head: { left: l.u * 6, width: l.u * 40, top: l.height * 0.55 },
+            phone: { left: l.width * 0.7 - pw(l) / 2, top: l.height * 0.13, w: pw(l), tilt: 4 },
+          }
+    }
   />
 );
 

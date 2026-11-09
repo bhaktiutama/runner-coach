@@ -198,6 +198,67 @@ export const PhotoStadium: React.FC<{
   );
 };
 
+/**
+ * Foto hero sebagai latar yang memudar ke warna latar (tidak pernah menutupi HP).
+ * `fade` = arah memudar; `dim` = lapisan gelap untuk adegan gelap; orang diletakkan di `target` (lokal).
+ */
+export const Backdrop: React.FC<{
+  name: string;
+  left: number;
+  top: number;
+  w: number;
+  h: number;
+  fade: 'down' | 'up' | 'left' | 'right' | 'radial';
+  dim?: number;
+  target?: [number, number];
+  opacity?: number;
+}> = ({ name, left, top, w, h, fade, dim = 0, target, opacity = 1 }) => {
+  const f = useCurrentFrame();
+  const zoom = interpolate(f, [0, 150], [1.04, 1.14], { extrapolateRight: 'clamp' });
+  const inO = interpolate(f, [0, 10], [0, 1], { extrapolateRight: 'clamp' });
+  const meta = PHOTOS[name] ?? { w: 1, h: 1, fx: 0.5, fy: 0.5 };
+  const s = Math.max(w / meta.w, h / meta.h) * zoom;
+  const rw = meta.w * s;
+  const rh = meta.h * s;
+  const [tx, ty] = target ?? [w / 2, h / 2];
+  const cl = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const mask = {
+    down: 'linear-gradient(to bottom, #000 45%, transparent 100%)',
+    up: 'linear-gradient(to top, #000 45%, transparent 100%)',
+    left: 'linear-gradient(to left, #000 40%, transparent 100%)',
+    right: 'linear-gradient(to right, #000 40%, transparent 100%)',
+    radial: 'radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%)',
+  }[fade];
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left,
+        top,
+        width: w,
+        height: h,
+        overflow: 'hidden',
+        opacity: opacity * inO,
+        WebkitMaskImage: mask,
+        maskImage: mask,
+      }}
+    >
+      <Img
+        src={staticFile(`photos/${name}.webp`)}
+        style={{
+          position: 'absolute',
+          left: cl(tx - meta.fx * rw, w - rw, 0),
+          top: cl(ty - meta.fy * rh, h - rh, 0),
+          width: rw,
+          height: rh,
+          maxWidth: 'none',
+        }}
+      />
+      {dim > 0 && <AbsoluteFill style={{ background: `rgba(27,33,38,${dim})` }} />}
+    </div>
+  );
+};
+
 export type Word = string | { k: string };
 
 /** Judul kinetik: tiap kata muncul tepat di beat berikutnya. Kata kunci: penanda oranye (terang) / teks oranye (gelap). */
