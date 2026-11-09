@@ -39,19 +39,21 @@ const V2: Part[] = [
 
 const total = (p: Part[]) => p.reduce((s, [, d]) => s + d, 0);
 
-// Musik: "Stride - RunCo Promo" (Suno v6 wild lewat EvoLink, instrumental, sekitar 180 BPM).
-// Track berakhir bersih di detik 29,5; V2 memakai 15 detik terakhir (mulai detik 14,5).
+// Musik: "Stride - Orbit" versi A (Suno v6 wild lewat EvoLink, instrumental sinematik, denyut sekitar 180 BPM).
+// Klimaks 26,5-28 dtk jatuh di layar penutup; V2 memakai 15 detik terakhir (mulai 14,8 dtk).
+// Alternatif: 'music/stride.mp3' (pop drum and bass, berhenti bersih di 29,5 dtk; V2 mulai 14,5 dtk).
 const FPS = 30;
+const MUSIC = 'music/orbit.mp3';
 const Cut: React.FC<{ parts: Part[]; musicFrom?: number }> = ({ parts, musicFrom = 0 }) => {
   const dur = total(parts);
   return (
     <AbsoluteFill>
       <Fonts />
       <Audio
-        src={staticFile('music/stride.mp3')}
+        src={staticFile(MUSIC)}
         trimBefore={Math.round(musicFrom * FPS)}
         volume={(f) =>
-          interpolate(f, [0, 3, dur - 8, dur], [0, 1, 1, 0], {
+          interpolate(f, [0, 3, dur - 24, dur], [0, 1, 1, 0], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',
           })
@@ -88,7 +90,7 @@ export const Root: React.FC = () => (
     />
     <Composition
       id="V2-Social"
-      component={() => <Cut parts={V2} musicFrom={14.5} />}
+      component={() => <Cut parts={V2} musicFrom={14.8} />}
       durationInFrames={total(V2)}
       fps={30}
       width={1080}

@@ -34,32 +34,50 @@ const Feature: React.FC<{
   photo?: string;
   photoSide?: 'left' | 'right';
   extra?: React.ReactNode;
-}> = ({ lines, sub, screen, every, dark, photo, photoSide = 'right', extra }) => {
+}> = ({ lines, sub, screen, every, dark, photo, extra }) => {
   const { width, height, v, u } = useLayout();
   const phoneW = v ? width * 0.62 : height * 0.43;
   const phoneLeft = v ? (width - phoneW) / 2 : width * 0.64 - phoneW / 2;
   const phoneTop = v ? height * 0.36 : height * 0.13;
+  const ring = dark ? C.primary : C.sand;
+  // Landscape: foto di belakang HP, di tepi kanan; orangnya ditaruh di tengah bagian yang tidak tertutup HP.
+  const lw = height * 0.5;
+  const lh = height * 0.68;
+  const ll = width * 0.74;
+  const visL = Math.max(ll, phoneLeft + phoneW);
+  const visR = Math.min(ll + lw, width);
+  // Portrait: foto kecil di depan HP (kanan bawah) supaya tetap terlihat utuh.
+  const vw = width * 0.4;
+  const vh = vw * 1.28;
   return (
     <AbsoluteFill style={{ background: dark ? C.dark : C.bg, overflow: 'hidden' }}>
       <LaneDashes opacity={dark ? 0.22 : 0.14} />
-      {photo && (
+      {photo && !v && (
         <PhotoStadium
           name={photo}
-          w={v ? width * 0.62 : height * 0.5}
-          h={v ? width * 0.62 * 1.25 : height * 0.68}
+          w={lw}
+          h={lh}
           enterAt={4}
-          from={photoSide}
-          ring={dark ? C.primary : C.sand}
-          style={
-            v
-              ? { left: photoSide === 'right' ? width * 0.56 : -width * 0.18, top: height * 0.45 }
-              : { left: photoSide === 'right' ? width * 0.74 : width * 0.44, top: height * 0.22 }
-          }
+          from="right"
+          ring={ring}
+          target={[(visL + visR) / 2 - ll, lh / 2]}
+          style={{ left: ll, top: height * 0.22 }}
         />
       )}
       <div style={{ position: 'absolute', left: phoneLeft, top: phoneTop }}>
         <Phone src={screen} width={phoneW} every={every} dark={dark} enterAt={2} tilt={v ? 0 : -3} />
       </div>
+      {photo && v && (
+        <PhotoStadium
+          name={photo}
+          w={vw}
+          h={vh}
+          enterAt={8}
+          from="right"
+          ring={ring}
+          style={{ left: width * 0.56, top: height * 0.66 }}
+        />
+      )}
       {extra}
       <Headline
         lines={lines}

@@ -18,7 +18,16 @@ Gaya: ritme pelari; ritme pelari 180 langkah/menit (1 beat = 10 frame). Semua du
 
 ## Musik
 
-- `public/music/stride.mp3` (di-gitignore): "Stride - RunCo Promo", Suno `suno-v6-wild` lewat EvoLink, task `task-unified-1794231154-v2tabrnq` (2026-11-09, 8 kredit). Versi B dari 2 hasil: tempo terukur sekitar 180 BPM (setengah tempo 90), drop di 10,75 dtk, jeda di 21,25 dtk, berhenti bersih di 29,5 dtk.
-- V1 dan V1-Portrait memakai track dari awal; V2 memakai 14,5 sampai 29,5 dtk. Fade 0,1 dtk di awal dan 0,27 dtk di akhir.
-- Prompt: style "bright pop drum and bass with a jersey club bounce, TikTok-ready, Gen Z and millennial vibe, 180 bpm, ..." (lengkap di `docs/store/04-VIDEO-PLAN.md`).
-- Hak pakai komersial musik AI mengikuti syarat EvoLink/Suno; cek sebelum video dipakai publik.
+Semua di `public/music/` (di-gitignore). Dibuat dengan Suno `suno-v6-wild` lewat EvoLink, instrumental.
+
+| File | Task EvoLink | Karakter | Dipakai |
+|---|---|---|---|
+| `orbit.mp3` (Orbit A) | `task-unified-1794232001-a520cqkb` (2026-11-09, 8 kredit) | Sinematik minimalis ala soundtrack luar angkasa: detak jam 180 BPM, organ, felt piano, arpeggio Lydian, napas dan langkah sebagai perkusi. Naik di 5,5 / 10,5 / 16 dtk, klimaks 26,5-28 dtk | **Ya**: V1 dan V1-Portrait dari awal, V2 mulai 14,8 dtk; fade akhir 0,8 dtk |
+| `orbit-b.mp3` (Orbit B) | sama | Lebih rata, memudar sendiri di akhir | Cadangan |
+| `stride.mp3` (Stride B) | `task-unified-1794231154-v2tabrnq` (8 kredit) | Pop drum and bass + jersey club, berhenti bersih 29,5 dtk | Cadangan (`MUSIC` di `src/Root.tsx`; V2 mulai 14,5 dtk) |
+
+Prompt lengkap ada di `docs/store/04-VIDEO-PLAN.md`. Hak pakai komersial musik AI mengikuti syarat EvoLink/Suno; cek sebelum video dipakai publik.
+
+## Foto hero
+
+`PHOTOS` di `src/kit.tsx` menyimpan titik fokus (posisi orang) tiap foto. Landscape: foto di belakang HP, orangnya diletakkan di tengah bagian yang tidak tertutup HP. Portrait: foto kecil di depan HP (kanan bawah).

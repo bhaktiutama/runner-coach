@@ -130,7 +130,26 @@ export const Phone: React.FC<{
   );
 };
 
-/** Foto hero dalam bentuk lintasan (stadion) dengan efek Ken Burns. */
+/** Ukuran asli dan titik fokus (posisi orang, 0..1) tiap foto hero, agar orangnya selalu terlihat. */
+export const PHOTOS: Record<string, { w: number; h: number; fx: number; fy: number }> = {
+  'road-sunrise-f': { w: 866, h: 887, fx: 0.76, fy: 0.55 },
+  'road-sunrise-m': { w: 867, h: 887, fx: 0.85, fy: 0.6 },
+  'riverside-city-f': { w: 866, h: 887, fx: 0.7, fy: 0.6 },
+  'riverside-city-m': { w: 864, h: 887, fx: 0.73, fy: 0.55 },
+  'track-back': { w: 527, h: 506, fx: 0.53, fy: 0.5 },
+  'track-side': { w: 508, h: 506, fx: 0.45, fy: 0.5 },
+  'track-overhead': { w: 504, h: 507, fx: 0.52, fy: 0.55 },
+  'shoe-sole': { w: 502, h: 507, fx: 0.45, fy: 0.55 },
+  'promo-privacy': { w: 659, h: 731, fx: 0.6, fy: 0.45 },
+  'promo-companion': { w: 658, h: 731, fx: 0.45, fy: 0.5 },
+  'promo-science': { w: 657, h: 731, fx: 0.25, fy: 0.5 },
+};
+
+/**
+ * Foto hero dalam bentuk lintasan (stadion) dengan efek Ken Burns.
+ * Titik fokus foto (orangnya) ditaruh di `target` (koordinat lokal kotak, bawaan = tengah),
+ * misalnya tengah bagian yang tidak tertutup HP.
+ */
 export const PhotoStadium: React.FC<{
   name: string;
   w: number;
@@ -139,7 +158,8 @@ export const PhotoStadium: React.FC<{
   from?: 'left' | 'right' | 'bottom';
   style?: React.CSSProperties;
   ring?: string;
-}> = ({ name, w, h, enterAt = 0, from = 'right', style, ring = C.primary }) => {
+  target?: [number, number];
+}> = ({ name, w, h, enterAt = 0, from = 'right', style, ring = C.primary, target }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const p = pop(f, fps, enterAt, 14);
@@ -149,6 +169,14 @@ export const PhotoStadium: React.FC<{
     extrapolateRight: 'clamp',
     extrapolateLeft: 'clamp',
   });
+  const meta = PHOTOS[name] ?? { w: 1, h: 1, fx: 0.5, fy: 0.5 };
+  const s = Math.max(w / meta.w, h / meta.h) * zoom;
+  const rw = meta.w * s;
+  const rh = meta.h * s;
+  const [tx, ty] = target ?? [w / 2, h / 2];
+  const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+  const left = clamp(tx - meta.fx * rw, w - rw, 0);
+  const top = clamp(ty - meta.fy * rh, h - rh, 0);
   return (
     <div
       style={{
@@ -164,7 +192,7 @@ export const PhotoStadium: React.FC<{
     >
       <Img
         src={staticFile(`photos/${name}.webp`)}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${zoom})` }}
+        style={{ position: 'absolute', left, top, width: rw, height: rh, maxWidth: 'none' }}
       />
     </div>
   );
