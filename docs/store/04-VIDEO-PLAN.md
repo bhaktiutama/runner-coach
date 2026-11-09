@@ -49,7 +49,7 @@ V2 (15 dtk) = potongan V1: hook timer (0-2 dtk) lalu Hari ini, Plan, Progres, Pe
 | Layar app | Rekaman build web EN | Sama dengan screenshot store |
 | Logo, warna, font | `docs/design-system/` | Bricolage Grotesque + Plus Jakarta Sans (OFL) |
 | Bunyi penanda timer | `docs/audio/earcons`, `apps/app/assets/sounds` | Dibuat sendiri (nada sintesis), aman dipakai |
-| Musik latar | Belum ada | Pilih: dari pemilik, YouTube Audio Library, atau tanpa musik (hanya bunyi penanda) |
+| Musik latar | "Stride - RunCo Promo" (Suno v6 wild via EvoLink, 2026-11-09) | Instrumental, sekitar 180 BPM, pop drum and bass + jersey club untuk Gen Z dan milenial. Style: `bright pop drum and bass with a jersey club bounce, TikTok-ready, Gen Z and millennial vibe, 180 bpm, punchy rolling breakbeat, crisp claps on every beat, glossy synth chords, chopped synth stabs, warm sub bass, sparkly arps, sunny feel-good summer energy, motivational running anthem, short riser into a big euphoric drop, clean hard stop ending, no vocals, modern advertising music`. Cek hak pakai komersial sebelum publik |
 | Ilustrasi pelari di dalam layar | `assets/imagery` | Lisensi belum diverifikasi (A4); wajib jelas sebelum video publik |
 
 ## 5. Aturan isi

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, Composition, Series } from 'remotion';
+import { AbsoluteFill, Audio, Composition, Series, interpolate, staticFile } from 'remotion';
 import { Fonts } from './kit';
 import {
   EndScene,
@@ -39,18 +39,34 @@ const V2: Part[] = [
 
 const total = (p: Part[]) => p.reduce((s, [, d]) => s + d, 0);
 
-const Cut: React.FC<{ parts: Part[] }> = ({ parts }) => (
-  <AbsoluteFill>
-    <Fonts />
-    <Series>
-      {parts.map(([C, d], i) => (
-        <Series.Sequence key={i} durationInFrames={d}>
-          <C />
-        </Series.Sequence>
-      ))}
-    </Series>
-  </AbsoluteFill>
-);
+// Musik: "Stride - RunCo Promo" (Suno v6 wild lewat EvoLink, instrumental, sekitar 180 BPM).
+// Track berakhir bersih di detik 29,5; V2 memakai 15 detik terakhir (mulai detik 14,5).
+const FPS = 30;
+const Cut: React.FC<{ parts: Part[]; musicFrom?: number }> = ({ parts, musicFrom = 0 }) => {
+  const dur = total(parts);
+  return (
+    <AbsoluteFill>
+      <Fonts />
+      <Audio
+        src={staticFile('music/stride.mp3')}
+        trimBefore={Math.round(musicFrom * FPS)}
+        volume={(f) =>
+          interpolate(f, [0, 3, dur - 8, dur], [0, 1, 1, 0], {
+            extrapolateLeft: 'clamp',
+            extrapolateRight: 'clamp',
+          })
+        }
+      />
+      <Series>
+        {parts.map(([C, d], i) => (
+          <Series.Sequence key={i} durationInFrames={d}>
+            <C />
+          </Series.Sequence>
+        ))}
+      </Series>
+    </AbsoluteFill>
+  );
+};
 
 export const Root: React.FC = () => (
   <>
@@ -72,7 +88,7 @@ export const Root: React.FC = () => (
     />
     <Composition
       id="V2-Social"
-      component={() => <Cut parts={V2} />}
+      component={() => <Cut parts={V2} musicFrom={14.5} />}
       durationInFrames={total(V2)}
       fps={30}
       width={1080}
