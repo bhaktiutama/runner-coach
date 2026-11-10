@@ -168,6 +168,10 @@ Pemeriksaan (2026-11-10):
 | Browser | 3D hidup dan beranimasi, tombol jeda, tab, link toko, 0 error konsol |
 | Tidak dicek | HP fisik, Safari/iOS, WebGL di GPU asli (cek memakai SwiftShader) |
 
+Preview review (L6, 2026-11-10): **https://run-coach--landing.expo.app** (EAS Hosting proyek `run-coach`, alias `landing`; alias `preview` app tidak diubah, tanpa `--prod`). Deploy ulang: salin `index.html` + `assets/` + `apps/app/dist/metadata.json` ke folder sementara di `apps/app`, `npx eas-cli@latest deploy --export-dir <folder> --alias landing --non-interactive`, hapus foldernya.
+
+Kit skill tidak punya file LICENSE di repo sumbernya (dicek 2026-11-10); cek hak pakai sebelum halaman publik.
+
 Perubahan kecil di luar kit: cincin fokus memakai warna tinta, bukan oranye (oranye 2,75:1 di latar, butuh 3:1).
 
 Sisa sebelum publik: lisensi ilustrasi (B10, ilustrasi tampil di layar app), ID App Store, `share.jpg`, file video, alamat `privacy@bhaktiutama.com` aktif, review copy EN (B8), versi ID.
