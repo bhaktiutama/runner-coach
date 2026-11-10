@@ -1,0 +1,6 @@
+# hasil cek skill design-taste-frontend (dibuat ulang tiap run)
+shots/
+.taste-skill/chrome-*/
+.taste-skill/consistency/
+.taste-skill/gate/
+.taste-skill/gate-*.json

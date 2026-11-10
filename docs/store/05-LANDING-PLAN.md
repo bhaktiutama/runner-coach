@@ -1,12 +1,12 @@
 # 05. Rencana landing page RunCo
 
-Status: Draft v0.1 (2026-11-09), menunggu persetujuan pemilik (bagian 9) | Copy dan klaim: `02-LISTING-EN.md` | Grafis: `graphics/` | Video: `04-VIDEO-PLAN.md` | Skill: `design-taste-frontend` (tasteskill 2.5.1, `skills-lock.json`)
+Status: v0.2 (2026-11-10). K1-K8 disetujui pemilik ("setuju jalankan semua"); draft halaman EN selesai di `marketing/landing/`, menunggu review (bagian 11) | Copy dan klaim: `02-LISTING-EN.md` | Grafis: `graphics/` | Video: `04-VIDEO-PLAN.md` | Skill: `design-taste-frontend` (tasteskill 2.5.1, `skills-lock.json`)
 
 ## Ringkasan
 
 - Satu halaman statis di `marketing/landing/` (di luar build app, seperti `marketing/video/`), untuk di-host di `https://bhaktiutama.com/runco` (alamat Website di `03-PLAY-CONSOLE.md`). Aksi utama: "Get the app" ke tombol Google Play dan App Store (link sementara, satu konfigurasi).
 - Konsep "Satu putaran": halaman dibaca sebagai satu putaran lintasan. Oval lintasan dari logo menjadi adegan 3D di hero, garis lajur oranye menyambung antar bagian, ritme 180 langkah/menit dari video dipakai untuk semua gerak.
-- Belum ada kode landing yang ditulis. Yang sudah dikerjakan: skill terpasang, aset diperiksa, plan ini.
+- Draft EN selesai (L1-L5): `marketing/landing/index.html`, gate skill `GATE: PASS`. Belum tayang publik (lisensi ilustrasi B10, link App Store, video).
 
 ## 1. Tujuan dan batas
 
@@ -143,3 +143,31 @@ Versi Bahasa Indonesia (`/runco/id/`) dikerjakan setelah EN disetujui (K2).
 | R5 | Aturan pemakaian badge App Store / Google Play sebelum app tayang belum dicek | Bisa perlu badge "pre-order/coming soon" | Dicek di L4 dari pedoman resmi |
 | R6 | Preview lewat EAS Hosting untuk folder non-app belum pernah dicoba di repo ini | Jalur preview bisa berubah ke Artifact | Dicek di L6 |
 | R7 | Copy ID untuk landing belum ada (listing ID juga belum) | Versi ID butuh review pemilik | Setelah EN |
+
+## 11. Hasil draft (2026-11-10)
+
+Yang berubah dari rencana bagian 4-6, dan alasannya:
+
+| Rencana | Hasil | Alasan |
+|---|---|---|
+| 9 bagian: hero, today, tour, strength, evidence, privacy, film, faq, get | hero, plan, privacy, training (tab: timer, strength, progres, minggu), more (4 kartu), evidence, film, faq, penutup + footer | Pemeriksa skill: satu tata letak paling banyak 2x, split tidak bersebelahan, judul harus menyebut kategori/produk |
+| 3D: Three.js atau WebGL langsung, diputuskan di L3 | WebGL2 langsung, tanpa library (`assets/hero/hero3d.js`, 19 KB) | Three.js 0.187.0 = 659 KB (`three.module.js`) untuk satu lintasan dan satu HP |
+| Momen kandidat `pinned-chapters` + `word-highlight` | `word-highlight` (#privacy) + `line-carries-colour` (#evidence) | Dibagi oleh `moments.mjs pick`, bukan dipilih |
+| Gambar bagikan 1200 x 630 | Belum dibuat (`og:image` menunjuk `share.jpg`) | Sisa pekerjaan |
+| Video V1 di slot | Poster sementara = feature graphic, tanpa file video | MP4 tidak ada di git (K5) |
+
+Deal skill: hero `product` (panggung = adegan 3D), nav `nav-cards`, tombol `tonal`, penutup `close-type`, footer `footer-columns`, ritme `surface-pairs`, warna dari token Lintas (`start.mjs brand`), font `bricolage` (Bricolage Grotesque + Figtree, di-host sendiri).
+
+Pemeriksaan (2026-11-10):
+
+| Cek | Hasil |
+|---|---|
+| `gate.mjs` (checker 1440 + 390, jalan 320, copy-lint) | PASS, 2 waiver: `hero-lines` (h1 asli 2 baris di 390; cek mengisi 40 karakter), `section-gaps` #more/#evidence (diukur ke panel momen kit) |
+| `perf.mjs` | 0 FAIL, 3 WARN (gambar lazy/eager di hero) |
+| `layout/check.mjs` 1440, 1024, 820, 768, 390 | 1 temuan `sparse` #film di 768 (konten 50% layar) |
+| Browser | 3D hidup dan beranimasi, tombol jeda, tab, link toko, 0 error konsol |
+| Tidak dicek | HP fisik, Safari/iOS, WebGL di GPU asli (cek memakai SwiftShader) |
+
+Perubahan kecil di luar kit: cincin fokus memakai warna tinta, bukan oranye (oranye 2,75:1 di latar, butuh 3:1).
+
+Sisa sebelum publik: lisensi ilustrasi (B10, ilustrasi tampil di layar app), ID App Store, `share.jpg`, file video, alamat `privacy@bhaktiutama.com` aktif, review copy EN (B8), versi ID.
