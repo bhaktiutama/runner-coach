@@ -1,6 +1,6 @@
 # RunCo "Run the Page": build prompt (landing v2)
 
-Status: Draft v0.1 (2026-11-11), waiting for owner approval (section 10). Replaces the v1 draft in `marketing/landing/` (kept in git history). Claims: `02-LISTING-EN.md` section 7. Engine facts: `docs/specs/07-ENGINE-EVIDENCE.md`.
+Status: v0.2 (2026-11-12). D1 to D8 approved by the owner ("setuju jalankan semua", 2026-11-11); built in `marketing/landing/`, preview at https://run-coach--landing.expo.app, waiting for review (section 12). Replaces the v1 draft in `marketing/landing/` (kept in git history). Claims: `02-LISTING-EN.md` section 7. Engine facts: `docs/specs/07-ENGINE-EVIDENCE.md`.
 
 Build a single-page landing site for **RunCo**, a running coach app (5K to marathon, iOS and Android). The page is not about a run. **The page is a run.** Scrolling is running: the page is a 5K course with a start line, five kilometre sections and a finish tape. A fixed run HUD, modelled on the app's own timer, shows your distance, your time on the page and your **scroll pace** as a live `min/km` readout with the app's Easy / Tempo / Interval zone chip. Each kilometre is a different surface and a different colour: a dawn road, a 3D fly-through of a real 19-week plan, a terracotta track, infield grass, night, and an orange finish. At the finish the page hands you a result card with your real time, your real splits and the real distance your thumb travelled, then asks you to run the real one. Every animation and interaction below must be built exactly, with the same libraries, timings, easings and numbers.
 
@@ -400,3 +400,39 @@ Expected result: the gate cannot pass (it allows five waivers). The build is clo
 | R4 | Scroll pace is a toy scale, not a measurement | Labelled "scroll pace" everywhere; the result card marks what is measured |
 | R5 | The strength frames' backgrounds (opaque or transparent) are not checked yet | Decides whether the disc needs a blend mode |
 | R6 | Checks so far used a software renderer; no real GPU, Safari or iOS run | Owner review on a phone before public |
+
+## 12. Build result (2026-11-12)
+
+Preview: **https://run-coach--landing.expo.app** (EAS Hosting, alias `landing`; the app's `preview` alias and production are untouched).
+
+Where the build differs from this prompt, and why:
+
+| Prompt | Built | Why |
+|---|---|---|
+| Three sections pinned by ScrollTrigger | CSS `position: sticky` inside tall sections (460, 360, 280 svh; phones 380, 260, 280); ScrollTrigger only scrubs | JS pinning measured a layout shift of 3.0 to 4.6 in the perf check; sticky measures 0.002 |
+| Stride type moves the `wdth` axis 75 to 100 | `skewX` up to 7 deg and `scaleX` up to 1.09 | Changing the axis re-laid the line on every frame (layout shift) |
+| HUD fill and dot by width and left | `transform` | Same reason |
+| Km numeral drawn with DrawSVG | Clip reveal, rotate -6 to 0 deg | DrawSVG does not draw text outlines |
+| Coach note 1 near the week card | Beside the day strip: "move your mouse: it changes every day" | The card follows the pointer, so a fixed note pointed at nothing |
+| Sounds as mp3 + ogg | mp3 only, 96 kb/s mono | Every current browser decodes mp3 |
+| Raw screens recaptured (6) | Two reused from the v1 capture: timer, "Why this workout?" | The other sections draw the product as live UI or data, not as screenshots |
+| KM 1 fallback chart in the HTML | Bars are built by script; without script the section shows its copy and an `aria-label` with all 19 values | Kept the HTML short |
+| KM 1 copy turns ink after week 14 | Stays stone with a soft shadow | It sits over dark asphalt at every point of the run |
+| Finish floods the page orange | The flood stays inside the finish section | The orange also coloured the end of KM 5 |
+| `gate.mjs --done` | Not run: no gate was armed for v2 | The kit is not used; `copy-lint` and `perf` were run as lint |
+
+Assets generated (EvoLink): 3 stills USD 0.051, one 5 s loop USD 0.604, total USD 0.655 (44.3 credits), within D2. The loop's first and last frame differ by 2.5 of 255 on average. Balance after: about 93.5 credits.
+
+Checks (2026-11-12, headless Chromium, WebGL on a software renderer):
+
+| Check | Result |
+|---|---|
+| Console and network, 1440 and 390, local and on the preview URL | 0 errors, 0 failed requests, 0 requests to another host |
+| Interactions | week card Monday to Sunday across the hero; scroll pace reads Interval on a fast flick; "Try the 3-2-1" turns sound on and plays; card row drags; a chip dragged out returns and counts 1; tape snaps and the result card fills with time, five splits and thumb distance |
+| `copy-lint.mjs --kind software` | 0 FAIL, 1 WARN (`copy-stat-strip`: the KM 1 readout, kept: it is the plan's own data) |
+| `perf.mjs` | 0 FAIL, 10 WARN (1.68 MB total transfer at 1440: 884 KB images, 515 KB film; three font families; two logos not lazy) |
+| Layout shift while scrolling the whole page | 0.002 at 1440, 0.001 at 390 |
+| Reduced motion | no load count, no Lenis, KM 1 as its chart, pins and HUD still work |
+| Not checked | a real phone, Safari and iOS, a real GPU, sound on a device, haptics |
+
+Open before public release: illustration licence (B10), the App Store id (`STORE.ios` in `app.js`), GSAP licence confirmation, a native speaker's read of the copy (B8), the `privacy@bhaktiutama.com` mailbox, a real-device pass, the Indonesian version.

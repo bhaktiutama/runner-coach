@@ -153,7 +153,10 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 
 /* ---- km shared ---- */
 .km { position: relative; }
-.pin { position: relative; height: 100svh; min-height: 34rem; overflow: hidden; }
+/* the three held kilometres: the section is tall, its .pin sticks (native, so no layout shift) */
+.km1 { height: 460svh; } .km2 { height: 360svh; } .km3 { height: 280svh; }
+.km1.is-flat { height: auto; }
+.pin { position: sticky; top: 0; height: 100svh; min-height: 34rem; overflow: hidden; }
 .board { position: absolute; left: 4rem; top: 6rem; z-index: 3; display: grid; grid-template-columns: auto auto; align-items: end; column-gap: 1rem; rotate: -4deg; transform-origin: 0 100%; }
 .board .lbl:first-child { grid-column: 1 / -1; }
 .board b { font: 800 13rem/.8 var(--display); font-stretch: 75%; color: transparent; -webkit-text-stroke: .12rem var(--fg); font-variant-numeric: tabular-nums; }
@@ -336,6 +339,7 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 /* ---- phones ---- */
 @media (max-width: 600px) {
   .h { font-size: 3.4rem; } .h--hero { font-size: 2.95rem; } .p { font-size: 1.1rem; } .note { font-size: 1.5rem; }
+  .km1 { height: 380svh; } .km2 { height: 260svh; }
   .nav { padding: 1rem; } .nav__logo img { height: 1.9rem; } .nav__cta { height: 2.5rem; font-size: .95rem; padding: 0 1rem; }
   .hud { left: 0; bottom: 0; translate: none; width: 100%; height: calc(3.2rem + env(safe-area-inset-bottom)); padding: 0 1rem env(safe-area-inset-bottom); border-radius: 0; gap: .9rem; border-width: 1px 0 0; }
   .hud__ticks, .hud__sound, .hud__stat .lbl { display: none; }

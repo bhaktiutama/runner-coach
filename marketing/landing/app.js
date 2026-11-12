@@ -47,7 +47,6 @@ if (G) {
     G.ticker.add(t => lenis.raf(t * 1000));
     G.ticker.lagSmoothing(0);
   }
-  const PIN = lenis ? 'transform' : 'fixed';   // with Lenis the pin follows by transform: no layout shift
   const go = (target, dur = 1.6) => { lenis ? lenis.scrollTo(target, { duration: dur }) : (typeof target === 'number' ? scrollTo({ top: target, behavior: 'smooth' }) : $(target).scrollIntoView({ behavior: RM ? 'auto' : 'smooth' })); };
   document.addEventListener('click', e => {
     const a = e.target.closest('a[href^="#"], [data-to]'); if (!a) return;
@@ -219,7 +218,7 @@ if (G) {
       if (ahead !== note._on) { note._on = ahead; G.to(note, { autoAlpha: ahead ? 1 : 0, duration: 0.3 }); }
       if (p > 0.985 && !flashed) { flashed = true; G.fromTo(flash, { opacity: 0 }, { opacity: 0.9, duration: 0.12, yoyo: true, repeat: 1, repeatDelay: 0.1 }); } else if (p < 0.9) flashed = false;
     };
-    ScrollTrigger.create({ trigger: sec, pin, pinType: PIN, start: 'top top', end: () => '+=' + innerHeight * (isPhone() ? 2.8 : 3.6), scrub: 0.4, refreshPriority: 5, invalidateOnRefresh: true, onUpdate: st => { p = st.progress; paint(); }, onToggle: st => { if (!st.isActive) html.classList.remove('is-day'); } });
+    ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.4, onUpdate: st => { p = st.progress; paint(); }, onToggle: st => { if (!st.isActive) html.classList.remove('is-day'); } });
     if (FINE) { const yTo = G.quickTo({ get v() { return yaw; }, set v(x) { yaw = x; paint(); } }, 'v', { duration: 0.6, ease: 'power3' }); pin.addEventListener('mousemove', e => yTo((e.clientX / innerWidth - 0.5) * 0.021)); pin.addEventListener('mouseleave', () => yTo(0)); }
     addEventListener('resize', () => { scene.resize(); paint(); });
     paint();
@@ -252,7 +251,7 @@ if (G) {
       lastE = e;
     };
     let st = { progress: 0 };
-    st = ScrollTrigger.create({ trigger: sec, pin, pinType: PIN, start: 'top top', end: () => '+=' + innerHeight * (isPhone() ? 1.6 : 2.6), scrub: 0.3, refreshPriority: 4, invalidateOnRefresh: true, onUpdate: s => paint(s.progress) });
+    st = ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.3, onUpdate: s => paint(s.progress) });
     paint(0);
     $('[data-321]').addEventListener('click', () => {
       if (demo) return; demo = true; setSound(true);
@@ -279,7 +278,7 @@ if (G) {
       const tw = rows.map((row, r) => G.fromTo(row, { xPercent: r ? -33.333 : 0 }, { xPercent: r ? 0 : -33.333, duration: 40 * (row.scrollWidth / 3 / innerWidth), ease: 'none', repeat: -1 }));
       let ts = 1; G.ticker.add(() => { const want = (1 + clamp(run.v / 600, 0, 4)) * run.dir; ts += (want - ts) * 0.08; tw.forEach(t => t.timeScale(Math.abs(ts) < 0.05 ? 0.05 : ts)); });
     }
-    ScrollTrigger.create({ trigger: sec, pin, pinType: PIN, start: 'top top', end: () => '+=' + innerHeight * 1.8, scrub: 0.2, refreshPriority: 3, invalidateOnRefresh: true, onUpdate: st => {
+    ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.2, onUpdate: st => {
       const reps = st.progress * 10, r = Math.min(10, Math.floor(reps + 0.5)); frac = reps % 1; if (st.progress >= 0.999) frac = 0;
       if (r !== lastRep) { if (r > lastRep) { play('tick'); if (!RM) G.fromTo(rep, { scale: 1.3 }, { scale: 1, duration: 0.25 }); } lastRep = r; rep.textContent = r; }
       const d = st.progress > 0.985; if (d !== isDone) { isDone = d; G.fromTo(done, { autoAlpha: d ? 0 : 1, y: d ? -30 : 0 }, { autoAlpha: d ? 1 : 0, y: 0, duration: 0.35, ease: 'back.out(2)' }); }

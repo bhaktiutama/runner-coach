@@ -2,6 +2,8 @@
 
 Status: v0.2 (2026-11-10). K1-K8 disetujui pemilik ("setuju jalankan semua"); draft halaman EN selesai di `marketing/landing/`, menunggu review (bagian 11) | Copy dan klaim: `02-LISTING-EN.md` | Grafis: `graphics/` | Video: `04-VIDEO-PLAN.md` | Skill: `design-taste-frontend` (tasteskill 2.5.1, `skills-lock.json`)
 
+> **Digantikan 2026-11-12:** pemilik menilai draft v1 terlalu datar dan generik. Halaman dibangun ulang dari `06-LANDING-V2-PROMPT.md` ("Run the Page"). Dokumen ini tinggal sebagai catatan v1; preview `landing` sekarang berisi v2.
+
 ## Ringkasan
 
 - Satu halaman statis di `marketing/landing/` (di luar build app, seperti `marketing/video/`), untuk di-host di `https://bhaktiutama.com/runco` (alamat Website di `03-PLAY-CONSOLE.md`). Aksi utama: "Get the app" ke tombol Google Play dan App Store (link sementara, satu konfigurasi).
