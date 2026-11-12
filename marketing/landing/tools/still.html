@@ -1,7 +1,0 @@
-<!doctype html>
-<!-- make-stills.cjs opens this page to render the hero's stills from the live 3D scene: ?w=1280&h=566&still=2.4 -->
-<meta charset="utf-8">
-<style>html,body{margin:0;background:transparent}#s{position:relative}#s canvas{position:absolute;inset:0;width:100%;height:100%}</style>
-<div id="s" data-hero3d data-screen="../assets/img/screen-today.webp"></div>
-<script>const q=new URLSearchParams(location.search),s=document.getElementById('s');s.style.width=(q.get('w')||1280)+'px';s.style.height=(q.get('h')||566)+'px';</script>
-<script type="module" src="../assets/hero/hero3d.js"></script>
