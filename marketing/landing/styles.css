@@ -154,7 +154,7 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 /* ---- km shared ---- */
 .km { position: relative; }
 /* the three held kilometres: the section is tall, its .pin sticks (native, so no layout shift) */
-.km1 { height: 460svh; } .km2 { height: 360svh; } .km3 { height: 280svh; }
+.km1 { height: 460svh; } .km2 { height: 360svh; }
 .km1.is-flat { height: auto; }
 .pin { position: sticky; top: 0; height: 100svh; min-height: 34rem; overflow: hidden; }
 .board { position: absolute; left: 4rem; top: 6rem; z-index: 3; display: grid; grid-template-columns: auto auto; align-items: end; column-gap: 1rem; rotate: -4deg; transform-origin: 0 100%; }
@@ -224,23 +224,26 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 .phone--timer { position: absolute; right: 4rem; bottom: 7rem; z-index: 3; rotate: 4deg; }
 .note--3 { right: 6rem; bottom: 40.5rem; rotate: -5deg; color: var(--sand); display: grid; justify-items: end; }
 
-/* ---- km3 ---- */
-.lib { position: absolute; left: 0; right: 0; z-index: 1; overflow: hidden; }
-.lib--a { top: 13%; } .lib--b { bottom: 11%; }
+/* ---- km3: flows, not held; the demo runs on its own clock ---- */
+.km3 { padding: 7rem 0 0; overflow: hidden; }
+.km3__grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4rem; align-items: center; padding: 0 6rem 0 4rem; }
+.km3__text { display: grid; gap: 2rem; justify-items: start; }
+.km3 .board--flow { margin: 0; }
+.km3 .km__copy .h { font-size: 5.6rem; }
+.exlist { display: flex; flex-wrap: wrap; gap: .5rem; max-width: 40rem; }
+.exlist button { min-height: 2.6rem; padding: 0 1rem; border-radius: 1.3rem; border: 1.5px solid rgb(245 244 242 / .45); font-size: .95rem; font-weight: 700; transition: background-color .2s, color .2s, border-color .2s; }
+.exlist button[aria-pressed="true"] { background: var(--stone); color: var(--forest); border-color: var(--stone); }
+.lib { margin-top: 5rem; padding-bottom: 6rem; overflow: hidden; pointer-events: none; }
 .lib__row { display: flex; width: max-content; will-change: transform; }
-.lib__row span { font: 800 7rem/1 var(--display); font-stretch: 75%; text-transform: uppercase; letter-spacing: -.01em; padding-right: 3rem; color: transparent; -webkit-text-stroke: .1rem rgb(245 244 242 / .5); white-space: nowrap; transition: color .25s, -webkit-text-stroke-color .25s; pointer-events: auto; cursor: pointer; }
-.lib__row span:hover, .lib__row span.on { color: var(--stone); -webkit-text-stroke-color: var(--stone); }
-.flip { position: absolute; left: 58%; top: 50%; z-index: 3; width: min(27rem, 50vh); translate: -50% -52%; display: grid; justify-items: center; }
+.lib__row span { font: 800 7rem/1 var(--display); font-stretch: 75%; text-transform: uppercase; letter-spacing: -.01em; padding-right: 3rem; color: transparent; -webkit-text-stroke: .1rem rgb(245 244 242 / .35); white-space: nowrap; transition: -webkit-text-stroke-color .25s; }
+.lib__row span.on { -webkit-text-stroke-color: var(--stone); }
+.flip { position: relative; width: min(27rem, 60vh); display: grid; justify-items: center; }
 .flip__cv { width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; background: var(--stone); box-shadow: 0 2rem 5rem -2rem rgb(0 0 0 / .5); }
-.flip__name { margin-top: 1rem; font: 800 3.4rem/1 var(--display); font-stretch: 75%; text-transform: uppercase; }
+.flip__pause { position: absolute; left: .5rem; top: .5rem; right: auto; bottom: auto; }
+.flip__name { margin-top: 1rem; font: 800 3.4rem/1 var(--display); font-stretch: 75%; text-transform: uppercase; text-align: center; }
 .flip__count { font-weight: 700; font-size: 1.1rem; font-variant-numeric: tabular-nums; margin-top: .3rem; }
 .flip__count b { display: inline-block; font-weight: 800; }
 .flip__done { position: absolute; right: -1rem; top: 8%; rotate: 8deg; height: 2.2rem; font-size: .9rem; visibility: hidden; }
-.km3 .km__copy { max-width: 26rem; bottom: auto; top: 50%; translate: 0 -42%; }
-.km3 .km__copy .h { font-size: 4.6rem; }
-.lib-list { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.lib-list:focus-within { position: absolute; right: 2rem; top: 6rem; z-index: 6; width: auto; height: auto; clip-path: none; background: var(--ink); color: var(--stone); padding: 1rem; border-radius: 1rem; display: grid; gap: .3rem; }
-.note--4 { left: calc(58% + 15rem); top: 42%; rotate: 5deg; color: var(--sand); display: grid; }
 
 /* ---- km4 ---- */
 .km4 { padding: 7rem 0 9rem; }
@@ -328,9 +331,9 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 @media (max-width: 991px) {
   .h { font-size: 5.4rem; } .h--hero { font-size: 6.4rem; }
   .board b { font-size: 9rem; }
-  .week, .note--1, .phone--timer, .note--3, .note--4, .hud__stat--time { display: none; }
+  .week, .note--1, .phone--timer, .note--3, .hud__stat--time { display: none; }
   .ring { left: 50%; translate: -50% -34%; width: min(46vh, 28rem); }
-  .flip { left: 50%; } .km3 .km__copy { top: auto; bottom: 7rem; translate: none; }
+  .km3__grid { grid-template-columns: 1fr; padding: 0 2rem; gap: 3rem; } .flip { justify-self: center; width: min(26rem, 70vw); }
   .km__copy--mid { top: 14rem; bottom: auto; translate: none; max-width: 36rem; align-content: start; }
   .km2 .km__copy--mid .p { display: none; }
   .km4__head { grid-template-columns: 1fr; padding-right: 2rem; } .phone--why { display: none; }
@@ -369,10 +372,11 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
   .lanes i { margin-left: .6rem; font-size: 1.4rem; }
   .km__copy--mid { top: 10.5rem; bottom: auto; align-content: start; } .km2 .btn { height: 3rem; } .km2 .km__copy .h { font-size: 3.2rem; }
   .ring { left: 50%; top: 59%; width: 60vw; translate: -50% -50%; } .ring__time { font-size: 4.2rem; }
-  .lib__row span { font-size: 3.6rem; padding-right: 1.6rem; -webkit-text-stroke-width: .06rem; } .lib--a { top: 20%; } .lib--b { display: none; }
-  .flip { left: 50%; width: 62vw; translate: -50% -62%; } .flip__name { font-size: 2.2rem; }
-  .km3 .km__copy { top: auto; bottom: 4.6rem; translate: none; }
-  .km3 .km__copy .h { font-size: 2.6rem; } .km3 .km__copy .p { font-size: .95rem; }
+  .lib__row span { font-size: 3.6rem; padding-right: 1.6rem; -webkit-text-stroke-width: .06rem; } .lib { margin-top: 3rem; padding-bottom: 4rem; }
+  .km3 { padding-top: 5rem; } .km3__grid { padding: 0 1.25rem; gap: 2.5rem; } .km3 .km__copy .h { font-size: 3.4rem; }
+  .exlist { flex-wrap: nowrap; overflow-x: auto; max-width: none; width: calc(100% + 1.25rem); margin-right: -1.25rem; padding: .2rem 1.25rem .4rem 0; scrollbar-width: none; scroll-snap-type: x proximity; }
+  .exlist li { flex: none; scroll-snap-align: start; } .exlist button { min-height: 2.75rem; }
+  .flip { width: 78vw; } .flip__name { font-size: 2.2rem; } .flip__done { right: 0; }
   .km4, .km5 { padding: 5rem 0 6rem; } .km4__head { padding: 0 1.25rem; } .km4__head .km__copy--flow { padding: 0; }
   .km4 .km__copy--flow, .km5 .km__copy--flow { left: 0; right: 0; }
   .cards { overflow-x: auto; scroll-snap-type: x mandatory; margin-top: 2rem; } .cards__row { padding: 0 1.25rem; gap: 1.2rem; } .card { width: 17rem; height: 24rem; scroll-snap-align: center; }

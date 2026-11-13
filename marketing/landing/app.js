@@ -262,29 +262,48 @@ if (G) {
     });
   };
 
-  /* ---- 5.8 KM 3: scroll is reps ---- */
+  /* ---- 5.8 KM 3: the exercise demo runs on its own clock (2.2 s a rep, 2 sets of 10) ---- */
   const initStrength = () => {
-    const sec = $('.km3'), pin = $('.pin', sec), cv = $('.flip__cv'), ctx = cv.getContext('2d'), rep = $('[data-flip="rep"]'), name = $('[data-flip="name"]'), done = $('.flip__done');
-    const btns = $$('.lib-list button'), cache = new Map();
-    let ex = 'squat', n = 16, frac = 0, lastRep = 0, isDone = false;
-    const load = (id, count) => { if (!cache.has(id)) cache.set(id, Array.from({ length: count }, (_, i) => { const im = new Image(); im.src = `assets/exercises/${id}-m-${i + 1}.webp`; im.onload = () => { if (id === ex) draw(); }; return im; })); return cache.get(id); };
-    const draw = () => { const fr = load(ex, n), t = 1 - Math.abs(1 - 2 * frac), im = fr[Math.round(t * (n - 1))]; if (im && im.complete && im.naturalWidth) { ctx.clearRect(0, 0, 840, 840); ctx.drawImage(im, 60, 70, 720, 720); } };
-    const pick = b => { ex = b.dataset.ex; n = +b.dataset.n; name.textContent = b.textContent; $$('.lib__row span').forEach(s => s.classList.toggle('on', s.dataset.ex === ex)); draw(); };
-    // the library: two rows of the 15 real exercises
-    const rows = $$('.lib__row');
-    [btns.slice(0, 8), btns.slice(8)].forEach((set, r) => { for (let k = 0; k < 3; k++) set.forEach(b => { const s = document.createElement('span'); s.textContent = b.textContent; s.dataset.ex = b.dataset.ex; rows[r].append(s); s.addEventListener(FINE ? 'mouseenter' : 'click', () => pick(b)); }); });
+    const sec = $('.km3'), cv = $('.flip__cv'), ctx = cv.getContext('2d'), rep = $('[data-flip="rep"]'), set = $('[data-flip="set"]'), name = $('[data-flip="name"]'), done = $('.flip__done'), pauseBtn = $('.flip__pause');
+    const btns = $$('.exlist button'), cache = new Map(), REP = 2.2, REST = 1.8;
+    let ex = 'squat', n = 16, t = 0, visible = false, paused = false, lastRep = -1, lastSet = 0, wasDone = false;
+    // one cycle = set 1 (10 reps), rest, set 2 (10 reps), rest
+    const SETLEN = 10 * REP + REST, CYCLE = 2 * SETLEN;
+    const state = () => { const c = t % CYCLE, s = c < SETLEN ? 0 : 1, inSet = c - s * SETLEN, resting = inSet >= 10 * REP; return { s, resting, reps: resting ? 10 : Math.floor(inSet / REP), f: resting ? 0 : (inSet % REP) / REP }; };
+    const frameT = () => { const st = state(); return 1 - Math.abs(1 - 2 * st.f); };
+    const load = (id, count) => { if (!cache.has(id)) cache.set(id, Array.from({ length: count }, (_, i) => { const im = new Image(); im.src = `assets/exercises/${id}-m-${i + 1}.webp`; im.onload = () => { if (id === ex) draw(RM ? 0.5 : frameT()); }; return im; })); return cache.get(id); };
+    const draw = k => { const fr = load(ex, n), im = fr[Math.round(k * (n - 1))]; if (im && im.complete && im.naturalWidth) { ctx.clearRect(0, 0, 840, 840); ctx.drawImage(im, 60, 70, 720, 720); } };
+    const paint = () => {
+      const st = state();
+      if (st.reps !== lastRep) { if (st.reps > lastRep && st.reps > 0 && visible) { play('tick'); G.fromTo(rep, { scale: 1.3 }, { scale: 1, duration: 0.25 }); } lastRep = st.reps; rep.textContent = st.reps; }
+      if (st.s + 1 !== lastSet) { lastSet = st.s + 1; set.textContent = lastSet; }
+      if (st.resting !== wasDone) { wasDone = st.resting; G.fromTo(done, { autoAlpha: wasDone ? 0 : 1, y: wasDone ? -30 : 0 }, { autoAlpha: wasDone ? 1 : 0, y: 0, duration: 0.35, ease: 'back.out(2)' }); }
+      draw(frameT());
+    };
+    const pick = b => {
+      ex = b.dataset.ex; n = +b.dataset.n; name.textContent = b.textContent;
+      btns.forEach(x => x.setAttribute('aria-pressed', x === b));
+      cv.setAttribute('aria-label', `${b.textContent}, shown as a looping animation of the movement`);
+      $$('.lib__row span').forEach(s => s.classList.toggle('on', s.dataset.ex === ex));
+      if (RM) return draw(0.5);
+      t = 0; lastRep = -1; lastSet = 0; paint();
+    };
     btns.forEach(b => b.addEventListener('click', () => pick(b)));
-    if (!RM) {
-      const tw = rows.map((row, r) => G.fromTo(row, { xPercent: r ? -33.333 : 0 }, { xPercent: r ? 0 : -33.333, duration: 40 * (row.scrollWidth / 3 / innerWidth), ease: 'none', repeat: -1 }));
-      let ts = 1; G.ticker.add(() => { const want = (1 + clamp(run.v / 600, 0, 4)) * run.dir; ts += (want - ts) * 0.08; tw.forEach(t => t.timeScale(Math.abs(ts) < 0.05 ? 0.05 : ts)); });
-    }
-    ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.2, onUpdate: st => {
-      const reps = st.progress * 10, r = Math.min(10, Math.floor(reps + 0.5)); frac = reps % 1; if (st.progress >= 0.999) frac = 0;
-      if (r !== lastRep) { if (r > lastRep) { play('tick'); if (!RM) G.fromTo(rep, { scale: 1.3 }, { scale: 1, duration: 0.25 }); } lastRep = r; rep.textContent = r; }
-      const d = st.progress > 0.985; if (d !== isDone) { isDone = d; G.fromTo(done, { autoAlpha: d ? 0 : 1, y: d ? -30 : 0 }, { autoAlpha: d ? 1 : 0, y: 0, duration: 0.35, ease: 'back.out(2)' }); }
-      draw();
-    } });
-    load('squat', 16); pick(btns[0]);
+    // the decorative marquee: one row of the 15 names, faster when you scroll faster
+    const row = $('.lib__row');
+    for (let k = 0; k < 3; k++) btns.forEach(b => { const s = document.createElement('span'); s.textContent = b.textContent; s.dataset.ex = b.dataset.ex; row.append(s); });
+    if (RM) { pauseBtn.hidden = true; rep.textContent = '10'; pick(btns[0]); return; }
+    const tw = G.fromTo(row, { xPercent: 0 }, { xPercent: -33.333, duration: 40 * (row.scrollWidth / 3 / innerWidth), ease: 'none', repeat: -1, paused: true });
+    let ts = 1;
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? tw.play() : tw.pause(); }, { threshold: 0.15 }).observe(sec);
+    pauseBtn.addEventListener('click', () => { paused = !paused; pauseBtn.setAttribute('aria-pressed', paused); pauseBtn.setAttribute('aria-label', paused ? 'Play the exercise animation' : 'Pause the exercise animation'); });
+    G.ticker.add((_, dms) => {
+      if (!visible) return;
+      const want = (1 + clamp(run.v / 600, 0, 4)) * run.dir; ts += (want - ts) * 0.08; tw.timeScale(Math.abs(ts) < 0.05 ? 0.05 : ts);
+      if (paused || document.hidden) return;
+      t += Math.min(0.1, dms / 1000); paint();
+    });
+    pick(btns[0]);
   };
 
   /* ---- 5.9 KM 4: the coach's index cards ---- */
@@ -354,7 +373,7 @@ if (G) {
   /* ---- everything that waits for the scroll ---- */
   const initScrollReveals = () => {
     $$('[data-reveal-scroll]').forEach(el => { const sec = el.closest('section'); ScrollTrigger.create({ trigger: el.closest('.pin') ? sec : el, start: el.closest('.pin') ? 'top 45%' : 'top 82%', once: true, onEnter: () => revealEl(el) }); });
-    [['.note--3', '.km2'], ['.note--4', '.km3'], ['.note--5', '.cards'], ['.note--6', '.km5'], ['.note--7', '.finish__copy']].forEach(([n, t]) => ScrollTrigger.create({ trigger: t, start: 'top 45%', once: true, onEnter: () => showNote($(n), 0.5) }));
+    [['.note--3', '.km2'], ['.note--5', '.cards'], ['.note--6', '.km5'], ['.note--7', '.finish__copy']].forEach(([n, t]) => ScrollTrigger.create({ trigger: t, start: 'top 45%', once: true, onEnter: () => showNote($(n), 0.5) }));
     if (!RM) $$('.board').forEach(b => { const num = $('b', b); G.set(b, { rotation: -6 }); ScrollTrigger.create({ trigger: b.closest('section'), start: 'top 60%', once: true, onEnter: () => { G.to(b, { rotation: 0, duration: 0.9, ease: 'power2.out' }); G.fromTo(num, { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.9, ease: 'power2.out' }); } }); });
   };
 

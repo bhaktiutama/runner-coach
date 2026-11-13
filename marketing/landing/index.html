@@ -179,47 +179,48 @@
     </div>
   </section>
 
-  <!-- 5.8 KM 3: strength -->
+  <!-- 5.8 KM 3: strength. The demo plays on its own clock: scroll only brings you here. -->
   <section class="km km3" id="strength" data-ground="forest" data-km="3" aria-labelledby="strength-h">
-    <div class="pin">
-      <div class="lib lib--a" aria-hidden="true"><div class="lib__row"></div></div>
-      <div class="lib lib--b" aria-hidden="true"><div class="lib__row"></div></div>
-      <div class="board"><span class="lbl">KM</span><b>3</b><span class="lbl">Strength</span></div>
+    <div class="km3__grid">
+      <div class="km3__text">
+        <div class="board board--flow"><span class="lbl">KM</span><b>3</b><span class="lbl">Strength</span></div>
+        <div class="km__copy km__copy--flow">
+          <h2 class="h" id="strength-h" data-reveal-scroll="chars">
+            <span class="ln">Strength built</span>
+            <span class="ln">for <span class="mk">runners</span></span>
+          </h2>
+          <p class="p">Optional bodyweight legs and core, 15 to 30 minutes, placed around your hard running days. Free for the first two weeks of every plan.</p>
+        </div>
+        <ul class="exlist" aria-label="The 15 exercises: pick one to see its form">
+          <li><button type="button" data-ex="squat" data-n="16" aria-pressed="true">Squat</button></li>
+          <li><button type="button" data-ex="split_squat" data-n="16" aria-pressed="false">Split squat</button></li>
+          <li><button type="button" data-ex="reverse_lunge" data-n="16" aria-pressed="false">Reverse lunge</button></li>
+          <li><button type="button" data-ex="bulgarian_split_squat" data-n="16" aria-pressed="false">Bulgarian split squat</button></li>
+          <li><button type="button" data-ex="step_up" data-n="15" aria-pressed="false">Step-up</button></li>
+          <li><button type="button" data-ex="single_leg_deadlift" data-n="16" aria-pressed="false">Single-leg deadlift</button></li>
+          <li><button type="button" data-ex="glute_bridge" data-n="16" aria-pressed="false">Glute bridge</button></li>
+          <li><button type="button" data-ex="single_leg_glute_bridge" data-n="16" aria-pressed="false">Single-leg glute bridge</button></li>
+          <li><button type="button" data-ex="calf_raise" data-n="16" aria-pressed="false">Calf raise</button></li>
+          <li><button type="button" data-ex="single_leg_calf_raise" data-n="16" aria-pressed="false">Single-leg calf raise</button></li>
+          <li><button type="button" data-ex="plank" data-n="16" aria-pressed="false">Plank</button></li>
+          <li><button type="button" data-ex="side_plank" data-n="16" aria-pressed="false">Side plank</button></li>
+          <li><button type="button" data-ex="copenhagen_plank" data-n="16" aria-pressed="false">Copenhagen plank</button></li>
+          <li><button type="button" data-ex="dead_bug" data-n="15" aria-pressed="false">Dead bug</button></li>
+          <li><button type="button" data-ex="bird_dog" data-n="15" aria-pressed="false">Bird dog</button></li>
+        </ul>
+      </div>
 
       <div class="flip">
-        <canvas class="flip__cv" width="840" height="840" role="img" aria-label="An animated squat: one rep for every step of scroll"></canvas>
+        <canvas class="flip__cv" width="840" height="840" role="img" aria-label="Squat, shown as a looping animation of the movement"></canvas>
+        <button class="pause flip__pause" type="button" aria-pressed="false" aria-label="Pause the exercise animation">
+          <svg viewBox="0 0 14 14" aria-hidden="true"><path class="pa" d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z"/><path class="pl" d="M3 1.5v11l9-5.5z"/></svg>
+        </button>
         <p class="flip__name" data-flip="name">Squat</p>
-        <p class="flip__count">Set 1 of 2 · <b data-flip="rep">0</b>/10</p>
+        <p class="flip__count">Set <b data-flip="set">1</b> of 2 · <b data-flip="rep">0</b>/10</p>
         <em class="chip flip__done" data-zone="done">Set done</em>
       </div>
-
-      <div class="km__copy">
-        <h2 class="h" id="strength-h" data-reveal-scroll="chars">
-          <span class="ln">Strength built</span>
-          <span class="ln">for <span class="mk">runners</span></span>
-        </h2>
-        <p class="p">Optional bodyweight legs and core, 15 to 30 minutes, placed around your hard running days. Free for the first two weeks of every plan.</p>
-      </div>
-      <ul class="lib-list">
-        <li><button type="button" data-ex="squat" data-n="16">Squat</button></li>
-        <li><button type="button" data-ex="split_squat" data-n="16">Split squat</button></li>
-        <li><button type="button" data-ex="reverse_lunge" data-n="16">Reverse lunge</button></li>
-        <li><button type="button" data-ex="bulgarian_split_squat" data-n="16">Bulgarian split squat</button></li>
-        <li><button type="button" data-ex="step_up" data-n="15">Step-up</button></li>
-        <li><button type="button" data-ex="single_leg_deadlift" data-n="16">Single-leg deadlift</button></li>
-        <li><button type="button" data-ex="glute_bridge" data-n="16">Glute bridge</button></li>
-        <li><button type="button" data-ex="single_leg_glute_bridge" data-n="16">Single-leg glute bridge</button></li>
-        <li><button type="button" data-ex="calf_raise" data-n="16">Calf raise</button></li>
-        <li><button type="button" data-ex="single_leg_calf_raise" data-n="16">Single-leg calf raise</button></li>
-        <li><button type="button" data-ex="plank" data-n="16">Plank</button></li>
-        <li><button type="button" data-ex="side_plank" data-n="16">Side plank</button></li>
-        <li><button type="button" data-ex="copenhagen_plank" data-n="16">Copenhagen plank</button></li>
-        <li><button type="button" data-ex="dead_bug" data-n="15">Dead bug</button></li>
-        <li><button type="button" data-ex="bird_dog" data-n="15">Bird dog</button></li>
-      </ul>
-      <p class="note note--4" aria-hidden="true"><span>scroll = reps. no skipping.</span>
-        <svg viewBox="0 0 90 60"><path d="M82 12C58 10 30 22 12 44M12 44l5-16M12 44l17-2"/></svg></p>
     </div>
+    <div class="lib" aria-hidden="true"><div class="lib__row"></div></div>
   </section>
 
   <!-- 5.9 KM 4: evidence -->
