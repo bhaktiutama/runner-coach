@@ -168,7 +168,8 @@ export function createPlan(canvas, labelsEl, data) {
       if (op > 0) {
         const cx = VP[0] * x + VP[4] * y + VP[8] * zz + VP[12], cy = VP[1] * x + VP[5] * y + VP[9] * zz + VP[13], cwc = VP[3] * x + VP[7] * y + VP[11] * zz + VP[15];
         const sy = 0.5 - cy / cwc * 0.5;
-        if (cwc <= 0.01 || (!l.gate && sy < 0.2)) op = 0; else l.el.style.transform = `translate3d(${((cx / cwc * 0.5 + 0.5) * cw).toFixed(1)}px, ${((0.5 - cy / cwc * 0.5) * ch).toFixed(1)}px, 0) translate(-50%, -100%) scale(${Math.min(1.25, Math.max(l.gate ? 0.85 : 0.55, 34 / d)).toFixed(3)})`;
+        const keep = data.keepClear ? data.keepClear() : null, sx = (cx / cwc * 0.5 + 0.5) * cw;   // never under the readout
+        if (cwc <= 0.01 || (!l.gate && (sy < 0.2 || (keep && sy * ch < keep.bottom + 30 && sx > keep.left - 60)))) op = 0; else l.el.style.transform = `translate3d(${((cx / cwc * 0.5 + 0.5) * cw).toFixed(1)}px, ${((0.5 - cy / cwc * 0.5) * ch).toFixed(1)}px, 0) translate(-50%, -100%) scale(${Math.min(1.25, Math.max(l.gate ? 0.85 : 0.55, 34 / d)).toFixed(3)})`;
       }
       if (op !== l.op) { l.op = op; l.el.style.opacity = op.toFixed(2); }
     }

@@ -87,6 +87,7 @@ if (G) {
   ScrollTrigger.addEventListener('refresh', measure);
   const ZONE = { easy: 'Easy', tempo: 'Tempo', interval: 'Interval', standing: 'Standing' };
   const pop = $('.coachpop');
+  hud.el.inert = true;
 
   const tickRun = (t, dms) => {
     const dt = Math.min(0.1, dms / 1000), y = scrollY, dy = y - run.lastY; run.lastY = y;
@@ -119,7 +120,7 @@ if (G) {
     }
     // paint
     const show = y > innerHeight * 0.55;
-    if (show !== hud.shown) { hud.shown = show; G.to(hud.el, { y: show ? '0%' : '160%', duration: 0.7, ease: show ? 'back.out(1.4)' : 'power2.in' }); }
+    if (show !== hud.shown) { hud.shown = show; hud.el.inert = !show; G.to(hud.el, { y: show ? '0%' : '160%', duration: 0.7, ease: show ? 'back.out(1.4)' : 'power2.in' }); }
     hud.dist.textContent = d.toFixed(2);
     const f5 = d / 5; if (f5 !== hud.f) { hud.f = f5; hud.fill.style.transform = `scaleX(${f5.toFixed(4)})`; hud.dot.style.transform = `translateX(${(f5 * hud.fill.parentElement.clientWidth).toFixed(1)}px)`; }
     hud.time.textContent = mmss(run.time);
@@ -201,7 +202,9 @@ if (G) {
     const chart = $('.chart', sec);
     KM.forEach((k, i) => { const b = document.createElement('i'); b.style.height = k / 38 * 100 + '%'; b.style.background = PHC[PHASE(i)]; b.dataset.km = k; chart.append(b); });
     let scene = null;
-    if (!RM) try { scene = (await import('./plan3d.js')).createPlan($('.world', sec), $('.labels', sec), { km: KM, phase: PHASE, colors: PHC, names: PHN }); } catch (e) { scene = null; }
+    const ro = $('.readout', sec); let keep = null;
+    const measureKeep = () => { const a = ro.getBoundingClientRect(), b = pin.getBoundingClientRect(); keep = { left: a.left - b.left, bottom: a.bottom - b.top }; };
+    if (!RM) try { scene = (await import('./plan3d.js')).createPlan($('.world', sec), $('.labels', sec), { km: KM, phase: PHASE, colors: PHC, names: PHN, keepClear: () => keep || (measureKeep(), keep) }); } catch (e) { scene = null; }
     if (!scene) { sec.classList.add('is-flat'); html.dataset.plan = 'flat'; return; }
     html.dataset.plan = '3d';
     let p = 0, yaw = 0, flashed = false;
@@ -220,7 +223,7 @@ if (G) {
     };
     ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: 0.4, onUpdate: st => { p = st.progress; paint(); }, onToggle: st => { if (!st.isActive) html.classList.remove('is-day'); } });
     if (FINE) { const yTo = G.quickTo({ get v() { return yaw; }, set v(x) { yaw = x; paint(); } }, 'v', { duration: 0.6, ease: 'power3' }); pin.addEventListener('mousemove', e => yTo((e.clientX / innerWidth - 0.5) * 0.021)); pin.addEventListener('mouseleave', () => yTo(0)); }
-    addEventListener('resize', () => { scene.resize(); paint(); });
+    addEventListener('resize', () => { measureKeep(); scene.resize(); paint(); });
     paint();
   };
 
@@ -325,10 +328,12 @@ if (G) {
   const initVault = () => {
     const phone = $('.vault__phone'), tries = $('[data-vault="tries"]'); let n = 0;
     const home = c => { if (c._home) return; c._home = true; n++; tries.textContent = n; G.to(c, { x: 0, y: 0, duration: RM ? 0.01 : 1.1, ease: 'elastic.out(1, 0.5)', overwrite: true, onComplete: () => { c._home = false; } }); };
+    const throwOut = c => G.to(c, { x: '+=' + (parseFloat(getComputedStyle(html).fontSize) * 14), duration: RM ? 0.01 : 0.3, ease: 'power2.out', onComplete: () => home(c) });
     const check = c => { if (c._home) return; const a = c.getBoundingClientRect(), b = phone.getBoundingClientRect(), cx = a.left + a.width / 2, cy = a.top + a.height / 2; if (cx < b.left || cx > b.right || cy < b.top || cy > b.bottom) home(c); };
     $$('.vault__phone .datachip').forEach(c => {
       Draggable.create(c, { type: 'x,y', inertia: true, bounds: '.km5', maxDuration: 0.5, onThrowComplete() { check(c); }, onDragEnd() { G.delayedCall(0.6, () => check(c)); },
-        onClick() { G.to(c, { x: '+=' + (parseFloat(getComputedStyle(html).fontSize) * 14), duration: 0.3, ease: 'power2.out', onComplete: () => home(c) }); } });
+        onClick() { throwOut(c); } });
+      c.addEventListener('click', e => { if (e.detail === 0) throwOut(c); });   // keyboard
     });
   };
 
