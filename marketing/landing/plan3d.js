@@ -1,13 +1,14 @@
 /*
-  plan3d.js - KM 1: you run down a road through the 19 weeks of a real half marathon plan.
-  Weekly volume stands as pillars on both sides (height = km x 0.42), phase gates span the road,
-  race day is the orange finish arch. Plain WebGL2, one context, one program. The sky is CSS behind
-  the transparent canvas; labels are DOM, projected every frame.
+  plan3d.js - KM 1: you run down a race course through the 19 weeks of a real half marathon plan.
+  Every week is a feather flag on both sides of the road (flag height = km x 0.27), phase gates span
+  the road, race day is the chequered finish arch. Barriers line the road, pines and far hills fill the
+  park. Plain WebGL2, one context, one program, flat shading. The sky is CSS behind the transparent
+  canvas; labels are DOM, projected every frame.
 
   createPlan(canvas, labelsEl, { km, phase, colors, names }) -> { render(p, yaw, horizonRGB, groundRGB), resize() }
   p is the scroll progress 0..1: the camera only moves when p moves.
 */
-const WEEK = 26, HEIGHT = 0.42, ROAD = 7;
+const WEEK = 26, FLAG = 0.27, ROAD = 7;
 const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255);
 
 const VS = `#version 300 es
@@ -17,8 +18,7 @@ void main(){ vW = aPos; vN = aNor; vC = aCol; gl_Position = uVP * vec4(aPos, 1.)
 const FS = `#version 300 es
 precision highp float;
 in vec3 vW; in vec3 vN; in vec3 vC; out vec4 o;
-uniform int uMode; uniform vec3 uEye, uFog, uGround; uniform float uDay;
-float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+uniform int uMode; uniform vec3 uEye, uFog, uGround;
 const vec3 L = normalize(vec3(-.35, .86, .45));
 void main(){
   vec3 col;
@@ -31,30 +31,12 @@ void main(){
     float edge = 1. - smoothstep(.1, .1 + w, abs(ax - 6.));
     float inside = step(ax, 5.);
     col = mix(col, vec3(.96, .957, .949), max(lane * dash * inside * .5, edge * .75));
-  } else if (uMode == 2) {                // the ground either side
-    col = uGround;
-  } else if (uMode == 3) {                // a building: one floor per kilometre, windows lit at dawn
-    vec3 n = normalize(vN);
+  } else if (uMode == 2) {                // the park either side, a little darker near the road
+    col = uGround * mix(.82, 1., smoothstep(8., 30., abs(vW.x)));
+  } else {                                // everything else: flat shaded, lit from both sides of a flag
+    vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
     float d = max(dot(n, L), 0.);
-    vec3 wall = vC * (.58 + .5 * d);
-    if (n.y > .5) { col = vC * .5; }
-    else {
-      float u = abs(n.x) > .5 ? vW.z : vW.x;
-      vec2 cell = vec2(u / .95, vW.y / ${HEIGHT});
-      vec2 id = floor(cell), f = fract(cell);
-      float ax = fwidth(cell.x) * 1.5, ay = fwidth(cell.y) * 1.5;
-      float win = smoothstep(.2, .2 + ax, f.x) * (1. - smoothstep(.8 - ax, .8, f.x)) * smoothstep(.3, .3 + ay, f.y) * (1. - smoothstep(.82 - ay, .82, f.y));
-      win = mix(win, .3, clamp(max(ax, ay) * .9, 0., 1.));           // far away the grid melts into a tone
-      float lit = step(hash(id + floor(vW.z / 26.) * 3.7 + n.x * 11.), mix(.5, 0., smoothstep(.12, .55, uDay)));
-      vec3 glass = mix(vec3(.13, .18, .22), uFog, .38 + .2 * uDay);
-      vec3 pane = mix(glass, vec3(1., .8, .46), lit);
-      col = mix(wall, pane, win);
-      col *= 1. - .1 * (1. - smoothstep(0., .08, f.y));               // the floor line
-      if (cell.y < 1.) col = mix(wall * .5, glass * .9, smoothstep(.15, .2, f.x) * (1. - smoothstep(.86, .9, f.x)) * step(.12, f.y) * .8);   // the ground floor: shopfronts
-    }
-  } else {                                // gates, pavement, trees, lamps
-    float d = max(dot(normalize(vN), L), 0.);
-    col = vC * (.6 + .5 * d);
+    col = vC * (.55 + .55 * d);
   }
   float f = exp(-.0045 * distance(vW, uEye));
   o = vec4(mix(uFog, col, f), 1.);
@@ -74,38 +56,79 @@ export function createPlan(canvas, labelsEl, data) {
   const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
   gl.useProgram(prog);
-  const U = {}; for (const n of ['uVP', 'uMode', 'uEye', 'uFog', 'uGround', 'uDay']) U[n] = gl.getUniformLocation(prog, n);
+  const U = {}; for (const n of ['uVP', 'uMode', 'uEye', 'uFog', 'uGround']) U[n] = gl.getUniformLocation(prog, n);
 
-  /* geometry */
+  /* geometry: every triangle carries position, normal, colour */
   const mesh = v => { const vao = gl.createVertexArray(); gl.bindVertexArray(vao); gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STATIC_DRAW); for (let i = 0; i < 3; i++) { gl.enableVertexAttribArray(i); gl.vertexAttribPointer(i, 3, gl.FLOAT, false, 36, i * 12); } return { vao, n: v.length / 9 }; };
   const quad = (x0, x1, z0, z1, y) => { const v = []; for (const [x, z] of [[x0, z0], [x1, z0], [x1, z1], [x0, z0], [x1, z1], [x0, z1]]) v.push(x, y, z, 0, 1, 0, 0, 0, 0); return v; };
-  const boxes = [], towers = [];
-  const box = (cx, cy, cz, sx, sy, sz, c, boxes_ = boxes) => {
+  const V = [];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const tri = (a, b, c, col) => { const n = norm(cross(sub(b, a), sub(c, a))); for (const p of [a, b, c]) V.push(...p, ...n, ...col); };
+  const box = (cx, cy, cz, sx, sy, sz, c) => {
     const x0 = cx - sx / 2, x1 = cx + sx / 2, y0 = cy - sy / 2, y1 = cy + sy / 2, z0 = cz - sz / 2, z1 = cz + sz / 2;
-    const f = (n, pts, k = 1) => { for (const i of [0, 1, 2, 0, 2, 3]) boxes_.push(...pts[i], ...n, c[0] * k, c[1] * k, c[2] * k); };
-    f([0, 0, 1], [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]]);
-    f([0, 0, -1], [[x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0]]);
-    f([1, 0, 0], [[x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1]]);
-    f([-1, 0, 0], [[x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]]);
-    f([0, 1, 0], [[x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0]], 1.08);
+    const f = (a, b, d, e, k = 1) => { const cc = [c[0] * k, c[1] * k, c[2] * k]; tri(a, b, d, cc); tri(a, d, e, cc); };
+    f([x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]);
+    f([x1, y0, z0], [x0, y0, z0], [x0, y1, z0], [x1, y1, z0]);
+    f([x1, y0, z1], [x1, y0, z0], [x1, y1, z0], [x1, y1, z1]);
+    f([x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]);
+    f([x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [x0, y1, z0], 1.08);
+  };
+  // a prism or cone around a vertical axis: n sides, radius r0 at y0, r1 at y1 (0 = a point)
+  const prism = (cx, cz, y0, y1, r0, r1, n, c, rot = 0) => {
+    for (let k = 0; k < n; k++) {
+      const a0 = rot + k / n * Math.PI * 2, a1 = rot + (k + 1) / n * Math.PI * 2;
+      const p0 = [cx + Math.cos(a0) * r0, y0, cz + Math.sin(a0) * r0], p1 = [cx + Math.cos(a1) * r0, y0, cz + Math.sin(a1) * r0];
+      const q0 = [cx + Math.cos(a0) * r1, y1, cz + Math.sin(a0) * r1], q1 = [cx + Math.cos(a1) * r1, y1, cz + Math.sin(a1) * r1];
+      tri(p0, q1, p1, c); if (r1 > 0) { tri(p0, q0, q1, c); tri([cx, y1, cz], q1, q0, c); }
+    }
+  };
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pine = (x, z, h, k) => {
+    const g = [[0.16, 0.33, 0.25], [0.2, 0.38, 0.27], [0.13, 0.29, 0.24]][Math.abs(k) % 3], r = h * 0.32, rot = rnd() * 6;
+    prism(x, z, 0, h * 0.22, 0.16 * h / 6, 0.12 * h / 6, 5, [0.33, 0.24, 0.17]);
+    prism(x, z, h * 0.16, h * 0.62, r, 0, 7, g, rot);
+    prism(x, z, h * 0.4, h * 0.84, r * 0.74, 0, 7, g.map(v => v * 1.1), rot + 0.4);
+    prism(x, z, h * 0.62, h, r * 0.48, 0, 7, g.map(v => v * 1.2), rot + 0.8);
+  };
+  // a feather flag: pole, and a cloth that billows and rounds over at the top, with a white band
+  const flag = (x, z, sx, top, c) => {
+    prism(x, z, 0, top + 0.25, 0.07, 0.05, 6, [0.2, 0.23, 0.25]);
+    prism(x, z, 0, 0.12, 0.5, 0.42, 4, [0.2, 0.23, 0.25], Math.PI / 4);
+    const d = norm([sx * 0.94, 0, -0.34]), nrm = cross(d, [0, 1, 0]), w = 1.75, y0 = 0.9, S = 12, U = 4;
+    const at = (t, u) => {
+      const tt = t < 0.78 ? 1 : Math.sqrt(Math.max(0, 1 - ((t - 0.78) / 0.22) ** 2));
+      const along = u * w * (0.86 + 0.14 * Math.sin(t * Math.PI)) * tt, bil = Math.sin(u * Math.PI) * 0.18 * (0.4 + t);
+      return [x + 0.07 * sx + d[0] * along + nrm[0] * bil, y0 + t * (top - y0), z + d[2] * along + nrm[2] * bil];
+    };
+    for (let i = 0; i < S; i++) for (let j = 0; j < U; j++) {
+      const t0 = i / S, t1 = (i + 1) / S, u0 = j / U, u1 = (j + 1) / U, band = t0 >= 1 / S && t0 < 2 / S;
+      const col = band ? [0.96, 0.957, 0.949] : c;
+      tri(at(t0, u0), at(t0, u1), at(t1, u1), col); tri(at(t0, u0), at(t1, u1), at(t1, u0), col);
+    }
   };
   const N = data.km.length, END = N * WEEK, cols = data.colors.map(hex), labels = [];
   const label = (cls, htmlText, pos) => { const el = document.createElement('span'); el.className = cls; el.innerHTML = htmlText; labelsEl.append(el); labels.push({ el, pos, op: -1, gate: cls.includes('gate') }); };
   data.km.forEach((km, i) => {
-    const zc = -(i * WEEK + WEEK / 2), h = km * HEIGHT, c = cols[data.phase(i)];
-    for (const sx of [-1, 1]) {
-      box(sx * 12, h / 2, zc, 6.65, h, 15.2, c, towers);                                   // the week: km floors
-      box(sx * 12.6, h + 0.5, zc - 3, 2, 1, 2.6, [c[0] * 0.55, c[1] * 0.55, c[2] * 0.55]);  // stair head on the roof
-      box(sx * 11.2, h + 0.3, zc + 4, 1.2, 0.6, 1.2, [0.5, 0.52, 0.54]);
-    }
-    label('', `<small>WEEK ${i + 1}</small>${km} km`, [11.4, h + 1.6, zc + 7]);
+    const zc = -(i * WEEK + WEEK / 2), top = km * FLAG, c = cols[data.phase(i)];
+    for (const sx of [-1, 1]) flag(sx * 9.2, zc, sx, top, c);
+    label('', `<small>WEEK ${i + 1}</small>${km} km`, [10.2, top + 1.3, zc]);
   });
-  // the street between the weeks: pavement, a tree and a lamp in every gap
-  for (const sx of [-1, 1]) box(sx * 7.8, 0.06, (60 - END - 120) / 2, 1.6, 0.12, END + 180, [0.6, 0.58, 0.55]);
-  for (let i = 0; i <= N; i++) for (const sx of [-1, 1]) {
-    const z = -(i * WEEK);
-    box(sx * 9.6, 0.8, z + 2.6, 0.3, 1.6, 0.3, [0.36, 0.27, 0.2]); box(sx * 9.6, 2.5, z + 2.6, 2.2, 1.9, 2.2, [0.24, 0.42, 0.33]); box(sx * 9.6, 3.9, z + 2.6, 1.4, 1.1, 1.4, [0.28, 0.48, 0.37]);
-    box(sx * 7.6, 2.6, z - 2.8, 0.16, 5.2, 0.16, [0.2, 0.23, 0.25]); box(sx * 7.1, 5.2, z - 2.8, 1.1, 0.12, 0.16, [0.2, 0.23, 0.25]); box(sx * 6.7, 5.08, z - 2.8, 0.5, 0.14, 0.34, [1.6, 1.3, 0.8]);
+  // barriers along both edges, panels in the colour of the phase they stand in
+  const phaseAt = z => data.phase(Math.min(N - 1, Math.max(0, Math.floor(-z / WEEK))));
+  for (let z = 6; z > -END - 40; z -= 4) for (const sx of [-1, 1]) {
+    const c = z > 0 || z < -END ? [0.96, 0.957, 0.949] : cols[phaseAt(z)].map(v => v * 0.92);
+    box(sx * 7.4, 0.62, z - 2, 0.1, 0.72, 3.7, c);
+    box(sx * 7.4, 1.02, z - 2, 0.14, 0.08, 3.9, [0.96, 0.957, 0.949]);
+    box(sx * 7.4, 0.13, z - 0.2, 0.7, 0.26, 0.12, [0.25, 0.28, 0.3]);
+  }
+  // the park: pines in loose rows behind the flags, hills far out
+  for (let z = 20; z > -END - 160; z -= 6.5) for (const sx of [-1, 1]) for (let r = 0; r < 3; r++) {
+    if (rnd() < 0.25) continue;
+    pine(sx * (14 + r * 9 + rnd() * 7), z + rnd() * 5, 4.5 + rnd() * 5.5 + r * 1.2, r + (z | 0));
+  }
+  for (let k = 0; k < 26; k++) {
+    const sx = k % 2 ? 1 : -1, z = 40 - k * 46 - rnd() * 30;
+    prism(sx * (170 + rnd() * 220), z, -1, 45 + rnd() * 70, 90 + rnd() * 70, 0, 6, [0.17, 0.27, 0.29], rnd() * 6);
   }
   const gate = (z, c, text, finish) => {
     box(-8.2, 4.6, z, 0.8, 9.2, 0.8, c); box(8.2, 4.6, z, 0.8, 9.2, 0.8, c);
@@ -115,7 +138,7 @@ export function createPlan(canvas, labelsEl, data) {
   };
   let w0 = 0; data.names.forEach((n, ph) => { let cnt = 0; for (let i = 0; i < N; i++) if (data.phase(i) === ph) cnt++; gate(-w0 * WEEK, cols[ph], `${n.toUpperCase()} · ${cnt} WEEKS`, false); w0 += cnt; });
   gate(-END, hex('#F26B38'), 'RACE DAY · MAR 15', true);
-  const M = { road: mesh(quad(-ROAD, ROAD, 60, -END - 120, 0)), ground: mesh(quad(-900, 900, 120, -END - 900, -0.03)), boxes: mesh(boxes), towers: mesh(towers) };
+  const M = { road: mesh(quad(-ROAD, ROAD, 60, -END - 120, 0)), ground: mesh(quad(-900, 900, 120, -END - 900, -0.03)), scene: mesh(V) };
 
   let W = 0, H = 0, asp = 1.6;
   const resize = () => { const r = canvas.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, innerWidth <= 600 ? 1.5 : 2); W = canvas.width = Math.max(2, Math.round(r.width * dpr)); H = canvas.height = Math.max(2, Math.round(r.height * dpr)); asp = W / H; };
@@ -134,8 +157,7 @@ export function createPlan(canvas, labelsEl, data) {
     gl.uniform3f(U.uFog, hor[0] / 255, hor[1] / 255, hor[2] / 255); gl.uniform3f(U.uGround, gnd[0] / 255, gnd[1] / 255, gnd[2] / 255);
     gl.uniform1i(U.uMode, 2); gl.bindVertexArray(M.ground.vao); gl.drawArrays(gl.TRIANGLES, 0, M.ground.n);
     gl.uniform1i(U.uMode, 0); gl.bindVertexArray(M.road.vao); gl.drawArrays(gl.TRIANGLES, 0, M.road.n);
-    gl.uniform1i(U.uMode, 1); gl.bindVertexArray(M.boxes.vao); gl.drawArrays(gl.TRIANGLES, 0, M.boxes.n);
-    gl.uniform1f(U.uDay, p); gl.uniform1i(U.uMode, 3); gl.bindVertexArray(M.towers.vao); gl.drawArrays(gl.TRIANGLES, 0, M.towers.n);
+    gl.uniform1i(U.uMode, 1); gl.bindVertexArray(M.scene.vao); gl.drawArrays(gl.TRIANGLES, 0, M.scene.n);
 
     // labels: DOM, projected
     const cw = canvas.clientWidth, ch = canvas.clientHeight;
@@ -145,7 +167,8 @@ export function createPlan(canvas, labelsEl, data) {
       let op = d < 6 ? 0 : Math.min(1, (far - d) / 26, (d - 6) / 10); op = Math.max(0, op);
       if (op > 0) {
         const cx = VP[0] * x + VP[4] * y + VP[8] * zz + VP[12], cy = VP[1] * x + VP[5] * y + VP[9] * zz + VP[13], cwc = VP[3] * x + VP[7] * y + VP[11] * zz + VP[15];
-        if (cwc <= 0.01) op = 0; else l.el.style.transform = `translate3d(${((cx / cwc * 0.5 + 0.5) * cw).toFixed(1)}px, ${((0.5 - cy / cwc * 0.5) * ch).toFixed(1)}px, 0) translate(-50%, -100%) scale(${Math.min(1.25, Math.max(l.gate ? 0.85 : 0.55, 34 / d)).toFixed(3)})`;
+        const sy = 0.5 - cy / cwc * 0.5;
+        if (cwc <= 0.01 || (!l.gate && sy < 0.2)) op = 0; else l.el.style.transform = `translate3d(${((cx / cwc * 0.5 + 0.5) * cw).toFixed(1)}px, ${((0.5 - cy / cwc * 0.5) * ch).toFixed(1)}px, 0) translate(-50%, -100%) scale(${Math.min(1.25, Math.max(l.gate ? 0.85 : 0.55, 34 / d)).toFixed(3)})`;
       }
       if (op !== l.op) { l.op = op; l.el.style.opacity = op.toFixed(2); }
     }

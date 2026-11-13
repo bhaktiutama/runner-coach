@@ -188,6 +188,8 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 .readout dd { font: 800 1.8rem/1 var(--display); font-stretch: 80%; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .readout dd b { font-weight: 800; }
 .readout p { grid-column: 1 / -1; justify-self: end; font-size: .85rem; font-weight: 700; padding: .4rem .9rem; border-radius: 1rem; background: var(--orange); color: var(--ink); }
+.km1 .pin::after { content: ""; position: absolute; inset: auto 0 0 0; height: 58%; z-index: 3; pointer-events: none; background: linear-gradient(to top, rgb(12 20 26 / .72), rgb(12 20 26 / .35) 55%, transparent); }
+.km1.is-flat .pin::after { display: none; }
 .km1 .km__copy { text-shadow: 0 .1rem 1.2rem rgb(20 26 30 / .55); }
 .km1 .km__copy .p { color: var(--stone); }
 .km1 .board { top: 6rem; }
