@@ -15,7 +15,7 @@ It is a static folder (`index.html`, one stylesheet, one script module, self-hos
 | Flat, all white | Seven grounds: dawn art, a sky that warms as you scroll, terracotta track, forest green, night, orange flood, paper. No section sits on plain stone |
 | Looks like every Claude-made page (thin 400 grotesk, grey panels, cards in a grid) | Poster type: Bricolage Grotesque 800 at width 75, uppercase, up to 9 rem, with the store screenshots' orange marker under the keyword. A coach's marker handwriting annotates the page |
 | Ordinary structure | One organising idea carried through every section: scroll = run, sections = kilometres, the nav is a run HUD |
-| 3D was a dot circling a track | 3D is the product's own data: you run down a road through the 19 weeks of a real half marathon plan, weekly volume standing as pillars, phase gates overhead, race day as the finish arch |
+| 3D was a dot circling a track | 3D is the product's own data: you run down a road through the 19 weeks of a real half marathon plan, weekly volume standing as feather flags along a race course (pillars, then buildings, until the 2026-11-13 audit), phase gates overhead, race day as the finish arch |
 
 The four things only RunCo can do, each made interactive: the plan built back from race day (KM 1), the coaching timer with its real sound cues (KM 2), the 15 strength animations (KM 3), and rules that show their evidence grade, weak ones included (KM 4). Privacy (KM 5) is something you try to break with your own hands.
 
@@ -63,12 +63,12 @@ From `docs/design-system/tokens.json` unless marked new. Every text and ground p
 | paper | `#FFF9F2` | KM 4 ground, rule cards |
 | orange | `#F26B38` | accent, marker highlight, finish flood |
 | orange-ink | `#C63F0D` | Interval chip, grade C stamp |
-| peach | `#E9B79D` | Easy chip, Base pillars |
-| build (new) | `#D98E63` | Build pillars (sampled from the app's volume chart) |
+| peach | `#E9B79D` | Easy chip, Base flags |
+| build (new) | `#D98E63` | Build flags (sampled from the app's volume chart) |
 | sand | `#F2C66D` | grade B stamp, sun |
 | mint | `#70D6B3` | "Set done" chip |
 | forest | `#477B63` | KM 3 ground (darkened to `#2F5D4A` if contrast needs it), grade A stamp |
-| taper | `#A6B8FF` | Taper pillars only (the app's own taper colour) |
+| taper | `#A6B8FF` | Taper flags only (the app's own taper colour) |
 | track (new) | `#B8472E` | KM 2 ground, load bands (from the track illustrations) |
 | dawn (new) | `#123C46` | sky mid tone |
 
@@ -212,19 +212,21 @@ A pin 100vh tall, scroll length `3.6 x innerHeight`, scrub 0.4.
 - **World** (one transparent WebGL2 canvas, DPR capped at 2, 1.5 on phones; one program; fog to the horizon colour, `exp(-0.0045 x distance)`):
   - Road along -Z, 14 units wide: six lanes of 2 units and 1 unit shoulders, asphalt `#2B343A`, cream lane dashes 3 on, 3 off at 50%, antialiased with `fwidth`.
   - One week = 26 units of road; 19 weeks = 494 units, plus 40 of run-out.
-  - **Pillars**: for week `i`, two boxes at x = -11 and +11, 5 wide, 16 deep, height = `km x 0.42` (15 km = 6.3, 38 km = 16.0). Colour by phase: Base peach, Build `#D98E63`, Peak orange, Taper `#A6B8FF`. Lambert shading from (-0.35, 0.86, 0.45), top faces 8% lighter.
+  - **Flags** (revised 2026-11-13 by the audit, `07-LANDING-AUDIT.md`): for week `i`, a feather flag on each side of the road at x = -9.2 and +9.2: a pole and a billowing cloth 1.75 units wide, rounded over at the top, from 0.9 units up to `km x 0.27` (15 km = 4.05, 38 km = 10.26), in the phase colour (Base peach, Build `#D98E63`, Peak orange, Taper `#A6B8FF`) with one stone band near the foot. Flat shading from (-0.35, 0.86, 0.45), lit on both faces. Why: boxes, then buildings with windows, did not read as weekly volume (owner review, KM 1 screenshot, 2026-11-12 and 2026-11-13); a race course with one flag per week reads as the course you are training for.
+  - **Course dressing**: barriers along both road edges (panels in the colour of the phase they stand in, stone top rail), low-poly pines in loose rows from x = 14 to 46, far hills as six-sided cones that the fog turns into silhouettes. No buildings, no lamps.
+  - **Scrim**: the lower 58% of the pin carries a gradient from ink at 72% to transparent so the copy stays legible over the road.
   - **Gates**: an arch over the road (two posts, a beam 1.6 units tall, phase colour) at the first week of each phase, and an orange finish arch with a two-row checker band at week 19.
-  - **Labels** are DOM, not textures: each is projected every frame (`translate3d`), fades in from 120 to 60 units away and is removed behind the camera. Pillars: `W12` over `21 km` (Bricolage 800, tabular). Gates: `BASE · 7 WEEKS`, `BUILD · 7 WEEKS`, `PEAK · 3 WEEKS`, `TAPER · 2 WEEKS`, `RACE DAY · MAR 15`.
+  - **Labels** are DOM, not textures: each is projected every frame (`translate3d`), fades in from 120 to 60 units away and is removed behind the camera. Flags: `WEEK 12` over `21 km` (Bricolage 800, tabular), hidden while they would sit under the readout. Gates: `BASE · 7 WEEKS`, `BUILD · 7 WEEKS`, `PEAK · 3 WEEKS`, `TAPER · 2 WEEKS`, `RACE DAY · MAR 15`.
 - **Camera**: FOV 58 deg, at height 3.2, `z = 8 - p x 494`, looking 40 units ahead at height 2.6. Each 1.3 units of travel is one step: a bob of 0.12 units and a roll of 0.4 deg, tied to distance, so the camera only bobs while you scroll and stands still when you stop. The pointer adds up to 0.6 deg of yaw (quickTo, 0.6 s `power3`).
-- **Copy** (left 4 rem, bottom 7 rem, max-width 34 rem): headline "A real plan, built around **race day**"; paragraph "Pick 5K, 10K, half or full marathon. Give RunCo your race date and the days you can train. It builds every week back from that date."
+- **Copy** (left 4 rem, bottom 7 rem, max-width 34 rem): headline "A real plan, built around **race day**"; paragraph "Give RunCo your race date and training days. It builds every week back from that date. Each flag on this road is one week: the taller the flag, the more you run."
 - **Readout** (top right, 2 rem in, three stat boxes in the app's style: ink at 80%, radius 1 rem, Label over a 1.8 rem tabular value), updated from `p`: `WEEK 12 of 19`, `PHASE Build`, `THIS WEEK 21 km`. A fourth line under them: "Race in 7 weeks".
-- **Coach note 2**: "lighter week. on purpose." anchored to week 4 (13 km), shown while that pillar is 40 to 90 units ahead; the same note returns at week 8, 12 and 16 as a small "again" under it.
+- **Coach note 2**: "lighter week. on purpose." anchored to week 4 (13 km), shown while that week's flag is 40 to 90 units ahead; the same note returns at week 8, 12 and 16 as a small "again" under it.
 - Past the finish arch (`p > 0.985`) the canvas flashes stone (opacity 0 to 0.9 to 0 in 0.35 s) and the section unpins.
 - **Fallback** (no WebGL2, context lost, or reduced motion): the same 19 bars as an SVG chart across the screen in the phase colours with the four phase labels and the same copy. Not pinned.
 
 ### 5.7 KM 2, the timer (pinned, `data-ground="track"`)
 
-Ground `#B8472E` with six lanes: `repeating-linear-gradient` horizontal lines every `16.667vh`, 3 px, cream at 55%, lane numbers at left 1.5 rem. A pin 100vh tall, scroll length `2.6 x innerHeight`, scrub 0.3.
+Ground `#B8472E` with six lanes: `repeating-linear-gradient` horizontal lines every `16.667vh`, 3 px, cream at 55% (revised 2026-11-13 by the audit, `07-LANDING-AUDIT.md`): no lane numbers, they collided with the headline at 1440 px. A pin 100vh tall, scroll length `2.6 x innerHeight`, scrub 0.3.
 
 - **The ring** (centre): rebuilt in SVG from the app's timer, not a screenshot. Diameter `min(62vh, 34rem)`, stroke 1.1 rem, track ring stone at 18%, progress arc stone, an orange dot with a stone ring at the arc's head. Inside: the zone chip, the countdown (Bricolage 800, wdth 75, 9 rem, tabular) and a line "left of 14:00".
 - **The workout** is Wednesday's 44 minutes, scrubbed by scroll: `elapsed = p x 2640 s`.
@@ -243,9 +245,16 @@ Ground `#B8472E` with six lanes: `repeating-linear-gradient` horizontal lines ev
 - **Right** (right 4 rem, bottom 7 rem): a phone (15 rem wide, 0.5 rem ink bezel, radius 2.2 rem, rotated 4 deg) with the real timer screenshot, and **coach note 3** beside it: "this is the real screen".
 - Phones: not pinned as a split. Headline, paragraph and button first; then the ring (diameter 78vw) pinned for `1.6 x innerHeight`; the phone is hidden.
 
-### 5.8 KM 3, strength: scroll is reps (pinned, `data-ground="forest"`)
+### 5.8 KM 3, strength: the demo plays on its own (not pinned, `data-ground="forest"`) (revised 2026-11-13 by the audit, `07-LANDING-AUDIT.md`)
 
-A pin 100vh tall, scroll length `1.8 x innerHeight`, scrub 0.2.
+Why: driving reps with the scroll felt odd (owner review, 2026-11-13). The section flows like KM 4: board, copy and the exercise picker on the left, the disc on the right; one column below 992 px.
+
+- **Clock**: 2.2 s a rep (frames 1 to 16 and back), two sets of ten with a 1.8 s rest that shows the mint "Set done" chip, then it loops. It runs only while the section is at least 15% on screen and the tab is visible. A pause button sits on the disc (WCAG 2.2.2). Under reduced motion: one still frame, `10/10`, no pause button.
+- **Picker**: the 15 exercises as real toggle buttons (`aria-pressed`), wrapping on desktop, one scrolling row on phones (2.75 rem tall). Picking one restarts the count at set 1.
+- **Marquee**: one decorative row of the 15 names under the section, `aria-hidden`, not interactive; the picked name is outlined in stone.
+- Coach note 4 is removed: the visible picker needs no instruction.
+
+The text below describes the first build and is kept for history.
 
 - **Flipbook** (centre): a 30 rem stone disc holding one 420 x 420 frame, drawn on a `<canvas>` from preloaded images. Ten reps over the scroll: each rep plays frames 1 to 16 and back to 1. Frame = from `p x 10`. Under the disc: the exercise name (Bricolage 800, 4 rem) and `Set 1 of 2 · 7/10` (tabular; the rep number pops scale 1.3 to 1 in 0.25 s at the bottom of each rep, with `tick` when sound is on). After rep 10 a mint chip "Set done" drops in.
 - **The library** (two rows behind the disc, top 18% and bottom 14%, moving in opposite directions): the 15 real exercises as giant outlined words (Section headline style, cream stroke 0.1 rem, transparent fill, gap 3 rem): Squat, Split squat, Reverse lunge, Bulgarian split squat, Step-up, Single-leg deadlift, Glute bridge, Single-leg glute bridge, Calf raise, Single-leg calf raise, Plank, Side plank, Copenhagen plank, Dead bug, Bird dog. Marquee as in 6.6. With a fine pointer, hovering a word fills it cream and swaps the flipbook to that exercise (its frames load on first hover; the rep count keeps going).
@@ -256,7 +265,8 @@ A pin 100vh tall, scroll length `1.8 x innerHeight`, scrub 0.2.
 ### 5.9 KM 4, evidence: the coach's index cards (`data-ground="paper"`, about 150vh, not pinned)
 
 - Board, then the headline "Every workout **explains itself**" and the paragraph "Open any workout and RunCo says why it is there. Every rule carries a grade, from strong evidence down to plain coaching practice."
-- **Six index cards** in one horizontal row that overflows the screen to the right, dragged sideways (Draggable type `x` with inertia, bounds = the row's width, `edgeResistance: 0.85`). Each card is 20 x 26 rem, white, radius 0.5 rem, ruled with 1 px lines every 1.9 rem in ink at 8%, a 1 px orange margin line at left 2.4 rem, and its own rotation (-3, 2, -1.5, 3, -2.5, 1.5 deg). Each holds: the rule id (Label), a title (Bricolage 800, 2 rem), the app's own sentence (Paragraph at 1.05 rem), the source (0.8 rem, ink at 60%) and a grade stamp at top right (a 6 rem circle, 0.25 rem ring, the letter in Bricolage 800 at 3.2 rem, the grade name around it on a circle path, rotated -12 deg, slightly broken up with an SVG turbulence mask like rubber stamp ink).
+- **Six index cards** (revised 2026-11-13 by the audit, `07-LANDING-AUDIT.md`): a 3 x 2 grid on desktop (cards 4 to 6 were reachable only by mouse drag), a native scroll-snap row below 992 px that is a focusable region. The grade stamp sits at the card's foot, not its top right, where it covered the title. Cards enter rising 90 px with a fade.
+- First build, kept for history: one horizontal row that overflows the screen to the right, dragged sideways (Draggable type `x` with inertia, bounds = the row's width, `edgeResistance: 0.85`). Each card is 20 x 26 rem, white, radius 0.5 rem, ruled with 1 px lines every 1.9 rem in ink at 8%, a 1 px orange margin line at left 2.4 rem, and its own rotation (-3, 2, -1.5, 3, -2.5, 1.5 deg). Each holds: the rule id (Label), a title (Bricolage 800, 2 rem), the app's own sentence (Paragraph at 1.05 rem), the source (0.8 rem, ink at 60%) and a grade stamp at top right (a 6 rem circle, 0.25 rem ring, the letter in Bricolage 800 at 3.2 rem, the grade name around it on a circle path, rotated -12 deg, slightly broken up with an SVG turbulence mask like rubber stamp ink).
 
 | Id | Grade | Title | The app's sentence (`packages/training-engine/src/i18n/en.ts`) | Source |
 |---|---|---|---|---|
@@ -357,7 +367,7 @@ The owner's review of v1 and this prompt win where they differ. The skill stays 
 | Every section exactly one or two screens | Pins of 2.8 to 4.6 screens |
 | Kit components and dealt hero, nav, close | Own markup and script; the kit is not copied in |
 | Never Plus Jakarta Sans | The brand's UI face |
-| No lavender | `#A6B8FF` on the Taper pillars only: it is the app's taper colour |
+| No lavender | `#A6B8FF` on the Taper flags only: it is the app's taper colour |
 | Kept | `copy-lint.mjs` (0 FAIL), no invented facts or proof, real product UI in every section, alt text, focus rings at 3:1, keyboard paths, reduced motion, `perf.mjs` with no FAIL row |
 
 Expected result: the gate cannot pass (it allows five waivers). The build is closed with `gate.mjs --done "<the owner's words>"`, and every open FAIL is listed in the report.
@@ -367,7 +377,7 @@ Expected result: the gate cannot pass (it allows five waivers). The build is clo
 - At 1440 x 900: 3, 2, 1, the lane bands leave, "KNOW EXACTLY WHAT / TO RUN TODAY" rises letter by letter over the dawn loop, and the orange marker draws under "RUN TODAY".
 - Moving the mouse across the hero from left to right walks the week card from Monday to Sunday; Wednesday shows TEMPO, 44 min.
 - Crossing the start line, the HUD springs up. Its pace reads about 7:00 /km at a reading scroll and drops under 6:15 with an INTERVAL chip on a fast flick; holding it there brings the coach's "Easy." note.
-- KM 1: the sky goes from night to day while the camera runs past 19 pairs of pillars; the labels read W1 15 km to W19 19 km; weeks 4, 8, 12 and 16 are visibly lower; the readout says "Week 12 of 19 · Build · 21 km"; the orange arch reads RACE DAY · MAR 15. The camera stands still when the scroll stops.
+- KM 1: the sky goes from night to day while the camera runs past 19 pairs of flags; the labels read W1 15 km to W19 19 km; weeks 4, 8, 12 and 16 are visibly lower; the readout says "Week 12 of 19 · Build · 21 km"; the orange arch reads RACE DAY · MAR 15. The camera stands still when the scroll stops.
 - KM 2: the ring counts Warm-up, Drills, Tempo, Cool-down as you scroll; three waves leave the ring at each boundary; "Try the 3-2-1" plays three ticks and a go.
 - KM 3: ten scroll-driven squats, the counter reads 10/10, "Set done" drops in; hovering "Bird dog" swaps the animation.
 - KM 4: six cards are dealt from the right with stamps A, A, A, B, B, D and can be thrown sideways.
