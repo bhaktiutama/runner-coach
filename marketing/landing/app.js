@@ -308,12 +308,15 @@ if (G) {
 
   /* ---- 5.9 KM 4: the coach's index cards ---- */
   const initCards = () => {
-    const wrap = $('.cards'), row = $('.cards__row'), cards = $$('.card');
-    if (!isPhone()) Draggable.create(row, { type: 'x', inertia: true, edgeResistance: 0.85, bounds: { minX: Math.min(0, wrap.clientWidth - row.scrollWidth), maxX: 0 }, cursor: 'grab', activeCursor: 'grabbing' });
+    const wrap = $('.cards'), cards = $$('.card');
+    // a grid on desktop; below 992 px a native scroll row, reachable by keyboard when it scrolls
+    const scrollable = () => { const on = wrap.scrollWidth > wrap.clientWidth + 2; on ? wrap.setAttribute('tabindex', '0') : wrap.removeAttribute('tabindex'); };
+    wrap.setAttribute('aria-label', 'Six rules from the plan engine, with their evidence grade'); wrap.setAttribute('role', 'region');
+    scrollable(); addEventListener('resize', scrollable);
     if (RM) return;
-    G.set(cards, { x: '60vw', rotation: 18 }); G.set($$('.stamp'), { autoAlpha: 0, scale: 1.6 });
-    ScrollTrigger.create({ trigger: wrap, start: 'top 75%', once: true, onEnter: () => {
-      G.to(cards, { x: 0, rotation: 0, duration: 0.9, ease: 'expo.out', stagger: 0.08 });
+    G.set(cards, { y: 90, autoAlpha: 0 }); G.set($$('.stamp'), { autoAlpha: 0, scale: 1.6 });
+    ScrollTrigger.create({ trigger: wrap, start: 'top 80%', once: true, onEnter: () => {
+      G.to(cards, { y: 0, autoAlpha: 1, duration: 0.9, ease: 'expo.out', stagger: 0.08 });
       G.to($$('.stamp'), { autoAlpha: 1, scale: 1, duration: 0.25, ease: 'back.out(3)', stagger: 0.08, delay: 0.55 });
     } });
   };

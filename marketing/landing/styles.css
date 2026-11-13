@@ -251,16 +251,15 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
 .km4__head .km__copy--flow { align-self: end; }
 .phone--why { rotate: 3deg; margin-bottom: -6rem; position: relative; z-index: 2; }
 .cards { position: relative; margin-top: 4rem; overflow: hidden; padding: 2rem 0 5rem; }
-.cards__row { display: flex; gap: 2rem; width: max-content; padding: 0 4rem; cursor: grab; touch-action: pan-y; }
-.cards__row:active { cursor: grabbing; }
-.card { position: relative; flex: none; width: 20rem; height: 26rem; rotate: var(--r); padding: 2rem 1.6rem 1.6rem 3.2rem; border-radius: .5rem; background: #fff repeating-linear-gradient(to bottom, transparent 0 calc(1.9rem - 1px), rgb(36 44 50 / .08) calc(1.9rem - 1px) 1.9rem); color: var(--ink); box-shadow: 0 1.2rem 2.4rem -1.2rem rgb(36 44 50 / .35); display: grid; align-content: start; gap: .9rem; user-select: none; transition: translate .25s var(--ease), box-shadow .25s; }
+.cards__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem 2.5rem; padding: 0 4rem; max-width: 82rem; }
+.card { position: relative; flex: none; min-height: 22rem; rotate: var(--r); padding: 2rem 1.6rem 1.8rem 3.2rem; border-radius: .5rem; background: #fff repeating-linear-gradient(to bottom, transparent 0 calc(1.9rem - 1px), rgb(36 44 50 / .08) calc(1.9rem - 1px) 1.9rem); color: var(--ink); box-shadow: 0 1.2rem 2.4rem -1.2rem rgb(36 44 50 / .35); display: grid; align-content: start; gap: .9rem; user-select: none; transition: translate .25s var(--ease), box-shadow .25s; }
 .card::before { content: ""; position: absolute; left: 2.4rem; top: 0; bottom: 0; width: 1px; background: var(--orange); }
 .card:hover { translate: 0 -.5rem; box-shadow: 0 2rem 3rem -1.4rem rgb(36 44 50 / .45); }
 .card .lbl { opacity: .6; }
-.card h3 { font: 800 2rem/.95 var(--display); font-stretch: 80%; max-width: 11rem; }
+.card h3 { font: 800 2rem/.95 var(--display); font-stretch: 80%; max-width: 15rem; }
 .card p { font-size: 1.05rem; line-height: 1.4; }
-.card cite { font-style: normal; font-size: .8rem; line-height: 1.35; opacity: .62; align-self: end; }
-.stamp { position: absolute; right: 1rem; top: 1rem; width: 6rem; height: 6rem; border-radius: 50%; border: .25rem solid currentColor; display: grid; place-content: center; justify-items: center; rotate: -12deg; color: var(--forest); background: rgb(255 255 255 / .6); mix-blend-mode: multiply; }
+.card cite { font-style: normal; font-size: .8rem; line-height: 1.35; opacity: .72; align-self: end; max-width: calc(100% - 6.5rem); }
+.stamp { position: absolute; right: 1rem; bottom: 1rem; width: 6rem; height: 6rem; border-radius: 50%; border: .25rem solid currentColor; display: grid; place-content: center; justify-items: center; rotate: -12deg; color: var(--forest); background: rgb(255 255 255 / .6); mix-blend-mode: multiply; }
 .stamp b { font: 800 3rem/.8 var(--display); }
 .stamp i { font: 700 .5rem/1.2 var(--text); font-style: normal; letter-spacing: .08em; text-transform: uppercase; text-align: center; max-width: 4.4rem; margin-top: .3rem; }
 .stamp[data-g="B"] { color: #95680D; } .stamp[data-g="C"] { color: var(--orange-ink); } .stamp[data-g="D"] { color: rgb(36 44 50 / .6); }
@@ -337,6 +336,7 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
   .km__copy--mid { top: 14rem; bottom: auto; translate: none; max-width: 36rem; align-content: start; }
   .km2 .km__copy--mid .p { display: none; }
   .km4__head { grid-template-columns: 1fr; padding-right: 2rem; } .phone--why { display: none; }
+  .cards { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; } .cards__row { display: flex; width: max-content; padding: 0 2rem; gap: 1.5rem; } .card { width: 20rem; scroll-snap-align: center; }
   .km5__grid { grid-template-columns: 1fr; justify-items: center; text-align: left; }
   .finish__grid { grid-template-columns: 1fr; gap: 4rem; justify-items: center; }
   .readout { top: 5.5rem; }
@@ -379,7 +379,7 @@ html[data-ground="finish"].is-flooded .nav__cta { background: var(--ink); color:
   .flip { width: 78vw; } .flip__name { font-size: 2.2rem; } .flip__done { right: 0; }
   .km4, .km5 { padding: 5rem 0 6rem; } .km4__head { padding: 0 1.25rem; } .km4__head .km__copy--flow { padding: 0; }
   .km4 .km__copy--flow, .km5 .km__copy--flow { left: 0; right: 0; }
-  .cards { overflow-x: auto; scroll-snap-type: x mandatory; margin-top: 2rem; } .cards__row { padding: 0 1.25rem; gap: 1.2rem; } .card { width: 17rem; height: 24rem; scroll-snap-align: center; }
+  .cards { overflow-x: auto; scroll-snap-type: x mandatory; margin-top: 2rem; } .cards__row { padding: 0 1.25rem; gap: 1.2rem; } .card { width: 17rem; min-height: 24rem; }
   .note--5 { right: 1.5rem; }
   .km5__grid { padding: 0 1.25rem; gap: 2rem; } .km5 .km__copy .h { font-size: 3rem; }
   .vault__phone { width: 62vw; height: 131vw; } .datachip { font-size: .9rem; height: 2.4rem; }
