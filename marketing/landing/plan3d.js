@@ -93,6 +93,7 @@ const mul = (a, b) => {
 };
 
 export function createPlan(canvas, labelsEl, data) {
+  const T = data.text || { week: 'WEEK', weeks: 'WEEKS', raceDay: 'RACE DAY · MAR 15' };
   const gl = canvas.getContext('webgl2', {
     alpha: true,
     antialias: true,
@@ -264,7 +265,7 @@ export function createPlan(canvas, labelsEl, data) {
       top = km * FLAG,
       c = cols[data.phase(i)];
     for (const sx of [-1, 1]) flag(sx * 9.2, zc, sx, top, c);
-    label('', `<small>WEEK ${i + 1}</small>${km} km`, [10.2, top + 1.3, zc]);
+    label('', `<small>${T.week} ${i + 1}</small>${km} km`, [10.2, top + 1.3, zc]);
   });
   // barriers along both edges, panels in the colour of the phase they stand in
   const phaseAt = (z) => data.phase(Math.min(N - 1, Math.max(0, Math.floor(-z / WEEK))));
@@ -319,10 +320,10 @@ export function createPlan(canvas, labelsEl, data) {
   data.names.forEach((n, ph) => {
     let cnt = 0;
     for (let i = 0; i < N; i++) if (data.phase(i) === ph) cnt++;
-    gate(-w0 * WEEK, cols[ph], `${n.toUpperCase()} · ${cnt} WEEKS`, false);
+    gate(-w0 * WEEK, cols[ph], `${n.toUpperCase()} · ${cnt} ${T.weeks}`, false);
     w0 += cnt;
   });
-  gate(-END, hex('#F26B38'), 'RACE DAY · MAR 15', true);
+  gate(-END, hex('#F26B38'), T.raceDay, true);
   const M = {
     road: mesh(quad(-ROAD, ROAD, 60, -END - 120, 0)),
     ground: mesh(quad(-900, 900, 120, -END - 900, -0.03)),

@@ -8,6 +8,87 @@ const STORE = {
   ios: 'https://apps.apple.com/app/runco', // the App Store address is still to come: put the app's id here
 };
 
+/* ---- the page's language: <html lang="en"> or lang="id" (marketing/landing/id/) ---- */
+const LANG = document.documentElement.lang === 'id' ? 'id' : 'en';
+const TXT = {
+  en: {
+    zone: { easy: 'Easy', tempo: 'Tempo', interval: 'Interval', standing: 'Standing' },
+    days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    week: [
+      'Easy + strides',
+      'Easy run',
+      '14 min at 6:46 /km',
+      'Easy run',
+      'Easy run',
+      'Rest day',
+      'Long run',
+    ],
+    rest: 'Rest',
+    long: 'Long',
+    raceWeek: 'Race week',
+    raceIn: (n) => `Race in ${n} week${n === 1 ? '' : 's'}`,
+    seg: [
+      'Warm-up · easy pace',
+      'A-skip, B-skip, C-skip, high knees, carioca',
+      'Target 6:46 /km · comfortably hard (6-7)',
+      'Cool-down · easy pace',
+    ],
+    drills: 'Drills',
+    leftOf: 'left of ',
+    halfway: 'Halfway',
+    ready: 'Get ready',
+    final321: 'the final 3-2-1',
+    exLabel: (n) => `${n}, shown as a looping animation of the movement`,
+    play: 'Play the exercise animation',
+    pause: 'Pause the exercise animation',
+    cards: 'Six rules from the plan engine, with their evidence grade',
+    easyVerdict: 'Mostly easy. That is how a base is built.',
+    fastVerdict: 'Quick. Save some for race day.',
+    weekLabel: 'WEEK',
+    weeks: 'WEEKS',
+    raceDay: 'RACE DAY · MAR 15',
+  },
+  id: {
+    zone: { easy: 'Easy', tempo: 'Tempo', interval: 'Interval', standing: 'Diam' },
+    days: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+    week: [
+      'Easy + strides',
+      'Lari easy',
+      '14 mnt di 6:46 /km',
+      'Lari easy',
+      'Lari easy',
+      'Hari istirahat',
+      'Long run',
+    ],
+    rest: 'Istirahat',
+    long: 'Long',
+    raceWeek: 'Minggu race',
+    raceIn: (n) => `Race ${n} minggu lagi`,
+    seg: [
+      'Pemanasan · pace easy',
+      'A-skip, B-skip, C-skip, high knees, carioca',
+      'Target 6:46 /km · agak berat (6-7)',
+      'Pendinginan · pace easy',
+    ],
+    drills: 'Drill',
+    leftOf: 'tersisa dari ',
+    halfway: 'Setengah jalan',
+    ready: 'Siap-siap',
+    final321: 'hitungan 3-2-1 terakhir',
+    exLabel: (n) => `${n}, animasi gerakan yang berulang`,
+    play: 'Putar animasi gerakan',
+    pause: 'Jeda animasi gerakan',
+    cards: 'Enam aturan dari mesin plan, dengan tingkat buktinya',
+    easyVerdict: 'Kebanyakan easy. Begitulah fondasi dibangun.',
+    fastVerdict: 'Cepat. Simpan tenaga untuk hari race.',
+    weekLabel: 'MINGGU',
+    weeks: 'MINGGU',
+    raceDay: 'HARI RACE · 15 MAR',
+  },
+}[LANG];
+// Assets live next to this script, so /id/ and / share one copy.
+const BASE = new URL('.', import.meta.url).href;
+
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const html = document.documentElement;
@@ -51,7 +132,7 @@ if (G) {
     if (on)
       for (const n of ['tick', 'go', 'segment', 'halfway', 'finish'])
         if (!sound.bank[n]) {
-          const a = new Audio(`assets/sounds/${n}.mp3`);
+          const a = new Audio(`${BASE}assets/sounds/${n}.mp3`);
           a.preload = 'auto';
           sound.bank[n] = a;
         }
@@ -167,7 +248,7 @@ if (G) {
     marks = kmEls.map((e) => e.getBoundingClientRect().top + scrollY);
   };
   ScrollTrigger.addEventListener('refresh', measure);
-  const ZONE = { easy: 'Easy', tempo: 'Tempo', interval: 'Interval', standing: 'Standing' };
+  const ZONE = TXT.zone;
   const pop = $('.coachpop');
   hud.el.inert = true;
 
@@ -273,20 +354,20 @@ if (G) {
 
   /* ---- 5.4 start: the film and the week card ---- */
   const WEEK = [
-    ['Monday', 'easy', 'Easy', '20', 'Easy + strides', 'track-overhead'],
-    ['Tuesday', 'easy', 'Easy', '20', 'Easy run', 'riverside-city-m'],
-    ['Wednesday', 'tempo', 'Tempo', '44', '14 min at 6:46 /km', 'track-back'],
-    ['Thursday', 'easy', 'Easy', '20', 'Easy run', 'riverside-city-m'],
-    ['Friday', 'easy', 'Easy', '20', 'Easy run', 'riverside-city-m'],
-    ['Saturday', 'rest', 'Rest', '0', 'Rest day', 'track-aerial'],
-    ['Sunday', 'long', 'Long', '43', 'Long run', 'road-sunrise-m'],
+    [TXT.days[0], 'easy', 'Easy', '20', TXT.week[0], 'track-overhead'],
+    [TXT.days[1], 'easy', 'Easy', '20', TXT.week[1], 'riverside-city-m'],
+    [TXT.days[2], 'tempo', 'Tempo', '44', TXT.week[2], 'track-back'],
+    [TXT.days[3], 'easy', 'Easy', '20', TXT.week[3], 'riverside-city-m'],
+    [TXT.days[4], 'easy', 'Easy', '20', TXT.week[4], 'riverside-city-m'],
+    [TXT.days[5], 'rest', TXT.rest, '0', TXT.week[5], 'track-aerial'],
+    [TXT.days[6], 'long', TXT.long, '43', TXT.week[6], 'road-sunrise-m'],
   ];
   const initStart = () => {
     const sec = $('.start'),
       vid = $('.start__bg'),
       pause = $('.pause');
     if (!RM) {
-      vid.src = 'assets/video/start-loop.mp4';
+      vid.src = `${BASE}assets/video/start-loop.mp4`;
       vid.play().catch(() => {});
     } else pause.hidden = true;
     pause.addEventListener('click', () => {
@@ -317,14 +398,14 @@ if (G) {
       line: $('.week__line'),
     };
     WEEK.forEach((w) => {
-      new Image().src = `assets/img/${w[5]}.webp`;
+      new Image().src = `${BASE}assets/img/${w[5]}.webp`;
     });
     let day = 2;
     const setDay = (i, flip) => {
       if (i === day) return;
       day = i;
       const w = WEEK[i];
-      parts.art.src = `assets/img/${w[5]}.webp`;
+      parts.art.src = `${BASE}assets/img/${w[5]}.webp`;
       parts.art.style.transform = i === 3 ? 'scaleX(-1)' : '';
       parts.chip.dataset.zone = w[1];
       parts.chip.textContent = w[2];
@@ -435,6 +516,7 @@ if (G) {
           phase: PHASE,
           colors: PHC,
           names: PHN,
+          text: { week: TXT.weekLabel, weeks: TXT.weeks, raceDay: TXT.raceDay },
           keepClear: () => keep || (measureKeep(), keep),
         });
       } catch {
@@ -461,7 +543,7 @@ if (G) {
       out.week.textContent = w;
       out.phase.textContent = PHN[PHASE(w - 1)];
       out.km.textContent = KM[w - 1];
-      out.left.textContent = w >= 19 ? 'Race week' : `Race in ${19 - w} week${19 - w === 1 ? '' : 's'}`;
+      out.left.textContent = w >= 19 ? TXT.raceWeek : TXT.raceIn(19 - w);
       html.classList.toggle('is-day', p > 0.6 && p < 0.999);
       // coach note 2: the lighter weeks (4, 8, 12, 16), while their pillar is 40 to 90 units ahead
       const ahead = [3, 7, 11, 15].some((i) => {
@@ -521,16 +603,16 @@ if (G) {
 
   /* ---- 5.7 KM 2: the timer ---- */
   const SEG = [
-    { n: 'Warm-up', len: 600, zone: 'easy', chip: 'Easy', line: 'Warm-up · easy pace' },
+    { n: 'Warm-up', len: 600, zone: 'easy', chip: 'Easy', line: TXT.seg[0] },
     {
       n: 'ABC drills',
       len: 600,
       zone: 'drills',
-      chip: 'Drills',
-      line: 'A-skip, B-skip, C-skip, high knees, carioca',
+      chip: TXT.drills,
+      line: TXT.seg[1],
     },
-    { n: 'Tempo', len: 840, zone: 'tempo', chip: 'Tempo', line: 'Target 6:46 /km · comfortably hard (6-7)' },
-    { n: 'Cool-down', len: 600, zone: 'easy', chip: 'Easy', line: 'Cool-down · easy pace' },
+    { n: 'Tempo', len: 840, zone: 'tempo', chip: 'Tempo', line: TXT.seg[2] },
+    { n: 'Cool-down', len: 600, zone: 'easy', chip: 'Easy', line: TXT.seg[3] },
   ];
   const initTimer = () => {
     const sec = $('.km2'),
@@ -569,7 +651,7 @@ if (G) {
       el.arc.style.strokeDashoffset = C * (1 - f);
       el.head.style.transform = `rotate(${f * 360}deg)`;
       el.time.textContent = mmss(s.len - (e - acc));
-      if (performance.now() > half) el.left.textContent = 'left of ' + mmss(s.len);
+      if (performance.now() > half) el.left.textContent = TXT.leftOf + mmss(s.len);
       if (i !== last) {
         if (last >= 0 && i > last) {
           wave();
@@ -584,7 +666,7 @@ if (G) {
       if (lastE < 1620 && e >= 1620 && e < 2040) {
         play('halfway');
         half = performance.now() + 1200;
-        el.left.textContent = 'Halfway';
+        el.left.textContent = TXT.halfway;
         wave();
         G.delayedCall(1.25, () => paint(st.progress));
       } // halfway through the tempo
@@ -609,8 +691,8 @@ if (G) {
       demo = true;
       setSound(true);
       el.chip.dataset.zone = 'tempo';
-      el.chip.textContent = 'Get ready';
-      el.left.textContent = 'the final 3-2-1';
+      el.chip.textContent = TXT.ready;
+      el.left.textContent = TXT.final321;
       ['3', '2', '1', 'GO'].forEach((n, k) =>
         G.delayedCall(k, () => {
           el.time.textContent = n;
@@ -675,7 +757,7 @@ if (G) {
           id,
           Array.from({ length: count }, (_, i) => {
             const im = new Image();
-            im.src = `assets/exercises/${id}-m-${i + 1}.webp`;
+            im.src = `${BASE}assets/exercises/${id}-m-${i + 1}.webp`;
             im.onload = () => {
               if (id === ex) draw(RM ? 0.5 : frameT());
             };
@@ -721,7 +803,7 @@ if (G) {
       n = +b.dataset.n;
       name.textContent = b.textContent;
       btns.forEach((x) => x.setAttribute('aria-pressed', x === b));
-      cv.setAttribute('aria-label', `${b.textContent}, shown as a looping animation of the movement`);
+      cv.setAttribute('aria-label', TXT.exLabel(b.textContent));
       $$('.lib__row span').forEach((s) => s.classList.toggle('on', s.dataset.ex === ex));
       if (RM) return draw(0.5);
       t = 0;
@@ -768,10 +850,7 @@ if (G) {
     pauseBtn.addEventListener('click', () => {
       paused = !paused;
       pauseBtn.setAttribute('aria-pressed', paused);
-      pauseBtn.setAttribute(
-        'aria-label',
-        paused ? 'Play the exercise animation' : 'Pause the exercise animation',
-      );
+      pauseBtn.setAttribute('aria-label', paused ? TXT.play : TXT.pause);
     });
     G.ticker.add((_, dms) => {
       if (!visible) return;
@@ -795,7 +874,7 @@ if (G) {
       if (on) wrap.setAttribute('tabindex', '0');
       else wrap.removeAttribute('tabindex');
     };
-    wrap.setAttribute('aria-label', 'Six rules from the plan engine, with their evidence grade');
+    wrap.setAttribute('aria-label', TXT.cards);
     wrap.setAttribute('role', 'region');
     scrollable();
     addEventListener('resize', scrollable);
@@ -904,10 +983,7 @@ if (G) {
       ['easy', 'tempo', 'interval'].forEach((z, i) => {
         zs[i].style.flexBasis = (run.zt[z] / tot) * 100 + '%';
       });
-      res('verdict').textContent =
-        run.zt.easy / tot >= 0.7
-          ? 'Mostly easy. That is how a base is built.'
-          : 'Quick. Save some for race day.';
+      res('verdict').textContent = run.zt.easy / tot >= 0.7 ? TXT.easyVerdict : TXT.fastVerdict;
     };
     const confetti = () => {
       const ctx = cv.getContext('2d'),

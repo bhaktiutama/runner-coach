@@ -27,7 +27,7 @@ cd marketing/landing && python3 -m http.server 8090   # buka http://localhost:80
 | Apa | Di mana |
 |---|---|
 | ID App Store | `STORE.ios` di `app.js` (Play sudah memakai `com.bhaktiutama.runco`) |
-| Domain kanonik | Baris `<link rel="canonical">` di `index.html` masih komentar |
+| Domain kanonik | Sudah diset ke `https://bhaktiutama.com/runco/` (canonical, og:url, og:image, hreflang). Ganti di `index.html` jika domain berubah, lalu jalankan `build-id.py` |
 
 ## Aset buatan (EvoLink, 2026-11-11)
 
@@ -44,4 +44,18 @@ Tanpa cookie, analitik atau request ke pihak ketiga (dicek di browser: 0 request
 
 ## Deploy preview
 
-Salin `index.html`, `styles.css`, `app.js`, `plan3d.js`, `assets/` dan `apps/app/dist/metadata.json` ke folder sementara di `apps/app`, lalu `npx eas-cli@latest deploy --export-dir <folder> --alias landing --non-interactive`, hapus foldernya. URL: https://run-coach--landing.expo.app
+1. `python3 marketing/landing/build-id.py` (halaman `id/` dibangun dari `index.html`; gagal jika teks EN yang dicari tidak ada).
+2. Salin `index.html`, `styles.css`, `app.js`, `plan3d.js`, `assets/`, `id/`, `privacy/` (symlink ke `docs/store/privacy/`, jadi pakai `cp -rL`) dan `apps/app/dist/metadata.json` ke folder sementara di `apps/app`.
+3. `npx eas-cli@latest deploy --export-dir <folder> --non-interactive`, lalu `deploy:alias:delete landing` dan `deploy:alias --alias landing --id <id>`; hapus foldernya. URL: https://run-coach--landing.expo.app
+
+## Bahasa
+
+`index.html` (EN) adalah sumber. `id/index.html` dibangun oleh `build-id.py` dari peta terjemahan; teks di JavaScript ada di objek `TXT` di `app.js` (dipilih dari `<html lang>`). Aset dibaca relatif ke `app.js`, jadi kedua halaman memakai satu salinan.
+
+## Test
+
+`pnpm test:landing` (juga di CI): EN dan ID di 390 dan 1440 px, tanpa error konsol, tanpa request ke luar, tanpa scroll horizontal, kedua link toko benar, dan versi reduced motion.
+
+## Lisensi
+
+GSAP 3.13 dan plugin-nya (ScrollTrigger, SplitText, DrawSVG, Inertia, Draggable): GSAP Standard License dari Webflow, dicek 2026-11-14 di https://gsap.com/standard-license. Pemakaian komersial di situs gratis, tanpa kewajiban atribusi; header lisensi di `assets/vendor/` tidak boleh dihapus.

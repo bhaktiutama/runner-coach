@@ -377,6 +377,25 @@ html[data-load-done] .load {
 .nav > * {
   pointer-events: auto;
 }
+.nav__lang {
+  margin-left: auto;
+  margin-right: 0.75rem;
+  display: inline-grid;
+  place-items: center;
+  min-width: 3rem;
+  height: 3rem;
+  border-radius: 1.5rem;
+  border: 2px solid currentColor;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--stone);
+}
+html[data-ground='paper'] .nav__lang,
+html.is-day .nav__lang,
+html[data-ground='finish'].is-flooded .nav__lang {
+  color: var(--ink);
+}
 .nav__logo img {
   height: 2.2rem;
   width: auto;
