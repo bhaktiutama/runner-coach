@@ -44,9 +44,10 @@ Tanpa cookie, analitik atau request ke pihak ketiga (dicek di browser: 0 request
 
 ## Deploy preview
 
-1. `python3 marketing/landing/build-id.py` (halaman `id/` dibangun dari `index.html`; gagal jika teks EN yang dicari tidak ada).
-2. Salin `index.html`, `styles.css`, `app.js`, `plan3d.js`, `assets/`, `id/`, `privacy/` (symlink ke `docs/store/privacy/`, jadi pakai `cp -rL`) dan `apps/app/dist/metadata.json` ke folder sementara di `apps/app`.
-3. `npx eas-cli@latest deploy --export-dir <folder> --non-interactive`, lalu `deploy:alias:delete landing` dan `deploy:alias --alias landing --id <id>`; hapus foldernya. URL: https://run-coach--landing.expo.app
+1. Dari `apps/app`: `python3 ../../marketing/landing/prepare-deploy.py landing-export-tmp` (membangun `id/`, menyalin semua file termasuk `privacy/`, dan memberi `?v=<hash>` pada URL CSS/JS), lalu `cp dist/metadata.json landing-export-tmp/`.
+2. `npx eas-cli@latest deploy --export-dir landing-export-tmp --non-interactive`, lalu `deploy:alias:delete landing` dan `deploy:alias --alias landing --id <id>`; hapus foldernya. URL: https://run-coach--landing.expo.app
+
+Kenapa `?v=`: EAS Hosting mengirim CSS/JS dengan `cache-control: max-age=3600`. Tanpa versi di URL, browser yang pernah membuka halaman memakai file lama sampai 1 jam setelah deploy (terjadi 2026-11-14).
 
 ## Bahasa
 
