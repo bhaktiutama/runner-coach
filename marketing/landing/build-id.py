@@ -45,7 +45,6 @@ TEXT = [
     ('Race in 18 weeks', 'Race 18 minggu lagi'),
     ('Give RunCo your race date and training days. It builds every week back from that date. Each flag on this road is one week: the taller the flag, the more you run.',
      'Masukkan tanggal race dan hari latihanmu. RunCo menyusun setiap minggu mundur dari tanggal itu. Tiap bendera di jalan ini adalah satu minggu: makin tinggi benderanya, makin jauh larimu.'),
-    ('lighter week. on purpose.', 'minggu ringan. sengaja.'),
     ('Weekly volume of a 19-week half marathon plan in km: Base 15, 16, 17, 13, 18, 20, 21; Build 17, 23, 25, 27, 21, 29, 32; Peak 35, 27, 38; Taper 26, 19. Race day March 15.',
      'Volume mingguan plan half marathon 19 minggu dalam km: Base 15, 16, 17, 13, 18, 20, 21; Build 17, 23, 25, 27, 21, 29, 32; Peak 35, 27, 38; Taper 26, 19. Hari race 15 Maret.'),
     ('Target pace on screen. Sound cues and haptics for work, recovery, halfway and the final 3-2-1.',

@@ -93,7 +93,13 @@ const mul = (a, b) => {
 };
 
 export function createPlan(canvas, labelsEl, data) {
-  const T = data.text || { week: 'WEEK', weeks: 'WEEKS', raceDay: 'RACE DAY · MAR 15' };
+  const T = data.text || {
+    week: 'WEEK',
+    weeks: 'WEEKS',
+    raceDay: 'RACE DAY · MAR 15',
+    lighter: 'lighter week. on purpose.',
+    again: 'again.',
+  };
   const gl = canvas.getContext('webgl2', {
     alpha: true,
     antialias: true,
@@ -258,14 +264,20 @@ export function createPlan(canvas, labelsEl, data) {
     el.className = cls;
     el.innerHTML = htmlText;
     labelsEl.append(el);
-    labels.push({ el, pos, op: -1, gate: cls.includes('gate') });
+    labels.push({ el, pos, op: -1, gate: cls.includes('gate'), note: htmlText.includes('class="lw"') });
   };
   data.km.forEach((km, i) => {
     const zc = -(i * WEEK + WEEK / 2),
       top = km * FLAG,
       c = cols[data.phase(i)];
     for (const sx of [-1, 1]) flag(sx * 9.2, zc, sx, top, c);
-    label('', `<small>${T.week} ${i + 1}</small>${km} km`, [10.2, top + 1.3, zc]);
+    // Coach note on the lighter weeks, projected with the flag's label so the arrow always lands on it.
+    const li = (data.lighter || []).indexOf(i);
+    const note =
+      li < 0
+        ? ''
+        : `<em class="lw">${li === 0 ? T.lighter : T.again}<svg viewBox="0 0 60 44" aria-hidden="true"><path d="M52 4C44 16 32 26 12 36M12 36l4-13M12 36l13 1" /></svg></em>`;
+    label('', `${note}<small>${T.week} ${i + 1}</small>${km} km`, [10.2, top + 1.3, zc]);
   });
   // barriers along both edges, panels in the colour of the phase they stand in
   const phaseAt = (z) => data.phase(Math.min(N - 1, Math.max(0, Math.floor(-z / WEEK))));
@@ -390,7 +402,9 @@ export function createPlan(canvas, labelsEl, data) {
           sx = ((cx / cwc) * 0.5 + 0.5) * cw; // never under the readout
         if (
           cwc <= 0.01 ||
-          (!l.gate && (sy < 0.2 || (keep && sy * ch < keep.bottom + 30 && sx > keep.left - 60)))
+          (!l.gate &&
+            (sy < 0.2 ||
+              (keep && sy * ch < keep.bottom + (l.note ? 150 : 30) && sx > keep.left - (l.note ? 320 : 60))))
         )
           op = 0;
         else

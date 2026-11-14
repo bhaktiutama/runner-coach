@@ -45,7 +45,8 @@
   --wdth: 75;
 }
 html {
-  font-size: calc(100vw / 90);
+  /* Width sets the scale, but never taller than the screen allows (wide, short screens: 1920 x 860) */
+  font-size: min(calc(100vw / 90), calc(100svh / 52));
   -webkit-text-size-adjust: 100%;
 }
 @media (max-width: 991px) {
@@ -1111,12 +1112,30 @@ html[data-ground='finish'].is-flooded .nav__cta {
 .km1 .board {
   top: 6rem;
 }
-.note--2 {
-  left: 30%;
-  top: 30%;
-  rotate: -4deg;
-  color: var(--sand);
+/* coach note 2 rides on the lighter weeks' labels (plan3d.js) */
+.labels span .lw {
+  position: absolute;
+  left: 55%;
+  bottom: 100%;
   display: grid;
+  justify-items: start;
+  font: 400 2rem/1 var(--hand);
+  letter-spacing: 0;
+  color: var(--sand);
+  white-space: nowrap;
+  rotate: -4deg;
+  text-shadow: 0 0.1rem 0.6rem rgb(0 0 0 / 0.45);
+}
+.labels span .lw svg {
+  width: 3rem;
+  height: auto;
+  margin-left: -0.6rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
 }
 .chart {
   display: none;
@@ -1145,7 +1164,7 @@ html[data-ground='finish'].is-flooded .nav__cta {
 }
 .km1.is-flat .world,
 .km1.is-flat .labels,
-.km1.is-flat .note--2 {
+.km1.is-flat .lw {
   display: none;
 }
 .km1.is-flat .chart {
@@ -1272,9 +1291,10 @@ html[data-ground='finish'].is-flooded .nav__cta {
   rotate: 4deg;
 }
 .note--3 {
-  right: 6rem;
-  bottom: 40.5rem;
-  rotate: -5deg;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 0.4rem;
+  rotate: -9deg;
   color: var(--sand);
   display: grid;
   justify-items: end;
@@ -1423,7 +1443,7 @@ html[data-ground='finish'].is-flooded .nav__cta {
   position: relative;
   margin-top: 4rem;
   overflow: hidden;
-  padding: 2rem 0 5rem;
+  padding: 2rem 0 8rem;
 }
 .cards__row {
   display: grid;
@@ -1521,9 +1541,14 @@ html[data-ground='finish'].is-flooded .nav__cta {
 .stamp[data-g='D'] {
   color: rgb(36 44 50 / 0.78);
 }
+.cards__wrap {
+  position: relative;
+  max-width: 82rem;
+}
 .note--5 {
-  right: 6rem;
-  bottom: 0.5rem;
+  right: 4rem;
+  top: 100%;
+  margin-top: 0.2rem;
   rotate: -3deg;
   display: grid;
   justify-items: end;
@@ -1546,10 +1571,11 @@ html[data-ground='finish'].is-flooded .nav__cta {
 }
 .note--6 {
   position: relative;
-  display: grid;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   rotate: -3deg;
   margin-top: 1rem;
-  justify-items: end;
   width: max-content;
 }
 .vault {
@@ -2017,7 +2043,7 @@ html[data-ground='finish'].is-flooded .nav__cta {
     display: none;
   }
   .pin .board,
-  .note--2,
+  .labels span .lw,
   .note--3,
   .phone--timer {
     display: none;
@@ -2059,6 +2085,11 @@ html[data-ground='finish'].is-flooded .nav__cta {
   }
   .ring__seg {
     top: 102%;
+  }
+}
+@media (max-width: 991px) {
+  .note--6 svg {
+    rotate: 80deg;
   }
 }
 /* ---- phones ---- */
@@ -2339,7 +2370,12 @@ html[data-ground='finish'].is-flooded .nav__cta {
     min-height: 24rem;
   }
   .note--5 {
-    right: 1.5rem;
+    position: relative;
+    right: auto;
+    top: auto;
+    margin: 0.5rem 1.25rem 0 auto;
+    width: max-content;
+    display: grid;
   }
   .km5__grid {
     padding: 0 1.25rem;

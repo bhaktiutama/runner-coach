@@ -253,11 +253,6 @@
             </p>
           </div>
 
-          <p class="note note--2" aria-hidden="true">
-            <span>lighter week. on purpose.</span>
-            <svg viewBox="0 0 90 60"><path d="M82 8C60 10 34 20 14 46M14 46l4-17M14 46l17-3" /></svg>
-          </p>
-
           <!-- the same 19 weeks as a chart: shown without WebGL2 and under reduced motion -->
           <div
             class="chart"
@@ -314,11 +309,11 @@
               height="1125"
               loading="lazy"
             />
+            <p class="note note--3" aria-hidden="true">
+              <span>this is the real screen</span>
+              <svg viewBox="0 0 90 60"><path d="M8 10c22 2 48 12 66 38M74 48l-16-5M74 48l1-17" /></svg>
+            </p>
           </figure>
-          <p class="note note--3" aria-hidden="true">
-            <span>this is the real screen</span>
-            <svg viewBox="0 0 90 60"><path d="M8 10c22 2 48 12 66 38M74 48l-16-5M74 48l1-17" /></svg>
-          </p>
         </div>
       </section>
 
@@ -455,56 +450,58 @@
           </figure>
         </div>
         <div class="cards">
-          <ul class="cards__row">
-            <li class="card" style="--r: -3deg">
-              <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
-              ><span class="lbl">Rule E-09</span>
-              <h3>Most of your running is easy</h3>
-              <p>“A large easy share builds endurance with a low recovery cost.”</p>
-              <cite>Silva Oliveira et al., Sports Med 2024. Meta-analysis of 17 studies.</cite>
-            </li>
-            <li class="card" style="--r: 2deg">
-              <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
-              ><span class="lbl">Rule E-11</span>
-              <h3>Taper: less volume, same intensity</h3>
-              <p>“A meta-analysis found this pattern helps race performance the most.”</p>
-              <cite>Bosquet et al., Med Sci Sports Exerc 2007. 27 studies.</cite>
-            </li>
-            <li class="card" style="--r: -1.5deg">
-              <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
-              ><span class="lbl">Rule E-23</span>
-              <h3>Strength, twice a week</h3>
-              <p>
-                “A meta-analysis of 25 randomised trials found strength training lowers sports injury risk.”
-              </p>
-              <cite>Lauersen et al., Br J Sports Med 2014.</cite>
-            </li>
-            <li class="card" style="--r: 3deg">
-              <span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span
-              ><span class="lbl">Rule E-06</span>
-              <h3>No single run jumps too far</h3>
-              <p>“A study of 5,205 runners found injury risk rises when one run goes past this limit.”</p>
-              <cite>Frandsen et al., Br J Sports Med 2025.</cite>
-            </li>
-            <li class="card" style="--r: -2.5deg">
-              <span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span
-              ><span class="lbl">Rule E-05</span>
-              <h3>Volume rises 10% at most</h3>
-              <p>“Research has not shown that the 10% figure itself prevents injury.”</p>
-              <cite>Buist et al., Am J Sports Med 2008. Randomised trial.</cite>
-            </li>
-            <li class="card" style="--r: 1.5deg">
-              <span class="stamp" data-g="D"><b>D</b><i>Coaching practice</i></span
-              ><span class="lbl">Rule E-07</span>
-              <h3>Every few weeks is lighter</h3>
-              <p>“Volume drops so your body absorbs the training of the previous weeks.”</p>
-              <cite>No study found that tests it.</cite>
-            </li>
-          </ul>
-          <p class="note note--5" aria-hidden="true">
-            <span>we show the weak ones too.</span>
-            <svg viewBox="0 0 90 60"><path d="M10 50C22 30 44 16 76 12M76 12l-15-4M76 12l-9 14" /></svg>
-          </p>
+          <div class="cards__wrap">
+            <ul class="cards__row">
+              <li class="card" style="--r: -3deg">
+                <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
+                ><span class="lbl">Rule E-09</span>
+                <h3>Most of your running is easy</h3>
+                <p>“A large easy share builds endurance with a low recovery cost.”</p>
+                <cite>Silva Oliveira et al., Sports Med 2024. Meta-analysis of 17 studies.</cite>
+              </li>
+              <li class="card" style="--r: 2deg">
+                <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
+                ><span class="lbl">Rule E-11</span>
+                <h3>Taper: less volume, same intensity</h3>
+                <p>“A meta-analysis found this pattern helps race performance the most.”</p>
+                <cite>Bosquet et al., Med Sci Sports Exerc 2007. 27 studies.</cite>
+              </li>
+              <li class="card" style="--r: -1.5deg">
+                <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
+                ><span class="lbl">Rule E-23</span>
+                <h3>Strength, twice a week</h3>
+                <p>
+                  “A meta-analysis of 25 randomised trials found strength training lowers sports injury risk.”
+                </p>
+                <cite>Lauersen et al., Br J Sports Med 2014.</cite>
+              </li>
+              <li class="card" style="--r: 3deg">
+                <span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span
+                ><span class="lbl">Rule E-06</span>
+                <h3>No single run jumps too far</h3>
+                <p>“A study of 5,205 runners found injury risk rises when one run goes past this limit.”</p>
+                <cite>Frandsen et al., Br J Sports Med 2025.</cite>
+              </li>
+              <li class="card" style="--r: -2.5deg">
+                <span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span
+                ><span class="lbl">Rule E-05</span>
+                <h3>Volume rises 10% at most</h3>
+                <p>“Research has not shown that the 10% figure itself prevents injury.”</p>
+                <cite>Buist et al., Am J Sports Med 2008. Randomised trial.</cite>
+              </li>
+              <li class="card" style="--r: 1.5deg">
+                <span class="stamp" data-g="D"><b>D</b><i>Coaching practice</i></span
+                ><span class="lbl">Rule E-07</span>
+                <h3>Every few weeks is lighter</h3>
+                <p>“Volume drops so your body absorbs the training of the previous weeks.”</p>
+                <cite>No study found that tests it.</cite>
+              </li>
+            </ul>
+            <p class="note note--5" aria-hidden="true">
+              <span>we show the weak ones too.</span>
+              <svg viewBox="0 0 90 60"><path d="M10 50C22 30 44 16 76 12M76 12l-15-4M76 12l-9 14" /></svg>
+            </p>
+          </div>
         </div>
       </section>
 
@@ -522,7 +519,7 @@
             <p class="p">Back up to a file, restore on a new phone, or delete everything.</p>
             <p class="note note--6" aria-hidden="true">
               <span>go on, try to drag it out.</span>
-              <svg viewBox="0 0 90 60"><path d="M8 12c24 0 50 10 68 34M76 46l-16-5M76 46l2-17" /></svg>
+              <svg viewBox="0 0 90 60"><path d="M6 36C26 20 52 18 82 28M82 28l-16-9M82 28l-12 12" /></svg>
             </p>
           </div>
           <div class="vault">

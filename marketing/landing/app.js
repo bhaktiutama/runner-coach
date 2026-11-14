@@ -44,6 +44,8 @@ const TXT = {
     cards: 'Six rules from the plan engine, with their evidence grade',
     easyVerdict: 'Mostly easy. That is how a base is built.',
     fastVerdict: 'Quick. Save some for race day.',
+    lighter: 'lighter week. on purpose.',
+    again: 'again.',
     weekLabel: 'WEEK',
     weeks: 'WEEKS',
     raceDay: 'RACE DAY · MAR 15',
@@ -81,6 +83,8 @@ const TXT = {
     cards: 'Enam aturan dari mesin plan, dengan tingkat buktinya',
     easyVerdict: 'Kebanyakan easy. Begitulah fondasi dibangun.',
     fastVerdict: 'Cepat. Simpan tenaga untuk hari race.',
+    lighter: 'minggu ringan. sengaja.',
+    again: 'lagi.',
     weekLabel: 'MINGGU',
     weeks: 'MINGGU',
     raceDay: 'HARI RACE · 15 MAR',
@@ -485,8 +489,7 @@ if (G) {
       pin = $('.pin', sec),
       sky = $('.sky', sec),
       sun = $('.sun', sec),
-      flash = $('.flash', sec),
-      note = $('.note--2', sec);
+      flash = $('.flash', sec);
     const out = {
       week: $('[data-plan="week"]'),
       phase: $('[data-plan="phase"]'),
@@ -516,7 +519,14 @@ if (G) {
           phase: PHASE,
           colors: PHC,
           names: PHN,
-          text: { week: TXT.weekLabel, weeks: TXT.weeks, raceDay: TXT.raceDay },
+          text: {
+            week: TXT.weekLabel,
+            weeks: TXT.weeks,
+            raceDay: TXT.raceDay,
+            lighter: TXT.lighter,
+            again: TXT.again,
+          },
+          lighter: [3, 7, 11, 15],
           keepClear: () => keep || (measureKeep(), keep),
         });
       } catch {
@@ -545,15 +555,6 @@ if (G) {
       out.km.textContent = KM[w - 1];
       out.left.textContent = w >= 19 ? TXT.raceWeek : TXT.raceIn(19 - w);
       html.classList.toggle('is-day', p > 0.6 && p < 0.999);
-      // coach note 2: the lighter weeks (4, 8, 12, 16), while their pillar is 40 to 90 units ahead
-      const ahead = [3, 7, 11, 15].some((i) => {
-        const d = st.z - -(i * 26 + 13);
-        return d > 40 && d < 90;
-      });
-      if (ahead !== note._on) {
-        note._on = ahead;
-        G.to(note, { autoAlpha: ahead ? 1 : 0, duration: 0.3 });
-      }
       if (p > 0.985 && !flashed) {
         flashed = true;
         G.fromTo(
@@ -1124,7 +1125,6 @@ if (G) {
     initFinish();
     initScrollReveals();
     initPlan().then(() => ScrollTrigger.refresh());
-    G.set($('.note--2'), { visibility: 'visible', autoAlpha: 0 });
     G.ticker.add(tickRun);
     ScrollTrigger.refresh();
     addEventListener('load', () => ScrollTrigger.refresh());
