@@ -49,8 +49,9 @@
   <tr><td>Email address and sign-in provider (email code, Google or Apple)</td><td>To create your account and sign you in</td><td>Supabase (authentication)</td><td>Until you delete your account</td></tr>
   <tr><td>Your account ID</td><td>To check whether your account has Premium access</td><td>Supabase (Edge Function, nothing is stored)</td><td>Not stored</td></tr>
   <tr><td>Anonymous usage events, such as "plan created" or "workout completed", with technical properties like workout type and platform, linked to a random ID created on your device</td><td>To understand which features work and improve the app</td><td>PostHog (EU servers)</td><td>Up to 12 months</td></tr>
+  <tr><td>Anonymous error reports: the type of error, the file and line in the app where it happened, app version and platform. Numbers, emails, IDs and links are removed from error messages before sending</td><td>To find and fix crashes</td><td>Sentry</td><td>Up to 90 days</td></tr>
 </table></div>
-<p>Usage events never include your email, name, account ID, health answers, effort ratings, distances, pace or the content of your plan. IP addresses are not stored with these events. You can turn usage events off at any time in Profile &gt; Data &amp; privacy.</p>
+<p>Usage events never include your email, name, account ID, health answers, effort ratings, distances, pace or the content of your plan. IP addresses are not stored with these events. Usage events and error reports are off until you turn them on, either on the plan preview when you create your account or in Profile &gt; Data &amp; privacy, and you can turn them off again there at any time.</p>
 <p>When you sign in with Google or Apple, that provider shares your email address with us under its own privacy policy. We do not receive your password.</p>
 <p>If you buy Premium in a future version, the payment is handled by Google Play or the App Store. We receive only the status of your subscription, never your payment details.</p>
 

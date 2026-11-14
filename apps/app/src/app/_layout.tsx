@@ -9,18 +9,47 @@ import {
   PlusJakartaSans_700Bold,
   PlusJakartaSans_800ExtraBold,
 } from '@expo-google-fonts/plus-jakarta-sans';
-import { color, setColorScheme } from '@run-coach/ui';
+import { color, PrimaryButton, setColorScheme, space, Text } from '@run-coach/ui';
+import Constants from 'expo-constants';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DbGate } from '@/components/DbGate';
 import { LocaleGate } from '@/components/LocaleGate';
 import { watchAuth } from '@/data/hooks';
+import { t } from '@/i18n/t';
+import { installCrashHandlers, reportError, type CrashMeta } from '@/lib/crash';
+
+const crashMeta: CrashMeta = {
+  release: `runco@${Constants.expoConfig?.version ?? 'unknown'}`,
+  platform: process.env.EXPO_OS ?? 'unknown',
+  environment: __DEV__ ? 'development' : 'production',
+};
+installCrashHandlers(crashMeta);
+
+/** Error saat render di layar mana pun: laporkan (bila opt-in) dan tawarkan coba lagi. */
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
+  useEffect(() => reportError(error, 'boundary', crashMeta), [error]);
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        padding: space[6],
+        gap: space[4],
+        backgroundColor: color.bg,
+      }}
+    >
+      <Text variant="bodyStrong">{t('common.error')}</Text>
+      <PrimaryButton label={t('common.retry')} testID="error-retry" onPress={() => void retry()} />
+    </View>
+  );
+}
 
 void SplashScreen.preventAutoHideAsync();
 

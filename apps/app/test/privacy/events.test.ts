@@ -26,6 +26,10 @@ describe('adjustment_proposed', () => {
     vi.stubGlobal('fetch', fetchMock);
     const a = await import('../../src/lib/analytics');
     a.setAnonymousId('anon');
+    // Opt-in (TRD 6 aturan 5): tanpa persetujuan tidak ada yang dikirim.
+    a.track('plan_paused');
+    expect(fetchMock).not.toHaveBeenCalled();
+    a.setAnalyticsEnabled(true);
     a.trackProposalsShown('2026-11-02', ['E-10', 'E-11']);
     a.trackProposalsShown('2026-11-02', ['E-10']);
     a.trackProposalsShown('2026-11-09', ['E-10']);

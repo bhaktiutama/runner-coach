@@ -209,6 +209,14 @@ ALTER TABLE profile ADD COLUMN today_card TEXT NOT NULL DEFAULT 'countdown' CHEC
 ALTER TABLE profile ADD COLUMN spot_icons INTEGER NOT NULL DEFAULT 1 CHECK (spot_icons IN (0, 1));
 `,
   },
+  {
+    // Analitik jadi opt-in (TRD 6 aturan 5, keputusan 2026-11-14, UU PDP + GDPR): mati sampai pengguna
+    // menyalakannya di 1.8 atau 4.5. Berlaku juga untuk instalasi lama (belum ada rilis publik).
+    version: 10,
+    sql: `
+UPDATE app_meta SET analytics_opt_in = 0;
+`,
+  },
 ];
 
 export const LATEST_SCHEMA_VERSION = migrations[migrations.length - 1]!.version;

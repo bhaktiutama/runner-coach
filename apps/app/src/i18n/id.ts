@@ -554,8 +554,11 @@ export const id = {
     'Simpan file backup di Files, Google Drive atau email milikmu. Tanpa backup, data hilang jika HP hilang atau app dihapus.',
   'privacy.backupDone': 'File backup dibuat.',
   'privacy.backupFailed': 'Gagal membuat file backup.',
+  'preview.analytics': 'Bantu kami memperbaiki RunCo',
+  'preview.analyticsSub':
+    'Kirim data pemakaian dan laporan error anonim: tanpa nama, email atau data latihan. Bisa diubah di Privasi.',
   'privacy.analytics': 'Kirim data pemakaian anonim',
-  'privacy.analyticsSub': 'Tanpa nama, email atau data latihan',
+  'privacy.analyticsSub': 'Termasuk laporan error. Tanpa nama, email atau data latihan',
   'privacy.backupReminder': 'Pengingat backup 30 hari',
   'privacy.account': 'Akun',
   'privacy.accountNone': 'Belum masuk',

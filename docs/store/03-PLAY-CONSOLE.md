@@ -26,17 +26,17 @@ Jawaban berdasarkan perilaku build saat ini (TRD 6, 08 bagian 7). Jika perilaku 
 | Does your app collect or share required user data types? | Yes |
 | Is all user data encrypted in transit? | Yes |
 | Do you provide a way for users to request data deletion? | Yes. URL: `https://bhaktiutama.com/runco/privacy#delete` |
-| Shared with third parties? | No untuk semua tipe (Supabase dan PostHog = service provider, bukan "sharing" menurut definisi Play) |
+| Shared with third parties? | No untuk semua tipe (Supabase, PostHog dan Sentry = service provider, bukan "sharing" menurut definisi Play) |
 
 | Tipe data | Collected | Required / optional | Tujuan | Ephemeral |
 |---|---|---|---|---|
 | Personal info > Email address | Yes | Required | Account management | No |
 | Personal info > User IDs | Yes | Required | Account management, App functionality (cek Premium) | No |
-| App activity > App interactions | Yes | Optional (sakelar 4.5) | Analytics | No |
+| App activity > App interactions | Yes | Optional (opt-in, sakelar 1.8 dan 4.5; mati bawaan) | Analytics | No |
 | Device or other IDs | Yes (ID acak per instalasi) | Optional | Analytics | No |
 | Health and fitness | **No**: hanya disimpan dan diproses di perangkat, tidak dikirim | | | |
 | Location, Financial info, Messages, Photos, Files, Contacts, Calendar | No | | | |
-| App info and performance > Crash logs | No (Sentry belum terpasang). Ubah ke Yes saat Sentry aktif | | | |
+| App info and performance > Crash logs | Yes (Sentry, sejak 2026-11-14) | Optional (opt-in, sakelar yang sama) | Analytics, App functionality | No |
 
 Catatan: event analitik baru terkirim setelah `EXPO_PUBLIC_POSTHOG_KEY` diisi (build 2), tetapi dideklarasikan sekarang agar tidak perlu revisi.
 

@@ -3,6 +3,7 @@ import { useActivePlan, useMeta, useProfile, useToday, useWorkouts } from '@/dat
 import { addDays } from '@run-coach/training-engine';
 import { t } from '@/i18n/t';
 import { setAnalyticsEnabled, setAnonymousId } from '@/lib/analytics';
+import { setCrashReportingEnabled } from '@/lib/crash';
 import { sessionStorage } from '@/auth/storage';
 import { newId } from '@/lib/id';
 import { planReminders } from '@/lib/reminders';
@@ -18,7 +19,9 @@ export function AppEffects() {
   const ws = useWorkouts(plan.data?.id, today, addDays(today, 7));
 
   useEffect(() => {
-    setAnalyticsEnabled(meta.data?.analytics_opt_in !== 0);
+    // Satu pilihan untuk keduanya: data pemakaian anonim dan laporan error anonim (TRD 6 aturan 5).
+    setAnalyticsEnabled(meta.data?.analytics_opt_in === 1);
+    setCrashReportingEnabled(meta.data?.analytics_opt_in === 1);
   }, [meta.data?.analytics_opt_in]);
 
   useEffect(() => {

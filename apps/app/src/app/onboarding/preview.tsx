@@ -13,6 +13,7 @@ import {
   size,
   space,
   typography,
+  Switch,
   Text,
   type PhaseKey,
   themed,
@@ -29,7 +30,8 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'reac
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CreateAccountButtons, useAuthFlow } from '@/components/AuthPanel';
 import { RationaleList } from '@/components/RationaleList';
-import { useActivePlan, useCompleteSignIn, useSession } from '@/data/hooks';
+import { useActivePlan, useCompleteSignIn, useMeta, usePrivacyActions, useSession } from '@/data/hooks';
+import { setAnalyticsEnabled } from '@/lib/analytics';
 import { planParams } from '@/data/rows';
 import { HelpHint } from '@/components/HelpHint';
 import { t } from '@/i18n/t';
@@ -44,6 +46,8 @@ export default function Preview() {
   const plan = useActivePlan();
   const complete = useCompleteSignIn();
   const session = useSession();
+  const meta = useMeta();
+  const privacy = usePrivacyActions();
   const insets = useSafeAreaInsets();
   const [whyOpen, setWhyOpen] = useState(true);
   const spot = useSpot();
@@ -178,6 +182,24 @@ export default function Preview() {
                 {session.data ? t('preview.signedInNote') : t('preview.accountNote')}
               </Text>
             </View>
+            {/* Analitik opt-in (TRD 6 aturan 5): mati sampai dinyalakan di sini atau di 4.5. */}
+            <View style={styles.consent}>
+              <View style={styles.flex}>
+                <Text variant="bodyStrong">{t('preview.analytics')}</Text>
+                <Text variant="note" color="textMuted">
+                  {t('preview.analyticsSub')}
+                </Text>
+              </View>
+              <Switch
+                label={t('preview.analytics')}
+                value={meta.data?.analytics_opt_in === 1}
+                testID="preview-analytics"
+                onChange={(v) => {
+                  setAnalyticsEnabled(v);
+                  privacy.setAnalytics.mutate(v);
+                }}
+              />
+            </View>
             {session.data ? (
               <PrimaryButton
                 label={t('preview.start')}
@@ -277,5 +299,6 @@ const styles = themed(() =>
       gap: space[2] + space[1] / 2,
     },
     note: { flexDirection: 'row', gap: space[2], alignItems: 'flex-start' },
+    consent: { flexDirection: 'row', gap: space[3], alignItems: 'center' },
   }),
 );

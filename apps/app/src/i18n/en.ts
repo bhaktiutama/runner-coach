@@ -557,8 +557,11 @@ export const en: Record<MessageKey, string> = {
     'Keep the backup file in Files, Google Drive or your own email. Without a backup, data is lost if the phone is lost or the app is deleted.',
   'privacy.backupDone': 'Backup file created.',
   'privacy.backupFailed': "Couldn't create the backup file.",
+  'preview.analytics': 'Help us improve RunCo',
+  'preview.analyticsSub':
+    'Send anonymous usage data and error reports: no name, email or training data. You can change this in Privacy.',
   'privacy.analytics': 'Send anonymous usage data',
-  'privacy.analyticsSub': 'No name, email or training data',
+  'privacy.analyticsSub': 'Includes error reports. No name, email or training data',
   'privacy.backupReminder': '30-day backup reminder',
   'privacy.account': 'Account',
   'privacy.accountNone': 'Not signed in',

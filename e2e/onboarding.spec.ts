@@ -27,6 +27,8 @@ async function onboard(page: Page) {
   await expect(page.getByTestId('screen-preview')).toBeVisible();
   await expect(page.getByText('PLAN KAMU SIAP')).toBeVisible();
   await expect(page.getByText('Kenapa plan ini?')).toBeVisible();
+  // Analitik opt-in (TRD 6 aturan 5): sakelar ada dan mati bawaan.
+  await expect(page.getByTestId('preview-analytics')).toHaveAttribute('aria-checked', 'false');
 }
 
 test('onboarding sampai Hari ini, data bertahan setelah reload, tanpa request keluar', async ({ page }) => {

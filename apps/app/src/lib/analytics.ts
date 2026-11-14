@@ -30,7 +30,8 @@ export function sanitize(name: EventName, props: Props): Props {
   return Object.fromEntries(Object.entries(props).filter(([k]) => allowed.has(k)));
 }
 
-let enabled = true;
+// Opt-in (TRD 6 aturan 5): mati sampai pilihan tersimpan terbaca dan bernilai 1.
+let enabled = false;
 let distinctId: string | null = null;
 
 export function setAnalyticsEnabled(on: boolean) {
