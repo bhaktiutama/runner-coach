@@ -140,7 +140,7 @@ export default function LogRun() {
           <Pressable
             testID="log-for-plan"
             accessibilityRole="radio"
-            accessibilityState={{ selected: forPlan }}
+            aria-selected={forPlan}
             onPress={() => setForPlan(true)}
             style={[styles.option, styles.optionTall, forPlan ? styles.optionOn : styles.optionOff]}
           >
@@ -157,7 +157,7 @@ export default function LogRun() {
         <Pressable
           testID="log-extra"
           accessibilityRole="radio"
-          accessibilityState={{ selected: !linked }}
+          aria-selected={!linked}
           onPress={() => setForPlan(false)}
           style={[styles.option, !linked ? styles.optionOn : styles.optionOff]}
         >

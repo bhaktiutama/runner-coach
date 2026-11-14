@@ -91,7 +91,7 @@ function RpeButton({ n, on, onPress }: { n: number; on: boolean; onPress: () => 
     <AnimatedPressable
       testID={`rpe-${n}`}
       accessibilityRole="radio"
-      accessibilityState={{ selected: on }}
+      aria-selected={on}
       accessibilityLabel={String(n)}
       onPress={onPress}
       style={[

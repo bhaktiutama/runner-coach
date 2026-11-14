@@ -128,7 +128,7 @@ export function Switch({
   return (
     <Pressable
       accessibilityRole="switch"
-      accessibilityState={{ checked: value }}
+      aria-checked={value}
       accessibilityLabel={label}
       onPress={() => onChange(!value)}
       testID={testID}

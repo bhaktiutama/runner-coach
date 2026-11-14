@@ -108,7 +108,7 @@ export default function MoveSheet() {
                 key={d}
                 testID={`move-${d}`}
                 accessibilityRole="radio"
-                accessibilityState={{ selected: on }}
+                aria-selected={on}
                 accessibilityLabel={weekdayLongName(weekday(d))}
                 onPress={() => setTarget(d)}
                 style={[styles.day, on ? styles.dayOn : styles.dayOff]}

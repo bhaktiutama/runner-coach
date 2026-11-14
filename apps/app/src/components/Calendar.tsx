@@ -72,7 +72,8 @@ export function Calendar({ year, month0, selected, minDate, onSelect, onMonth }:
                   key={d}
                   testID={`day-${d}`}
                   accessibilityRole="button"
-                  accessibilityState={{ selected: on, disabled }}
+                  aria-selected={on}
+                  aria-disabled={disabled}
                   accessibilityLabel={d}
                   disabled={disabled}
                   onPress={() => onSelect(d)}

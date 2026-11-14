@@ -65,7 +65,7 @@ export function ChoiceCard({
   return (
     <Pressable
       accessibilityRole="radio"
-      accessibilityState={{ selected }}
+      aria-selected={selected}
       accessibilityLabel={title}
       onPress={onPress}
       testID={testID}
@@ -149,7 +149,8 @@ export function Chip({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ selected: !!selected, disabled: !!disabled }}
+      aria-selected={!!selected}
+      aria-disabled={!!disabled}
       accessibilityLabel={label}
       onPress={onPress}
       disabled={disabled}
@@ -199,7 +200,8 @@ export function SegmentedControl<T extends string>({
           <Pressable
             key={it.value}
             accessibilityRole="tab"
-            accessibilityState={{ selected: on, disabled: !!it.disabled }}
+            aria-selected={on}
+            aria-disabled={!!it.disabled}
             accessibilityLabel={it.label}
             disabled={it.disabled}
             onPress={() => onChange(it.value)}
@@ -417,7 +419,7 @@ export function Checkbox({
   return (
     <Pressable
       accessibilityRole="checkbox"
-      accessibilityState={{ checked }}
+      aria-checked={checked}
       accessibilityLabel={label}
       onPress={() => onChange(!checked)}
       testID={testID}

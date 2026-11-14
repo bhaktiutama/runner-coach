@@ -64,7 +64,8 @@ export function PrimaryButton({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!off, busy: !!loading }}
+      aria-disabled={!!off}
+      aria-busy={!!loading}
       accessibilityLabel={label}
       disabled={off}
       {...rest}
@@ -99,7 +100,7 @@ export function SecondaryButton({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
+      aria-disabled={!!disabled}
       accessibilityLabel={label}
       disabled={disabled}
       {...rest}

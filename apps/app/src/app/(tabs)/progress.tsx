@@ -129,7 +129,7 @@ export default function ProgressTab() {
               <Pressable
                 key={r}
                 accessibilityRole="tab"
-                accessibilityState={{ selected: on }}
+                aria-selected={on}
                 onPress={() => (setRange(r), setShowAll(false))}
                 style={[styles.segItem, on && styles.segOn]}
               >

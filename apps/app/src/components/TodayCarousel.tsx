@@ -78,7 +78,7 @@ export function TodayCarousel({ today, plan, planTargetM, phase }: Props) {
     return (
       <Pressable
         accessibilityRole="button"
-        accessibilityState={{ selected: on }}
+        aria-selected={on}
         accessibilityLabel={on ? t('today.card.default') : t('today.card.makeDefault')}
         disabled={on}
         onPress={() => update.mutate({ today_card: c })}
@@ -315,7 +315,7 @@ export function TodayCarousel({ today, plan, planTargetM, phase }: Props) {
           <Pressable
             key={c}
             accessibilityRole="tab"
-            accessibilityState={{ selected: i === page }}
+            aria-selected={i === page}
             accessibilityLabel={t(`today.card.name.${c}` as MessageKey)}
             onPress={() => {
               ref.current?.scrollTo({ x: i * pageW, animated: true });

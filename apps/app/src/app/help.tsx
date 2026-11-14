@@ -92,7 +92,7 @@ function TopicCard({
     <View style={flat ? styles.row : styles.focus}>
       <Pressable
         accessibilityRole="button"
-        accessibilityState={{ expanded: open }}
+        aria-expanded={open}
         onPress={() => setOpen(!open)}
         testID={`help-${topic.id}`}
         style={styles.head}

@@ -76,7 +76,7 @@ export default function DaysStep() {
               key={i}
               testID={`wd-${i}`}
               accessibilityRole="checkbox"
-              accessibilityState={{ checked: on }}
+              aria-checked={on}
               accessibilityLabel={weekdayShortName(i)}
               onPress={() => toggle(i as Weekday)}
               style={[styles.day, on ? styles.dayOn : styles.dayOff]}

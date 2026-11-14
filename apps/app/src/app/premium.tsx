@@ -100,7 +100,7 @@ export default function Premium() {
             <Pressable
               key={p}
               accessibilityRole="radio"
-              accessibilityState={{ selected: plan === p }}
+              aria-selected={plan === p}
               onPress={() => setPlan(p)}
               testID={`price-${p}`}
               style={[styles.price, plan === p && styles.priceOn]}

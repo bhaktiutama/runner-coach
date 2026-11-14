@@ -136,7 +136,7 @@ export default function Welcome() {
                 onPress={() => goTo(i)}
                 accessibilityRole="button"
                 accessibilityLabel={t('welcome.goTo', { n: i + 1, total })}
-                accessibilityState={{ selected: i === page }}
+                aria-selected={i === page}
                 hitSlop={space[3]}
                 testID={`welcome-dot-${i + 1}`}
               >

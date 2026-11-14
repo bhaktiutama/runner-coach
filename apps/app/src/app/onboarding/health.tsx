@@ -51,7 +51,7 @@ export default function HealthStep() {
                   <Pressable
                     key={String(yes)}
                     accessibilityRole="radio"
-                    accessibilityState={{ selected: on }}
+                    aria-selected={on}
                     accessibilityLabel={yes ? t('common.yes') : t('common.no')}
                     onPress={() => setAnswers((a) => a.map((x, j) => (j === i ? yes : x)))}
                     style={[styles.opt, yes ? styles.optYes : styles.optNo, on && styles.optOn]}
