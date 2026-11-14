@@ -104,3 +104,26 @@ Domain and hosting at `bhaktiutama.com/runco`, absolute `og:image` and `canonica
 - The server privacy test could not run here (session token rejected with 401); its last CI pass was run 49 on 2026-11-08.
 - The 2-to-3-week estimate for M7 assumes owner items arrive within the first week; the 14-day Play closed test alone sets the minimum.
 - Reading was targeted (privacy, auth, entitlement, DB, timer, landing), not line by line for all 27,902 lines.
+
+## 6. Follow-up (2026-11-14, same day, owner: "perbaiki semua plan")
+
+| Item | Status | Where |
+|---|---|---|
+| A1 CI red | Fixed and merged; CI run 54 on `development` green (lint, typecheck, test, E2E, privacy) | `ae9a47a` |
+| Branch protection on `development` | Owner: GitHub > Settings > Branches, require the `check` job | Not possible from this session |
+| A2 Paywall during beta | Off in the EAS `production` profile (`EXPO_PUBLIC_PAYWALL=0`); web preview and `preview` builds keep it on for review | `apps/app/eas.json`, `08-MONETIZATION.md` |
+| A3 Privacy policy | Ships with the landing at `/privacy/` (symlink to `docs/store/privacy/`); goes live when the owner hosts the landing on `bhaktiutama.com/runco` | `marketing/landing/README.md` |
+| A4 Email login | Owner items B2, B5, SMTP | Unchanged |
+| A5 Crash reports | `apps/app/src/lib/crash.ts`: Sentry envelope over HTTP, no SDK, scrubbed (no digits, emails, ids, URLs, device paths), global handler + root `ErrorBoundary`; tests in `test/privacy/crash.test.ts`. Needs `EXPO_PUBLIC_SENTRY_DSN` (B7) | TRD 6 |
+| A6 Consent | Opt-in: one switch on 1.8 and 4.5 covers usage data and error reports, off by default; migration v10 turns it off everywhere; privacy policy and Play Data safety answers updated | TRD 6 rule 5, `03-APP-FLOW.md` 1.8, `03-PLAY-CONSOLE.md` |
+| A7 Date-dependent E2E | `motion.spec.ts` pins the clock; 0 tests skip on rest days now | `e2e/motion.spec.ts` |
+| A8 Timer screen | Split with no behaviour change: screen 485 lines, `components/timer/{views,controls,styles}` | `apps/app/src/components/timer/` |
+| New: web accessibility | `react-native-web` ignores `accessibilityState`, so 22 switches, tabs and choices exposed no checked/selected/disabled state on web. Replaced with `aria-*` props (work on native too). Found by the new 1.8 E2E check | `packages/ui`, `apps/app` |
+| New: static server | `scripts/serve-web.mjs` refused every file when given a relative root (`.`); now resolves the root. Found by the landing smoke test | `scripts/serve-web.mjs` |
+| L2 og:image, canonical | Absolute URLs on `https://bhaktiutama.com/runco/`, `og:url`, `hreflang` EN/ID | `marketing/landing/index.html` |
+| L4 Dead bug | Removed from the landing list (14 exercises, as the app schedules) | same |
+| L5 GSAP licence | Confirmed: GSAP Standard License (Webflow) allows commercial use of GSAP and all plugins at no charge, no attribution; headers kept | `marketing/landing/README.md` |
+| L5 Indonesian version | `/id/`, built from the English page by `build-id.py`; JS texts in one `TXT` table; rule sentences and grade names from the app's own catalogue | `marketing/landing/id/` |
+| L6 Landing in CI | `pnpm test:landing`: EN + ID at 390 and 1440 px, reduced motion, no console errors, no external requests | `.github/workflows/ci.yml` |
+
+Still open, needs the owner: B2, B5 + SMTP, B7 keys, B11 Apple account, Play Console account and closed-test testers, hosting `bhaktiutama.com/runco`, App Store id, coach and physio review (B4, B9), illustration licence (B10), native read of the Indonesian landing and app copy (B8), and an explicit command before any native build. Version `0.9.0` is bumped only at the first beta build (`docs/DEV-SESSION.md` 3c).
