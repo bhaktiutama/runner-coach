@@ -27,6 +27,7 @@ jobs:
           EXPO_PUBLIC_E2E: '1'
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
+      - run: pnpm test:landing
       - name: Privacy (schema public kosong)
         if: ${{ env.SUPABASE_ACCESS_TOKEN != '' }}
         env:

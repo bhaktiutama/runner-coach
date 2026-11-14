@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { onboard, restoreSeed } from './helpers';
 
+// Selasa tetap, seperti workout.spec: tanpa ini test melewati diri sendiri pada hari istirahat.
+test.beforeEach(async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-11-03T07:00:00') });
+});
+
 // UI/UX bagian 11 (G1): cincin Progres benar-benar bergerak saat layar terlihat.
 test('cincin Progres beranimasi saat layar terlihat', async ({ page }) => {
   await onboard(page);

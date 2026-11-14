@@ -2,9 +2,9 @@
 // (dibutuhkan expo-sqlite di web) dan fallback SPA. Dipakai Playwright dan cek manual.
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { extname, join, normalize, resolve } from 'node:path';
 
-const root = process.argv[2] ?? 'apps/app/dist';
+const root = resolve(process.argv[2] ?? 'apps/app/dist');
 const port = Number(process.env.PORT ?? 8081);
 const types = {
   '.html': 'text/html',
@@ -16,6 +16,11 @@ const types = {
   '.ico': 'image/x-icon',
   '.ttf': 'font/ttf',
   '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.woff2': 'font/woff2',
+  '.mp4': 'video/mp4',
+  '.mp3': 'audio/mpeg',
 };
 
 createServer(async (req, res) => {
