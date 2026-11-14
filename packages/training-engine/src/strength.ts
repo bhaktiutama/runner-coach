@@ -244,7 +244,7 @@ export function replaceRetiredExercises(steps: Step[]): Step[] {
   for (const s of steps) {
     const to = s.kind === 'exercise' ? RETIRED_EXERCISES[s.exercise_id] : undefined;
     if (!to) out.push(s);
-    else if (!present.has(to)) out.push({ ...s, exercise_id: to });
+    else if (s.kind === 'exercise' && !present.has(to)) out.push({ ...s, exercise_id: to });
   }
   return out.length > 0 ? out : steps;
 }

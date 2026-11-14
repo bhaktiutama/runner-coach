@@ -1,349 +1,650 @@
 <!doctype html>
 <html lang="en" data-ground="dawn">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RunCo: running coach app for 5K to marathon</title>
-<meta name="description" content="RunCo builds a training plan back from your race date and coaches every run with a guided timer. The full running plan is free.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="RunCo: running coach app for 5K to marathon">
-<meta property="og:description" content="A plan built back from race day, a timer that coaches every interval, and data that stays on your phone.">
-<meta property="og:image" content="assets/img/start-poster.webp">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#161B1F">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<!-- <link rel="canonical" href="https://bhaktiutama.com/runco/"> -->
-<link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css">
-<noscript><style>main{visibility:visible!important}.load,.hud,.week,.result{display:none!important}[data-reveal]{visibility:visible!important}</style></noscript>
-</head>
-<body>
-<!-- Build prompt: docs/store/06-LANDING-V2-PROMPT.md. The page is a 5K: scroll is running.
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>RunCo: running coach app for 5K to marathon</title>
+    <meta
+      name="description"
+      content="RunCo builds a training plan back from your race date and coaches every run with a guided timer. The full running plan is free."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="RunCo: running coach app for 5K to marathon" />
+    <meta
+      property="og:description"
+      content="A plan built back from race day, a timer that coaches every interval, and data that stays on your phone."
+    />
+    <meta property="og:image" content="assets/img/start-poster.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#161B1F" />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <!-- <link rel="canonical" href="https://bhaktiutama.com/runco/"> -->
+    <link
+      rel="preload"
+      href="assets/fonts/bricolage-grotesque-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/plus-jakarta-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <noscript
+      ><style>
+        main {
+          visibility: visible !important;
+        }
+        .load,
+        .hud,
+        .week,
+        .result {
+          display: none !important;
+        }
+        [data-reveal] {
+          visibility: visible !important;
+        }
+      </style></noscript
+    >
+  </head>
+  <body>
+    <!-- Build prompt: docs/store/06-LANDING-V2-PROMPT.md. The page is a 5K: scroll is running.
      STORE LINKS: the STORE object at the top of app.js. -->
 
-<a class="skip" href="#plan">Skip to the plan</a>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".04 .9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></svg>
+    <a class="skip" href="#plan">Skip to the plan</a>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <filter id="rough">
+        <feTurbulence type="fractalNoise" baseFrequency=".04 .9" numOctaves="2" seed="3" />
+        <feDisplacementMap in="SourceGraphic" scale="3" />
+      </filter>
+    </svg>
 
-<!-- 5.1 load: three, two, one -->
-<div class="load" aria-hidden="true">
-  <div class="load__band"><i>1</i></div><div class="load__band"><i>2</i></div><div class="load__band"><i>3</i></div>
-  <div class="load__band"><i>4</i></div><div class="load__band"><i>5</i></div><div class="load__band"><i>6</i></div>
-  <b class="load__num"></b>
-</div>
-
-<!-- 5.2 nav -->
-<header class="nav">
-  <a class="nav__logo" href="#start" aria-label="RunCo, back to the start">
-    <img class="on-dark" src="assets/img/logo-horizontal-dark.svg" alt="RunCo" width="159" height="64">
-    <img class="on-light" src="assets/img/logo-horizontal.svg" alt="" width="159" height="64">
-  </a>
-  <a class="nav__cta" href="#finish"><span><b>Get the app</b><b aria-hidden="true">Get the app</b></span></a>
-</header>
-
-<!-- 5.3 the run HUD -->
-<nav class="hud" aria-label="Course">
-  <div class="hud__stat"><span class="lbl">Dist</span><b><span data-hud="dist">0.00</span> km</b></div>
-  <div class="hud__course">
-    <div class="hud__track"><div class="hud__fill" data-hud="fill"></div><i class="hud__dot" data-hud="dot"></i></div>
-    <div class="hud__ticks">
-      <button type="button" data-to="#plan">Plan</button>
-      <button type="button" data-to="#timer">Timer</button>
-      <button type="button" data-to="#strength">Strength</button>
-      <button type="button" data-to="#evidence">Evidence</button>
-      <button type="button" data-to="#privacy">Privacy</button>
-      <button type="button" data-to="#finish" class="hud__flag" aria-label="Finish"></button>
+    <!-- 5.1 load: three, two, one -->
+    <div class="load" aria-hidden="true">
+      <div class="load__band"><i>1</i></div>
+      <div class="load__band"><i>2</i></div>
+      <div class="load__band"><i>3</i></div>
+      <div class="load__band"><i>4</i></div>
+      <div class="load__band"><i>5</i></div>
+      <div class="load__band"><i>6</i></div>
+      <b class="load__num"></b>
     </div>
-  </div>
-  <div class="hud__stat hud__stat--pace"><span class="lbl">Scroll pace</span><b><span data-hud="pace">--:--</span> /km</b><em class="chip" data-hud="zone" data-zone="standing">Standing</em></div>
-  <div class="hud__stat hud__stat--time"><span class="lbl">Time</span><b data-hud="time">00:00</b></div>
-  <button class="hud__sound" type="button" aria-pressed="false" aria-label="Timer sounds">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path class="w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
-  </button>
-</nav>
-<p class="coachpop note" aria-hidden="true">Easy. About 80% of your running should be.</p>
 
-<main>
-  <!-- 5.4 START -->
-  <section class="start" id="start" data-ground="dawn" aria-labelledby="start-h">
-    <video class="start__bg" muted loop playsinline preload="auto" poster="assets/img/start-poster.webp" aria-hidden="true"></video>
-    <div class="start__shade" aria-hidden="true"></div>
+    <!-- 5.2 nav -->
+    <header class="nav">
+      <a class="nav__logo" href="#start" aria-label="RunCo, back to the start">
+        <img class="on-dark" src="assets/img/logo-horizontal-dark.svg" alt="RunCo" width="159" height="64" />
+        <img class="on-light" src="assets/img/logo-horizontal.svg" alt="" width="159" height="64" />
+      </a>
+      <a class="nav__cta" href="#finish"
+        ><span><b>Get the app</b><b aria-hidden="true">Get the app</b></span></a
+      >
+    </header>
 
-    <div class="week" aria-hidden="true">
-      <div class="week__in">
-        <div class="week__art"><img src="assets/img/track-back.webp" alt="" width="527" height="506"></div>
-        <div class="week__body">
-          <div class="week__row"><em class="chip" data-zone="tempo">Tempo</em><span class="week__day">Wednesday</span></div>
-          <div class="week__num"><b>44</b><span>min</span></div>
-          <p class="week__line">14 min at 6:46 /km</p>
+    <!-- 5.3 the run HUD -->
+    <nav class="hud" aria-label="Course">
+      <div class="hud__stat">
+        <span class="lbl">Dist</span><b><span data-hud="dist">0.00</span> km</b>
+      </div>
+      <div class="hud__course">
+        <div class="hud__track">
+          <div class="hud__fill" data-hud="fill"></div>
+          <i class="hud__dot" data-hud="dot"></i>
+        </div>
+        <div class="hud__ticks">
+          <button type="button" data-to="#plan">Plan</button>
+          <button type="button" data-to="#timer">Timer</button>
+          <button type="button" data-to="#strength">Strength</button>
+          <button type="button" data-to="#evidence">Evidence</button>
+          <button type="button" data-to="#privacy">Privacy</button>
+          <button type="button" data-to="#finish" class="hud__flag" aria-label="Finish"></button>
         </div>
       </div>
-    </div>
-
-    <div class="start__content">
-      <p class="lbl" data-reveal="line">RunCo · running coach app · 5K to marathon</p>
-      <h1 class="h h--hero" id="start-h" data-reveal="chars">
-        <span class="ln">Know exactly what</span>
-        <span class="ln">to <span class="mk">run today</span></span>
-      </h1>
-      <p class="p" data-reveal="line">RunCo builds your plan back from race day, then coaches every run. The full running plan is free.</p>
-      <div class="stores" data-reveal="el">
-        <a class="store" data-store="play" href="https://play.google.com/store/apps/details?id=com.bhaktiutama.runco"><small>Get it on</small><b>Google Play</b></a>
-        <a class="store" data-store="ios" href="https://apps.apple.com/app/runco"><small>Download on the</small><b>App Store</b></a>
+      <div class="hud__stat hud__stat--pace">
+        <span class="lbl">Scroll pace</span><b><span data-hud="pace">--:--</span> /km</b
+        ><em class="chip" data-hud="zone" data-zone="standing">Standing</em>
       </div>
-      <div class="daysrow"><ol class="days" aria-hidden="true"><li>M</li><li>T</li><li class="on">W</li><li>T</li><li>F</li><li>S</li><li>S</li></ol>
-        <p class="note note--1" aria-hidden="true"><svg viewBox="0 0 70 40"><path d="M64 22C46 14 26 14 8 22M8 22l13-9M8 22l15 6"/></svg><span>move your mouse: it changes every day</span></p></div>
-    </div>
-
-    <button class="pause" type="button" aria-pressed="false" aria-label="Pause the background film">
-      <svg viewBox="0 0 14 14" aria-hidden="true"><path class="pa" d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z"/><path class="pl" d="M3 1.5v11l9-5.5z"/></svg>
-    </button>
-
-    <div class="startline" aria-hidden="true">
-      <div class="startline__lanes"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div>
-      <p class="startline__hint">Scroll to run <span>↓</span></p>
-      <b>START</b>
-      <div class="startline__band"></div>
-    </div>
-  </section>
-
-  <!-- 5.6 KM 1: the plan -->
-  <section class="km km1" id="plan" data-ground="sky" data-km="1" aria-labelledby="plan-h">
-    <div class="pin">
-      <div class="sky" aria-hidden="true"><i class="sun"></i></div>
-      <canvas class="world" aria-hidden="true"></canvas>
-      <div class="labels" aria-hidden="true"></div>
-      <div class="flash" aria-hidden="true"></div>
-
-      <div class="board"><span class="lbl">KM</span><b>1</b><span class="lbl">The plan</span></div>
-
-      <dl class="readout">
-        <div><dt class="lbl">Week</dt><dd><b data-plan="week">1</b> of 19</dd></div>
-        <div><dt class="lbl">Phase</dt><dd data-plan="phase">Base</dd></div>
-        <div><dt class="lbl">This week</dt><dd><b data-plan="km">15</b> km</dd></div>
-        <div class="readout__left"><dt class="vh">Countdown</dt><dd data-plan="left">Race in 18 weeks</dd></div>
-      </dl>
-
-      <div class="km__copy">
-        <h2 class="h" id="plan-h" data-reveal-scroll="chars">
-          <span class="ln">A real plan, built</span>
-          <span class="ln">around <span class="mk">race day</span></span>
-        </h2>
-        <p class="p">Give RunCo your race date and training days. It builds every week back from that date. Each flag on this road is one week: the taller the flag, the more you run.</p>
-      </div>
-
-      <p class="note note--2" aria-hidden="true"><span>lighter week. on purpose.</span>
-        <svg viewBox="0 0 90 60"><path d="M82 8C60 10 34 20 14 46M14 46l4-17M14 46l17-3"/></svg></p>
-
-      <!-- the same 19 weeks as a chart: shown without WebGL2 and under reduced motion -->
-      <div class="chart" role="img" aria-label="Weekly volume of a 19-week half marathon plan in km: Base 15, 16, 17, 13, 18, 20, 21; Build 17, 23, 25, 27, 21, 29, 32; Peak 35, 27, 38; Taper 26, 19. Race day March 15."></div>
-    </div>
-  </section>
-
-  <!-- 5.7 KM 2: the timer -->
-  <section class="km km2" id="timer" data-ground="track" data-km="2" aria-labelledby="timer-h">
-    <div class="pin">
-      <div class="lanes" aria-hidden="true"></div>
-      <div class="board"><span class="lbl">KM</span><b>2</b><span class="lbl">The timer</span></div>
-
-      <div class="km__copy km__copy--mid">
-        <h2 class="h" id="timer-h" data-reveal-scroll="chars">
-          <span class="ln">Every interval,</span>
-          <span class="ln"><span class="mk">coached</span></span>
-        </h2>
-        <p class="p">Target pace on screen. Sound cues and haptics for work, recovery, halfway and the final 3-2-1.</p>
-        <button class="btn" type="button" data-321>Try the 3-2-1</button>
-      </div>
-
-      <div class="ring" role="img" aria-label="The RunCo timer: a 44 minute tempo workout in four segments, counting down as you scroll">
-        <div class="ring__waves" aria-hidden="true"><i></i><i></i><i></i></div>
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <circle class="ring__bg" cx="50" cy="50" r="45"/>
-          <circle class="ring__arc" cx="50" cy="50" r="45" transform="rotate(-90 50 50)"/>
-          <g class="ring__head"><circle cx="50" cy="5" r="3.4"/></g>
+      <div class="hud__stat hud__stat--time"><span class="lbl">Time</span><b data-hud="time">00:00</b></div>
+      <button class="hud__sound" type="button" aria-pressed="false" aria-label="Timer sounds">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z" />
+          <path class="w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
+          <path class="x" d="M16 9.5l5 5M21 9.5l-5 5" />
         </svg>
-        <div class="ring__in">
-          <em class="chip" data-timer="chip" data-zone="easy">Easy</em>
-          <b class="ring__time" data-timer="time">10:00</b>
-          <span class="ring__left" data-timer="left">left of 10:00</span>
+      </button>
+    </nav>
+    <p class="coachpop note" aria-hidden="true">Easy. About 80% of your running should be.</p>
+
+    <main>
+      <!-- 5.4 START -->
+      <section class="start" id="start" data-ground="dawn" aria-labelledby="start-h">
+        <video
+          class="start__bg"
+          muted
+          loop
+          playsinline
+          preload="auto"
+          poster="assets/img/start-poster.webp"
+          aria-hidden="true"
+        ></video>
+        <div class="start__shade" aria-hidden="true"></div>
+
+        <div class="week" aria-hidden="true">
+          <div class="week__in">
+            <div class="week__art">
+              <img src="assets/img/track-back.webp" alt="" width="527" height="506" />
+            </div>
+            <div class="week__body">
+              <div class="week__row">
+                <em class="chip" data-zone="tempo">Tempo</em><span class="week__day">Wednesday</span>
+              </div>
+              <div class="week__num"><b>44</b><span>min</span></div>
+              <p class="week__line">14 min at 6:46 /km</p>
+            </div>
+          </div>
         </div>
-        <p class="ring__seg" data-timer="line">Warm-up · easy pace</p>
-        <div class="ring__bar" aria-hidden="true"><i data-s="0"></i><i data-s="1" class="hatch"></i><i data-s="2"></i><i data-s="3"></i></div>
-      </div>
 
-      <figure class="phone phone--timer">
-        <img src="assets/img/screen-timer.webp" alt="The RunCo timer screen: tempo, 13:52 left of 14:00, target pace 6:46 per km" width="520" height="1125" loading="lazy">
-      </figure>
-      <p class="note note--3" aria-hidden="true"><span>this is the real screen</span>
-        <svg viewBox="0 0 90 60"><path d="M8 10c22 2 48 12 66 38M74 48l-16-5M74 48l1-17"/></svg></p>
-    </div>
-  </section>
-
-  <!-- 5.8 KM 3: strength. The demo plays on its own clock: scroll only brings you here. -->
-  <section class="km km3" id="strength" data-ground="forest" data-km="3" aria-labelledby="strength-h">
-    <div class="km3__grid">
-      <div class="km3__text">
-        <div class="board board--flow"><span class="lbl">KM</span><b>3</b><span class="lbl">Strength</span></div>
-        <div class="km__copy km__copy--flow">
-          <h2 class="h" id="strength-h" data-reveal-scroll="chars">
-            <span class="ln">Strength built</span>
-            <span class="ln">for <span class="mk">runners</span></span>
-          </h2>
-          <p class="p">Optional bodyweight legs and core, 15 to 30 minutes, placed around your hard running days. Free for the first two weeks of every plan.</p>
+        <div class="start__content">
+          <p class="lbl" data-reveal="line">RunCo · running coach app · 5K to marathon</p>
+          <h1 class="h h--hero" id="start-h" data-reveal="chars">
+            <span class="ln">Know exactly what</span>
+            <span class="ln">to <span class="mk">run today</span></span>
+          </h1>
+          <p class="p" data-reveal="line">
+            RunCo builds your plan back from race day, then coaches every run. The full running plan is free.
+          </p>
+          <div class="stores" data-reveal="el">
+            <a
+              class="store"
+              data-store="play"
+              href="https://play.google.com/store/apps/details?id=com.bhaktiutama.runco"
+              ><small>Get it on</small><b>Google Play</b></a
+            >
+            <a class="store" data-store="ios" href="https://apps.apple.com/app/runco"
+              ><small>Download on the</small><b>App Store</b></a
+            >
+          </div>
+          <div class="daysrow">
+            <ol class="days" aria-hidden="true">
+              <li>M</li>
+              <li>T</li>
+              <li class="on">W</li>
+              <li>T</li>
+              <li>F</li>
+              <li>S</li>
+              <li>S</li>
+            </ol>
+            <p class="note note--1" aria-hidden="true">
+              <svg viewBox="0 0 70 40"><path d="M64 22C46 14 26 14 8 22M8 22l13-9M8 22l15 6" /></svg
+              ><span>move your mouse: it changes every day</span>
+            </p>
+          </div>
         </div>
-        <ul class="exlist" aria-label="The 15 exercises: pick one to see its form">
-          <li><button type="button" data-ex="squat" data-n="16" aria-pressed="true">Squat</button></li>
-          <li><button type="button" data-ex="split_squat" data-n="16" aria-pressed="false">Split squat</button></li>
-          <li><button type="button" data-ex="reverse_lunge" data-n="16" aria-pressed="false">Reverse lunge</button></li>
-          <li><button type="button" data-ex="bulgarian_split_squat" data-n="16" aria-pressed="false">Bulgarian split squat</button></li>
-          <li><button type="button" data-ex="step_up" data-n="15" aria-pressed="false">Step-up</button></li>
-          <li><button type="button" data-ex="single_leg_deadlift" data-n="16" aria-pressed="false">Single-leg deadlift</button></li>
-          <li><button type="button" data-ex="glute_bridge" data-n="16" aria-pressed="false">Glute bridge</button></li>
-          <li><button type="button" data-ex="single_leg_glute_bridge" data-n="16" aria-pressed="false">Single-leg glute bridge</button></li>
-          <li><button type="button" data-ex="calf_raise" data-n="16" aria-pressed="false">Calf raise</button></li>
-          <li><button type="button" data-ex="single_leg_calf_raise" data-n="16" aria-pressed="false">Single-leg calf raise</button></li>
-          <li><button type="button" data-ex="plank" data-n="16" aria-pressed="false">Plank</button></li>
-          <li><button type="button" data-ex="side_plank" data-n="16" aria-pressed="false">Side plank</button></li>
-          <li><button type="button" data-ex="copenhagen_plank" data-n="16" aria-pressed="false">Copenhagen plank</button></li>
-          <li><button type="button" data-ex="dead_bug" data-n="15" aria-pressed="false">Dead bug</button></li>
-          <li><button type="button" data-ex="bird_dog" data-n="15" aria-pressed="false">Bird dog</button></li>
-        </ul>
-      </div>
 
-      <div class="flip">
-        <canvas class="flip__cv" width="840" height="840" role="img" aria-label="Squat, shown as a looping animation of the movement"></canvas>
-        <button class="pause flip__pause" type="button" aria-pressed="false" aria-label="Pause the exercise animation">
-          <svg viewBox="0 0 14 14" aria-hidden="true"><path class="pa" d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z"/><path class="pl" d="M3 1.5v11l9-5.5z"/></svg>
+        <button class="pause" type="button" aria-pressed="false" aria-label="Pause the background film">
+          <svg viewBox="0 0 14 14" aria-hidden="true">
+            <path class="pa" d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z" />
+            <path class="pl" d="M3 1.5v11l9-5.5z" />
+          </svg>
         </button>
-        <p class="flip__name" data-flip="name">Squat</p>
-        <p class="flip__count">Set <b data-flip="set">1</b> of 2 · <b data-flip="rep">0</b>/10</p>
-        <em class="chip flip__done" data-zone="done">Set done</em>
-      </div>
-    </div>
-    <div class="lib" aria-hidden="true"><div class="lib__row"></div></div>
-  </section>
 
-  <!-- 5.9 KM 4: evidence -->
-  <section class="km km4" id="evidence" data-ground="paper" data-km="4" aria-labelledby="evidence-h">
-    <div class="km4__head">
-      <div class="board board--flow"><span class="lbl">KM</span><b>4</b><span class="lbl">Evidence</span></div>
-      <div class="km__copy km__copy--flow">
-        <h2 class="h" id="evidence-h" data-reveal-scroll="chars">
-          <span class="ln">Every workout</span>
-          <span class="ln"><span class="mk">explains itself</span></span>
-        </h2>
-        <p class="p">Open any workout and RunCo says why it is there. Every rule carries a grade, from strong evidence down to plain coaching practice.</p>
-      </div>
-      <figure class="phone phone--why">
-        <img src="assets/img/screen-detail-why.webp" alt="A workout's steps and the Why this workout card with a Limited evidence label and a link to sources" width="520" height="1125" loading="lazy">
-      </figure>
-    </div>
-    <div class="cards">
-      <ul class="cards__row">
-        <li class="card" style="--r:-3deg"><span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span><span class="lbl">Rule E-09</span><h3>Most of your running is easy</h3><p>“A large easy share builds endurance with a low recovery cost.”</p><cite>Silva Oliveira et al., Sports Med 2024. Meta-analysis of 17 studies.</cite></li>
-        <li class="card" style="--r:2deg"><span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span><span class="lbl">Rule E-11</span><h3>Taper: less volume, same intensity</h3><p>“A meta-analysis found this pattern helps race performance the most.”</p><cite>Bosquet et al., Med Sci Sports Exerc 2007. 27 studies.</cite></li>
-        <li class="card" style="--r:-1.5deg"><span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span><span class="lbl">Rule E-23</span><h3>Strength, twice a week</h3><p>“A meta-analysis of 25 randomised trials found strength training lowers sports injury risk.”</p><cite>Lauersen et al., Br J Sports Med 2014.</cite></li>
-        <li class="card" style="--r:3deg"><span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span><span class="lbl">Rule E-06</span><h3>No single run jumps too far</h3><p>“A study of 5,205 runners found injury risk rises when one run goes past this limit.”</p><cite>Frandsen et al., Br J Sports Med 2025.</cite></li>
-        <li class="card" style="--r:-2.5deg"><span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span><span class="lbl">Rule E-05</span><h3>Volume rises 10% at most</h3><p>“Research has not shown that the 10% figure itself prevents injury.”</p><cite>Buist et al., Am J Sports Med 2008. Randomised trial.</cite></li>
-        <li class="card" style="--r:1.5deg"><span class="stamp" data-g="D"><b>D</b><i>Coaching practice</i></span><span class="lbl">Rule E-07</span><h3>Every few weeks is lighter</h3><p>“Volume drops so your body absorbs the training of the previous weeks.”</p><cite>No study found that tests it.</cite></li>
-      </ul>
-      <p class="note note--5" aria-hidden="true"><span>we show the weak ones too.</span>
-        <svg viewBox="0 0 90 60"><path d="M10 50C22 30 44 16 76 12M76 12l-15-4M76 12l-9 14"/></svg></p>
-    </div>
-  </section>
-
-  <!-- 5.10 KM 5: privacy -->
-  <section class="km km5" id="privacy" data-ground="night" data-km="5" aria-labelledby="privacy-h">
-    <div class="board board--flow"><span class="lbl">KM</span><b>5</b><span class="lbl">Privacy</span></div>
-    <div class="km5__grid">
-      <div class="km__copy km__copy--flow">
-        <h2 class="h" id="privacy-h" data-reveal-scroll="chars">
-          <span class="ln">Your data stays</span>
-          <span class="ln"><span class="mk">on your phone</span></span>
-        </h2>
-        <p class="p">Back up to a file, restore on a new phone, or delete everything.</p>
-        <p class="note note--6" aria-hidden="true"><span>go on, try to drag it out.</span>
-          <svg viewBox="0 0 90 60"><path d="M8 12c24 0 50 10 68 34M76 46l-16-5M76 46l2-17"/></svg></p>
-      </div>
-      <div class="vault">
-        <div class="vault__phone">
-          <img src="assets/img/night.webp" alt="" width="640" height="800" loading="lazy">
-          <button class="datachip" type="button" style="--r:-5deg">Your plan</button>
-          <button class="datachip" type="button" style="--r:4deg">Your runs</button>
-          <button class="datachip" type="button" style="--r:-3deg">Effort ratings</button>
-          <button class="datachip" type="button" style="--r:6deg">Notes</button>
-          <button class="datachip" type="button" style="--r:-6deg">Health answers</button>
+        <div class="startline" aria-hidden="true">
+          <div class="startline__lanes"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div>
+          <p class="startline__hint">Scroll to run <span>↓</span></p>
+          <b>START</b>
+          <div class="startline__band"></div>
         </div>
-        <p class="vault__count" aria-live="polite">Tried to leave: <b data-vault="tries">0</b> · Left the phone: <b>0</b></p>
-      </div>
-      <div class="server">
-        <div class="server__box"><span class="lbl">Our server</span><span class="datachip datachip--fixed">Sign-in email</span></div>
-        <p>Anonymous usage stats are optional, and carry no name, email or training data.</p>
-      </div>
-    </div>
-  </section>
+      </section>
 
-  <!-- 5.11 FINISH -->
-  <section class="finish" id="finish" data-ground="finish" aria-labelledby="finish-h">
-    <div class="finish__flood" aria-hidden="true"></div>
-    <canvas class="confetti" aria-hidden="true"></canvas>
-    <div class="tape" aria-hidden="true"><div class="tape__l"><span>FINISH · FINISH · FINISH · FINISH · FINISH · FINISH ·</span></div><div class="tape__r"><span>FINISH · FINISH · FINISH · FINISH · FINISH · FINISH ·</span></div></div>
+      <!-- 5.6 KM 1: the plan -->
+      <section class="km km1" id="plan" data-ground="sky" data-km="1" aria-labelledby="plan-h">
+        <div class="pin">
+          <div class="sky" aria-hidden="true"><i class="sun"></i></div>
+          <canvas class="world" aria-hidden="true"></canvas>
+          <div class="labels" aria-hidden="true"></div>
+          <div class="flash" aria-hidden="true"></div>
 
-    <div class="finish__grid">
-      <article class="result" aria-label="Your run through this page">
-        <div class="result__art"><img src="assets/img/finish.webp" alt="" width="720" height="900" loading="lazy"></div>
-        <div class="result__body">
-          <h3>Page 5K · finished</h3>
-          <dl>
-            <div><dt>Time</dt><dd data-res="time">00:00</dd></div>
-            <div><dt>Scroll pace, average</dt><dd><span data-res="pace">--:--</span> /km</dd></div>
-            <div><dt>Thumb distance</dt><dd><span data-res="thumb">0.0</span> m</dd></div>
+          <div class="board"><span class="lbl">KM</span><b>1</b><span class="lbl">The plan</span></div>
+
+          <dl class="readout">
+            <div>
+              <dt class="lbl">Week</dt>
+              <dd><b data-plan="week">1</b> of 19</dd>
+            </div>
+            <div>
+              <dt class="lbl">Phase</dt>
+              <dd data-plan="phase">Base</dd>
+            </div>
+            <div>
+              <dt class="lbl">This week</dt>
+              <dd><b data-plan="km">15</b> km</dd>
+            </div>
+            <div class="readout__left">
+              <dt class="vh">Countdown</dt>
+              <dd data-plan="left">Race in 18 weeks</dd>
+            </div>
           </dl>
-          <ol class="result__splits" data-res="splits"></ol>
-          <div class="result__zones" data-res="zones"><i data-zone="easy"></i><i data-zone="tempo"></i><i data-zone="interval"></i></div>
-          <p class="result__verdict" data-res="verdict">Mostly easy. That is how a base is built.</p>
-          <p class="result__fine">Counted in this tab only. Nothing was sent anywhere.</p>
+
+          <div class="km__copy">
+            <h2 class="h" id="plan-h" data-reveal-scroll="chars">
+              <span class="ln">A real plan, built</span>
+              <span class="ln">around <span class="mk">race day</span></span>
+            </h2>
+            <p class="p">
+              Give RunCo your race date and training days. It builds every week back from that date. Each flag
+              on this road is one week: the taller the flag, the more you run.
+            </p>
+          </div>
+
+          <p class="note note--2" aria-hidden="true">
+            <span>lighter week. on purpose.</span>
+            <svg viewBox="0 0 90 60"><path d="M82 8C60 10 34 20 14 46M14 46l4-17M14 46l17-3" /></svg>
+          </p>
+
+          <!-- the same 19 weeks as a chart: shown without WebGL2 and under reduced motion -->
+          <div
+            class="chart"
+            role="img"
+            aria-label="Weekly volume of a 19-week half marathon plan in km: Base 15, 16, 17, 13, 18, 20, 21; Build 17, 23, 25, 27, 21, 29, 32; Peak 35, 27, 38; Taper 26, 19. Race day March 15."
+          ></div>
         </div>
-      </article>
+      </section>
 
-      <div class="finish__copy">
-        <h2 class="h" id="finish-h" data-reveal-scroll="chars">
-          <span class="ln">Now run the</span>
-          <span class="ln"><span class="mk mk--ink">real</span> one.</span>
-        </h2>
-        <p class="p">Your thumb did five kilometres of page. RunCo plans the real ones, free, from day one to race day.</p>
-        <div class="stores stores--xl">
-          <a class="store" data-store="play" href="https://play.google.com/store/apps/details?id=com.bhaktiutama.runco"><small>Get it on</small><b>Google Play</b></a>
-          <a class="store" data-store="ios" href="https://apps.apple.com/app/runco"><small>Download on the</small><b>App Store</b></a>
+      <!-- 5.7 KM 2: the timer -->
+      <section class="km km2" id="timer" data-ground="track" data-km="2" aria-labelledby="timer-h">
+        <div class="pin">
+          <div class="lanes" aria-hidden="true"></div>
+          <div class="board"><span class="lbl">KM</span><b>2</b><span class="lbl">The timer</span></div>
+
+          <div class="km__copy km__copy--mid">
+            <h2 class="h" id="timer-h" data-reveal-scroll="chars">
+              <span class="ln">Every interval,</span>
+              <span class="ln"><span class="mk">coached</span></span>
+            </h2>
+            <p class="p">
+              Target pace on screen. Sound cues and haptics for work, recovery, halfway and the final 3-2-1.
+            </p>
+            <button class="btn" type="button" data-321>Try the 3-2-1</button>
+          </div>
+
+          <div
+            class="ring"
+            role="img"
+            aria-label="The RunCo timer: a 44 minute tempo workout in four segments, counting down as you scroll"
+          >
+            <div class="ring__waves" aria-hidden="true"><i></i><i></i><i></i></div>
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="ring__bg" cx="50" cy="50" r="45" />
+              <circle class="ring__arc" cx="50" cy="50" r="45" transform="rotate(-90 50 50)" />
+              <g class="ring__head"><circle cx="50" cy="5" r="3.4" /></g>
+            </svg>
+            <div class="ring__in">
+              <em class="chip" data-timer="chip" data-zone="easy">Easy</em>
+              <b class="ring__time" data-timer="time">10:00</b>
+              <span class="ring__left" data-timer="left">left of 10:00</span>
+            </div>
+            <p class="ring__seg" data-timer="line">Warm-up · easy pace</p>
+            <div class="ring__bar" aria-hidden="true">
+              <i data-s="0"></i><i data-s="1" class="hatch"></i><i data-s="2"></i><i data-s="3"></i>
+            </div>
+          </div>
+
+          <figure class="phone phone--timer">
+            <img
+              src="assets/img/screen-timer.webp"
+              alt="The RunCo timer screen: tempo, 13:52 left of 14:00, target pace 6:46 per km"
+              width="520"
+              height="1125"
+              loading="lazy"
+            />
+          </figure>
+          <p class="note note--3" aria-hidden="true">
+            <span>this is the real screen</span>
+            <svg viewBox="0 0 90 60"><path d="M8 10c22 2 48 12 66 38M74 48l-16-5M74 48l1-17" /></svg>
+          </p>
         </div>
-        <button class="link" type="button" data-again>Run it again</button>
+      </section>
 
-        <div class="faq">
-          <details><summary>Is RunCo free?</summary><p>Running is free: the full plan, the timer and your progress. Strength sessions are free for two weeks of a plan, then part of Premium, which is not on sale yet.</p></details>
-          <details><summary>Which races does RunCo plan for?</summary><p>5K, 10K, half marathon and marathon, or fitness with no race.</p></details>
-          <details><summary>Does RunCo need an account?</summary><p>Yes. It holds your sign-in email and nothing about your training.</p></details>
-          <details><summary>Is RunCo medical advice?</summary><p>No. RunCo is a training guide, not a medical device. Check with a doctor before a new program.</p></details>
+      <!-- 5.8 KM 3: strength. The demo plays on its own clock: scroll only brings you here. -->
+      <section class="km km3" id="strength" data-ground="forest" data-km="3" aria-labelledby="strength-h">
+        <div class="km3__grid">
+          <div class="km3__text">
+            <div class="board board--flow">
+              <span class="lbl">KM</span><b>3</b><span class="lbl">Strength</span>
+            </div>
+            <div class="km__copy km__copy--flow">
+              <h2 class="h" id="strength-h" data-reveal-scroll="chars">
+                <span class="ln">Strength built</span>
+                <span class="ln">for <span class="mk">runners</span></span>
+              </h2>
+              <p class="p">
+                Optional bodyweight legs and core, 15 to 30 minutes, placed around your hard running days.
+                Free for the first two weeks of every plan.
+              </p>
+            </div>
+            <ul class="exlist" aria-label="The 15 exercises: pick one to see its form">
+              <li><button type="button" data-ex="squat" data-n="16" aria-pressed="true">Squat</button></li>
+              <li>
+                <button type="button" data-ex="split_squat" data-n="16" aria-pressed="false">
+                  Split squat
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="reverse_lunge" data-n="16" aria-pressed="false">
+                  Reverse lunge
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="bulgarian_split_squat" data-n="16" aria-pressed="false">
+                  Bulgarian split squat
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="step_up" data-n="15" aria-pressed="false">Step-up</button>
+              </li>
+              <li>
+                <button type="button" data-ex="single_leg_deadlift" data-n="16" aria-pressed="false">
+                  Single-leg deadlift
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="glute_bridge" data-n="16" aria-pressed="false">
+                  Glute bridge
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="single_leg_glute_bridge" data-n="16" aria-pressed="false">
+                  Single-leg glute bridge
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="calf_raise" data-n="16" aria-pressed="false">
+                  Calf raise
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="single_leg_calf_raise" data-n="16" aria-pressed="false">
+                  Single-leg calf raise
+                </button>
+              </li>
+              <li><button type="button" data-ex="plank" data-n="16" aria-pressed="false">Plank</button></li>
+              <li>
+                <button type="button" data-ex="side_plank" data-n="16" aria-pressed="false">
+                  Side plank
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="copenhagen_plank" data-n="16" aria-pressed="false">
+                  Copenhagen plank
+                </button>
+              </li>
+              <li>
+                <button type="button" data-ex="dead_bug" data-n="15" aria-pressed="false">Dead bug</button>
+              </li>
+              <li>
+                <button type="button" data-ex="bird_dog" data-n="15" aria-pressed="false">Bird dog</button>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flip">
+            <canvas
+              class="flip__cv"
+              width="840"
+              height="840"
+              role="img"
+              aria-label="Squat, shown as a looping animation of the movement"
+            ></canvas>
+            <button
+              class="pause flip__pause"
+              type="button"
+              aria-pressed="false"
+              aria-label="Pause the exercise animation"
+            >
+              <svg viewBox="0 0 14 14" aria-hidden="true">
+                <path class="pa" d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z" />
+                <path class="pl" d="M3 1.5v11l9-5.5z" />
+              </svg>
+            </button>
+            <p class="flip__name" data-flip="name">Squat</p>
+            <p class="flip__count">Set <b data-flip="set">1</b> of 2 · <b data-flip="rep">0</b>/10</p>
+            <em class="chip flip__done" data-zone="done">Set done</em>
+          </div>
         </div>
-        <p class="note note--7" aria-hidden="true"><span>see you at 6 am.</span></p>
-      </div>
-    </div>
-  </section>
-</main>
+        <div class="lib" aria-hidden="true"><div class="lib__row"></div></div>
+      </section>
 
-<footer class="foot">
-  <img src="assets/img/logo-horizontal-dark.svg" alt="RunCo" width="159" height="64" loading="lazy">
-  <p>A running coach for your next race.</p>
-  <nav aria-label="Legal"><a href="https://bhaktiutama.com/runco/privacy">Privacy policy</a><a href="mailto:privacy@bhaktiutama.com">Email</a></nav>
-  <p class="foot__fine">RunCo is a training guide, not a medical device. © 2026 Bhakti Utama</p>
-</footer>
+      <!-- 5.9 KM 4: evidence -->
+      <section class="km km4" id="evidence" data-ground="paper" data-km="4" aria-labelledby="evidence-h">
+        <div class="km4__head">
+          <div class="board board--flow">
+            <span class="lbl">KM</span><b>4</b><span class="lbl">Evidence</span>
+          </div>
+          <div class="km__copy km__copy--flow">
+            <h2 class="h" id="evidence-h" data-reveal-scroll="chars">
+              <span class="ln">Every workout</span>
+              <span class="ln"><span class="mk">explains itself</span></span>
+            </h2>
+            <p class="p">
+              Open any workout and RunCo says why it is there. Every rule carries a grade, from strong
+              evidence down to plain coaching practice.
+            </p>
+          </div>
+          <figure class="phone phone--why">
+            <img
+              src="assets/img/screen-detail-why.webp"
+              alt="A workout's steps and the Why this workout card with a Limited evidence label and a link to sources"
+              width="520"
+              height="1125"
+              loading="lazy"
+            />
+          </figure>
+        </div>
+        <div class="cards">
+          <ul class="cards__row">
+            <li class="card" style="--r: -3deg">
+              <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
+              ><span class="lbl">Rule E-09</span>
+              <h3>Most of your running is easy</h3>
+              <p>“A large easy share builds endurance with a low recovery cost.”</p>
+              <cite>Silva Oliveira et al., Sports Med 2024. Meta-analysis of 17 studies.</cite>
+            </li>
+            <li class="card" style="--r: 2deg">
+              <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
+              ><span class="lbl">Rule E-11</span>
+              <h3>Taper: less volume, same intensity</h3>
+              <p>“A meta-analysis found this pattern helps race performance the most.”</p>
+              <cite>Bosquet et al., Med Sci Sports Exerc 2007. 27 studies.</cite>
+            </li>
+            <li class="card" style="--r: -1.5deg">
+              <span class="stamp" data-g="A"><b>A</b><i>Strong evidence</i></span
+              ><span class="lbl">Rule E-23</span>
+              <h3>Strength, twice a week</h3>
+              <p>
+                “A meta-analysis of 25 randomised trials found strength training lowers sports injury risk.”
+              </p>
+              <cite>Lauersen et al., Br J Sports Med 2014.</cite>
+            </li>
+            <li class="card" style="--r: 3deg">
+              <span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span
+              ><span class="lbl">Rule E-06</span>
+              <h3>No single run jumps too far</h3>
+              <p>“A study of 5,205 runners found injury risk rises when one run goes past this limit.”</p>
+              <cite>Frandsen et al., Br J Sports Med 2025.</cite>
+            </li>
+            <li class="card" style="--r: -2.5deg">
+              <span class="stamp" data-g="B"><b>B</b><i>Moderate evidence</i></span
+              ><span class="lbl">Rule E-05</span>
+              <h3>Volume rises 10% at most</h3>
+              <p>“Research has not shown that the 10% figure itself prevents injury.”</p>
+              <cite>Buist et al., Am J Sports Med 2008. Randomised trial.</cite>
+            </li>
+            <li class="card" style="--r: 1.5deg">
+              <span class="stamp" data-g="D"><b>D</b><i>Coaching practice</i></span
+              ><span class="lbl">Rule E-07</span>
+              <h3>Every few weeks is lighter</h3>
+              <p>“Volume drops so your body absorbs the training of the previous weeks.”</p>
+              <cite>No study found that tests it.</cite>
+            </li>
+          </ul>
+          <p class="note note--5" aria-hidden="true">
+            <span>we show the weak ones too.</span>
+            <svg viewBox="0 0 90 60"><path d="M10 50C22 30 44 16 76 12M76 12l-15-4M76 12l-9 14" /></svg>
+          </p>
+        </div>
+      </section>
 
-<script src="assets/vendor/gsap.min.js"></script>
-<script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="assets/vendor/SplitText.min.js"></script>
-<script src="assets/vendor/DrawSVGPlugin.min.js"></script>
-<script src="assets/vendor/InertiaPlugin.min.js"></script>
-<script src="assets/vendor/Draggable.min.js"></script>
-<script src="assets/vendor/lenis.min.js"></script>
-<script type="module" src="app.js"></script>
-</body>
+      <!-- 5.10 KM 5: privacy -->
+      <section class="km km5" id="privacy" data-ground="night" data-km="5" aria-labelledby="privacy-h">
+        <div class="board board--flow">
+          <span class="lbl">KM</span><b>5</b><span class="lbl">Privacy</span>
+        </div>
+        <div class="km5__grid">
+          <div class="km__copy km__copy--flow">
+            <h2 class="h" id="privacy-h" data-reveal-scroll="chars">
+              <span class="ln">Your data stays</span>
+              <span class="ln"><span class="mk">on your phone</span></span>
+            </h2>
+            <p class="p">Back up to a file, restore on a new phone, or delete everything.</p>
+            <p class="note note--6" aria-hidden="true">
+              <span>go on, try to drag it out.</span>
+              <svg viewBox="0 0 90 60"><path d="M8 12c24 0 50 10 68 34M76 46l-16-5M76 46l2-17" /></svg>
+            </p>
+          </div>
+          <div class="vault">
+            <div class="vault__phone">
+              <img src="assets/img/night.webp" alt="" width="640" height="800" loading="lazy" />
+              <button class="datachip" type="button" style="--r: -5deg">Your plan</button>
+              <button class="datachip" type="button" style="--r: 4deg">Your runs</button>
+              <button class="datachip" type="button" style="--r: -3deg">Effort ratings</button>
+              <button class="datachip" type="button" style="--r: 6deg">Notes</button>
+              <button class="datachip" type="button" style="--r: -6deg">Health answers</button>
+            </div>
+            <p class="vault__count" aria-live="polite">
+              Tried to leave: <b data-vault="tries">0</b> · Left the phone: <b>0</b>
+            </p>
+          </div>
+          <div class="server">
+            <div class="server__box">
+              <span class="lbl">Our server</span><span class="datachip datachip--fixed">Sign-in email</span>
+            </div>
+            <p>Anonymous usage stats are optional, and carry no name, email or training data.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5.11 FINISH -->
+      <section class="finish" id="finish" data-ground="finish" aria-labelledby="finish-h">
+        <div class="finish__flood" aria-hidden="true"></div>
+        <canvas class="confetti" aria-hidden="true"></canvas>
+        <div class="tape" aria-hidden="true">
+          <div class="tape__l"><span>FINISH · FINISH · FINISH · FINISH · FINISH · FINISH ·</span></div>
+          <div class="tape__r"><span>FINISH · FINISH · FINISH · FINISH · FINISH · FINISH ·</span></div>
+        </div>
+
+        <div class="finish__grid">
+          <article class="result" aria-label="Your run through this page">
+            <div class="result__art">
+              <img src="assets/img/finish.webp" alt="" width="720" height="900" loading="lazy" />
+            </div>
+            <div class="result__body">
+              <h3>Page 5K · finished</h3>
+              <dl>
+                <div>
+                  <dt>Time</dt>
+                  <dd data-res="time">00:00</dd>
+                </div>
+                <div>
+                  <dt>Scroll pace, average</dt>
+                  <dd><span data-res="pace">--:--</span> /km</dd>
+                </div>
+                <div>
+                  <dt>Thumb distance</dt>
+                  <dd><span data-res="thumb">0.0</span> m</dd>
+                </div>
+              </dl>
+              <ol class="result__splits" data-res="splits"></ol>
+              <div class="result__zones" data-res="zones">
+                <i data-zone="easy"></i><i data-zone="tempo"></i><i data-zone="interval"></i>
+              </div>
+              <p class="result__verdict" data-res="verdict">Mostly easy. That is how a base is built.</p>
+              <p class="result__fine">Counted in this tab only. Nothing was sent anywhere.</p>
+            </div>
+          </article>
+
+          <div class="finish__copy">
+            <h2 class="h" id="finish-h" data-reveal-scroll="chars">
+              <span class="ln">Now run the</span>
+              <span class="ln"><span class="mk mk--ink">real</span> one.</span>
+            </h2>
+            <p class="p">
+              Your thumb did five kilometres of page. RunCo plans the real ones, free, from day one to race
+              day.
+            </p>
+            <div class="stores stores--xl">
+              <a
+                class="store"
+                data-store="play"
+                href="https://play.google.com/store/apps/details?id=com.bhaktiutama.runco"
+                ><small>Get it on</small><b>Google Play</b></a
+              >
+              <a class="store" data-store="ios" href="https://apps.apple.com/app/runco"
+                ><small>Download on the</small><b>App Store</b></a
+              >
+            </div>
+            <button class="link" type="button" data-again>Run it again</button>
+
+            <div class="faq">
+              <details>
+                <summary>Is RunCo free?</summary>
+                <p>
+                  Running is free: the full plan, the timer and your progress. Strength sessions are free for
+                  two weeks of a plan, then part of Premium, which is not on sale yet.
+                </p>
+              </details>
+              <details>
+                <summary>Which races does RunCo plan for?</summary>
+                <p>5K, 10K, half marathon and marathon, or fitness with no race.</p>
+              </details>
+              <details>
+                <summary>Does RunCo need an account?</summary>
+                <p>Yes. It holds your sign-in email and nothing about your training.</p>
+              </details>
+              <details>
+                <summary>Is RunCo medical advice?</summary>
+                <p>
+                  No. RunCo is a training guide, not a medical device. Check with a doctor before a new
+                  program.
+                </p>
+              </details>
+            </div>
+            <p class="note note--7" aria-hidden="true"><span>see you at 6 am.</span></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <img src="assets/img/logo-horizontal-dark.svg" alt="RunCo" width="159" height="64" loading="lazy" />
+      <p>A running coach for your next race.</p>
+      <nav aria-label="Legal">
+        <a href="https://bhaktiutama.com/runco/privacy">Privacy policy</a
+        ><a href="mailto:privacy@bhaktiutama.com">Email</a>
+      </nav>
+      <p class="foot__fine">RunCo is a training guide, not a medical device. © 2026 Bhakti Utama</p>
+    </footer>
+
+    <script src="assets/vendor/gsap.min.js"></script>
+    <script src="assets/vendor/ScrollTrigger.min.js"></script>
+    <script src="assets/vendor/SplitText.min.js"></script>
+    <script src="assets/vendor/DrawSVGPlugin.min.js"></script>
+    <script src="assets/vendor/InertiaPlugin.min.js"></script>
+    <script src="assets/vendor/Draggable.min.js"></script>
+    <script src="assets/vendor/lenis.min.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
 </html>

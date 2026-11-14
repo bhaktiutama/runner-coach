@@ -38,7 +38,7 @@ test('latihan selesai (3.4) -> 2.7 -> PNG 1080 x 1920, tanpa request ke luar', a
   await expect(page.getByTestId('screen-share')).toBeVisible();
   const preview = page.getByTestId('share-preview');
   await expect(preview).toContainText('LATIHAN SELESAI');
-  await expect(preview).toContainText('Run Coach');
+  await expect(preview).toContainText('RunCo');
   for (const s of ['RPE', 'Nyeri', 'Kurang tidur', 'Panas']) await expect(preview).not.toContainText(s);
   // Pace bisa disembunyikan (lari dengan jarak).
   if (await page.getByTestId('share-pace').count()) {

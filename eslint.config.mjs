@@ -15,6 +15,9 @@ export default tseslint.config(
       'playwright-report/**',
       'apps/app/expo-env.d.ts',
       'supabase/functions/**',
+      // Vendored, minified libraries of the static landing page; local-only skill assets.
+      'marketing/landing/assets/vendor/**',
+      '.claude/skills/**',
     ],
   },
   js.configs.recommended,

@@ -31,7 +31,7 @@ test('ikon spot tampil bawaan dan sakelar Profil mengembalikan tampilan tanpa ik
   // 4.3 Jeda plan, alasan Cedera: ikon cedera di label bagian yang nyeri.
   await page.getByRole('tab', { name: 'Profil' }).click();
   await page.getByTestId('row-pause').click();
-  await expect(page.getByTestId('spot-injury')).toBeVisible();
+  await expect(page.getByTestId('screen-pause').getByTestId('spot-injury')).toBeVisible();
   if (shots) await page.screenshot({ path: `${shots}/pause-on.png`, fullPage: true });
   await page.goBack();
 

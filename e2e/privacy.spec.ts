@@ -65,7 +65,7 @@ test('file bukan backup ditolak, data lama utuh', async ({ page }) => {
   await (
     await chooser
   ).setFiles({ name: 'x.json', mimeType: 'application/json', buffer: Buffer.from('{"hello":1}') });
-  await expect(page.getByTestId('privacy-msg')).toContainText('bukan backup Run Coach');
+  await expect(page.getByTestId('privacy-msg')).toContainText('bukan backup RunCo');
 });
 
 test('jeda plan lalu lanjut dengan Return to run', async ({ page }) => {
