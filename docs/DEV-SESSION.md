@@ -67,6 +67,20 @@ Catatan E2E: 6 test "skipped" itu normal (spec screenshot butuh `SHOTS_DIR`; sat
 
 Build iOS tidak bisa dari sesi cloud selama akun EAS belum punya kredensial Apple (`eas build -p ios --non-interactive` gagal "couldn't find any credentials suitable for internal distribution"). Sekali kredensial dibuat secara interaktif, build berikutnya bisa non-interaktif.
 
+### 3c. Beta M7: urutan rilis (review 2026-11-14, `docs/reviews/2026-11-14-CODE-REVIEW.md`)
+
+| # | Langkah | Siapa | Catatan |
+|---|---|---|---|
+| 1 | Kebijakan privasi online di `https://bhaktiutama.com/runco/privacy` (salinan ada di `marketing/landing/privacy/`, ikut ter-deploy bersama landing) | Pemilik (hosting domain) | Wajib untuk Play Console |
+| 2 | Template email `{{ .Token }}` (B5), Redirect URL `exp://**` (B2), SMTP sendiri | Pemilik | SMTP bawaan Supabase hanya 2 email/jam |
+| 3 | `EXPO_PUBLIC_SENTRY_DSN` dan `EXPO_PUBLIC_POSTHOG_KEY` di EAS environment `production` (B7) | Pemilik | App jalan normal tanpa keduanya |
+| 4 | Naikkan `version` di `apps/app/app.json` ke `0.9.0` tepat sebelum build beta pertama | Agent, atas perintah build | `runtimeVersion.policy = appVersion`: APK preview 0.1.0 tidak lagi menerima `eas update` setelah versi naik, jadi jangan dinaikkan lebih awal |
+| 5 | `npx eas-cli build -p android --profile production` lalu upload ke Play internal testing, lalu closed test | Agent atas perintah eksplisit; Play Console oleh pemilik | Closed test minimal 12 penguji x 14 hari sebelum production (akun pribadi baru) |
+| 6 | `npx eas-cli build -p ios --profile production` + `submit` (TestFlight) | Pemilik sekali interaktif (kredensial Apple, B11) | |
+| 7 | OTA ke beta: `EXPO_PUBLIC_PAYWALL=0 npx eas-cli update --channel production` | Agent | Env OTA dibaca dari mesin penerbit, bukan dari `eas.json` |
+
+Profil `production` di `eas.json` membawa `EXPO_PUBLIC_PAYWALL=0` (08-MONETIZATION, keputusan 2026-11-14).
+
 ## 4. Alur git
 
 - Branch kerja dari `development` (mis. `feat/<milestone>-<nama>`). Pemilik mengizinkan merge langsung ke `development` tanpa PR: `git checkout development && git pull --ff-only origin development && git merge --no-edit <branch> && git push origin development`.

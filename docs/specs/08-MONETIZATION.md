@@ -6,6 +6,7 @@ Status: Draft v0.3 (2026-11-07, paywall aktif + whitelist; bagikan gratis) | Fit
 
 - **Model: hybrid "lari gratis, strength berbayar".** Plan lari lengkap gratis selamanya; strength + core gratis di 2 minggu pertama plan, sesudahnya Premium. Trial store 14 hari.
 - **Harga usulan (placeholder): US$5,99 / bulan atau US$39,99 / tahun** (setara US$3,33 / bulan, hemat 44%). Harga final mengikuti tier store per negara dan hasil survey Van Westendorp.
+- **Beta (M7, keputusan pemilik 2026-11-14): gerbang MATI di build toko.** Profil EAS `production` (TestFlight, Play testing) membawa `EXPO_PUBLIC_PAYWALL=0`, karena pembelian belum ada (Fase 3) dan konten terkunci tanpa cara membeli berisiko ditolak App Store (guideline 3.1.1). `eas update --channel production` harus dijalankan dengan `EXPO_PUBLIC_PAYWALL=0` di environment, karena update OTA membaca env mesin yang menerbitkan, bukan `eas.json`. Web preview dan build `preview` tetap memakai gerbang aktif untuk review. Gerbang dinyalakan lagi di build toko setelah RevenueCat (Fase 3).
 - **Sejak 2026-11-07 gerbang AKTIF** untuk strength (minggu ke-3 dst.). Bagikan ke media sosial (F-29, `10-SHARE.md`) gratis untuk semua. `EXPO_PUBLIC_PAYWALL=0` mematikannya. **Whitelist user id** di Supabase (secret Edge Function `entitlement`, tanpa tabel) memberi Premium tanpa bayar. Pembelian (RevenueCat) tetap Fase 3, jadi sampai itu hanya pengguna whitelist yang bisa membuka fitur Premium.
 
 ## 1. Pilihan model yang dipertimbangkan
